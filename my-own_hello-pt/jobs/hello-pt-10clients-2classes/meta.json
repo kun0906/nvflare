@@ -1,0 +1,28 @@
+{
+  "name": "hello-pt-sep",
+  "resource_spec": {},
+  "min_clients" : 2,
+  "deploy_map": {
+    "app_server": [
+      "server"
+    ],
+    "app_site-1": [
+      "site-bcm-dgxa100-0016"
+    ],
+     "app_site-2": [
+      "site-bcm-dgxa100-0016"
+    ],
+    "app_site-3": [
+      "site-bcm-dgxa100-0016"
+    ],
+     "app_site-4": [
+      "site-bcm-dgxa100-0016"
+    ],
+    "app_site-5": [
+      "site-bcm-dgxa100-0016"
+    ],
+     "app_site-6": [
+      "site-bcm-dgxa100-0016"
+    ]
+  }
+}

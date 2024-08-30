@@ -1,0 +1,24 @@
+{
+  "site-bcm-dgxa100-0013": {
+    "SRV_server": {
+      "val_acc": 0.2854
+    },
+    "site-bcm-dgxa100-0013": {
+      "val_acc": 0.2931
+    },
+    "site-bcm-dgxa100-0003": {
+      "val_acc": 0.2852
+    }
+  },
+  "site-bcm-dgxa100-0003": {
+    "SRV_server": {
+      "val_acc": 0.2854
+    },
+    "site-bcm-dgxa100-0013": {
+      "val_acc": 0.2931
+    },
+    "site-bcm-dgxa100-0003": {
+      "val_acc": 0.2852
+    }
+  }
+}
