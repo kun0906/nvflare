@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# Load the conda environment with NVFlare
+module load conda
+if [ $? -ne 0 ]; then
+  echo "Error loading conda module"
+  exit 1
+fi
+which conda
+conda --version
+
+conda activate nvflare-3.10
+if [ $? -ne 0 ]; then
+  echo "Error activating conda environment nvflare-3.10"
+  exit 1
+fi
+
 pwd
 python3 -V
 nvflare -V
@@ -18,4 +33,9 @@ for CLIENT_ID in $(seq 0 $N); do  # Replace N with the actual number of clients
   $ROOT_DIR/site-${CLIENT_ID}/startup/start.sh &
 done
 
+
+
 echo "NVFlare started."
+
+
+$SHELL

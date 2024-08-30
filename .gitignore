@@ -3,4 +3,5 @@
 /NVFlare/
 /my-own_hello-pt/data/
 /NVFlare/*
-
+.idea/
+cifar10-hello-pt-10clients-2classes/data/cifar-10-python.tar.gz
