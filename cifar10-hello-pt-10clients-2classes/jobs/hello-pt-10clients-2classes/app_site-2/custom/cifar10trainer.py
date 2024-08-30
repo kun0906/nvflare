@@ -35,25 +35,7 @@ from nvflare.apis.signal import Signal
 from nvflare.app_common.abstract.model import make_model_learnable, model_learnable_to_dxo
 from nvflare.app_common.app_constant import AppConstants
 from nvflare.app_opt.pt.model_persistence_format_manager import PTModelPersistenceFormatManager
-from torch.utils.data import Dataset
-
-# Custom Dataset class
-class CustomCIFAR10Dataset(Dataset):
-    def __init__(self, data, targets, transform=None):
-        self.data = data
-        self.targets = targets
-        self.transform = transform
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        sample = self.data[idx]
-        target = self.targets[idx]
-        if self.transform:
-            sample = self.transform(sample)
-        return sample, target
-
+from data import CustomCIFAR10Dataset
 
 class Cifar10Trainer(Executor):
     def __init__(
@@ -104,15 +86,15 @@ class Cifar10Trainer(Executor):
         # )
         # self._train_dataset = CIFAR10(root=data_path, transform=transforms, download=True, train=True)
 
-        print(os.getcwd())
+        self.logger.info(os.getcwd())
         with open(self.data_path, "rb") as f:
             # Get the size of the subset
             client_data = pickle.load(f)
         # Unpack client_data into separate lists
-        client_images, _, client_targets = zip(*client_data)
+        client_images, _, client_targets = client_data
         client_images = np.array(client_images).astype('float32')
         client_targets = np.array(client_targets).astype('int')
-    
+
         # Convert lists to tensors if needed
         # client_images = torch.tensor(client_images)
         # Convert to float32 if needed
@@ -130,14 +112,14 @@ class Cifar10Trainer(Executor):
         self._train_loader = DataLoader(self._train_subset, batch_size=4, shuffle=True)
         self._n_iterations = len(self._train_loader)
         subset_size = len(self._train_subset)
-        print(f"Client {self.__class__.name}: Size of the training subset: {subset_size}")
+        self.logger.info(f"Client {self.__class__.name}: Size of the training subset: {subset_size}")
         # Count the number of samples in each class within the subset
         class_counts = Counter()
         for label in self._train_subset.targets.numpy():
             class_counts[str(label)] += 1
         # Print the counts for each class
         for class_index, count in class_counts.items():
-            print(f"Class {class_index}: {count} samples")
+            self.logger.info(f"Class {class_index}: {count} samples")
         # Setup the persistence manager to save PT model.
         # The default training configuration is used by persistence manager
         # in case no initial model is found.
@@ -147,6 +129,7 @@ class Cifar10Trainer(Executor):
         )
 
     def execute(self, task_name: str, shareable: Shareable, fl_ctx: FLContext, abort_signal: Signal) -> Shareable:
+        self.log_info(fl_ctx, os.getcwd())
         try:
             if task_name == self._pre_train_task_name:
                 # Get the new state dict and send as weights
