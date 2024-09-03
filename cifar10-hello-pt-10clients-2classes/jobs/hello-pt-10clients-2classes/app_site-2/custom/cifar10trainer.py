@@ -20,7 +20,7 @@ import torch
 from pt_constants import PTConstants
 from simple_network import SimpleNetwork
 from torch import nn
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data import Subset
 from torchvision.datasets import CIFAR10
@@ -40,7 +40,7 @@ from data import CustomCIFAR10Dataset
 class Cifar10Trainer(Executor):
     def __init__(
         self,
-        data_path= '/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_2_airplane.pkl',
+        data_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_2_airplane_train.pkl',
         lr=0.01,
         epochs=5,
         train_task_name=AppConstants.TASK_TRAIN,
@@ -75,7 +75,8 @@ class Cifar10Trainer(Executor):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
         self.loss = nn.CrossEntropyLoss()
-        self.optimizer = SGD(self.model.parameters(), lr=lr, momentum=0.9)
+        # self.optimizer = SGD(self.model.parameters(), lr=lr, momentum=0.9)
+        self.optimizer = Adam(self.model.parameters(), lr=lr)
 
         # # Create Cifar10 dataset for training.
         # transforms = Compose(
@@ -177,7 +178,7 @@ class Cifar10Trainer(Executor):
     def _get_model_weights(self) -> Shareable:
         # Get the new state dict and send as weights
         weights = {k: v.cpu().numpy() for k, v in self.model.state_dict().items()}
-
+        # self.logger.info(f'client 2: {weights}')
         outgoing_dxo = DXO(
             data_kind=DataKind.WEIGHTS, data=weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self._n_iterations}
         )
@@ -208,7 +209,7 @@ class Cifar10Trainer(Executor):
                 running_loss += cost.cpu().detach().numpy() / images.size()[0]
                 if i % 3000 == 0:
                     self.log_info(
-                        fl_ctx, f"Epoch: {epoch}/{self._epochs}, Iteration: {i}, " f"Loss: {running_loss/3000}"
+                        fl_ctx, f"\n\nEpoch: {epoch}/{self._epochs}, Iteration: {i}, " f"Loss: {running_loss/3000}"
                     )
                     running_loss = 0.0
 

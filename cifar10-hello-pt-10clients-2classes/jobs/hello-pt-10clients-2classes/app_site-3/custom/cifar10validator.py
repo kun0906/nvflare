@@ -34,7 +34,7 @@ from data import CustomCIFAR10Dataset
 
 class Cifar10Validator(Executor):
     def __init__(self,
-        data_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_2_airplane_test.pkl',
+        data_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_3_airplane_test.pkl',
                  validate_task_name=AppConstants.TASK_VALIDATION):
         super().__init__()
 

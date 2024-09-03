@@ -40,7 +40,7 @@ from data import CustomCIFAR10Dataset
 class Cifar10Trainer(Executor):
     def __init__(
         self,
-        data_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_1_airplane_train.pkl',
+        data_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_3_airplane_train.pkl',
         lr=0.01,
         epochs=5,
         train_task_name=AppConstants.TASK_TRAIN,

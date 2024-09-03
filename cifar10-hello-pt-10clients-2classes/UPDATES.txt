@@ -1,0 +1,5 @@
+v0.0.4:Generated sites automatically
+
+1. Add gen_sites.py
+2. Update cifar10_data.py for airplane vs. rest
+3. Update jobs and scripts

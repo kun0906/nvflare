@@ -231,8 +231,101 @@ def split_test_data():
 
 
 
-if __name__ == '__main__':
-    split_train_data()
+def split_data(data_type='train'):
+    data_path = 'data'
+    # Create Cifar10 dataset for training.
+    transforms = Compose(
+        [
+            ToTensor(),
+            Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+        ]
+    )
+    train = True if data_type == 'train' else False
+    _train_dataset = CIFAR10(root=data_path, transform=transforms, download=True, train=train)
+    print('_train_dataset', len(_train_dataset))
+    Y =  np.asarray(_train_dataset.targets)
+    mask = Y == 0  # Y =='airplane'
+    X_airplane, Y_airplane = _train_dataset.data[mask], Y[mask]
+    X_others, Y_others = _train_dataset.data[~mask], Y[~mask]
+    N = 10 # 10 clients
+    block = len(Y_airplane)//N
+    for i in range(0, N):
+        client_id = i + 1
+        print(f"\n\nClient {client_id}:")
+        X_1, Y_1 = X_airplane[i*block:(i+1)*block], Y_airplane[i*block:(i+1)*block]
+        X_0, Y_0 = X_others[i*block:(i+1)*block], Y_others[i*block:(i+1)*block]
 
-    print('\n\nTestset...')
-    split_test_data()
+        X_ = np.vstack((X_1, X_0))
+        Y_ = np.hstack((Y_1, Y_0))
+        Y_new = np.asarray([1]*len(Y_1)+ [0]*len(Y_0))
+        client_data = (X_, Y_, Y_new)
+        # Save the data to a file specific to the client
+        file_path = f'data/client_{client_id}_airplane_{data_type}.pkl'
+        with open(file_path, "wb") as f:
+            pickle.dump(client_data, f)
+
+        # Unpack client_data into separate lists
+        client_images, client_targets, new_client_targets= client_data
+        client_images = np.array(client_images).astype('float32')
+        client_targets = np.array(client_targets).astype('int')
+
+        # Convert lists to tensors if needed
+        # client_images = torch.tensor(client_images)
+        # Convert to float32 if needed
+        # client_images = client_images.astype('float32')
+
+        # Convert to PyTorch tensor
+        client_images = torch.tensor(client_images, dtype=torch.float32)
+        client_targets = torch.tensor(client_targets)
+
+        # Instantiate the custom dataset
+        _train_subset = CustomCIFAR10Dataset(data=client_images, targets=client_targets, transform=None)
+
+        _train_loader = DataLoader(_train_subset, batch_size=4, shuffle=True)
+        _n_iterations = len(_train_loader)
+        subset_size = len(_train_subset)
+        print(f"Size of the {data_type}ing subset: {subset_size}")
+        # Count the number of samples in each class within the subset
+        class_counts = Counter()
+        for label in _train_subset.targets.numpy():
+            class_counts[str(label)] += 1
+        # Print the counts for each class
+        for class_index, count in class_counts.items():
+            print(f"Class {class_index}: {count} samples")
+
+        for batch in _train_loader:
+            x, y = batch
+
+        with open(file_path, "rb") as f:
+            # Get the size of the subset
+            X, Y_, Y = pickle.load(f)
+        subset_size = len(Y)
+        print(f"Client {client_id}: Size of the {data_type}ing subset: {subset_size}")
+        # Count the number of samples in each class within the subset
+        class_counts = Counter()
+        for label in Y:
+            class_counts[label] += 1
+        # Print the counts for each class
+        for class_index, count in class_counts.items():
+            print(f"Class {class_index}: {count} samples")
+
+        # _train_loader = DataLoader(client_data2, batch_size=4, shuffle=True)
+        # _n_iterations = len(_train_loader)
+
+    # # Specify the portion of the dataset you want to use:
+    # # torch.arange(start, end) creates a range of indices from start to end.
+    # subset_indices = torch.arange(0, len(_train_dataset) // 10)  # For example, using only 10% of the dataset
+    # # Create a subset of the original dataset
+    # _train_subset = Subset(_train_dataset, subset_indices)  #
+
+
+
+if __name__ == '__main__':
+    # split_train_data()
+    #
+    # print('\n\nTestset...')
+    # split_test_data()
+
+    for data_type in ['train', 'test']:
+        print(f'\n\n{data_type}...')
+        split_data(data_type)
