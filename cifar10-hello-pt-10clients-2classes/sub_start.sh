@@ -15,6 +15,10 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+nvflare -V
+N=10
+#nvflare poc prepare -n $N
+
 pwd
 python3 -V
 nvflare -V
@@ -27,7 +31,6 @@ echo "Starting the server..."
 $ROOT_DIR/server/startup/start.sh &
 
 # Start the clients
-N=10
 for CLIENT_ID in $(seq 1 $N); do  # Replace N with the actual number of clients
   echo "Starting client $CLIENT_ID..."
   $ROOT_DIR/site-${CLIENT_ID}/startup/start.sh &

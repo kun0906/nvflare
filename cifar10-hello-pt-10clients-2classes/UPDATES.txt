@@ -1,3 +1,12 @@
+v0.0.5:Add attack data with fixed values: 255
+
+1. Add attack data: cifar10_attack_data
+2. Modify config/config_fed_server.json: "min_clients" : 10
+3. Add json formatter: format_json.py
+
+
+
+
 v0.0.4:Generated sites automatically
 
 1. Add gen_sites.py

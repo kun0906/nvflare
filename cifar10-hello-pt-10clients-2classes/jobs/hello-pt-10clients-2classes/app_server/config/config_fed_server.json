@@ -24,7 +24,15 @@
         "expected_data_kind": "WEIGHTS",
         "aggregation_weights": {
           "site-1": 1.0,
-          "site-2": 1.0
+          "site-2": 1.0,
+          "site-3": 1.0,
+          "site-4": 1.0,
+          "site-5": 1.0,
+          "site-6": 1.0,
+          "site-7": 1.0,
+          "site-8": 1.0,
+          "site-9": 1.0,
+          "site-10": 1.0
         }
       }
     },
@@ -51,8 +59,8 @@
         "id": "scatter_and_gather",
         "name": "ScatterAndGather",
         "args": {
-            "min_clients" : 2,
-            "num_rounds" : 3,
+            "min_clients" : 10,
+            "num_rounds" : 10,
             "start_round": 0,
             "wait_time_after_min_received": 10,
             "aggregator_id": "aggregator",

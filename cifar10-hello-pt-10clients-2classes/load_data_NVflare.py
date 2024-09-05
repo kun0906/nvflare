@@ -24,7 +24,7 @@ class NumpyArrayDecomposer(Decomposer):
 fobs.register(NumpyArrayDecomposer)
 
 # Path to the model_shareables file
-model_shareables_path = "cross_site_val/model_shareables/SRV_server"
+model_shareables_path = "../cross_site_val/model_shareables/SRV_server"
 
 # Load the serialized shareable
 model_shareable = load_from_file(model_shareables_path)
@@ -36,7 +36,7 @@ print(model_shareable.data.keys())
 
 
 # Path to the model_shareables file
-result_shareables_path = "cross_site_val/result_shareables/site-bcm-dgxa100-0003_site-bcm-dgxa100-0013"
+result_shareables_path = "../cross_site_val/result_shareables/site-bcm-dgxa100-0003_site-bcm-dgxa100-0013"
 
 # Load the serialized shareable
 result_shareable = load_from_file(result_shareables_path)
