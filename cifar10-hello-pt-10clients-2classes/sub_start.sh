@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load the conda environment with NVFlare
-module load conda
+#module load conda
 if [ $? -ne 0 ]; then
   echo "Error loading conda module"
   exit 1
@@ -9,7 +9,7 @@ fi
 which conda
 conda --version
 
-conda activate nvflare-3.10
+#conda activate nvflare-3.10
 if [ $? -ne 0 ]; then
   echo "Error activating conda environment nvflare-3.10"
   exit 1

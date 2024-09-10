@@ -1,10 +1,13 @@
+v0.0.6:Add tensorboard for job:"10clients-2classes"
+
+1. Add tensorboard for job:"10clients-2classes"
+
+
 v0.0.5:Add attack data with fixed values: 255
 
 1. Add attack data: cifar10_attack_data
 2. Modify config/config_fed_server.json: "min_clients" : 10
 3. Add json formatter: format_json.py
-
-
 
 
 v0.0.4:Generated sites automatically
