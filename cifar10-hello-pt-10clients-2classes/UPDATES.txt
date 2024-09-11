@@ -1,3 +1,11 @@
+v0.0.8:Add more GPUs and store local models in each iteration
+
+1. Modify learner_with_tb.py to use more GPUs
+2. Update gen_sites
+3. Store local models in each iteration
+
+
+
 v0.0.7-3:Update download.sh
 
 v0.0.7:Update NVFLare to 2.5.0

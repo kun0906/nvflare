@@ -42,14 +42,20 @@ def main():
 >>>>>>> 45127c9 (v0.0.7-1:sync with different devices)
         # replace the content
         train_file = os.path.join(dst, 'custom/learner_with_tb.py')
-        ith_line = 50 - 1
-        new_line = f"        train_path='{remote_dir}/cifar10-hello-pt-10clients-2classes/data/client_{i}_airplane_train.pkl',\n"
+        ith_line = 51 - 1
+        new_line = f"            train_path='{remote_dir}/cifar10-hello-pt-10clients-2classes/data/client_{i}_airplane_train.pkl',\n"
         replace_line(train_file, ith_line, new_line)
 
         valid_file = os.path.join(dst, 'custom/learner_with_tb.py')
-        ith_line = 51 - 1
-        new_line = f"        test_path='{remote_dir}/cifar10-hello-pt-10clients-2classes/data/client_{i}_airplane_test.pkl',\n"
+        ith_line = 52 - 1
+        new_line = f"            test_path='{remote_dir}/cifar10-hello-pt-10clients-2classes/data/client_{i}_airplane_test.pkl',\n"
         replace_line(valid_file, ith_line, new_line)
+
+        train_file = os.path.join(dst, 'custom/learner_with_tb.py')
+        ith_line = 53 - 1
+        site_id = i
+        new_line = f"            site_id={site_id},\n"
+        replace_line(train_file, ith_line, new_line)
 
 
 if __name__ == '__main__':

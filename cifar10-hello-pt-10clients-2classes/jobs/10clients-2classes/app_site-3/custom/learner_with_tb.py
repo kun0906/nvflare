@@ -21,12 +21,13 @@ import torch
 from pt_constants import PTConstants
 from simple_network import SimpleNetwork
 from torch import nn
-from torch.optim import SGD
+from torch.optim import SGD, Adam
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.datasets import CIFAR10
 from torchvision.transforms import Compose, Normalize, ToTensor
 from data import CustomCIFAR10Dataset
+import torchvision.transforms as transforms
 
 from nvflare.apis.dxo import DXO, DataKind, MetaKey, from_shareable
 from nvflare.apis.fl_constant import FLContextKey, ReservedKey, ReturnCode
@@ -46,13 +47,14 @@ from nvflare.app_opt.pt.model_persistence_format_manager import PTModelPersisten
 
 class PTLearner(Learner):
     def __init__(
-        self,
-        train_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_3_airplane_train.pkl',
-        test_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_3_airplane_test.pkl',
-        lr=0.01,
-        epochs=5,
-        exclude_vars=None,
-        analytic_sender_id="analytic_sender",
+            self,
+            train_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_3_airplane_train.pkl',
+            test_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_3_airplane_test.pkl',
+            site_id=3,
+            lr=0.01,
+            epochs=5,
+            exclude_vars=None,
+            analytic_sender_id="analytic_sender",
     ):
         """Simple PyTorch Learner that trains and validates a simple network on the CIFAR10 dataset.
 
@@ -80,6 +82,7 @@ class PTLearner(Learner):
 
         self.train_path = train_path
         self.test_path = test_path
+        self.site_id = site_id
         self.lr = lr
         self.epochs = epochs
         self.exclude_vars = exclude_vars
@@ -88,10 +91,23 @@ class PTLearner(Learner):
     def initialize(self, parts: dict, fl_ctx: FLContext):
         # Training setup
         self.model = SimpleNetwork()
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        if torch.cuda.is_available():
+            cuda_id = self.site_id % 2
+            device = f"cuda:{cuda_id}"
+        else:
+            device = "cpu"
+        self.device = torch.device(device)
         self.model.to(self.device)
         self.loss = nn.CrossEntropyLoss()
-        self.optimizer = SGD(self.model.parameters(), lr=self.lr, momentum=0.9)
+        # self.optimizer = SGD(self.model.parameters(), lr=self.lr, momentum=0.9)
+        self.optimizer = Adam(self.model.parameters(), lr=self.lr)
+
+        transform = transforms.Compose(
+            [
+                # transforms.ToTensor(), # divide by 255
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            ]
+        )
 
         # load train set
         self.logger.info(os.getcwd())
@@ -100,7 +116,7 @@ class PTLearner(Learner):
             client_data = pickle.load(f)
         # Unpack client_data into separate lists
         client_images, _, client_targets = client_data
-        client_images = np.array(client_images).astype('float32')
+        client_images = np.array(client_images).astype('float32') / 255.0
         client_targets = np.array(client_targets).astype('int')
 
         # Convert lists to tensors if needed
@@ -115,7 +131,7 @@ class PTLearner(Learner):
         client_images = client_images.permute(0, 3, 1, 2)
 
         # Instantiate the custom dataset
-        self._train_subset = CustomCIFAR10Dataset(data=client_images, targets=client_targets, transform=None)
+        self._train_subset = CustomCIFAR10Dataset(data=client_images, targets=client_targets, transform=transform)
 
         self.train_loader = DataLoader(self._train_subset, batch_size=4, shuffle=True)
         self.n_iterations = len(self.train_loader)
@@ -143,7 +159,7 @@ class PTLearner(Learner):
             client_data = pickle.load(f)
         # Unpack client_data into separate lists
         client_images, _, client_targets = client_data
-        client_images = np.array(client_images).astype('float32')
+        client_images = np.array(client_images).astype('float32') / 255.0
         client_targets = np.array(client_targets).astype('int')
 
         # Convert lists to tensors if needed
@@ -158,7 +174,7 @@ class PTLearner(Learner):
         client_images = client_images.permute(0, 3, 1, 2)
 
         # Instantiate the custom dataset
-        self._test_subset = CustomCIFAR10Dataset(data=client_images, targets=client_targets, transform=None)
+        self._test_subset = CustomCIFAR10Dataset(data=client_images, targets=client_targets, transform=transform)
 
         self.test_loader = DataLoader(self._test_subset, batch_size=4, shuffle=True)
         # self._n_iterations = len(self._test_loader)
@@ -172,11 +188,10 @@ class PTLearner(Learner):
         for class_index, count in class_counts.items():
             print(f"Class {class_index}: {count} samples")
 
-
         # Tensorboard streaming setup
         self.writer = parts.get(self.analytic_sender_id)  # user configuration from config_fed_client.json
-        # if not self.writer:  # else use local TensorBoard writer only
-        #     self.writer = SummaryWriter(fl_ctx.get_prop(FLContextKey.APP_ROOT))
+        if not self.writer:  # else use local TensorBoard writer only
+            self.writer = SummaryWriter(fl_ctx.get_prop(FLContextKey.APP_ROOT))
 
     def get_weights(self):
         # Get the new state dict and send as weights
@@ -186,6 +201,7 @@ class PTLearner(Learner):
             data_kind=DataKind.WEIGHTS, data=weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self.n_iterations}
         )
         return outgoing_dxo.to_shareable()
+
     def train(self, data: Shareable, fl_ctx: FLContext, abort_signal: Signal) -> Shareable:
         # Get model weights
         try:
@@ -243,18 +259,24 @@ class PTLearner(Learner):
                 running_loss += cost.cpu().detach().numpy() / images.size()[0]
                 if i % 3000 == 0:
                     self.log_info(
-                        fl_ctx, f"Epoch: {epoch}/{self.epochs}, Iteration: {i}, " f"Loss: {running_loss/3000}"
+                        fl_ctx,
+                        f"current_round: {current_round}, Epoch: {epoch}/{self.epochs}, Iteration: {i}, " f"Loss: {running_loss / 3000}"
                     )
-                    running_loss = 0.0
+                    # running_loss = 0.0
 
                 # # Stream training loss at each step
                 # current_step = self.n_iterations * self.epochs * current_round + self.n_iterations * epoch + i
                 # self.writer.add_scalar("train_loss", cost.item(), current_step)
-
-            self.writer.add_scalar("train_loss", running_loss, epoch)
+            current_step = self.n_iterations * self.epochs * current_round + self.n_iterations * epoch
+            self.writer.add_scalar("train_loss", running_loss, current_step)
             # Stream validation accuracy at the end of each epoch
-            metric = self.local_validate(abort_signal)
-            self.writer.add_scalar("validation_accuracy", metric, epoch)
+            metrics = self.local_validate(self.train_loader, 'train', abort_signal)
+            for metric, val in metrics.items():
+                self.writer.add_scalar(metric, val, current_step)
+
+            metrics = self.local_validate(self.test_loader,'test', abort_signal)
+            for metric, val in metrics.items():
+                self.writer.add_scalar(metric, val, current_step)
 
     def get_model_for_validation(self, model_name: str, fl_ctx: FLContext) -> Shareable:
         run_dir = fl_ctx.get_engine().get_workspace().get_run_dir(fl_ctx.get_job_id())
@@ -296,7 +318,7 @@ class PTLearner(Learner):
             self.model.load_state_dict(weights)
 
             # Get validation accuracy
-            val_accuracy = self.local_validate(abort_signal)
+            val_accuracy = self.local_validate(self.test_loader, 'test', abort_signal)
             if abort_signal.triggered:
                 return make_reply(ReturnCode.TASK_ABORTED)
 
@@ -313,12 +335,13 @@ class PTLearner(Learner):
             self.log_exception(fl_ctx, f"Exception in validating model from {model_owner}")
             return make_reply(ReturnCode.EXECUTION_EXCEPTION)
 
-    def local_validate(self, abort_signal):
+    def local_validate(self, test_loader, data_type='test', abort_signal=None):
+        metrics = {f'{data_type}_accuracy': 0, f'{data_type}_auc':0}
         self.model.eval()
         correct = 0
         total = 0
         with torch.no_grad():
-            for i, (images, labels) in enumerate(self.test_loader):
+            for i, (images, labels) in enumerate(test_loader):
                 if abort_signal.triggered:
                     return 0
 
@@ -330,7 +353,9 @@ class PTLearner(Learner):
                 correct += (pred_label == labels).sum().item()
                 total += images.size()[0]
             metric = correct / float(total)
-        return metric
+
+        metrics[f'{data_type}_accuracy'] = metric
+        return metrics
 
     def save_local_model(self, fl_ctx: FLContext):
         run_dir = fl_ctx.get_engine().get_workspace().get_run_dir(fl_ctx.get_prop(ReservedKey.RUN_NUM))

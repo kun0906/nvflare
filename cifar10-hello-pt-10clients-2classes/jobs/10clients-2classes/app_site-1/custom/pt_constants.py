@@ -19,3 +19,4 @@ class PTConstants:
     PTLocalModelName = "local_model.pt"
 
     PTModelsDir = "models"
+    CrossValResultsJsonFilename = "cross_val_results.json"

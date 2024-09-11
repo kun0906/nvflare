@@ -2,3 +2,4 @@ nvflare~=2.5.0
 torch
 torchvision
 pytest
+matplotlib

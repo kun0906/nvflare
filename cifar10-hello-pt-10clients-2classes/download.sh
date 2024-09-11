@@ -34,6 +34,7 @@ rsync -avP kunyang@superpod.smu.edu:/users/kunyang/${PROJECT_DIR} $LOCAL_PROJECT
 echo
 echo "Finished!"
 
+python3 format_json.py
 
 <<<<<<< HEAD
 rsync -avP kunyang@superpod.smu.edu:/users/kunyang/cifar10-hello-pt-10clients-2classes ~

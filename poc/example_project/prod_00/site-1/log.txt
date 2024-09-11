@@ -4789,3 +4789,136 @@
 2024-09-10 19:56:12,414 - ProcessExecutor - INFO - run (422924c0-3b27-4a8e-94c2-61a836e59ff6): child worker process finished with RC -9
 2024-09-10 19:56:12,431 - ProcessExecutor - INFO - run (422924c0-3b27-4a8e-94c2-61a836e59ff6): child worker process terminated
 2024-09-10 19:56:12,431 - ProcessExecutor - INFO - Client worker process is terminated.
+2024-09-11 16:55:25,076 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-11 16:55:25,076 - ConnectorManager - INFO - 95439: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-11 16:55:25,077 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:43796] is starting
+2024-09-11 16:55:25,580 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:43796
+2024-09-11 16:55:25,580 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-11 16:55:25,581 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-11 16:55:25,603 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 16:55:25,603 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 95439
+2024-09-11 16:55:25,911 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:09b5ae1f-9856-42e3-9096-759179df545d SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-11 16:55:25,917 - FederatedClient - INFO - Got engine after 0.3355569839477539 seconds
+2024-09-11 16:55:25,917 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-11 16:55:38,276 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 45981
+2024-09-11 16:55:38,278 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00002 Not Connected]
+2024-09-11 16:55:39,296 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 16:55:39,308 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 N/A => localhost:8002] is created: PID: 45981
+2024-09-11 16:56:36,260 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-11 16:56:36,260 - ConnectorManager - INFO - 95818: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-11 16:56:36,261 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:50584] is starting
+2024-09-11 16:56:36,766 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:50584
+2024-09-11 16:56:36,767 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-11 16:56:36,768 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-11 16:56:36,778 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 16:56:36,778 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 95818
+2024-09-11 16:56:37,088 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:0e63bd28-355e-4595-bad0-5ae82dce3236 SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-11 16:56:37,089 - FederatedClient - INFO - Got engine after 0.32080912590026855 seconds
+2024-09-11 16:56:37,089 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-11 16:57:08,456 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-11 16:57:08,457 - ConnectorManager - INFO - 95826: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-11 16:57:08,458 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:33263] is starting
+2024-09-11 16:57:08,960 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:33263
+2024-09-11 16:57:08,960 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-11 16:57:08,963 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-11 16:57:08,998 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 16:57:08,999 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 16:57:09,233 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:f7edb65f-bded-4e7c-9d2f-29e00716914f SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-11 16:57:09,239 - FederatedClient - INFO - Got engine after 0.27553796768188477 seconds
+2024-09-11 16:57:09,239 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-11 16:57:27,275 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-11 16:57:27,287 - ProcessExecutor - INFO - Worker child process ID: 95885
+2024-09-11 16:57:27,287 - ProcessExecutor - INFO - run (53f0ac09-1485-4c2f-93d2-7f21980a4ae9): waiting for child worker process to finish.
+2024-09-11 16:57:38,810 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:33263 <= 127.0.0.1:50309] is created: PID: 95826
+2024-09-11 16:58:10,062 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 95826
+2024-09-11 16:58:15,739 - ProcessExecutor - INFO - run (53f0ac09-1485-4c2f-93d2-7f21980a4ae9): child worker process finished with RC 0
+2024-09-11 17:00:37,046 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-11 17:00:37,058 - ProcessExecutor - INFO - Worker child process ID: 95971
+2024-09-11 17:00:37,059 - ProcessExecutor - INFO - run (1b9ea33f-51a0-417b-8ca3-7afeb6966834): waiting for child worker process to finish.
+2024-09-11 17:00:44,201 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:33263 <= 127.0.0.1:50347] is created: PID: 95826
+2024-09-11 17:02:47,698 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 95826
+2024-09-11 17:02:50,814 - ProcessExecutor - INFO - run (1b9ea33f-51a0-417b-8ca3-7afeb6966834): child worker process finished with RC 0
+2024-09-11 17:03:12,541 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-11 17:03:12,554 - ProcessExecutor - INFO - Worker child process ID: 96155
+2024-09-11 17:03:12,555 - ProcessExecutor - INFO - run (458bd16d-467a-4459-957f-2489357ca213): waiting for child worker process to finish.
+2024-09-11 17:03:18,792 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 127.0.0.1:33263 <= 127.0.0.1:50391] is created: PID: 95826
+2024-09-11 17:05:03,193 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 95826
+2024-09-11 17:05:06,195 - ProcessExecutor - INFO - run (458bd16d-467a-4459-957f-2489357ca213): child worker process finished with RC 0
+2024-09-11 17:05:06,229 - ProcessExecutor - INFO - run (458bd16d-467a-4459-957f-2489357ca213): child worker process terminated
+2024-09-11 17:05:06,229 - ProcessExecutor - INFO - Client worker process is terminated.
+2024-09-11 17:05:21,064 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-11 17:05:21,073 - ProcessExecutor - INFO - Worker child process ID: 96283
+2024-09-11 17:05:21,073 - ProcessExecutor - INFO - run (c1b1775b-6eec-4255-9090-6d6adc58dd8a): waiting for child worker process to finish.
+2024-09-11 17:05:46,001 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:33263 <= 127.0.0.1:50444] is created: PID: 95826
+2024-09-11 17:06:05,874 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 95826
+2024-09-11 17:06:05,874 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00002 Not Connected]
+2024-09-11 17:06:06,881 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:06:06,881 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:06:06,883 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 95826
+2024-09-11 17:06:06,883 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00007 Not Connected]
+2024-09-11 17:06:08,892 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:06:08,894 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:06:08,899 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 95826
+2024-09-11 17:06:08,900 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00008 Not Connected]
+2024-09-11 17:06:11,455 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-11 17:06:11,456 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-11 17:06:12,908 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:06:12,909 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:06:12,914 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 Not Connected] is closed PID: 95826
+2024-09-11 17:06:12,915 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00009 Not Connected]
+2024-09-11 17:06:12,915 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 8 seconds
+2024-09-11 17:06:20,923 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:06:20,924 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:06:20,931 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 Not Connected] is closed PID: 95826
+2024-09-11 17:06:20,932 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00010 Not Connected]
+2024-09-11 17:06:20,932 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-11 17:06:21,474 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-11 17:06:21,474 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-11 17:06:30,939 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:06:30,940 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:06:30,947 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 Not Connected] is closed PID: 95826
+2024-09-11 17:06:30,948 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00011 Not Connected]
+2024-09-11 17:06:30,948 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-11 17:06:31,497 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-11 17:06:31,498 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-11 17:06:40,953 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:06:40,953 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:06:40,955 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 Not Connected] is closed PID: 95826
+2024-09-11 17:06:40,956 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00012 Not Connected]
+2024-09-11 17:06:40,956 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-11 17:06:41,520 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-11 17:06:41,520 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-11 17:06:50,964 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:06:50,966 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:06:50,973 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 Not Connected] is closed PID: 95826
+2024-09-11 17:06:50,973 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00013 Not Connected]
+2024-09-11 17:06:50,974 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-11 17:06:51,541 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-11 17:06:51,542 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-11 17:07:00,981 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:07:00,982 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 N/A => localhost:8002] is created: PID: 95826
+2024-09-11 17:07:16,965 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 95826
+2024-09-11 17:07:19,116 - ProcessExecutor - INFO - run (c1b1775b-6eec-4255-9090-6d6adc58dd8a): child worker process finished with RC 0
+2024-09-11 17:07:19,135 - ProcessExecutor - INFO - run (c1b1775b-6eec-4255-9090-6d6adc58dd8a): child worker process terminated
+2024-09-11 17:07:19,137 - ProcessExecutor - INFO - Client worker process is terminated.
+2024-09-11 17:07:47,137 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-11 17:07:47,137 - ConnectorManager - INFO - 96331: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-11 17:07:47,138 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:4151] is starting
+2024-09-11 17:07:47,640 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:4151
+2024-09-11 17:07:47,641 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-11 17:07:47,643 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-11 17:07:47,680 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-11 17:07:47,681 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 96331
+2024-09-11 17:07:48,040 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:c0989fe0-f5fb-454e-9dc2-2454b45f54ad SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-11 17:07:48,044 - FederatedClient - INFO - Got engine after 0.4010806083679199 seconds
+2024-09-11 17:07:48,044 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-11 17:08:09,093 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-11 17:08:09,107 - ProcessExecutor - INFO - Worker child process ID: 96359
+2024-09-11 17:08:09,108 - ProcessExecutor - INFO - run (1bbbc59a-7340-4412-b2f0-b6ef31d6f62f): waiting for child worker process to finish.
+2024-09-11 17:08:15,812 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:4151 <= 127.0.0.1:50520] is created: PID: 96331
+2024-09-11 17:17:28,142 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 96331
+2024-09-11 17:17:31,010 - ProcessExecutor - INFO - run (1bbbc59a-7340-4412-b2f0-b6ef31d6f62f): child worker process finished with RC 0
+2024-09-11 17:19:09,168 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-11 17:19:09,178 - ProcessExecutor - INFO - Worker child process ID: 97601
+2024-09-11 17:19:09,179 - ProcessExecutor - INFO - run (469c921f-71a2-468d-a310-71db4feb1c31): waiting for child worker process to finish.
+2024-09-11 17:19:15,934 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:4151 <= 127.0.0.1:50669] is created: PID: 96331

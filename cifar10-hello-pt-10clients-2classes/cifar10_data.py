@@ -237,14 +237,8 @@ def split_test_data():
 def split_data(data_type='train'):
     data_path = 'data'
     # Create Cifar10 dataset for training.
-    transforms = Compose(
-        [
-            ToTensor(),
-            Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-        ]
-    )
     train = True if data_type == 'train' else False
-    _train_dataset = CIFAR10(root=data_path, transform=transforms, download=True, train=train)
+    _train_dataset = CIFAR10(root=data_path, transform=None, download=True, train=train)
     print('_train_dataset', len(_train_dataset))
     Y = np.asarray(_train_dataset.targets)
     mask = Y == 0  # Y =='airplane'
