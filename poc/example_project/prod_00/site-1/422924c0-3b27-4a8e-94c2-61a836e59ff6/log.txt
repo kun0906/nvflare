@@ -1,0 +1,16 @@
+2024-09-10 16:21:50,481 - worker_process - INFO - Worker_process started.
+2024-09-10 16:21:55,488 - CoreCell - INFO - site-1.422924c0-3b27-4a8e-94c2-61a836e59ff6: created backbone internal connector to tcp://localhost:35390 on parent
+2024-09-10 16:21:55,490 - CoreCell - INFO - site-1.422924c0-3b27-4a8e-94c2-61a836e59ff6: created backbone external connector to grpc://localhost:8002
+2024-09-10 16:21:55,490 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:35390] is starting
+2024-09-10 16:21:55,490 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 ACTIVE grpc://localhost:8002] is starting
+2024-09-10 16:21:55,491 - FederatedClient - INFO - Wait for client_runner to be created.
+2024-09-10 16:21:55,491 - FederatedClient - INFO - Got client_runner after 9.393692016601562e-05 seconds
+2024-09-10 16:21:55,491 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-10 16:21:55,491 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-10 16:21:55,494 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:52718 => 127.0.0.1:35390] is created: PID: 52572
+2024-09-10 16:21:55,516 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-10 16:21:55,516 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 N/A => localhost:8002] is created: PID: 52572
+2024-09-10 16:21:59,126 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.422924c0-3b27-4a8e-94c2-61a836e59ff6'], timeout=2.0
+2024-09-10 19:55:57,010 - ClientRunner - INFO - [identity=site-1, run=422924c0-3b27-4a8e-94c2-61a836e59ff6, peer=example_project, peer_run=422924c0-3b27-4a8e-94c2-61a836e59ff6]: received request from Server to end current RUN
+2024-09-10 19:56:02,345 - ClientRunner - INFO - [identity=site-1, run=422924c0-3b27-4a8e-94c2-61a836e59ff6]: Received command to abort job
+2024-09-10 19:56:07,064 - ClientRunner - INFO - [identity=site-1, run=422924c0-3b27-4a8e-94c2-61a836e59ff6]: Received command to abort job

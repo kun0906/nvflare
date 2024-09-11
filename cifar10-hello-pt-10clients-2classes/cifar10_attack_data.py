@@ -1,3 +1,6 @@
+"""Generate attack data
+
+"""
 import pickle
 from collections import Counter
 

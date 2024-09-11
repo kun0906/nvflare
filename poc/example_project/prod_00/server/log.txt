@@ -1,0 +1,298 @@
+2024-09-10 11:13:59,864 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-10 11:13:59,998 - CoreCell - INFO - server: creating listener on grpc://0:8002
+2024-09-10 11:14:00,113 - CoreCell - INFO - server: created backbone external listener for grpc://0:8002
+2024-09-10 11:14:00,113 - ConnectorManager - INFO - 9179: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-10 11:14:00,114 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:3925] is starting
+2024-09-10 11:14:00,619 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:3925
+2024-09-10 11:14:00,620 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE grpc://0:8002] is starting
+2024-09-10 11:14:00,623 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - deployed FLARE Server.
+2024-09-10 11:14:00,632 - MPM - ERROR - Execute exception: OSError: [Errno 48] Address already in use
+2024-09-10 11:14:00,652 - nvflare.fuel.f3.drivers.grpc_driver.Server - INFO - added secure port at 0.0.0.0:8002
+2024-09-10 11:14:00,672 - MPM - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/f3/mpm.py", line 154, in run
+    rc = main_func(**kwargs)
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/server/server_train.py", line 112, in main
+    admin_server = create_admin_server(
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/app/utils.py", line 80, in create_admin_server
+    admin_server = FedAdminServer(
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/admin.py", line 174, in __init__
+    AdminServer.__init__(
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/hci/server/hci.py", line 164, in __init__
+    self.server_bind()
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/socketserver.py", line 466, in server_bind
+    self.socket.bind(self.server_address)
+OSError: [Errno 48] Address already in use
+
+2024-09-10 11:14:02,619 - MPM - WARNING - #### MPM: still running thread Thread-3 (client_cleanup)
+2024-09-10 11:14:02,620 - MPM - WARNING - #### MPM: still running thread Thread-4 (_start_job_runner)
+2024-09-10 11:14:02,620 - MPM - WARNING - #### MPM: still running thread Thread-5 (_job_complete_process)
+2024-09-10 11:14:02,620 - MPM - INFO - MPM: Good Bye!
+2024-09-10 11:14:32,674 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-10 11:14:32,774 - CoreCell - INFO - server: creating listener on grpc://0:8002
+2024-09-10 11:14:32,787 - CoreCell - INFO - server: created backbone external listener for grpc://0:8002
+2024-09-10 11:14:32,787 - ConnectorManager - INFO - 9197: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-10 11:14:32,788 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:54927] is starting
+2024-09-10 11:14:33,293 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:54927
+2024-09-10 11:14:33,294 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE grpc://0:8002] is starting
+2024-09-10 11:14:33,297 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - deployed FLARE Server.
+2024-09-10 11:14:33,309 - nvflare.fuel.hci.server.hci - INFO - Starting Admin Server localhost on Port 8003
+2024-09-10 11:14:33,309 - root - INFO - Server started
+2024-09-10 11:14:33,311 - nvflare.fuel.f3.drivers.grpc_driver.Server - INFO - added secure port at 0.0.0.0:8002
+2024-09-10 11:14:38,300 - ServerState - INFO - Got the primary sp: localhost fl_port: 8002 SSID: ebc6125d-0a56-4688-9b08-355fe9e4d61a. Turning to hot.
+2024-09-10 11:14:51,043 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 0.0.0.0:8002 <= ipv6:%5B::1%5D:64231 SSL site-1] is created: PID: 9197
+2024-09-10 11:14:51,271 - ClientManager - INFO - Client: New client site-1@10.9.172.167 joined. Sent token: 843d6add-5e92-4621-bd74-9c5d1deea9f7.  Total clients: 1
+2024-09-10 11:15:50,642 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job b4d5c077-904f-4ed2-8cf5-9ce02336a6f1, get result: (scheduled).
+2024-09-10 11:15:50,643 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1 from the scheduler to run
+2024-09-10 11:15:50,925 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1
+2024-09-10 11:15:51,237 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1
+2024-09-10 11:15:53,131 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1
+2024-09-10 11:15:53,132 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1
+2024-09-10 11:15:53,158 - JobRunner - INFO - [identity=example_project, run=?]: Started run: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1 for clients: site-1
+2024-09-10 11:15:53,158 - JobRunner - INFO - [identity=example_project, run=?]: Job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1 has been started.
+2024-09-10 11:15:53,158 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1 status to RUNNING.
+2024-09-10 11:15:53,159 - JobRunner - INFO - [identity=example_project, run=?]: Job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1 started to run, status changed to RUNNING.
+2024-09-10 11:15:54,924 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:54927 <= 127.0.0.1:64264] is created: PID: 9197
+2024-09-10 11:15:56,538 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 9197
+2024-09-10 11:15:58,840 - ServerEngine - INFO - Job: b4d5c077-904f-4ed2-8cf5-9ce02336a6f1 child process exit with return code 103
+2024-09-10 11:15:59,603 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (b4d5c077-904f-4ed2-8cf5-9ce02336a6f1) on clients ...
+2024-09-10 11:17:43,672 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314, get result: (scheduled).
+2024-09-10 11:17:43,672 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314 from the scheduler to run
+2024-09-10 11:17:43,936 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314
+2024-09-10 11:17:44,114 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314
+2024-09-10 11:17:46,010 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314
+2024-09-10 11:17:46,011 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314
+2024-09-10 11:17:46,030 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314 for clients: site-1
+2024-09-10 11:17:46,031 - JobRunner - INFO - [identity=example_project, run=?]: Job: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314 has been started.
+2024-09-10 11:17:46,031 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314 status to RUNNING.
+2024-09-10 11:17:46,031 - JobRunner - INFO - [identity=example_project, run=?]: Job: 06fdd0e1-0252-4ace-9b1f-fc7d21a3b314 started to run, status changed to RUNNING.
+2024-09-10 11:17:48,025 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:54927 <= 127.0.0.1:64313] is created: PID: 9197
+2024-09-10 11:17:55,808 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 0.0.0.0:8002 <= ipv6:%5B::1%5D:64318 SSL site-1] is created: PID: 9197
+2024-09-10 11:17:59,015 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 9197
+2024-09-10 11:18:01,593 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 9197
+2024-09-10 11:18:02,049 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (06fdd0e1-0252-4ace-9b1f-fc7d21a3b314) on clients ...
+2024-09-10 11:19:19,492 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 40ada45f-6f0b-4471-b32d-a401af0cbe3f, get result: (scheduled).
+2024-09-10 11:19:19,493 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 40ada45f-6f0b-4471-b32d-a401af0cbe3f from the scheduler to run
+2024-09-10 11:19:19,939 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 40ada45f-6f0b-4471-b32d-a401af0cbe3f
+2024-09-10 11:19:20,133 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 40ada45f-6f0b-4471-b32d-a401af0cbe3f
+2024-09-10 11:19:22,087 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 40ada45f-6f0b-4471-b32d-a401af0cbe3f
+2024-09-10 11:19:22,088 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 40ada45f-6f0b-4471-b32d-a401af0cbe3f
+2024-09-10 11:19:22,102 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 40ada45f-6f0b-4471-b32d-a401af0cbe3f for clients: site-1
+2024-09-10 11:19:22,103 - JobRunner - INFO - [identity=example_project, run=?]: Job: 40ada45f-6f0b-4471-b32d-a401af0cbe3f has been started.
+2024-09-10 11:19:22,103 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 40ada45f-6f0b-4471-b32d-a401af0cbe3f status to RUNNING.
+2024-09-10 11:19:22,103 - JobRunner - INFO - [identity=example_project, run=?]: Job: 40ada45f-6f0b-4471-b32d-a401af0cbe3f started to run, status changed to RUNNING.
+2024-09-10 11:19:23,994 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:54927 <= 127.0.0.1:64351] is created: PID: 9197
+2024-09-10 11:19:25,292 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 0.0.0.0:8002 <= ipv6:%5B::1%5D:64354 SSL site-1] is created: PID: 9197
+2024-09-10 11:24:10,235 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 9197
+2024-09-10 11:24:13,886 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 9197
+2024-09-10 11:24:43,549 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 4386c027-e022-4abb-ae9f-888372b836cd, get result: (scheduled).
+2024-09-10 11:24:43,550 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 4386c027-e022-4abb-ae9f-888372b836cd from the scheduler to run
+2024-09-10 11:24:43,959 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 4386c027-e022-4abb-ae9f-888372b836cd
+2024-09-10 11:24:44,160 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 4386c027-e022-4abb-ae9f-888372b836cd
+2024-09-10 11:24:45,865 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 4386c027-e022-4abb-ae9f-888372b836cd
+2024-09-10 11:24:45,866 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 4386c027-e022-4abb-ae9f-888372b836cd
+2024-09-10 11:24:45,881 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 4386c027-e022-4abb-ae9f-888372b836cd for clients: site-1
+2024-09-10 11:24:45,882 - JobRunner - INFO - [identity=example_project, run=?]: Job: 4386c027-e022-4abb-ae9f-888372b836cd has been started.
+2024-09-10 11:24:45,882 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 4386c027-e022-4abb-ae9f-888372b836cd status to RUNNING.
+2024-09-10 11:24:45,882 - JobRunner - INFO - [identity=example_project, run=?]: Job: 4386c027-e022-4abb-ae9f-888372b836cd started to run, status changed to RUNNING.
+2024-09-10 11:24:47,830 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 127.0.0.1:54927 <= 127.0.0.1:64411] is created: PID: 9197
+2024-09-10 11:27:49,454 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 0.0.0.0:8002 <= ipv6:%5B::1%5D:64450 SSL site-1] is created: PID: 9197
+2024-09-10 11:28:31,633 - ServerEngine - INFO - Abort the server app run.
+2024-09-10 11:28:31,750 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 Not Connected] is closed PID: 9197
+2024-09-10 11:28:32,640 - ServerEngine - INFO - Abort server status: None
+2024-09-10 11:28:32,642 - JobRunner - INFO - [identity=example_project, run=?]: Stop the job run: 4386c027-e022-4abb-ae9f-888372b836cd
+2024-09-10 11:28:32,644 - Cell - WARNING - Receiving unknown req_id='9d996cac-1d1b-4eb0-ac61-c311db40ebf2', discarded: '9d996cac-1d1b-4eb0-ac61-c311db40ebf2'
+2024-09-10 11:28:33,925 - CoreCell - WARNING - server: no waiter for req 171c7fd2-8401-4860-9421-0490aa550b10 - the reply is too late
+2024-09-10 11:28:34,748 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 9197
+2024-09-10 11:28:36,971 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job eb5fd59b-44c7-44f8-a10c-18bc3ee3969a, get result: (scheduled).
+2024-09-10 11:28:36,972 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a from the scheduler to run
+2024-09-10 11:28:37,385 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a
+2024-09-10 11:28:37,639 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a
+2024-09-10 11:28:39,373 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a
+2024-09-10 11:28:39,374 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a
+2024-09-10 11:28:39,390 - JobRunner - INFO - [identity=example_project, run=?]: Started run: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a for clients: site-1
+2024-09-10 11:28:39,390 - JobRunner - INFO - [identity=example_project, run=?]: Job: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a has been started.
+2024-09-10 11:28:39,390 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a status to RUNNING.
+2024-09-10 11:28:39,391 - JobRunner - INFO - [identity=example_project, run=?]: Job: eb5fd59b-44c7-44f8-a10c-18bc3ee3969a started to run, status changed to RUNNING.
+2024-09-10 11:28:41,308 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 127.0.0.1:54927 <= 127.0.0.1:64475] is created: PID: 9197
+2024-09-10 11:30:52,964 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 0.0.0.0:8002 <= ipv6:%5B::1%5D:64500 SSL site-1] is created: PID: 9197
+2024-09-10 11:32:40,510 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 8eab1b85-1f22-4b46-8cce-04feb683f495, get result: (scheduled).
+2024-09-10 11:32:40,510 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 8eab1b85-1f22-4b46-8cce-04feb683f495 from the scheduler to run
+2024-09-10 11:32:40,830 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 8eab1b85-1f22-4b46-8cce-04feb683f495
+2024-09-10 11:32:41,510 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 8eab1b85-1f22-4b46-8cce-04feb683f495
+2024-09-10 11:32:43,957 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 8eab1b85-1f22-4b46-8cce-04feb683f495
+2024-09-10 11:32:43,959 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 8eab1b85-1f22-4b46-8cce-04feb683f495
+2024-09-10 11:32:43,980 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 8eab1b85-1f22-4b46-8cce-04feb683f495 for clients: site-1
+2024-09-10 11:32:43,981 - JobRunner - INFO - [identity=example_project, run=?]: Job: 8eab1b85-1f22-4b46-8cce-04feb683f495 has been started.
+2024-09-10 11:32:43,981 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 8eab1b85-1f22-4b46-8cce-04feb683f495 status to RUNNING.
+2024-09-10 11:32:43,982 - JobRunner - INFO - [identity=example_project, run=?]: Job: 8eab1b85-1f22-4b46-8cce-04feb683f495 started to run, status changed to RUNNING.
+2024-09-10 11:32:46,339 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 127.0.0.1:54927 <= 127.0.0.1:64521] is created: PID: 9197
+2024-09-10 11:32:47,848 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 0.0.0.0:8002 <= ipv6:%5B::1%5D:64525 SSL site-1] is created: PID: 9197
+2024-09-10 11:33:48,076 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 Not Connected] is closed PID: 9197
+2024-09-10 11:33:58,236 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 Not Connected] is closed PID: 9197
+2024-09-10 11:37:22,089 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 Not Connected] is closed PID: 9197
+2024-09-10 11:37:24,279 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 Not Connected] is closed PID: 9197
+2024-09-10 15:12:08,754 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-10 15:12:08,853 - CoreCell - INFO - server: creating listener on grpc://0:8002
+2024-09-10 15:12:08,867 - CoreCell - INFO - server: created backbone external listener for grpc://0:8002
+2024-09-10 15:12:08,867 - ConnectorManager - INFO - 45929: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-10 15:12:08,867 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:29039] is starting
+2024-09-10 15:12:09,373 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:29039
+2024-09-10 15:12:09,373 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE grpc://0:8002] is starting
+2024-09-10 15:12:09,377 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - deployed FLARE Server.
+2024-09-10 15:12:09,385 - nvflare.fuel.hci.server.hci - INFO - Starting Admin Server localhost on Port 8003
+2024-09-10 15:12:09,385 - root - INFO - Server started
+2024-09-10 15:12:09,405 - nvflare.fuel.f3.drivers.grpc_driver.Server - INFO - added secure port at 0.0.0.0:8002
+2024-09-10 15:12:14,378 - ServerState - INFO - Got the primary sp: localhost fl_port: 8002 SSID: ebc6125d-0a56-4688-9b08-355fe9e4d61a. Turning to hot.
+2024-09-10 15:12:16,003 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 0.0.0.0:8002 <= ipv6:%5B::1%5D:52153 SSL site-1] is created: PID: 45929
+2024-09-10 15:12:16,358 - ClientManager - INFO - Client: New client site-1@10.9.172.167 joined. Sent token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 1
+2024-09-10 15:12:51,603 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 483a9c38-bf2d-4797-9fa4-067b0f86c9ca, get result: (scheduled).
+2024-09-10 15:12:51,605 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca from the scheduler to run
+2024-09-10 15:12:51,884 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca
+2024-09-10 15:12:52,249 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca
+2024-09-10 15:12:54,098 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca
+2024-09-10 15:12:54,099 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca
+2024-09-10 15:12:54,121 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca for clients: site-1
+2024-09-10 15:12:54,133 - JobRunner - INFO - [identity=example_project, run=?]: Job: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca has been started.
+2024-09-10 15:12:54,133 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca status to RUNNING.
+2024-09-10 15:12:54,134 - JobRunner - INFO - [identity=example_project, run=?]: Job: 483a9c38-bf2d-4797-9fa4-067b0f86c9ca started to run, status changed to RUNNING.
+2024-09-10 15:12:56,124 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:29039 <= 127.0.0.1:52179] is created: PID: 45929
+2024-09-10 15:12:57,880 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 0.0.0.0:8002 <= ipv6:%5B::1%5D:52182 SSL site-1] is created: PID: 45929
+2024-09-10 15:44:02,880 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 45929
+2024-09-10 15:44:03,966 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (483a9c38-bf2d-4797-9fa4-067b0f86c9ca) on clients ...
+2024-09-10 15:44:05,746 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 45929
+2024-09-10 15:45:14,998 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 3ec73501-4f38-4cc3-9d51-a96553ed77fe, get result: (scheduled).
+2024-09-10 15:45:14,998 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 3ec73501-4f38-4cc3-9d51-a96553ed77fe from the scheduler to run
+2024-09-10 15:45:15,277 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 3ec73501-4f38-4cc3-9d51-a96553ed77fe
+2024-09-10 15:45:15,593 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 3ec73501-4f38-4cc3-9d51-a96553ed77fe
+2024-09-10 15:45:17,291 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 3ec73501-4f38-4cc3-9d51-a96553ed77fe
+2024-09-10 15:45:17,292 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 3ec73501-4f38-4cc3-9d51-a96553ed77fe
+2024-09-10 15:45:17,308 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 3ec73501-4f38-4cc3-9d51-a96553ed77fe for clients: site-1
+2024-09-10 15:45:17,308 - JobRunner - INFO - [identity=example_project, run=?]: Job: 3ec73501-4f38-4cc3-9d51-a96553ed77fe has been started.
+2024-09-10 15:45:17,308 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 3ec73501-4f38-4cc3-9d51-a96553ed77fe status to RUNNING.
+2024-09-10 15:45:17,309 - JobRunner - INFO - [identity=example_project, run=?]: Job: 3ec73501-4f38-4cc3-9d51-a96553ed77fe started to run, status changed to RUNNING.
+2024-09-10 15:45:20,109 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 127.0.0.1:29039 <= 127.0.0.1:52433] is created: PID: 45929
+2024-09-10 15:45:27,005 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 0.0.0.0:8002 <= ipv6:%5B::1%5D:52436 SSL site-1] is created: PID: 45929
+2024-09-10 16:21:24,601 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 45929
+2024-09-10 16:21:27,228 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 45929
+2024-09-10 16:21:27,659 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (3ec73501-4f38-4cc3-9d51-a96553ed77fe) on clients ...
+2024-09-10 16:21:45,645 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 422924c0-3b27-4a8e-94c2-61a836e59ff6, get result: (scheduled).
+2024-09-10 16:21:45,645 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 422924c0-3b27-4a8e-94c2-61a836e59ff6 from the scheduler to run
+2024-09-10 16:21:45,990 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 422924c0-3b27-4a8e-94c2-61a836e59ff6
+2024-09-10 16:21:46,219 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 422924c0-3b27-4a8e-94c2-61a836e59ff6
+2024-09-10 16:21:47,936 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 422924c0-3b27-4a8e-94c2-61a836e59ff6
+2024-09-10 16:21:47,939 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 422924c0-3b27-4a8e-94c2-61a836e59ff6
+2024-09-10 16:21:47,968 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 422924c0-3b27-4a8e-94c2-61a836e59ff6 for clients: site-1
+2024-09-10 16:21:47,968 - JobRunner - INFO - [identity=example_project, run=?]: Job: 422924c0-3b27-4a8e-94c2-61a836e59ff6 has been started.
+2024-09-10 16:21:47,969 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 422924c0-3b27-4a8e-94c2-61a836e59ff6 status to RUNNING.
+2024-09-10 16:21:47,969 - JobRunner - INFO - [identity=example_project, run=?]: Job: 422924c0-3b27-4a8e-94c2-61a836e59ff6 started to run, status changed to RUNNING.
+2024-09-10 16:21:50,278 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 127.0.0.1:29039 <= 127.0.0.1:52717] is created: PID: 45929
+2024-09-10 16:21:55,531 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 0.0.0.0:8002 <= ipv6:%5B::1%5D:52721 SSL site-1] is created: PID: 45929
+2024-09-10 19:55:26,905 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 19:55:26,908 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 19:55:26,909 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 1
+2024-09-10 19:56:01,414 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 45929
+2024-09-10 19:56:02,334 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (422924c0-3b27-4a8e-94c2-61a836e59ff6) on clients ...
+2024-09-10 19:56:12,403 - CoreCell - WARNING - server: no waiter for req 83031aa9-9e8d-4350-afd4-89a46138cdbc - the reply is too late
+2024-09-10 19:56:12,421 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 45929
+2024-09-10 20:12:08,630 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 20:12:08,630 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 20:12:17,264 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 20:30:58,663 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 20:30:58,734 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 20:31:04,750 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 21:00:41,677 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 21:00:41,751 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 21:00:45,449 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 21:21:23,689 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 21:21:23,762 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 21:21:27,352 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 22:22:45,613 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 22:22:45,687 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 22:22:55,008 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 22:49:31,624 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 22:49:31,695 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 22:49:34,668 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 23:06:12,618 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 23:06:12,690 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 23:06:17,946 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 23:31:56,537 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 23:31:56,612 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 23:31:59,070 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-10 23:48:51,607 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-10 23:48:51,680 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-10 23:49:01,234 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 00:19:41,602 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 00:19:41,674 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 00:19:42,276 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 00:31:56,600 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 00:31:56,673 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 00:31:56,762 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 00:46:59,268 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 00:46:59,341 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 00:47:08,357 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 01:04:07,556 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 01:04:07,557 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 01:04:09,851 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 01:31:57,297 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 01:31:57,371 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 01:31:58,002 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 01:49:36,541 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 01:49:36,612 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 01:49:45,087 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 02:07:54,592 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 02:07:54,665 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 02:08:01,467 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 02:26:23,597 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 02:26:23,669 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 02:26:32,521 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 02:44:09,565 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 02:44:09,639 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 02:44:10,577 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 03:06:51,567 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 03:06:51,639 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 03:06:52,094 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 03:24:16,563 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 03:24:16,636 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 03:24:25,425 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 03:43:08,541 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 03:43:08,611 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 03:43:15,752 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 04:05:19,553 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 04:05:19,628 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 04:05:23,638 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 04:23:28,552 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 04:23:28,624 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 04:23:35,405 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 04:45:24,544 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 04:45:24,618 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 04:45:29,291 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 05:09:42,529 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 05:09:42,529 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 05:09:49,046 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 05:23:44,381 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 05:23:44,458 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 05:23:49,250 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 05:50:24,530 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 05:50:24,604 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 05:50:25,844 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 06:14:37,507 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 06:14:37,579 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 06:14:37,579 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 06:32:50,487 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 06:32:50,561 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 06:32:59,356 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 06:50:34,521 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 06:50:34,591 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 06:50:41,971 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 07:08:50,521 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 07:08:50,593 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 07:08:55,301 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 07:26:31,471 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 07:26:31,545 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 07:26:35,513 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 07:50:37,504 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 07:50:37,575 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 07:50:43,784 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b
+2024-09-11 08:18:37,506 - ClientManager - INFO - Client Name:site-1 	Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b left.  Total clients: 0
+2024-09-11 08:18:37,577 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b.  Total clients: 0
+2024-09-11 08:18:46,137 - ClientManager - INFO - Re-activate the client:site-1 with token: f72d4a20-dbd1-4e0d-bdf4-7f551745ad7b

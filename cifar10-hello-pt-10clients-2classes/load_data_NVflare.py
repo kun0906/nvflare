@@ -10,6 +10,7 @@ from nvflare.fuel.utils.fobs.lobs import load_from_file
 # Register the decomposer for DXO
 register(DXODecomposer)
 
+
 class NumpyArrayDecomposer(Decomposer):
     def supported_type(self) -> type:
         return np.ndarray
@@ -19,6 +20,7 @@ class NumpyArrayDecomposer(Decomposer):
 
     def recompose(self, data: Any, manager) -> np.ndarray:
         return np.frombuffer(data, dtype=np.float32)
+
 
 # Register the decomposer
 fobs.register(NumpyArrayDecomposer)
@@ -32,9 +34,6 @@ model_shareable = load_from_file(model_shareables_path)
 # Now you can inspect the DXO object
 print(model_shareable.data.keys())
 
-
-
-
 # Path to the model_shareables file
 result_shareables_path = "../cross_site_val/result_shareables/site-bcm-dgxa100-0003_site-bcm-dgxa100-0013"
 
@@ -43,6 +42,3 @@ result_shareable = load_from_file(result_shareables_path)
 
 # Now you can inspect the DXO object
 print(result_shareable.data.keys())
-
-
-

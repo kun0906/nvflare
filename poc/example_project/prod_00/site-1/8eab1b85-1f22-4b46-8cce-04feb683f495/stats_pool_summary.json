@@ -1,0 +1,994 @@
+{
+    "msg_travel": {
+        "type": "hist",
+        "pool": {
+            "name": "msg_travel",
+            "description": "Time taken (secs) to get here (receiver)",
+            "marks": [
+                0.0001,
+                0.0005,
+                0.001,
+                0.002,
+                0.004,
+                0.008,
+                0.01,
+                0.02,
+                0.04,
+                0.08,
+                0.1,
+                0.2,
+                0.4,
+                0.8,
+                1.0,
+                2.0
+            ],
+            "unit": "second",
+            "cat_data": {
+                "server#reply:server_parent_listener:get_clients": [
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.00036525726318359375,
+                        "min": 0.00036525726318359375,
+                        "max": 0.00036525726318359375
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "site-1#reply:admin:train.notify_job_status": [
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.00023508071899414062,
+                        "min": 0.00023508071899414062,
+                        "max": 0.00023508071899414062
+                    },
+                    {
+                        "count": 1,
+                        "total": 0.0008702278137207031,
+                        "min": 0.0008702278137207031,
+                        "max": 0.0008702278137207031
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "server.8eab1b85-1f22-4b46-8cce-04feb683f495#req:sm__STREAM:sm__DATA": [
+                    "",
+                    {
+                        "count": 16,
+                        "total": 0.007079362869262695,
+                        "min": 0.00037288665771484375,
+                        "max": 0.0004999637603759766
+                    },
+                    {
+                        "count": 30,
+                        "total": 0.019205331802368164,
+                        "min": 0.0005018711090087891,
+                        "max": 0.0008840560913085938
+                    },
+                    {
+                        "count": 13,
+                        "total": 0.01861119270324707,
+                        "min": 0.0010008811950683594,
+                        "max": 0.0019698143005371094
+                    },
+                    {
+                        "count": 15,
+                        "total": 0.04082036018371582,
+                        "min": 0.0020208358764648438,
+                        "max": 0.003798961639404297
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "site-1#reply:cellnet.channel:bye": [
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.0004496574401855469,
+                        "min": 0.0004496574401855469,
+                        "max": 0.0004496574401855469
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "server#reply:cellnet.channel:bye": [
+                    "",
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.0008001327514648438,
+                        "min": 0.0008001327514648438,
+                        "max": 0.0008001327514648438
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    },
+    "received_msg_counters": {
+        "type": "counter",
+        "pool": {
+            "name": "received_msg_counters",
+            "description": "Result counters of received messages",
+            "counter_names": [
+                "received",
+                "no_reply:none"
+            ],
+            "cat_data": {
+                "reply:server_parent_listener:get_clients": {
+                    "received": 1
+                },
+                "reply:admin:train.notify_job_status": {
+                    "received": 2
+                },
+                "req:sm__STREAM:sm__DATA": {
+                    "received": 74,
+                    "no_reply:none": 74
+                },
+                "reply:cellnet.channel:bye": {
+                    "received": 2
+                }
+            }
+        }
+    },
+    "received_msg_sizes": {
+        "type": "hist",
+        "pool": {
+            "name": "received_msg_sizes",
+            "description": "Sizes of messages received (MBs)",
+            "marks": [
+                0.01,
+                0.1,
+                1,
+                10,
+                50,
+                100,
+                200,
+                500,
+                800,
+                1000
+            ],
+            "unit": "MB",
+            "cat_data": {
+                "reply:server_parent_listener:get_clients": [
+                    {
+                        "count": 1,
+                        "total": 0.00023746490478515625,
+                        "min": 0.00023746490478515625,
+                        "max": 0.00023746490478515625
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "reply:admin:train.notify_job_status": [
+                    {
+                        "count": 2,
+                        "total": 0.00037384033203125,
+                        "min": 0.000186920166015625,
+                        "max": 0.000186920166015625
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "req:sm__STREAM:sm__DATA": [
+                    {
+                        "count": 52,
+                        "total": 0.008305549621582031,
+                        "min": 9.5367431640625e-06,
+                        "max": 0.00054931640625
+                    },
+                    "",
+                    {
+                        "count": 22,
+                        "total": 5.257162094116211,
+                        "min": 0.23889827728271484,
+                        "max": 0.2389678955078125
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "reply:cellnet.channel:bye": [
+                    {
+                        "count": 2,
+                        "total": 0.0,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    },
+    "received_stream_counters": {
+        "type": "counter",
+        "pool": {
+            "name": "received_stream_counters",
+            "description": "Counters of received streams",
+            "counter_names": [
+                "received"
+            ],
+            "cat_data": {
+                "stream:return_only:aux_communication:__sync_runner__": {
+                    "received": 1
+                },
+                "stream:return_only:server_command:get_task": {
+                    "received": 24
+                },
+                "stream:return_only:aux_communication:__task_check__": {
+                    "received": 24
+                },
+                "stream:return_only:server_command:submit_update": {
+                    "received": 24
+                },
+                "stream:aux_communication:__end_run__": {
+                    "received": 1
+                }
+            }
+        }
+    },
+    "received_stream_sizes": {
+        "type": "hist",
+        "pool": {
+            "name": "received_stream_sizes",
+            "description": "Sizes of streams received (MBs)",
+            "marks": [
+                0.01,
+                0.1,
+                1,
+                10,
+                50,
+                100,
+                200,
+                500,
+                800,
+                1000
+            ],
+            "unit": "MB",
+            "cat_data": {
+                "stream:return_only:aux_communication:__sync_runner__": [
+                    {
+                        "count": 1,
+                        "total": 0.0002727508544921875,
+                        "min": 0.0002727508544921875,
+                        "max": 0.0002727508544921875
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "stream:return_only:server_command:get_task": [
+                    {
+                        "count": 2,
+                        "total": 0.0010595321655273438,
+                        "min": 0.0005102157592773438,
+                        "max": 0.00054931640625
+                    },
+                    "",
+                    {
+                        "count": 22,
+                        "total": 5.257162094116211,
+                        "min": 0.23889827728271484,
+                        "max": 0.2389678955078125
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "stream:return_only:aux_communication:__task_check__": [
+                    {
+                        "count": 24,
+                        "total": 0.0065460205078125,
+                        "min": 0.0002727508544921875,
+                        "max": 0.0002727508544921875
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "stream:return_only:server_command:submit_update": [
+                    {
+                        "count": 24,
+                        "total": 0.0002288818359375,
+                        "min": 9.5367431640625e-06,
+                        "max": 9.5367431640625e-06
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "stream:aux_communication:__end_run__": [
+                    {
+                        "count": 1,
+                        "total": 0.0001983642578125,
+                        "min": 0.0001983642578125,
+                        "max": 0.0001983642578125
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    },
+    "request_processing": {
+        "type": "hist",
+        "pool": {
+            "name": "request_processing",
+            "description": "Time spent (secs) by request processing callbacks (receiver)",
+            "marks": [
+                0.0001,
+                0.0005,
+                0.001,
+                0.002,
+                0.004,
+                0.008,
+                0.01,
+                0.02,
+                0.04,
+                0.08,
+                0.1,
+                0.2,
+                0.4,
+                0.8,
+                1.0,
+                2.0
+            ],
+            "unit": "second",
+            "cat_data": {
+                "req:sm__STREAM:sm__DATA": [
+                    {
+                        "count": 53,
+                        "total": 0.003240999882109463,
+                        "min": 4.591699689626694e-05,
+                        "max": 9.68750100582838e-05
+                    },
+                    {
+                        "count": 21,
+                        "total": 0.003470331779681146,
+                        "min": 0.00010495795868337154,
+                        "max": 0.000279792002402246
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    },
+    "request_response": {
+        "type": "hist",
+        "pool": {
+            "name": "request_response",
+            "description": "Request/response time in secs (sender)",
+            "marks": [
+                0.0001,
+                0.0005,
+                0.001,
+                0.002,
+                0.004,
+                0.008,
+                0.01,
+                0.02,
+                0.04,
+                0.08,
+                0.1,
+                0.2,
+                0.4,
+                0.8,
+                1.0,
+                2.0
+            ],
+            "unit": "second",
+            "cat_data": {
+                "reply:server_parent_listener:get_clients": [
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.004326820373535156,
+                        "min": 0.004326820373535156,
+                        "max": 0.004326820373535156
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "reply:admin:train.notify_job_status": [
+                    "",
+                    "",
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.0010099411010742188,
+                        "min": 0.0010099411010742188,
+                        "max": 0.0010099411010742188
+                    },
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.004124164581298828,
+                        "min": 0.004124164581298828,
+                        "max": 0.004124164581298828
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "reply:cellnet.channel:bye": [
+                    "",
+                    "",
+                    "",
+                    {
+                        "count": 1,
+                        "total": 0.0019559860229492188,
+                        "min": 0.0019559860229492188,
+                        "max": 0.0019559860229492188
+                    },
+                    {
+                        "count": 1,
+                        "total": 0.002705812454223633,
+                        "min": 0.002705812454223633,
+                        "max": 0.002705812454223633
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    },
+    "sent_msg_counters": {
+        "type": "counter",
+        "pool": {
+            "name": "sent_msg_counters",
+            "description": "Result counters of sent messages",
+            "counter_names": [
+                "sent",
+                "target_unreachable",
+                "ok"
+            ],
+            "cat_data": {
+                "?:?:?": {
+                    "target_unreachable": 1
+                },
+                "req:server_parent_listener:get_clients": {
+                    "sent": 1
+                },
+                "reply:server_parent_listener:get_clients": {
+                    "ok": 1
+                },
+                "req:admin:train.notify_job_status": {
+                    "sent": 2
+                },
+                "reply:admin:train.notify_job_status": {
+                    "ok": 2
+                },
+                "req:sm__STREAM:sm__DATA": {
+                    "sent": 50283
+                },
+                "req:cellnet.channel:bye": {
+                    "sent": 2
+                },
+                "reply:cellnet.channel:bye": {
+                    "ok": 2
+                }
+            }
+        }
+    },
+    "sent_msg_sizes": {
+        "type": "hist",
+        "pool": {
+            "name": "sent_msg_sizes",
+            "description": "Sizes of messages sent (MBs)",
+            "marks": [
+                0.01,
+                0.1,
+                1,
+                10,
+                50,
+                100,
+                200,
+                500,
+                800,
+                1000
+            ],
+            "unit": "MB",
+            "cat_data": {
+                "req:server_parent_listener:get_clients": [
+                    {
+                        "count": 1,
+                        "total": 1.9073486328125e-06,
+                        "min": 1.9073486328125e-06,
+                        "max": 1.9073486328125e-06
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "req:admin:train.notify_job_status": [
+                    {
+                        "count": 2,
+                        "total": 3.814697265625e-06,
+                        "min": 1.9073486328125e-06,
+                        "max": 1.9073486328125e-06
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "req:sm__STREAM:sm__DATA": [
+                    {
+                        "count": 50261,
+                        "total": 35.93020248413086,
+                        "min": 0.0003147125244140625,
+                        "max": 0.0007238388061523438
+                    },
+                    "",
+                    {
+                        "count": 22,
+                        "total": 5.257538795471191,
+                        "min": 0.23893070220947266,
+                        "max": 0.238983154296875
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "req:cellnet.channel:bye": [
+                    {
+                        "count": 2,
+                        "total": 0.0,
+                        "min": 0.0,
+                        "max": 0.0
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    },
+    "sent_stream_counters": {
+        "type": "counter",
+        "pool": {
+            "name": "sent_stream_counters",
+            "description": "Counters of sent streams",
+            "counter_names": [
+                "sent"
+            ],
+            "cat_data": {
+                "blob:aux_communication:__sync_runner__": {
+                    "sent": 1
+                },
+                "blob:aux_communication:__job_heartbeat__": {
+                    "sent": 10
+                },
+                "blob:server_command:get_task": {
+                    "sent": 24
+                },
+                "blob:aux_communication:__task_check__": {
+                    "sent": 24
+                },
+                "blob:server_command:submit_update": {
+                    "sent": 24
+                },
+                "blob:aux_communication:fed.event": {
+                    "sent": 50200
+                }
+            }
+        }
+    },
+    "sent_stream_sizes": {
+        "type": "hist",
+        "pool": {
+            "name": "sent_stream_sizes",
+            "description": "Sizes of streams sent (MBs)",
+            "marks": [
+                0.01,
+                0.1,
+                1,
+                10,
+                50,
+                100,
+                200,
+                500,
+                800,
+                1000
+            ],
+            "unit": "MB",
+            "cat_data": {
+                "blob:aux_communication:__sync_runner__": [
+                    {
+                        "count": 1,
+                        "total": 0.0003147125244140625,
+                        "min": 0.0003147125244140625,
+                        "max": 0.0003147125244140625
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "blob:aux_communication:__job_heartbeat__": [
+                    {
+                        "count": 10,
+                        "total": 0.00316619873046875,
+                        "min": 0.000316619873046875,
+                        "max": 0.000316619873046875
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "blob:server_command:get_task": [
+                    {
+                        "count": 24,
+                        "total": 0.0098876953125,
+                        "min": 0.0004119873046875,
+                        "max": 0.0004119873046875
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "blob:aux_communication:__task_check__": [
+                    {
+                        "count": 24,
+                        "total": 0.00867462158203125,
+                        "min": 0.00036144256591796875,
+                        "max": 0.00036144256591796875
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "blob:server_command:submit_update": [
+                    {
+                        "count": 2,
+                        "total": 0.001338958740234375,
+                        "min": 0.000667572021484375,
+                        "max": 0.00067138671875
+                    },
+                    "",
+                    {
+                        "count": 22,
+                        "total": 5.257538795471191,
+                        "min": 0.23893070220947266,
+                        "max": 0.238983154296875
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "blob:aux_communication:fed.event": [
+                    {
+                        "count": 50200,
+                        "total": 35.90682029724121,
+                        "min": 0.0007114410400390625,
+                        "max": 0.0007238388061523438
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    },
+    "sfm_send_frame": {
+        "type": "hist",
+        "pool": {
+            "name": "sfm_send_frame",
+            "description": "SFM send_frame time in secs",
+            "marks": [
+                0.0001,
+                0.0005,
+                0.001,
+                0.002,
+                0.004,
+                0.008,
+                0.01,
+                0.02,
+                0.04,
+                0.08,
+                0.1,
+                0.2,
+                0.4,
+                0.8,
+                1.0,
+                2.0
+            ],
+            "unit": "second",
+            "cat_data": {
+                "GrpcDriver": [
+                    {
+                        "count": 49230,
+                        "total": 1.9138384622056037,
+                        "min": 2.3541972041130066e-05,
+                        "max": 9.995803702622652e-05
+                    },
+                    {
+                        "count": 1055,
+                        "total": 0.13257409702055156,
+                        "min": 0.00010008300887420774,
+                        "max": 0.00042579194996505976
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "TcpDriver": [
+                    {
+                        "count": 1,
+                        "total": 3.629201091825962e-05,
+                        "min": 3.629201091825962e-05,
+                        "max": 3.629201091825962e-05
+                    },
+                    {
+                        "count": 2,
+                        "total": 0.00035854201996698976,
+                        "min": 0.00011962500866502523,
+                        "max": 0.00023891701130196452
+                    },
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ]
+            }
+        }
+    }
+}

@@ -247,13 +247,14 @@ class PTLearner(Learner):
                     )
                     running_loss = 0.0
 
-                # Stream training loss at each step
-                current_step = self.n_iterations * self.epochs * current_round + self.n_iterations * epoch + i
-                self.writer.add_scalar("train_loss", cost.item(), current_step)
+                # # Stream training loss at each step
+                # current_step = self.n_iterations * self.epochs * current_round + self.n_iterations * epoch + i
+                # self.writer.add_scalar("train_loss", cost.item(), current_step)
 
+            self.writer.add_scalar("train_loss", running_loss, epoch)
             # Stream validation accuracy at the end of each epoch
             metric = self.local_validate(abort_signal)
-            self.writer.add_scalar("validation_accuracy", metric, current_step)
+            self.writer.add_scalar("validation_accuracy", metric, epoch)
 
     def get_model_for_validation(self, model_name: str, fl_ctx: FLContext) -> Shareable:
         run_dir = fl_ctx.get_engine().get_workspace().get_run_dir(fl_ctx.get_job_id())

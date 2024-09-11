@@ -1,3 +1,6 @@
+"""Generate normal data
+
+"""
 import pickle
 from collections import Counter
 
@@ -8,6 +11,7 @@ from torchvision.datasets import CIFAR10
 from torchvision.transforms import Compose, Normalize, ToTensor
 import numpy as np
 from torch.utils.data import Dataset
+
 
 # Custom Dataset class
 class CustomCIFAR10Dataset(Dataset):
@@ -42,24 +46,25 @@ def split_train_data_animals_vs_non():
     client2 = ["ship", "deer"]
     client3 = ["truck", "dog"]
     client4 = ["", "frog"]  # adversary
-    client5 = ["", "horse"] # adversary
+    client5 = ["", "horse"]  # adversary
     # Original dictionary with class names as keys and indices as values
     class_to_idx = {'airplane': 0, 'automobile': 1, 'bird': 2, 'cat': 3, 'deer': 4, 'dog': 5, 'frog': 6, 'horse': 7,
                     'ship': 8, 'truck': 9}
     # Convert to idx_to_class dictionary where indices are keys and class names are values
     idx_to_class = {v: k for k, v in class_to_idx.items()}
     new_idx_map = {'airplane': 0, 'automobile': 0, 'bird': 1, 'cat': 1, 'deer': 1, 'dog': 1, 'frog': 1, 'horse': 1,
-                    'ship': 0, 'truck': 0}
+                   'ship': 0, 'truck': 0}
     for i, classes in enumerate([client0, client1, client2, client3, client4, client5]):
         # Filter the dataset to include only the specified classes for the client
-        client_data = [(s, c, new_idx_map[idx_to_class[c]]) for s, c in zip(_train_dataset.data, _train_dataset.targets) if idx_to_class[c] in classes]
+        client_data = [(s, c, new_idx_map[idx_to_class[c]]) for s, c in zip(_train_dataset.data, _train_dataset.targets)
+                       if idx_to_class[c] in classes]
         # Save the data to a file specific to the client
         file_path = f'data/client_{i}.pkl'
         with open(file_path, "wb") as f:
             pickle.dump(client_data, f)
 
         # Unpack client_data into separate lists
-        client_images, client_targets, new_client_targets= zip(*client_data)
+        client_images, client_targets, new_client_targets = zip(*client_data)
         client_images = np.array(client_images).astype('float32')
         client_targets = np.array(client_targets).astype('int')
 
@@ -113,7 +118,6 @@ def split_train_data_animals_vs_non():
     # _train_subset = Subset(_train_dataset, subset_indices)  #
 
 
-
 def split_train_data():
     data_path = 'data'
     # Create Cifar10 dataset for training.
@@ -125,20 +129,20 @@ def split_train_data():
     )
     _train_dataset = CIFAR10(root=data_path, transform=transforms, download=True, train=True)
 
-    Y =  np.asarray(_train_dataset.targets)
+    Y = np.asarray(_train_dataset.targets)
     mask = Y == 0  # Y =='airplane'
     X_airplane, Y_airplane = _train_dataset.data[mask], Y[mask]
     X_others, Y_others = _train_dataset.data[~mask], Y[~mask]
-    N = 10 # 10 clients
-    block = len(Y_airplane)//N
+    N = 10  # 10 clients
+    block = len(Y_airplane) // N
     for i in range(N):
         print(f"\n\nClient {i}:")
-        X_1, Y_1 = X_airplane[i*block:(i+1)*block], Y_airplane[i*block:(i+1)*block]
-        X_0, Y_0 = X_others[i*block:(i+1)*block], Y_others[i*block:(i+1)*block]
+        X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
+        X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
 
         X_ = np.vstack((X_1, X_0))
         Y_ = np.hstack((Y_1, Y_0))
-        Y_new = np.asarray([1]*len(Y_1)+ [0]*len(Y_0))
+        Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
         client_data = (X_, Y_, Y_new)
         # Save the data to a file specific to the client
         file_path = f'data/client_{i}_airplane.pkl'
@@ -146,7 +150,7 @@ def split_train_data():
             pickle.dump(client_data, f)
 
         # Unpack client_data into separate lists
-        client_images, client_targets, new_client_targets= client_data
+        client_images, client_targets, new_client_targets = client_data
         client_images = np.array(client_images).astype('float32')
         client_targets = np.array(client_targets).astype('int')
 
@@ -218,17 +222,16 @@ def split_test_data():
     idx_to_class = {v: k for k, v in class_to_idx.items()}
 
     for s, c in zip(_test_dataset.data, _test_dataset.targets):
-        if c in [2, 3, 4, 5, 6, 7]: # animals vs. non-animals
+        if c in [2, 3, 4, 5, 6, 7]:  # animals vs. non-animals
             c = 1
         else:
-            c= 0
+            c = 0
         # Filter the dataset to include only the specified classes for the client
         client_data = [(s, c)]
         # Save the data to a file specific to the client
         file_path = f'data/test_2classes.pkl'
         with open(file_path, "wb") as f:
             pickle.dump(client_data, f)
-
 
 
 def split_data(data_type='train'):
@@ -243,21 +246,21 @@ def split_data(data_type='train'):
     train = True if data_type == 'train' else False
     _train_dataset = CIFAR10(root=data_path, transform=transforms, download=True, train=train)
     print('_train_dataset', len(_train_dataset))
-    Y =  np.asarray(_train_dataset.targets)
+    Y = np.asarray(_train_dataset.targets)
     mask = Y == 0  # Y =='airplane'
     X_airplane, Y_airplane = _train_dataset.data[mask], Y[mask]
     X_others, Y_others = _train_dataset.data[~mask], Y[~mask]
-    N = 10 # 10 clients
-    block = len(Y_airplane)//N
+    N = 10  # 10 clients
+    block = len(Y_airplane) // N
     for i in range(0, N):
         client_id = i + 1
         print(f"\n\nClient {client_id}:")
-        X_1, Y_1 = X_airplane[i*block:(i+1)*block], Y_airplane[i*block:(i+1)*block]
-        X_0, Y_0 = X_others[i*block:(i+1)*block], Y_others[i*block:(i+1)*block]
+        X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
+        X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
 
         X_ = np.vstack((X_1, X_0))
         Y_ = np.hstack((Y_1, Y_0))
-        Y_new = np.asarray([1]*len(Y_1)+ [0]*len(Y_0))
+        Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
         client_data = (X_, Y_, Y_new)
         # Save the data to a file specific to the client
         file_path = f'data/client_{client_id}_airplane_{data_type}.pkl'
@@ -265,7 +268,7 @@ def split_data(data_type='train'):
             pickle.dump(client_data, f)
 
         # Unpack client_data into separate lists
-        client_images, client_targets, new_client_targets= client_data
+        client_images, client_targets, new_client_targets = client_data
         client_images = np.array(client_images).astype('float32')
         client_targets = np.array(client_targets).astype('int')
 
@@ -317,7 +320,6 @@ def split_data(data_type='train'):
     # subset_indices = torch.arange(0, len(_train_dataset) // 10)  # For example, using only 10% of the dataset
     # # Create a subset of the original dataset
     # _train_subset = Subset(_train_dataset, subset_indices)  #
-
 
 
 if __name__ == '__main__':

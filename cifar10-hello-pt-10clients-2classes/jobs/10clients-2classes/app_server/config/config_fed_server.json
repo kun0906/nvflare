@@ -65,7 +65,11 @@
         "name": "ScatterAndGather",
         "args": {
             "min_clients" : 10,
-            "num_rounds" : 20,
+<<<<<<< HEAD
+            "num_rounds" : 5,
+=======
+            "num_rounds" : 10,
+>>>>>>> 45127c9 (v0.0.7-1:sync with different devices)
             "start_round": 0,
             "wait_time_after_min_received": 10,
             "aggregator_id": "aggregator",

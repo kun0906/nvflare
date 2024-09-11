@@ -1,0 +1,99 @@
+2024-09-10 11:15:56,292 - worker_process - INFO - Worker_process started.
+2024-09-10 11:15:56,381 - JsonScanner - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 99, in _do_scan
+    node.processor.process_element(node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 150, in process_element
+    self.process_config_element(self.config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 90, in process_config_element
+    FedJsonConfigurator.process_config_element(self, config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed_json_config.py", line 91, in process_config_element
+    c = self.authorize_and_build_component(element, config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 103, in authorize_and_build_component
+    return self.build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 122, in build_component
+    t = super().build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/component_builder.py", line 86, in build_component
+    return instantiate_class(class_path, class_args)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/class_utils.py", line 51, in instantiate_class
+    c = get_class(class_path)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/class_utils.py", line 30, in get_class
+    module_ = importlib.import_module(module_name)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-1/b4d5c077-904f-4ed2-8cf5-9ce02336a6f1/app_site-1/custom/learner_with_tb.py", line 26, in <module>
+    from torch.utils.tensorboard import SummaryWriter
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py", line 1, in <module>
+    import tensorboard
+ModuleNotFoundError: No module named 'tensorboard'
+
+2024-09-10 11:15:56,381 - worker_process - ERROR - FL client execution exception: ConfigError: Error processing 'b4d5c077-904f-4ed2-8cf5-9ce02336a6f1/app_site-1/config/config_fed_client.json' in element '{"id": "pt_learner", "path": "learner_with_tb.PTLearner", "args": {"lr": 0.001, "epochs": 10, "analytic_sender_id": "log_writer"}}': path: 'components.#1', exception: 'ModuleNotFoundError: No module named 'tensorboard''
+2024-09-10 11:15:56,381 - FederatedClient - INFO - Shutting down client run: site-1
+2024-09-10 11:15:57,339 - MPM - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 99, in _do_scan
+    node.processor.process_element(node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 150, in process_element
+    self.process_config_element(self.config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 90, in process_config_element
+    FedJsonConfigurator.process_config_element(self, config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed_json_config.py", line 91, in process_config_element
+    c = self.authorize_and_build_component(element, config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 103, in authorize_and_build_component
+    return self.build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 122, in build_component
+    t = super().build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/component_builder.py", line 86, in build_component
+    return instantiate_class(class_path, class_args)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/class_utils.py", line 51, in instantiate_class
+    c = get_class(class_path)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/class_utils.py", line 30, in get_class
+    module_ = importlib.import_module(module_name)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-1/b4d5c077-904f-4ed2-8cf5-9ce02336a6f1/app_site-1/custom/learner_with_tb.py", line 26, in <module>
+    from torch.utils.tensorboard import SummaryWriter
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py", line 1, in <module>
+    import tensorboard
+ModuleNotFoundError: No module named 'tensorboard'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/f3/mpm.py", line 154, in run
+    rc = main_func(**kwargs)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/app/client/worker_process.py", line 124, in main
+    raise e
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/app/client/worker_process.py", line 120, in main
+    client_app_runner.start_run(app_root, args, config_folder, federated_client, secure_train, sp, conf.handlers)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_app_runner.py", line 45, in start_run
+    self.client_runner = self.create_client_runner(
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_app_runner.py", line 93, in create_client_runner
+    conf.configure()
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 147, in configure
+    raise e
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 144, in configure
+    self._do_configure()
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 137, in _do_configure
+    self.json_scanner.scan(self)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 159, in scan
+    self._do_scan(node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 129, in _do_scan
+    self._do_scan(_child_node(node, k, 0, v))
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 132, in _do_scan
+    self._do_scan(_child_node(node, node.key, i + 1, element[i]))
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 121, in _do_scan
+    raise ConfigError(self.get_process_err_msg(e, elmt_str, location, node))
+nvflare.fuel.common.excepts.ConfigError: Error processing 'b4d5c077-904f-4ed2-8cf5-9ce02336a6f1/app_site-1/config/config_fed_client.json' in element '{"id": "pt_learner", "path": "learner_with_tb.PTLearner", "args": {"lr": 0.001, "epochs": 10, "analytic_sender_id": "log_writer"}}': path: 'components.#1', exception: 'ModuleNotFoundError: No module named 'tensorboard''
+
+2024-09-10 11:15:58,847 - MPM - INFO - MPM: Good Bye!

@@ -1,3 +1,8 @@
+v0.0.7-3:Update download.sh
+
+v0.0.7:Update NVFLare to 2.5.0
+
+
 v0.0.6:Add tensorboard for job:"10clients-2classes"
 
 1. Add tensorboard for job:"10clients-2classes"
