@@ -1673,3 +1673,398 @@ OSError: [Errno 48] Address already in use
 2024-09-12 16:15:30,495 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
 2024-09-12 16:15:31,614 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
 2024-09-12 16:15:35,503 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:36,616 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:40,509 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:41,621 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:43,261 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:45,510 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:46,624 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:49,765 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:50,512 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:51,260 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:51,630 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:55,518 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:56,636 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:00,524 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:01,640 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:05,524 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:06,645 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:10,532 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:11,649 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:15,536 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:16,651 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:19,895 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:20,539 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:21,656 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:21,776 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:23,297 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:25,544 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:26,658 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:30,550 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:31,662 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:35,554 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:36,664 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:40,558 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:41,666 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:45,559 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:46,667 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:49,977 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:50,565 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:51,670 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:52,291 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:55,569 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:16:56,672 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:00,573 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:01,677 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:03,324 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:05,579 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:06,679 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:10,582 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:11,685 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:15,585 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:16,690 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:20,084 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:20,591 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:21,691 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:22,809 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:25,599 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:26,697 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:30,610 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:31,701 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:35,603 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:36,705 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:40,609 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:41,708 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:43,354 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:45,610 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:46,713 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:50,237 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:50,613 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:51,716 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:53,324 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:55,615 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:17:56,720 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:00,620 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:01,721 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:05,624 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:06,727 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:10,628 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:11,732 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:15,631 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:16,734 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:20,335 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:20,634 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:21,735 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:23,379 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:23,838 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:25,638 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:26,741 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:30,644 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:31,743 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:35,645 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:36,748 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:40,651 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:41,754 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:45,657 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:46,756 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:50,485 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:50,662 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:51,760 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:54,358 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:55,665 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:18:56,762 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:00,666 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:01,766 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:03,407 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:05,672 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:06,770 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:10,676 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:11,772 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:15,678 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:16,773 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:20,613 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:20,683 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:21,776 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:24,873 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:25,689 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:19:57,975 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-12 16:19:58,116 - CoreCell - INFO - server: creating listener on grpc://0:8002
+2024-09-12 16:19:58,261 - CoreCell - INFO - server: created backbone external listener for grpc://0:8002
+2024-09-12 16:19:58,262 - ConnectorManager - INFO - 32326: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-12 16:19:58,264 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:61338] is starting
+2024-09-12 16:19:58,770 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:61338
+2024-09-12 16:19:58,770 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE grpc://0:8002] is starting
+2024-09-12 16:19:58,778 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - deployed FLARE Server.
+2024-09-12 16:19:58,789 - nvflare.fuel.hci.server.hci - INFO - Starting Admin Server localhost on Port 8003
+2024-09-12 16:19:58,790 - root - INFO - Server started
+2024-09-12 16:19:58,807 - nvflare.fuel.f3.drivers.grpc_driver.Server - INFO - added secure port at 0.0.0.0:8002
+2024-09-12 16:20:01,684 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 0.0.0.0:8002 <= ipv6:%5B::1%5D:62682 SSL site-1] is created: PID: 32326
+2024-09-12 16:20:03,777 - ServerState - INFO - Got the primary sp: localhost fl_port: 8002 SSID: ebc6125d-0a56-4688-9b08-355fe9e4d61a. Turning to hot.
+2024-09-12 16:20:04,063 - JobRunner - INFO - Update the previous running job: 0502dd16-3d29-4567-8b07-525e00594c74 to FINISHED:ABANDONED.
+2024-09-12 16:20:04,682 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 0.0.0.0:8002 <= ipv6:%5B::1%5D:62683 SSL site-1] is created: PID: 32326
+2024-09-12 16:20:13,492 - ClientManager - INFO - Re-activate the client:site-1 with token: 2eaddf03-a05d-4a0a-aaab-4620fc52bb17
+2024-09-12 16:20:23,626 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 32326
+2024-09-12 16:20:38,071 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job c7b89545-0243-4a99-9a84-f9c17ddc3feb, get result: (scheduled).
+2024-09-12 16:20:38,071 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: c7b89545-0243-4a99-9a84-f9c17ddc3feb from the scheduler to run
+2024-09-12 16:20:38,209 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: c7b89545-0243-4a99-9a84-f9c17ddc3feb
+2024-09-12 16:20:38,277 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: c7b89545-0243-4a99-9a84-f9c17ddc3feb
+2024-09-12 16:20:38,945 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: c7b89545-0243-4a99-9a84-f9c17ddc3feb
+2024-09-12 16:20:38,950 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: c7b89545-0243-4a99-9a84-f9c17ddc3feb
+2024-09-12 16:20:38,987 - JobRunner - INFO - [identity=example_project, run=?]: Started run: c7b89545-0243-4a99-9a84-f9c17ddc3feb for clients: site-1
+2024-09-12 16:20:38,987 - JobRunner - INFO - [identity=example_project, run=?]: Job: c7b89545-0243-4a99-9a84-f9c17ddc3feb has been started.
+2024-09-12 16:20:38,987 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: c7b89545-0243-4a99-9a84-f9c17ddc3feb status to RUNNING.
+2024-09-12 16:20:38,988 - JobRunner - INFO - [identity=example_project, run=?]: Job: c7b89545-0243-4a99-9a84-f9c17ddc3feb started to run, status changed to RUNNING.
+2024-09-12 16:20:47,978 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:61338 <= 127.0.0.1:62708] is created: PID: 32326
+2024-09-12 16:20:51,904 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 0.0.0.0:8002 <= ipv6:%5B::1%5D:62711 SSL site-1] is created: PID: 32326
+2024-09-12 16:21:17,877 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 32326
+2024-09-12 16:21:22,664 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 32326
+2024-09-12 16:21:32,412 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17, get result: (scheduled).
+2024-09-12 16:21:32,413 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17 from the scheduler to run
+2024-09-12 16:21:32,787 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17
+2024-09-12 16:21:32,956 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17
+2024-09-12 16:21:34,029 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17
+2024-09-12 16:21:34,030 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17
+2024-09-12 16:21:34,054 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17 for clients: site-1
+2024-09-12 16:21:34,054 - JobRunner - INFO - [identity=example_project, run=?]: Job: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17 has been started.
+2024-09-12 16:21:34,054 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17 status to RUNNING.
+2024-09-12 16:21:34,055 - JobRunner - INFO - [identity=example_project, run=?]: Job: 9ef2b787-c4c7-4ad4-90d5-8d97661e1f17 started to run, status changed to RUNNING.
+2024-09-12 16:21:40,274 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:61338 <= 127.0.0.1:62729] is created: PID: 32326
+2024-09-12 16:21:41,928 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 0.0.0.0:8002 <= ipv6:%5B::1%5D:62732 SSL site-1] is created: PID: 32326
+2024-09-12 16:31:35,799 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 32326
+2024-09-12 16:31:39,596 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 32326
+2024-09-12 16:31:42,112 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 79e4825a-73b0-4a71-954f-15a4351d95ef, get result: (scheduled).
+2024-09-12 16:31:42,114 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 79e4825a-73b0-4a71-954f-15a4351d95ef from the scheduler to run
+2024-09-12 16:31:42,264 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 79e4825a-73b0-4a71-954f-15a4351d95ef
+2024-09-12 16:31:42,352 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 79e4825a-73b0-4a71-954f-15a4351d95ef
+2024-09-12 16:31:43,891 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 79e4825a-73b0-4a71-954f-15a4351d95ef
+2024-09-12 16:31:43,892 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 79e4825a-73b0-4a71-954f-15a4351d95ef
+2024-09-12 16:31:43,921 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 79e4825a-73b0-4a71-954f-15a4351d95ef for clients: site-1
+2024-09-12 16:31:43,921 - JobRunner - INFO - [identity=example_project, run=?]: Job: 79e4825a-73b0-4a71-954f-15a4351d95ef has been started.
+2024-09-12 16:31:43,921 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 79e4825a-73b0-4a71-954f-15a4351d95ef status to RUNNING.
+2024-09-12 16:31:43,922 - JobRunner - INFO - [identity=example_project, run=?]: Job: 79e4825a-73b0-4a71-954f-15a4351d95ef started to run, status changed to RUNNING.
+2024-09-12 16:32:15,397 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 127.0.0.1:61338 <= 127.0.0.1:62829] is created: PID: 32326
+2024-09-12 16:32:23,470 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 0.0.0.0:8002 <= ipv6:%5B::1%5D:62833 SSL site-1] is created: PID: 32326
+2024-09-12 16:34:35,551 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 Not Connected] is closed PID: 32326
+2024-09-12 16:34:38,191 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 32326
+2024-09-12 16:34:39,105 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (79e4825a-73b0-4a71-954f-15a4351d95ef) on clients ...
+2024-09-12 16:34:52,645 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 774e15b0-ba5a-4fab-8ae9-f42545e86746, get result: (scheduled).
+2024-09-12 16:34:52,646 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 774e15b0-ba5a-4fab-8ae9-f42545e86746 from the scheduler to run
+2024-09-12 16:34:52,759 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 774e15b0-ba5a-4fab-8ae9-f42545e86746
+2024-09-12 16:34:52,842 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 774e15b0-ba5a-4fab-8ae9-f42545e86746
+2024-09-12 16:34:53,788 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 774e15b0-ba5a-4fab-8ae9-f42545e86746
+2024-09-12 16:34:53,789 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 774e15b0-ba5a-4fab-8ae9-f42545e86746
+2024-09-12 16:34:53,816 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 774e15b0-ba5a-4fab-8ae9-f42545e86746 for clients: site-1
+2024-09-12 16:34:53,816 - JobRunner - INFO - [identity=example_project, run=?]: Job: 774e15b0-ba5a-4fab-8ae9-f42545e86746 has been started.
+2024-09-12 16:34:53,816 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 774e15b0-ba5a-4fab-8ae9-f42545e86746 status to RUNNING.
+2024-09-12 16:34:53,817 - JobRunner - INFO - [identity=example_project, run=?]: Job: 774e15b0-ba5a-4fab-8ae9-f42545e86746 started to run, status changed to RUNNING.
+2024-09-12 16:35:00,475 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 127.0.0.1:61338 <= 127.0.0.1:62863] is created: PID: 32326
+2024-09-12 16:35:02,201 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 0.0.0.0:8002 <= ipv6:%5B::1%5D:62866 SSL site-1] is created: PID: 32326
+2024-09-12 16:39:39,374 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 Not Connected] is closed PID: 32326
+2024-09-12 16:39:41,365 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 Not Connected] is closed PID: 32326
+2024-09-12 16:39:42,224 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (774e15b0-ba5a-4fab-8ae9-f42545e86746) on clients ...
+2024-09-12 16:41:00,302 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef, get result: (scheduled).
+2024-09-12 16:41:00,302 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef from the scheduler to run
+2024-09-12 16:41:00,417 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef
+2024-09-12 16:41:00,504 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef
+2024-09-12 16:41:01,921 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef
+2024-09-12 16:41:01,923 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef
+2024-09-12 16:41:01,949 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef for clients: site-1
+2024-09-12 16:41:01,950 - JobRunner - INFO - [identity=example_project, run=?]: Job: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef has been started.
+2024-09-12 16:41:01,950 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef status to RUNNING.
+2024-09-12 16:41:01,951 - JobRunner - INFO - [identity=example_project, run=?]: Job: 3b1a2d41-7e44-49ee-bf1a-3d379bd091ef started to run, status changed to RUNNING.
+2024-09-12 16:41:05,047 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 0.0.0.0:8002 <= ipv6:%5B::1%5D:62926 SSL site-2] is created: PID: 32326
+2024-09-12 16:41:05,183 - ClientManager - INFO - Client: New client site-2@10.9.172.167 joined. Sent token: e6b65e46-79d2-41e3-9466-3f402f5423dc.  Total clients: 2
+2024-09-12 16:41:08,484 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 127.0.0.1:61338 <= 127.0.0.1:62928] is created: PID: 32326
+2024-09-12 16:41:10,194 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 0.0.0.0:8002 <= ipv6:%5B::1%5D:62931 SSL site-1] is created: PID: 32326
+2024-09-12 16:49:57,418 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job e8dc82c7-d669-4e80-a351-ea78545adde0, get result: (scheduled).
+2024-09-12 16:49:57,419 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: e8dc82c7-d669-4e80-a351-ea78545adde0 from the scheduler to run
+2024-09-12 16:49:57,585 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: e8dc82c7-d669-4e80-a351-ea78545adde0
+2024-09-12 16:49:57,667 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: e8dc82c7-d669-4e80-a351-ea78545adde0
+2024-09-12 16:49:57,741 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: e8dc82c7-d669-4e80-a351-ea78545adde0
+2024-09-12 16:49:58,637 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: e8dc82c7-d669-4e80-a351-ea78545adde0
+2024-09-12 16:49:58,638 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: e8dc82c7-d669-4e80-a351-ea78545adde0
+2024-09-12 16:49:58,671 - JobRunner - INFO - [identity=example_project, run=?]: Started run: e8dc82c7-d669-4e80-a351-ea78545adde0 for clients: site-1,site-2
+2024-09-12 16:49:58,672 - JobRunner - INFO - [identity=example_project, run=?]: Job: e8dc82c7-d669-4e80-a351-ea78545adde0 has been started.
+2024-09-12 16:49:58,672 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: e8dc82c7-d669-4e80-a351-ea78545adde0 status to RUNNING.
+2024-09-12 16:49:58,673 - JobRunner - INFO - [identity=example_project, run=?]: Job: e8dc82c7-d669-4e80-a351-ea78545adde0 started to run, status changed to RUNNING.
+2024-09-12 16:50:27,043 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 127.0.0.1:61338 <= 127.0.0.1:63074] is created: PID: 32326
+2024-09-12 16:50:28,632 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 Not Connected] is closed PID: 32326
+2024-09-12 16:50:31,273 - ServerEngine - INFO - Job: e8dc82c7-d669-4e80-a351-ea78545adde0 child process exit with return code 103
+2024-09-12 16:50:31,557 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (e8dc82c7-d669-4e80-a351-ea78545adde0) on clients ...
+2024-09-12 16:50:34,408 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 0.0.0.0:8002 <= ipv6:%5B::1%5D:63081 SSL site-2] is created: PID: 32326
+2024-09-12 16:50:34,409 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 0.0.0.0:8002 <= ipv6:%5B::1%5D:63080 SSL site-1] is created: PID: 32326
+2024-09-12 16:50:47,674 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 Not Connected] is closed PID: 32326
+2024-09-12 16:50:47,920 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 Not Connected] is closed PID: 32326
+2024-09-12 16:50:58,808 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 Not Connected] is closed PID: 32326
+2024-09-12 16:50:59,680 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (3b1a2d41-7e44-49ee-bf1a-3d379bd091ef) on clients ...
+2024-09-12 16:51:09,709 - CoreCell - WARNING - server: no waiter for req a9a58780-94a0-476f-87eb-b7f29eeab0c1 - the reply is too late
+2024-09-12 16:51:09,849 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 Not Connected] is closed PID: 32326
+2024-09-12 16:51:17,352 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 798505d8-6524-4711-80f6-5b060468268a, get result: (scheduled).
+2024-09-12 16:51:17,353 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 798505d8-6524-4711-80f6-5b060468268a from the scheduler to run
+2024-09-12 16:51:17,504 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 798505d8-6524-4711-80f6-5b060468268a
+2024-09-12 16:51:17,581 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 798505d8-6524-4711-80f6-5b060468268a
+2024-09-12 16:51:17,671 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 798505d8-6524-4711-80f6-5b060468268a
+2024-09-12 16:51:18,303 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 798505d8-6524-4711-80f6-5b060468268a
+2024-09-12 16:51:18,304 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 798505d8-6524-4711-80f6-5b060468268a
+2024-09-12 16:51:18,332 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 798505d8-6524-4711-80f6-5b060468268a for clients: site-1,site-2
+2024-09-12 16:51:18,332 - JobRunner - INFO - [identity=example_project, run=?]: Job: 798505d8-6524-4711-80f6-5b060468268a has been started.
+2024-09-12 16:51:18,332 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 798505d8-6524-4711-80f6-5b060468268a status to RUNNING.
+2024-09-12 16:51:18,334 - JobRunner - INFO - [identity=example_project, run=?]: Job: 798505d8-6524-4711-80f6-5b060468268a started to run, status changed to RUNNING.
+2024-09-12 16:51:24,906 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 127.0.0.1:61338 <= 127.0.0.1:63104] is created: PID: 32326
+2024-09-12 16:51:26,461 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 Not Connected] is closed PID: 32326
+2024-09-12 16:51:26,559 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 0.0.0.0:8002 <= ipv6:%5B::1%5D:63109 SSL site-1] is created: PID: 32326
+2024-09-12 16:51:26,560 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 0.0.0.0:8002 <= ipv6:%5B::1%5D:63110 SSL site-2] is created: PID: 32326
+2024-09-12 16:51:28,986 - ServerEngine - INFO - Job: 798505d8-6524-4711-80f6-5b060468268a child process exit with return code 103
+2024-09-12 16:51:29,813 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (798505d8-6524-4711-80f6-5b060468268a) on clients ...
+2024-09-12 16:51:39,841 - CoreCell - WARNING - server: no waiter for req bd0cb3d9-8718-45dd-81f0-1c8281ccb73e - the reply is too late
+2024-09-12 16:51:39,864 - CoreCell - WARNING - server: no waiter for req bd0cb3d9-8718-45dd-81f0-1c8281ccb73e - the reply is too late
+2024-09-12 16:51:39,878 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 Not Connected] is closed PID: 32326
+2024-09-12 16:51:39,912 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 Not Connected] is closed PID: 32326
+2024-09-12 16:52:15,901 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 8b80c5e5-92f1-4200-9c7b-a631c1652918, get result: (scheduled).
+2024-09-12 16:52:15,902 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 8b80c5e5-92f1-4200-9c7b-a631c1652918 from the scheduler to run
+2024-09-12 16:52:16,077 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 8b80c5e5-92f1-4200-9c7b-a631c1652918
+2024-09-12 16:52:16,225 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 8b80c5e5-92f1-4200-9c7b-a631c1652918
+2024-09-12 16:52:16,318 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 8b80c5e5-92f1-4200-9c7b-a631c1652918
+2024-09-12 16:52:17,011 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 8b80c5e5-92f1-4200-9c7b-a631c1652918
+2024-09-12 16:52:17,012 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 8b80c5e5-92f1-4200-9c7b-a631c1652918
+2024-09-12 16:52:17,043 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 8b80c5e5-92f1-4200-9c7b-a631c1652918 for clients: site-1,site-2
+2024-09-12 16:52:17,043 - JobRunner - INFO - [identity=example_project, run=?]: Job: 8b80c5e5-92f1-4200-9c7b-a631c1652918 has been started.
+2024-09-12 16:52:17,043 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 8b80c5e5-92f1-4200-9c7b-a631c1652918 status to RUNNING.
+2024-09-12 16:52:17,047 - JobRunner - INFO - [identity=example_project, run=?]: Job: 8b80c5e5-92f1-4200-9c7b-a631c1652918 started to run, status changed to RUNNING.
+2024-09-12 16:52:23,810 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 127.0.0.1:61338 <= 127.0.0.1:63133] is created: PID: 32326
+2024-09-12 16:52:25,497 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 0.0.0.0:8002 <= ipv6:%5B::1%5D:63138 SSL site-2] is created: PID: 32326
+2024-09-12 16:52:25,497 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 0.0.0.0:8002 <= ipv6:%5B::1%5D:63139 SSL site-1] is created: PID: 32326
+2024-09-12 16:52:36,100 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 Not Connected] is closed PID: 32326
+2024-09-12 16:52:36,103 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 Not Connected] is closed PID: 32326
+2024-09-12 16:52:40,413 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 Not Connected] is closed PID: 32326
+2024-09-12 16:52:41,156 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (8b80c5e5-92f1-4200-9c7b-a631c1652918) on clients ...
+2024-09-12 17:00:21,009 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0cce6f10-ed64-49e1-8fd0-2a5efc14f960, get result: (scheduled).
+2024-09-12 17:00:21,010 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960 from the scheduler to run
+2024-09-12 17:00:21,161 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960
+2024-09-12 17:00:21,249 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960
+2024-09-12 17:00:21,324 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960
+2024-09-12 17:00:22,112 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960
+2024-09-12 17:00:22,114 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960
+2024-09-12 17:00:22,144 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960 for clients: site-1,site-2
+2024-09-12 17:00:22,145 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960 has been started.
+2024-09-12 17:00:22,145 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960 status to RUNNING.
+2024-09-12 17:00:22,151 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960 started to run, status changed to RUNNING.
+2024-09-12 17:00:29,095 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00024 127.0.0.1:61338 <= 127.0.0.1:63242] is created: PID: 32326
+2024-09-12 17:00:30,662 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00024 Not Connected] is closed PID: 32326
+2024-09-12 17:00:33,358 - ServerEngine - INFO - Job: 0cce6f10-ed64-49e1-8fd0-2a5efc14f960 child process exit with return code 103
+2024-09-12 17:00:33,907 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (0cce6f10-ed64-49e1-8fd0-2a5efc14f960) on clients ...
+2024-09-12 17:00:34,036 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00025 0.0.0.0:8002 <= ipv6:%5B::1%5D:63250 SSL site-2] is created: PID: 32326
+2024-09-12 17:00:34,036 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00026 0.0.0.0:8002 <= ipv6:%5B::1%5D:63251 SSL site-1] is created: PID: 32326
+2024-09-12 17:00:51,174 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00026 Not Connected] is closed PID: 32326
+2024-09-12 17:00:51,299 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00025 Not Connected] is closed PID: 32326
+2024-09-12 17:04:03,366 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 54d28d80-e182-4d85-a30c-77a26dbe24e5, get result: (scheduled).
+2024-09-12 17:04:03,367 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 54d28d80-e182-4d85-a30c-77a26dbe24e5 from the scheduler to run
+2024-09-12 17:04:03,507 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 54d28d80-e182-4d85-a30c-77a26dbe24e5
+2024-09-12 17:04:03,594 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 54d28d80-e182-4d85-a30c-77a26dbe24e5
+2024-09-12 17:04:03,661 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 54d28d80-e182-4d85-a30c-77a26dbe24e5
+2024-09-12 17:04:04,542 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 54d28d80-e182-4d85-a30c-77a26dbe24e5
+2024-09-12 17:04:04,546 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 54d28d80-e182-4d85-a30c-77a26dbe24e5
+2024-09-12 17:04:04,610 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 54d28d80-e182-4d85-a30c-77a26dbe24e5 for clients: site-1,site-2
+2024-09-12 17:04:04,610 - JobRunner - INFO - [identity=example_project, run=?]: Job: 54d28d80-e182-4d85-a30c-77a26dbe24e5 has been started.
+2024-09-12 17:04:04,610 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 54d28d80-e182-4d85-a30c-77a26dbe24e5 status to RUNNING.
+2024-09-12 17:04:04,617 - JobRunner - INFO - [identity=example_project, run=?]: Job: 54d28d80-e182-4d85-a30c-77a26dbe24e5 started to run, status changed to RUNNING.
+2024-09-12 17:04:36,970 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00027 127.0.0.1:61338 <= 127.0.0.1:63320] is created: PID: 32326
+2024-09-12 17:04:38,556 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00027 Not Connected] is closed PID: 32326
+2024-09-12 17:04:41,175 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 0.0.0.0:8002 <= ipv6:%5B::1%5D:63327 SSL site-1] is created: PID: 32326
+2024-09-12 17:04:41,175 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00029 0.0.0.0:8002 <= ipv6:%5B::1%5D:63326 SSL site-2] is created: PID: 32326
+2024-09-12 17:04:41,207 - ServerEngine - INFO - Job: 54d28d80-e182-4d85-a30c-77a26dbe24e5 child process exit with return code 103
+2024-09-12 17:04:41,874 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (54d28d80-e182-4d85-a30c-77a26dbe24e5) on clients ...
+2024-09-12 17:04:51,769 - CoreCell - WARNING - server: no waiter for req 104f6fe4-6784-4fe0-b6b8-b0d33ada2cfe - the reply is too late
+2024-09-12 17:04:51,771 - CoreCell - WARNING - server: no waiter for req 104f6fe4-6784-4fe0-b6b8-b0d33ada2cfe - the reply is too late
+2024-09-12 17:04:51,810 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00029 Not Connected] is closed PID: 32326
+2024-09-12 17:04:51,833 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 Not Connected] is closed PID: 32326
+2024-09-12 17:05:52,106 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 448cb233-145c-4f4a-b96b-8c173a09ea74, get result: (scheduled).
+2024-09-12 17:05:52,106 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 448cb233-145c-4f4a-b96b-8c173a09ea74 from the scheduler to run
+2024-09-12 17:05:52,252 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 448cb233-145c-4f4a-b96b-8c173a09ea74
+2024-09-12 17:05:52,330 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 448cb233-145c-4f4a-b96b-8c173a09ea74
+2024-09-12 17:05:52,401 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 448cb233-145c-4f4a-b96b-8c173a09ea74
+2024-09-12 17:05:53,122 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 448cb233-145c-4f4a-b96b-8c173a09ea74
+2024-09-12 17:05:53,134 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 448cb233-145c-4f4a-b96b-8c173a09ea74
+2024-09-12 17:05:53,196 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 448cb233-145c-4f4a-b96b-8c173a09ea74 for clients: site-1,site-2
+2024-09-12 17:05:53,197 - JobRunner - INFO - [identity=example_project, run=?]: Job: 448cb233-145c-4f4a-b96b-8c173a09ea74 has been started.
+2024-09-12 17:05:53,197 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 448cb233-145c-4f4a-b96b-8c173a09ea74 status to RUNNING.
+2024-09-12 17:05:53,199 - JobRunner - INFO - [identity=example_project, run=?]: Job: 448cb233-145c-4f4a-b96b-8c173a09ea74 started to run, status changed to RUNNING.
+2024-09-12 17:06:00,585 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00030 127.0.0.1:61338 <= 127.0.0.1:63363] is created: PID: 32326
+2024-09-12 17:06:02,146 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00030 Not Connected] is closed PID: 32326
+2024-09-12 17:06:02,522 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00031 0.0.0.0:8002 <= ipv6:%5B::1%5D:63369 SSL site-2] is created: PID: 32326
+2024-09-12 17:06:02,522 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00032 0.0.0.0:8002 <= ipv6:%5B::1%5D:63370 SSL site-1] is created: PID: 32326
+2024-09-12 17:06:04,773 - ServerEngine - INFO - Job: 448cb233-145c-4f4a-b96b-8c173a09ea74 child process exit with return code 103
+2024-09-12 17:06:05,240 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (448cb233-145c-4f4a-b96b-8c173a09ea74) on clients ...
+2024-09-12 17:06:15,288 - CoreCell - WARNING - server: no waiter for req 28f4b77b-8d4f-4619-8ab1-354c59efc62d - the reply is too late
+2024-09-12 17:06:15,303 - CoreCell - WARNING - server: no waiter for req 28f4b77b-8d4f-4619-8ab1-354c59efc62d - the reply is too late
+2024-09-12 17:06:15,340 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00032 Not Connected] is closed PID: 32326
+2024-09-12 17:06:15,350 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00031 Not Connected] is closed PID: 32326
+2024-09-12 17:06:48,797 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 8c79409f-a573-4c9a-946d-1e074f1c8164, get result: (scheduled).
+2024-09-12 17:06:48,797 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 8c79409f-a573-4c9a-946d-1e074f1c8164 from the scheduler to run
+2024-09-12 17:06:48,909 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 8c79409f-a573-4c9a-946d-1e074f1c8164
+2024-09-12 17:06:48,974 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 8c79409f-a573-4c9a-946d-1e074f1c8164
+2024-09-12 17:06:49,039 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 8c79409f-a573-4c9a-946d-1e074f1c8164
+2024-09-12 17:06:49,815 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 8c79409f-a573-4c9a-946d-1e074f1c8164
+2024-09-12 17:06:49,816 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 8c79409f-a573-4c9a-946d-1e074f1c8164
+2024-09-12 17:06:49,859 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 8c79409f-a573-4c9a-946d-1e074f1c8164 for clients: site-1,site-2
+2024-09-12 17:06:49,859 - JobRunner - INFO - [identity=example_project, run=?]: Job: 8c79409f-a573-4c9a-946d-1e074f1c8164 has been started.
+2024-09-12 17:06:49,859 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 8c79409f-a573-4c9a-946d-1e074f1c8164 status to RUNNING.
+2024-09-12 17:06:49,863 - JobRunner - INFO - [identity=example_project, run=?]: Job: 8c79409f-a573-4c9a-946d-1e074f1c8164 started to run, status changed to RUNNING.
+2024-09-12 17:06:56,744 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00033 127.0.0.1:61338 <= 127.0.0.1:63393] is created: PID: 32326
+2024-09-12 17:06:58,296 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00033 Not Connected] is closed PID: 32326
+2024-09-12 17:06:58,508 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00034 0.0.0.0:8002 <= ipv6:%5B::1%5D:63403 SSL site-2] is created: PID: 32326
+2024-09-12 17:06:58,509 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00035 0.0.0.0:8002 <= ipv6:%5B::1%5D:63404 SSL site-1] is created: PID: 32326
+2024-09-12 17:07:00,845 - ServerEngine - INFO - Job: 8c79409f-a573-4c9a-946d-1e074f1c8164 child process exit with return code 103
+2024-09-12 17:07:01,511 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (8c79409f-a573-4c9a-946d-1e074f1c8164) on clients ...
+2024-09-12 17:07:11,576 - CoreCell - WARNING - server: no waiter for req f417aae5-2d33-45ef-81f3-9e00660beb3b - the reply is too late
+2024-09-12 17:07:11,579 - CoreCell - WARNING - server: no waiter for req f417aae5-2d33-45ef-81f3-9e00660beb3b - the reply is too late
+2024-09-12 17:07:11,619 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00035 Not Connected] is closed PID: 32326
+2024-09-12 17:07:11,621 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00034 Not Connected] is closed PID: 32326
+2024-09-12 17:08:00,550 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 81314c99-942a-465a-a4ae-13fab4efbd87, get result: (scheduled).
+2024-09-12 17:08:00,551 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 81314c99-942a-465a-a4ae-13fab4efbd87 from the scheduler to run
+2024-09-12 17:08:00,708 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 81314c99-942a-465a-a4ae-13fab4efbd87
+2024-09-12 17:08:00,850 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 81314c99-942a-465a-a4ae-13fab4efbd87
+2024-09-12 17:08:01,017 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 81314c99-942a-465a-a4ae-13fab4efbd87
+2024-09-12 17:08:01,747 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 81314c99-942a-465a-a4ae-13fab4efbd87
+2024-09-12 17:08:01,748 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 81314c99-942a-465a-a4ae-13fab4efbd87
+2024-09-12 17:08:01,773 - nvflare.fuel.f3.streaming.byte_streamer - DEBUG - Message sending error to target server.81314c99-942a-465a-a4ae-13fab4efbd87: target_unreachable
+2024-09-12 17:08:01,773 - nvflare.fuel.f3.streaming.byte_streamer - DEBUG - Stream error: Message sending error to target server.81314c99-942a-465a-a4ae-13fab4efbd87: target_unreachable
+2024-09-12 17:08:01,785 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 81314c99-942a-465a-a4ae-13fab4efbd87 for clients: site-1,site-2
+2024-09-12 17:08:01,786 - JobRunner - INFO - [identity=example_project, run=?]: Job: 81314c99-942a-465a-a4ae-13fab4efbd87 has been started.
+2024-09-12 17:08:01,786 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 81314c99-942a-465a-a4ae-13fab4efbd87 status to RUNNING.
+2024-09-12 17:08:01,787 - JobRunner - INFO - [identity=example_project, run=?]: Job: 81314c99-942a-465a-a4ae-13fab4efbd87 started to run, status changed to RUNNING.
+2024-09-12 17:08:09,045 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00036 127.0.0.1:61338 <= 127.0.0.1:63438] is created: PID: 32326
+2024-09-12 17:08:10,765 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00037 0.0.0.0:8002 <= ipv6:%5B::1%5D:63445 SSL site-2] is created: PID: 32326
+2024-09-12 17:08:10,766 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00038 0.0.0.0:8002 <= ipv6:%5B::1%5D:63444 SSL site-1] is created: PID: 32326
+2024-09-12 17:10:06,038 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job b98f4ee8-96fb-441f-b97b-3ac91121dc62, get result: (scheduled).
+2024-09-12 17:10:06,039 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: b98f4ee8-96fb-441f-b97b-3ac91121dc62 from the scheduler to run
+2024-09-12 17:10:06,196 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: b98f4ee8-96fb-441f-b97b-3ac91121dc62
+2024-09-12 17:10:06,450 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: b98f4ee8-96fb-441f-b97b-3ac91121dc62
+2024-09-12 17:10:06,589 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: b98f4ee8-96fb-441f-b97b-3ac91121dc62
+2024-09-12 17:10:07,231 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: b98f4ee8-96fb-441f-b97b-3ac91121dc62
+2024-09-12 17:10:07,233 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: b98f4ee8-96fb-441f-b97b-3ac91121dc62
+2024-09-12 17:10:07,266 - JobRunner - INFO - [identity=example_project, run=?]: Started run: b98f4ee8-96fb-441f-b97b-3ac91121dc62 for clients: site-1,site-2
+2024-09-12 17:10:07,267 - JobRunner - INFO - [identity=example_project, run=?]: Job: b98f4ee8-96fb-441f-b97b-3ac91121dc62 has been started.
+2024-09-12 17:10:07,267 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: b98f4ee8-96fb-441f-b97b-3ac91121dc62 status to RUNNING.
+2024-09-12 17:10:07,271 - JobRunner - INFO - [identity=example_project, run=?]: Job: b98f4ee8-96fb-441f-b97b-3ac91121dc62 started to run, status changed to RUNNING.
+2024-09-12 17:10:14,037 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00039 127.0.0.1:61338 <= 127.0.0.1:63481] is created: PID: 32326
+2024-09-12 17:10:15,791 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00040 0.0.0.0:8002 <= ipv6:%5B::1%5D:63488 SSL site-2] is created: PID: 32326
+2024-09-12 17:10:15,791 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00041 0.0.0.0:8002 <= ipv6:%5B::1%5D:63489 SSL site-1] is created: PID: 32326
+2024-09-12 17:10:26,138 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00040 Not Connected] is closed PID: 32326
+2024-09-12 17:10:26,202 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00041 Not Connected] is closed PID: 32326
+2024-09-12 17:10:30,652 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00039 Not Connected] is closed PID: 32326
+2024-09-12 17:10:31,274 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (b98f4ee8-96fb-441f-b97b-3ac91121dc62) on clients ...
+2024-09-12 17:11:16,875 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job b02a2d86-3011-4f4e-85b9-7a88881f8614, get result: (scheduled).
+2024-09-12 17:11:16,876 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: b02a2d86-3011-4f4e-85b9-7a88881f8614 from the scheduler to run
+2024-09-12 17:11:17,158 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: b02a2d86-3011-4f4e-85b9-7a88881f8614
+2024-09-12 17:11:17,329 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: b02a2d86-3011-4f4e-85b9-7a88881f8614
+2024-09-12 17:11:17,538 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: b02a2d86-3011-4f4e-85b9-7a88881f8614
+2024-09-12 17:11:18,434 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: b02a2d86-3011-4f4e-85b9-7a88881f8614
+2024-09-12 17:11:18,435 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: b02a2d86-3011-4f4e-85b9-7a88881f8614
+2024-09-12 17:11:18,475 - JobRunner - INFO - [identity=example_project, run=?]: Started run: b02a2d86-3011-4f4e-85b9-7a88881f8614 for clients: site-1,site-2
+2024-09-12 17:11:18,476 - JobRunner - INFO - [identity=example_project, run=?]: Job: b02a2d86-3011-4f4e-85b9-7a88881f8614 has been started.
+2024-09-12 17:11:18,476 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: b02a2d86-3011-4f4e-85b9-7a88881f8614 status to RUNNING.
+2024-09-12 17:11:18,477 - JobRunner - INFO - [identity=example_project, run=?]: Job: b02a2d86-3011-4f4e-85b9-7a88881f8614 started to run, status changed to RUNNING.
+2024-09-12 17:11:25,070 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00042 127.0.0.1:61338 <= 127.0.0.1:63521] is created: PID: 32326
+2024-09-12 17:11:26,840 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00043 0.0.0.0:8002 <= ipv6:%5B::1%5D:63526 SSL site-1] is created: PID: 32326
+2024-09-12 17:11:26,840 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00044 0.0.0.0:8002 <= ipv6:%5B::1%5D:63527 SSL site-2] is created: PID: 32326

@@ -1,3 +1,5 @@
+v0.1.1: Add collect_and_assemble_aggregator
+
 v0.1.0:Save global_model in each round
 
 1. Save global_model in each round in scatter_and_gather.py
