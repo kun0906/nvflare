@@ -1,6 +1,7 @@
 """Generate normal data
 
 """
+import os.path
 import pickle
 from collections import Counter
 
@@ -235,7 +236,10 @@ def split_test_data():
 
 
 def split_data(data_type='train'):
-    data_path = 'data'
+    data_path = os.path.expanduser('~/data')
+    data_path = os.path.abspath(data_path)
+    print(data_path)
+
     # Create Cifar10 dataset for training.
     train = True if data_type == 'train' else False
     _train_dataset = CIFAR10(root=data_path, transform=None, download=True, train=train)
@@ -257,7 +261,7 @@ def split_data(data_type='train'):
         Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
         client_data = (X_, Y_, Y_new)
         # Save the data to a file specific to the client
-        file_path = f'data/client_{client_id}_airplane_{data_type}.pkl'
+        file_path = f'{data_path}/client_{client_id}_airplane_{data_type}.pkl'
         with open(file_path, "wb") as f:
             pickle.dump(client_data, f)
 

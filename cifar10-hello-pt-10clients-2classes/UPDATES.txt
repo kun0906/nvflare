@@ -1,3 +1,11 @@
+v0.0.9:Add confusion matrix and AUC
+
+1. Add confusion matrix and AUC to learner_with_tb.py
+2. Change POC directory from /tmp to $WORK
+3. Change all data directory to ~/data, then use it directly in code, i.e., os.path.expanduser(data_path)
+
+
+
 v0.0.8:Add more GPUs and store local models in each iteration
 
 1. Modify learner_with_tb.py to use more GPUs

@@ -16,10 +16,10 @@ import gc
 from typing import Any
 
 from nvflare.apis.client import Client
-from nvflare.apis.controller_spec import OperatorMethod, TaskOperatorKey
+from nvflare.apis.controller_spec import OperatorMethod, TaskOperatorKey, ClientTask
 from nvflare.apis.fl_constant import ReturnCode
 from nvflare.apis.fl_context import FLContext
-from nvflare.apis.impl.controller import ClientTask, Controller, Task
+from nvflare.apis.impl.controller import Controller, Task
 from nvflare.apis.shareable import Shareable
 from nvflare.apis.signal import Signal
 from nvflare.app_common.abstract.aggregator import Aggregator

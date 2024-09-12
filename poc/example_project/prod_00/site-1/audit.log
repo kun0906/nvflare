@@ -536,3 +536,542 @@
 [E:51f7678d-8ab5-4ae7-8a8b-a6909cc78f10][R:51e7d308-0dea-4117-b88a-6b6855d6cb08][T:2024-09-11 17:19:19.047520][J:469c921f-71a2-468d-a310-71db4feb1c31][A:train#63a84933-2b18-403f-98a1-93867b4cbbfe]received task from server
 [E:f7ab16b5-95ca-490e-b339-fb1f76cd6eca][T:2024-09-11 17:19:19.048011][J:469c921f-71a2-468d-a310-71db4feb1c31][A:train#63a84933-2b18-403f-98a1-93867b4cbbfe]invoked executor LearnerExecutor
 [E:d47bb787-f941-435a-873a-b8710e361c70][R:51e7d308-0dea-4117-b88a-6b6855d6cb08][T:2024-09-11 17:19:20.141270][J:469c921f-71a2-468d-a310-71db4feb1c31][A:train#63a84933-2b18-403f-98a1-93867b4cbbfe]submit result OK
+[E:5b85003a-f479-4e87-84fa-a8f3a79e040a][T:2024-09-12 08:28:27.550138][U:admin@nvidia.com][A:train.deploy]
+[E:5790af5e-28be-4c2f-871f-d96968b4f7f3][T:2024-09-12 08:28:27.574577][U:][A:train.start_job]
+[E:4a5b9f38-a5b6-4c84-9927-62568dcf828d][T:2024-09-12 08:28:56.582983][U:][A:train.notify_job_status]
+[E:8383a363-2164-4841-ac34-708dc02c8f94][R:bcf2f823-aaba-413e-8905-b8ade31dcfca][T:2024-09-12 08:28:57.116623][J:30ade631-5406-4693-bb1e-6df280dc3c55][A:get_weights#f13c07c4-82ce-4132-a278-c1b416e5b17f]received task from server
+[E:950cfac7-643a-4b27-a944-20aee4d95c6a][T:2024-09-12 08:28:57.117529][J:30ade631-5406-4693-bb1e-6df280dc3c55][A:get_weights#f13c07c4-82ce-4132-a278-c1b416e5b17f]invoked executor LearnerExecutor
+[E:872c9395-09d5-4a82-b9f7-ede4e56f1b06][R:bcf2f823-aaba-413e-8905-b8ade31dcfca][T:2024-09-12 08:28:57.139340][J:30ade631-5406-4693-bb1e-6df280dc3c55][A:get_weights#f13c07c4-82ce-4132-a278-c1b416e5b17f]submit result: EXECUTION_EXCEPTION
+[E:ed7666c6-e1e8-4208-bcb3-6ec02ba567d7][T:2024-09-12 08:28:59.177002][U:][A:train.notify_job_status]
+[E:8510e809-1cea-419a-83f2-aa6cd8aea2b1][T:2024-09-12 08:29:01.663121][U:][A:train.abort]
+[E:6c8e4824-3a37-4ff7-8dc4-17c7befb7e7a][T:2024-09-12 08:31:21.192796][U:admin@nvidia.com][A:train.deploy]
+[E:05feba82-418f-475d-ab22-01e84515db90][T:2024-09-12 08:31:21.217746][U:][A:train.start_job]
+[E:a453bc4a-c182-4ae1-a2cd-bf7a2d3222c8][T:2024-09-12 08:31:28.547013][U:][A:train.notify_job_status]
+[E:e11dd62a-5924-484a-b09a-f3a2219d4b0d][R:cc039ade-2541-4e5d-86fc-eed126894f70][T:2024-09-12 08:31:29.084663][J:f649cbcd-9531-4195-830d-78ca992e5877][A:get_weights#2d15a3f6-0d05-4912-9f6e-2fdbb70416d3]received task from server
+[E:73220154-0f9b-4a86-9586-082f6280c9bf][T:2024-09-12 08:31:29.085124][J:f649cbcd-9531-4195-830d-78ca992e5877][A:get_weights#2d15a3f6-0d05-4912-9f6e-2fdbb70416d3]invoked executor LearnerExecutor
+[E:ec98806f-9b4e-4b9a-990a-75650fd71747][R:cc039ade-2541-4e5d-86fc-eed126894f70][T:2024-09-12 08:31:29.094325][J:f649cbcd-9531-4195-830d-78ca992e5877][A:get_weights#2d15a3f6-0d05-4912-9f6e-2fdbb70416d3]submit result: EXECUTION_EXCEPTION
+[E:5117f2c3-400b-4489-a049-856835560a14][T:2024-09-12 08:31:31.120274][U:][A:train.notify_job_status]
+[E:86270c6e-db3f-4a1f-a2b0-26d82973e500][T:2024-09-12 08:31:32.705099][U:][A:train.abort]
+[E:e8c7ee62-e74f-453b-a6e3-a75a0e38f824][T:2024-09-12 08:34:13.289407][U:admin@nvidia.com][A:train.deploy]
+[E:3fe7b70b-e598-471b-9c9f-7085fc3e7a7e][T:2024-09-12 08:34:13.313146][U:][A:train.start_job]
+[E:8b93c485-a479-47d8-8f56-f945bb561f13][T:2024-09-12 08:34:20.645458][U:][A:train.notify_job_status]
+[E:adc932cd-3827-4bea-99b1-21e3d9c3b23a][R:401b7ba5-bcb1-46b6-baf4-7e4080c109c3][T:2024-09-12 08:34:21.184857][J:4f937420-0fe4-4659-9f9e-b7400e718a59][A:get_weights#00e65c27-148e-41c1-8849-7eb122d6e893]received task from server
+[E:607bb26a-821d-46ab-bfb4-1db28ff45926][T:2024-09-12 08:34:21.185759][J:4f937420-0fe4-4659-9f9e-b7400e718a59][A:get_weights#00e65c27-148e-41c1-8849-7eb122d6e893]invoked executor LearnerExecutor
+[E:3883cd3b-ce6e-41fb-8814-ccfc6b021c0e][R:401b7ba5-bcb1-46b6-baf4-7e4080c109c3][T:2024-09-12 08:34:21.193821][J:4f937420-0fe4-4659-9f9e-b7400e718a59][A:get_weights#00e65c27-148e-41c1-8849-7eb122d6e893]submit result: EXECUTION_EXCEPTION
+[E:7f347b3e-17f7-4722-98cb-d34bd9ff1758][T:2024-09-12 08:34:23.214464][U:][A:train.notify_job_status]
+[E:b94f6ba6-7d69-4d8d-8b9c-0d9da5581975][T:2024-09-12 08:34:24.761920][U:][A:train.abort]
+[E:59f13a1c-9f4e-4c8b-a956-c3cd29e7be1f][T:2024-09-12 08:35:16.257578][U:admin@nvidia.com][A:train.deploy]
+[E:e453ab5f-3c81-499a-86c4-fcfadfe34a4a][T:2024-09-12 08:35:16.278508][U:][A:train.start_job]
+[E:5f873216-bb21-403f-910a-25bca0bd0daf][T:2024-09-12 08:35:23.652024][U:][A:train.notify_job_status]
+[E:62d745f7-3023-4081-b46b-979e4dbb7b03][R:871a8ed0-2cb1-4921-83b9-dc941684651b][T:2024-09-12 08:35:24.181745][J:7ee5d11b-8425-4601-b5e3-998821be48ca][A:get_weights#af059686-b8e0-4707-8766-f0f805cad679]received task from server
+[E:92383a8e-d4b8-427c-b396-91a39d28bc12][T:2024-09-12 08:35:24.182807][J:7ee5d11b-8425-4601-b5e3-998821be48ca][A:get_weights#af059686-b8e0-4707-8766-f0f805cad679]invoked executor LearnerExecutor
+[E:62856859-3e09-4ebd-8f4e-af24e9508bfa][R:871a8ed0-2cb1-4921-83b9-dc941684651b][T:2024-09-12 08:35:24.191323][J:7ee5d11b-8425-4601-b5e3-998821be48ca][A:get_weights#af059686-b8e0-4707-8766-f0f805cad679]submit result: EXECUTION_EXCEPTION
+[E:d0a9c5c0-3cce-4314-9065-e1a6d643013d][T:2024-09-12 08:35:26.216289][U:][A:train.notify_job_status]
+[E:4877088f-63e6-40f3-9699-de0f693b2476][T:2024-09-12 08:35:27.802926][U:][A:train.abort]
+[E:74abdd06-984e-4412-9de2-1571c266b0a5][T:2024-09-12 08:37:40.148231][U:admin@nvidia.com][A:train.deploy]
+[E:6ebc0fdb-7fcd-453c-8e70-83bc436e66e2][T:2024-09-12 08:37:40.169667][U:][A:train.start_job]
+[E:179a20da-f59d-4eb7-9aef-772978e7f197][T:2024-09-12 08:37:47.970038][U:][A:train.notify_job_status]
+[E:e1d4074d-4287-46a0-9a1a-2b89125a33de][R:4fbac3f7-6993-44aa-98d6-b832ede01480][T:2024-09-12 08:37:48.507639][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:get_weights#87fd9cd4-c207-45aa-94ef-9bcbaea34966]received task from server
+[E:e49ec3fb-5b7b-487f-9052-18b52fa2e2ef][T:2024-09-12 08:37:48.508427][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:get_weights#87fd9cd4-c207-45aa-94ef-9bcbaea34966]invoked executor LearnerExecutor
+[E:30ec884a-1d71-4c16-a51e-410e891fc3e2][R:4fbac3f7-6993-44aa-98d6-b832ede01480][T:2024-09-12 08:37:48.543363][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:get_weights#87fd9cd4-c207-45aa-94ef-9bcbaea34966]submit result OK
+[E:b1576de9-cd24-4cbc-951d-fbf58b4fac88][R:5e58e03c-d104-4050-a219-1ca115543f8f][T:2024-09-12 08:37:50.581130][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:train#581cc196-5dd2-4dd4-af31-77b7a2f216f7]received task from server
+[E:2af6e0be-f8f0-44c1-945c-469108fd3e35][T:2024-09-12 08:37:50.582070][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:train#581cc196-5dd2-4dd4-af31-77b7a2f216f7]invoked executor LearnerExecutor
+[E:afb8d56d-8f99-4f3d-b38f-494c31d6901f][R:5e58e03c-d104-4050-a219-1ca115543f8f][T:2024-09-12 08:37:51.567908][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:train#581cc196-5dd2-4dd4-af31-77b7a2f216f7]submit result OK
+[E:f34e8b5b-07a7-44e3-a551-1fd78220e626][R:cd39ea15-4e4b-42a0-974a-e79e6f9e03bf][T:2024-09-12 08:37:53.668058][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:train#7de348f6-fbd0-43c2-8137-6830f9a5fbf9]received task from server
+[E:df2916c1-ea1f-4ab6-aeac-6553b55b7903][T:2024-09-12 08:37:53.668934][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:train#7de348f6-fbd0-43c2-8137-6830f9a5fbf9]invoked executor LearnerExecutor
+[E:ef24e798-24a7-4a5a-ac8a-359a5a107a47][R:cd39ea15-4e4b-42a0-974a-e79e6f9e03bf][T:2024-09-12 08:37:54.589112][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:train#7de348f6-fbd0-43c2-8137-6830f9a5fbf9]submit result OK
+[E:13df4ddf-dc7b-45cc-9b23-7c58105c9ab8][R:584133de-b25a-4154-a928-0ce219b1cc83][T:2024-09-12 08:37:56.685748][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:submit_model#a505e9d9-655c-4e25-bd84-576b63d9219f]received task from server
+[E:9315e3f6-978c-48d8-bbd1-1f3fe0bc84cd][T:2024-09-12 08:37:56.686842][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:submit_model#a505e9d9-655c-4e25-bd84-576b63d9219f]invoked executor LearnerExecutor
+[E:66645d1d-5897-4c06-ae10-577ee3ff3c38][R:584133de-b25a-4154-a928-0ce219b1cc83][T:2024-09-12 08:37:56.690699][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:submit_model#a505e9d9-655c-4e25-bd84-576b63d9219f]submit result OK
+[E:fba77274-568e-4047-a4e1-590014a14f07][R:f73b7d35-2e56-42e4-b834-b65e1e1c27a7][T:2024-09-12 08:37:58.737538][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:validate#6d321fde-7968-4f59-bc82-7323e4a0315b]received task from server
+[E:ead4a2e7-34d8-49f8-bb3a-82d36521a403][T:2024-09-12 08:37:58.738453][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:validate#6d321fde-7968-4f59-bc82-7323e4a0315b]invoked executor LearnerExecutor
+[E:c02af81e-bb93-4428-a7ea-684f621fd7e2][R:f73b7d35-2e56-42e4-b834-b65e1e1c27a7][T:2024-09-12 08:37:58.765676][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:validate#6d321fde-7968-4f59-bc82-7323e4a0315b]submit result OK
+[E:7d2389cb-c5b0-42d8-b907-c57736d008b6][R:84b89e4e-f6d2-4a16-a5e4-4605695c1d83][T:2024-09-12 08:38:00.804116][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:validate#e09a4f56-3c97-4072-a034-2a9928917b7b]received task from server
+[E:a0a50aea-a092-452a-8186-83a7755657a7][T:2024-09-12 08:38:00.805093][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:validate#e09a4f56-3c97-4072-a034-2a9928917b7b]invoked executor LearnerExecutor
+[E:a7c3a7b0-1c7c-4141-9c32-2d2bb50122ed][R:84b89e4e-f6d2-4a16-a5e4-4605695c1d83][T:2024-09-12 08:38:00.831602][J:9920fa22-59d0-4868-aa93-b8b71c95b58b][A:validate#e09a4f56-3c97-4072-a034-2a9928917b7b]submit result OK
+[E:c258bed0-ca3f-46c5-a849-faa07da71a83][T:2024-09-12 08:38:02.851508][U:][A:train.notify_job_status]
+[E:05757acf-d4d0-4ef8-a129-b7a8b6d30207][T:2024-09-12 08:45:29.471697][U:admin@nvidia.com][A:train.deploy]
+[E:67ae376f-e844-489d-a118-d587c8a961fe][T:2024-09-12 08:45:29.498025][U:][A:train.start_job]
+[E:cd36d724-04c3-45ca-9dce-86a1d2a46210][T:2024-09-12 08:46:06.453930][U:][A:train.notify_job_status]
+[E:76c26e2f-0e7c-4008-bc8a-dad71c50b311][R:8b3718e6-3ecd-44a1-a463-caf720173ec9][T:2024-09-12 08:46:35.197306][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:get_weights#b1a4daaa-d1a7-4586-9fab-308b113632b5]received task from server
+[E:49ff90f6-0d71-46d6-9fbb-4fadafe9d8d6][T:2024-09-12 08:46:35.198644][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:get_weights#b1a4daaa-d1a7-4586-9fab-308b113632b5]invoked executor LearnerExecutor
+[E:88cf9607-fab3-4558-a70d-7e63fd0f22c9][R:8b3718e6-3ecd-44a1-a463-caf720173ec9][T:2024-09-12 08:46:35.239911][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:get_weights#b1a4daaa-d1a7-4586-9fab-308b113632b5]submit result OK
+[E:c1003d7e-15cf-42c6-a6d5-b931b6039fb2][R:63370ccd-54e6-4751-a2a2-3bd71e005930][T:2024-09-12 08:46:37.279852][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:train#354b08df-25d9-43d6-8b5c-6f056df4c241]received task from server
+[E:59053edb-f0f9-405b-98a8-1846fd096d46][T:2024-09-12 08:46:37.280767][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:train#354b08df-25d9-43d6-8b5c-6f056df4c241]invoked executor LearnerExecutor
+[E:7883c3ed-56f5-4e25-a52d-da2c7c2e71c9][R:63370ccd-54e6-4751-a2a2-3bd71e005930][T:2024-09-12 08:46:38.225290][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:train#354b08df-25d9-43d6-8b5c-6f056df4c241]submit result OK
+[E:ea5d195c-ab1e-4cff-8283-22012d689826][R:e46ee806-54fc-4aa9-b490-3875b0b4e58d][T:2024-09-12 08:52:53.041597][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:train#228c0fcf-433d-4e0b-9f74-82bcc99ad9cd]received task from server
+[E:a0fa1277-9523-4946-bd32-53e4fc92f9af][T:2024-09-12 08:52:53.042396][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:train#228c0fcf-433d-4e0b-9f74-82bcc99ad9cd]invoked executor LearnerExecutor
+[E:7cc22b7f-4269-4e2d-bd12-9a0672cbf13c][R:e46ee806-54fc-4aa9-b490-3875b0b4e58d][T:2024-09-12 08:52:53.927221][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:train#228c0fcf-433d-4e0b-9f74-82bcc99ad9cd]submit result OK
+[E:4cf909f9-4383-4b65-92a0-bbe9915f91ea][R:e558b967-991c-42ac-9f81-ee33035ef6b8][T:2024-09-12 08:54:40.778636][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:submit_model#8b05ebc9-914d-4d1a-b91c-ad0b6ccaee0d]received task from server
+[E:03414571-1b28-4eb4-99d8-a6a0ad1c2627][T:2024-09-12 08:54:40.780140][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:submit_model#8b05ebc9-914d-4d1a-b91c-ad0b6ccaee0d]invoked executor LearnerExecutor
+[E:d7c87de3-7774-46b3-9272-0a4d34889b53][R:e558b967-991c-42ac-9f81-ee33035ef6b8][T:2024-09-12 08:54:40.785831][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:submit_model#8b05ebc9-914d-4d1a-b91c-ad0b6ccaee0d]submit result OK
+[E:c495162d-6dba-4330-bc7f-5bed929e7c73][R:23d4e9d8-62b6-4890-83dc-6d017c80815f][T:2024-09-12 08:54:42.831757][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:validate#cfca39e3-181a-451d-97d7-e43c4fb6053b]received task from server
+[E:4485ae05-7500-4c7b-a947-70dd4b9ce709][T:2024-09-12 08:54:42.832668][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:validate#cfca39e3-181a-451d-97d7-e43c4fb6053b]invoked executor LearnerExecutor
+[E:9b1b1410-bcdd-4192-9139-2df2da96120f][R:23d4e9d8-62b6-4890-83dc-6d017c80815f][T:2024-09-12 08:54:42.858644][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:validate#cfca39e3-181a-451d-97d7-e43c4fb6053b]submit result OK
+[E:a0cd81e8-800c-4f49-86be-ca36c4574475][R:d8b2af75-6ddc-4e00-8657-a35ba28ce4bc][T:2024-09-12 08:54:44.899025][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:validate#00cf128d-78b1-4cae-a130-2890a7f04541]received task from server
+[E:4bc18500-1498-40b3-8fcc-cd5086270eb0][T:2024-09-12 08:54:44.899962][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:validate#00cf128d-78b1-4cae-a130-2890a7f04541]invoked executor LearnerExecutor
+[E:a2fab42b-337c-4c14-80fc-e21c8ce71bac][R:d8b2af75-6ddc-4e00-8657-a35ba28ce4bc][T:2024-09-12 08:54:44.927774][J:55176e34-68f6-4fdb-a3c3-810d6f14e059][A:validate#00cf128d-78b1-4cae-a130-2890a7f04541]submit result OK
+[E:a198929a-3c87-4d7f-9344-94fe91663a51][T:2024-09-12 08:54:46.944735][U:][A:train.notify_job_status]
+[E:2ec0866f-3d48-4e6f-819c-08132bf13b05][T:2024-09-12 09:20:27.740304][U:admin@nvidia.com][A:train.deploy]
+[E:6becf4fc-3ccc-431b-ae14-8a66eeb4b8f4][T:2024-09-12 09:20:27.781352][U:][A:train.start_job]
+[E:30ec6035-1511-471d-b8ea-457611b1cae5][T:2024-09-12 09:20:56.620085][U:][A:train.notify_job_status]
+[E:f7b8e3da-5598-47f4-b2f9-b6d985d50761][R:79d96b40-40d4-4565-aa3f-9097a20aaa1d][T:2024-09-12 09:21:37.447823][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:get_weights#1e5c28b9-1495-4898-837d-a710c2ad7086]received task from server
+[E:3abbaa22-7e65-4540-a802-ca86a2d0e7b7][T:2024-09-12 09:21:37.449687][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:get_weights#1e5c28b9-1495-4898-837d-a710c2ad7086]invoked executor LearnerExecutor
+[E:b6cdc5d1-0d7c-49dd-b030-08ce01e770ac][R:79d96b40-40d4-4565-aa3f-9097a20aaa1d][T:2024-09-12 09:21:37.494348][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:get_weights#1e5c28b9-1495-4898-837d-a710c2ad7086]submit result OK
+[E:44a2bf3c-aea4-4a41-b43b-4a6fbac07744][R:b0e7320b-227a-4235-8571-b4f5ec1d0654][T:2024-09-12 09:21:39.536332][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:train#7f2a2afa-704a-4eaa-9980-28c9fd99f106]received task from server
+[E:43f51cc0-f712-4bef-bda3-b5e08d9bb26f][T:2024-09-12 09:21:39.537180][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:train#7f2a2afa-704a-4eaa-9980-28c9fd99f106]invoked executor LearnerExecutor
+[E:13453667-2ae2-4e73-8473-8edf69e80b30][R:b0e7320b-227a-4235-8571-b4f5ec1d0654][T:2024-09-12 09:21:40.462563][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:train#7f2a2afa-704a-4eaa-9980-28c9fd99f106]submit result OK
+[E:42a9dd70-cb1e-4bdd-9414-bc380114194d][R:fabe6aa4-d7c7-464a-be43-2e16f41389d2][T:2024-09-12 09:21:44.612291][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:train#9ff046d9-c2c5-489e-8ed8-dc983cf8855d]received task from server
+[E:9bad2567-20fc-48be-a2d8-9d636e5f63a7][T:2024-09-12 09:21:44.613211][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:train#9ff046d9-c2c5-489e-8ed8-dc983cf8855d]invoked executor LearnerExecutor
+[E:487a1dfd-f832-4c67-9bbf-c64d133a039a][R:fabe6aa4-d7c7-464a-be43-2e16f41389d2][T:2024-09-12 09:21:45.580356][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:train#9ff046d9-c2c5-489e-8ed8-dc983cf8855d]submit result OK
+[E:02f78caf-cbec-421e-a729-bd202ce22413][R:1d653a0d-52d5-4d54-91e1-7335b3716be4][T:2024-09-12 09:21:49.692162][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:submit_model#423cfc7f-f9be-415b-822b-20b801fb1c5d]received task from server
+[E:ebacc1f3-0e1a-4977-8cd7-72ad63fd851c][T:2024-09-12 09:21:49.693367][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:submit_model#423cfc7f-f9be-415b-822b-20b801fb1c5d]invoked executor LearnerExecutor
+[E:6e14e711-37f8-4237-a1d8-bd9626f70efb][R:1d653a0d-52d5-4d54-91e1-7335b3716be4][T:2024-09-12 09:21:49.698549][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:submit_model#423cfc7f-f9be-415b-822b-20b801fb1c5d]submit result OK
+[E:7ca163d1-ea5b-454f-8e68-0b253ff19fe3][R:b5477a50-c95d-4ce5-98f5-309c8cda64b2][T:2024-09-12 09:21:51.743941][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:validate#40b62ae4-d6f0-4a3a-862d-a895042fc61c]received task from server
+[E:02ee3ea5-b8a3-44ff-b5b7-23699fd3f82f][T:2024-09-12 09:21:51.744848][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:validate#40b62ae4-d6f0-4a3a-862d-a895042fc61c]invoked executor LearnerExecutor
+[E:bf587709-5afd-408e-a206-94490d065c3b][R:b5477a50-c95d-4ce5-98f5-309c8cda64b2][T:2024-09-12 09:21:51.770856][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:validate#40b62ae4-d6f0-4a3a-862d-a895042fc61c]submit result OK
+[E:082b577c-bc37-4c4e-bfbc-9435adb8e911][R:b971d459-7184-4b0d-9bff-126791c50137][T:2024-09-12 09:21:53.809664][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:validate#6676fa9d-04c4-488b-ba9b-6002cc808b97]received task from server
+[E:4f0d80a2-5fc1-44b1-ad7f-dd289c54fa60][T:2024-09-12 09:21:53.810587][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:validate#6676fa9d-04c4-488b-ba9b-6002cc808b97]invoked executor LearnerExecutor
+[E:6c98e279-6575-4f14-b0ce-350cf5aa60cb][R:b971d459-7184-4b0d-9bff-126791c50137][T:2024-09-12 09:21:53.837257][J:012ea13a-57c9-478b-a0a2-f3f911458d40][A:validate#6676fa9d-04c4-488b-ba9b-6002cc808b97]submit result OK
+[E:63aac271-8390-4fe6-99d4-0d4c84d02403][T:2024-09-12 09:21:55.859244][U:][A:train.notify_job_status]
+[E:468e5860-c676-48df-85b2-9568bf9689d4][T:2024-09-12 09:49:41.615665][U:admin@nvidia.com][A:train.deploy]
+[E:b3cd1199-8dfd-4c0a-99db-8114474c457b][T:2024-09-12 09:49:41.989630][U:][A:train.start_job]
+[E:c75ab04e-de30-40bf-bded-700768c32b93][T:2024-09-12 09:50:11.290621][U:][A:train.notify_job_status]
+[E:e39c6bfa-59b1-4e64-a797-73b01d307d09][R:e3dd6b1c-9848-4e43-be20-80c365eecd76][T:2024-09-12 09:51:16.305999][J:dc52351d-ba07-490f-ab2b-b9ba262f590c][A:get_weights#8556c1e9-0dd8-4f53-994e-255b537be663]received task from server
+[E:51ec8383-2538-4efb-81bf-9f1d481ec316][T:2024-09-12 09:51:16.308429][J:dc52351d-ba07-490f-ab2b-b9ba262f590c][A:get_weights#8556c1e9-0dd8-4f53-994e-255b537be663]invoked executor LearnerExecutor
+[E:11452535-11ef-49a9-b543-d16f8c2833c4][R:e3dd6b1c-9848-4e43-be20-80c365eecd76][T:2024-09-12 09:51:16.358308][J:dc52351d-ba07-490f-ab2b-b9ba262f590c][A:get_weights#8556c1e9-0dd8-4f53-994e-255b537be663]submit result OK
+[E:fe5fa204-0749-465f-b251-b58bb547ef15][R:b2753bcf-97a8-408a-a115-a202d4766d98][T:2024-09-12 09:51:18.399326][J:dc52351d-ba07-490f-ab2b-b9ba262f590c][A:train#5e446aed-985b-4888-81eb-2e1c20d25a8e]received task from server
+[E:cda29046-6857-4850-8dba-6b8210cf3f29][T:2024-09-12 09:51:18.400223][J:dc52351d-ba07-490f-ab2b-b9ba262f590c][A:train#5e446aed-985b-4888-81eb-2e1c20d25a8e]invoked executor LearnerExecutor
+[E:d9c1ecd1-fa71-412b-ac9e-7a3ff40d966f][T:2024-09-12 10:06:11.714783][U:admin@nvidia.com][A:train.deploy]
+[E:40d47267-3175-42ed-98e5-eae38f2e4fc2][T:2024-09-12 10:06:11.764315][U:][A:train.start_job]
+[E:a4768833-e486-459f-8103-3fabfce630cf][T:2024-09-12 10:06:37.728966][U:][A:train.notify_job_status]
+[E:3824317e-dc58-4bae-8ce0-6d28865741c4][R:8efa0113-5de1-4334-b081-4aaa959048fe][T:2024-09-12 10:06:38.259767][J:69f59684-ddf8-491e-a286-69f4e31365aa][A:get_weights#a3c1cfcf-e900-43f8-af70-47711554f55d]received task from server
+[E:dd1232c6-ae98-4312-b6a4-797f689ebe7e][T:2024-09-12 10:06:38.260464][J:69f59684-ddf8-491e-a286-69f4e31365aa][A:get_weights#a3c1cfcf-e900-43f8-af70-47711554f55d]invoked executor LearnerExecutor
+[E:df8cd52c-4b55-473e-bd3d-961d802af313][R:8efa0113-5de1-4334-b081-4aaa959048fe][T:2024-09-12 10:06:38.284186][J:69f59684-ddf8-491e-a286-69f4e31365aa][A:get_weights#a3c1cfcf-e900-43f8-af70-47711554f55d]submit result OK
+[E:0fcff8b4-9d7a-4613-ae85-2ac47985ad2c][R:84458eec-dfc8-4571-add9-4e9098fab036][T:2024-09-12 10:06:40.321881][J:69f59684-ddf8-491e-a286-69f4e31365aa][A:train#3c81a8e5-d585-4bb9-9278-cfc1844ff46d]received task from server
+[E:bf0a6afc-9569-43fb-883f-74b16051d754][T:2024-09-12 10:06:40.322688][J:69f59684-ddf8-491e-a286-69f4e31365aa][A:train#3c81a8e5-d585-4bb9-9278-cfc1844ff46d]invoked executor LearnerExecutor
+[E:4dffcb5a-7275-4888-8844-10bb85b3fa8f][R:84458eec-dfc8-4571-add9-4e9098fab036][T:2024-09-12 10:06:40.692495][J:69f59684-ddf8-491e-a286-69f4e31365aa][A:train#3c81a8e5-d585-4bb9-9278-cfc1844ff46d]submit result: EXECUTION_EXCEPTION
+[E:8c9d800d-636a-4544-8dac-b871a8953b5b][T:2024-09-12 10:06:42.789354][U:][A:train.notify_job_status]
+[E:b51130dd-2981-4dec-87ec-911ec01f634a][T:2024-09-12 10:06:46.617957][U:][A:train.abort]
+[E:443ca792-6096-4365-9dea-7c7c8f065e7d][R:b2753bcf-97a8-408a-a115-a202d4766d98][T:2024-09-12 10:07:17.475721][J:dc52351d-ba07-490f-ab2b-b9ba262f590c][A:train#5e446aed-985b-4888-81eb-2e1c20d25a8e]submit result: EXECUTION_EXCEPTION
+[E:9530078d-b74e-4c12-ad53-9d6ede9387e7][T:2024-09-12 10:07:19.645863][U:][A:train.notify_job_status]
+[E:13d18eb2-dc85-48f5-9678-801c97c55adf][T:2024-09-12 10:07:24.425167][U:][A:train.abort]
+[E:945f3759-faac-498d-87da-bdb12d67aa11][T:2024-09-12 10:09:26.821973][U:admin@nvidia.com][A:train.deploy]
+[E:ca51f0a4-a299-4bea-8520-1a8ec1af2c61][T:2024-09-12 10:09:26.842548][U:][A:train.start_job]
+[E:6b8939f3-f541-47d7-af84-27a174e294ae][T:2024-09-12 10:09:34.778066][U:][A:train.notify_job_status]
+[E:c1aef116-bc0a-41c6-9b13-5258ffc4e7dd][R:f81ec7d7-2b15-4746-a0fa-48eb64b85770][T:2024-09-12 10:09:35.316319][J:bff18280-bb59-489d-b048-a1e3e98e795b][A:get_weights#4ff9b123-1e2d-4e3f-bf1e-8ffb9c8f60fa]received task from server
+[E:70cee991-c8fa-4df0-bad7-be7f733dcb96][T:2024-09-12 10:09:35.317171][J:bff18280-bb59-489d-b048-a1e3e98e795b][A:get_weights#4ff9b123-1e2d-4e3f-bf1e-8ffb9c8f60fa]invoked executor LearnerExecutor
+[E:67a2ff64-e207-4954-88ba-7fc91ea85e54][R:f81ec7d7-2b15-4746-a0fa-48eb64b85770][T:2024-09-12 10:09:35.334347][J:bff18280-bb59-489d-b048-a1e3e98e795b][A:get_weights#4ff9b123-1e2d-4e3f-bf1e-8ffb9c8f60fa]submit result OK
+[E:e9c4c677-86b0-4430-8b74-d0c92ef41199][R:3d3694aa-f59f-44c5-8f40-e4167c5d8d78][T:2024-09-12 10:09:37.367834][J:bff18280-bb59-489d-b048-a1e3e98e795b][A:train#b25c3b7a-bc3c-4ce7-be72-305d17c18d50]received task from server
+[E:452951e1-2ac4-48cc-929b-554ee3509c93][T:2024-09-12 10:09:37.369204][J:bff18280-bb59-489d-b048-a1e3e98e795b][A:train#b25c3b7a-bc3c-4ce7-be72-305d17c18d50]invoked executor LearnerExecutor
+[E:9c5226db-fcfc-4d8a-9e65-640bb73143a2][R:3d3694aa-f59f-44c5-8f40-e4167c5d8d78][T:2024-09-12 10:09:38.153916][J:bff18280-bb59-489d-b048-a1e3e98e795b][A:train#b25c3b7a-bc3c-4ce7-be72-305d17c18d50]submit result: EXECUTION_EXCEPTION
+[E:8c281085-27db-4879-a142-e744b56a35c1][T:2024-09-12 10:09:40.236595][U:][A:train.notify_job_status]
+[E:8b7f9095-a103-47e1-8d1b-5120bea22adb][T:2024-09-12 10:09:44.477857][U:][A:train.abort]
+[E:782c2ac7-14a1-4151-ab89-c42910619b6a][T:2024-09-12 10:18:19.495304][U:admin@nvidia.com][A:train.deploy]
+[E:898a9c49-5605-4cd2-bc0c-42654fcab53d][T:2024-09-12 10:18:19.517187][U:][A:train.start_job]
+[E:02170951-8084-49b4-bf63-1ee405316cfc][T:2024-09-12 10:18:55.418357][U:][A:train.notify_job_status]
+[E:3f0bc13a-9892-47ff-af43-039d2e89396d][R:a3e7b35e-8663-4c67-88f6-c0d743b948bf][T:2024-09-12 10:18:55.957589][J:0aabdd4d-57dc-412f-bb58-403a11a89daf][A:get_weights#00b35708-433a-4d70-9a70-2c23fb44d90e]received task from server
+[E:b61ac704-fe75-4550-8c8e-b9cbbd6df843][T:2024-09-12 10:18:55.958399][J:0aabdd4d-57dc-412f-bb58-403a11a89daf][A:get_weights#00b35708-433a-4d70-9a70-2c23fb44d90e]invoked executor LearnerExecutor
+[E:91950c4a-1da4-4d41-9a38-ee04442a0643][R:a3e7b35e-8663-4c67-88f6-c0d743b948bf][T:2024-09-12 10:18:55.986489][J:0aabdd4d-57dc-412f-bb58-403a11a89daf][A:get_weights#00b35708-433a-4d70-9a70-2c23fb44d90e]submit result OK
+[E:ef623cd7-ba4c-4104-9eed-60fcf33a812f][R:0c397c2b-ee21-4a48-8fa4-3908f47d821c][T:2024-09-12 10:18:58.016615][J:0aabdd4d-57dc-412f-bb58-403a11a89daf][A:train#d5132443-e1a6-4fc9-b70f-9ff392672c97]received task from server
+[E:5e629aab-3a0a-4d40-8847-f92d961873a6][T:2024-09-12 10:18:58.017399][J:0aabdd4d-57dc-412f-bb58-403a11a89daf][A:train#d5132443-e1a6-4fc9-b70f-9ff392672c97]invoked executor LearnerExecutor
+[E:93304838-2949-46e8-b2fb-7a573ac8dc33][R:0c397c2b-ee21-4a48-8fa4-3908f47d821c][T:2024-09-12 10:19:00.871788][J:0aabdd4d-57dc-412f-bb58-403a11a89daf][A:train#d5132443-e1a6-4fc9-b70f-9ff392672c97]submit result: EXECUTION_EXCEPTION
+[E:33358818-9713-422c-8c22-61ebc8b83e5d][T:2024-09-12 10:19:02.964949][U:][A:train.notify_job_status]
+[E:56d63ffd-d35c-434b-b7fd-7d995a64e3f6][T:2024-09-12 10:19:07.335763][U:][A:train.abort]
+[E:07ce0bf2-e6c0-43cd-a3a4-e6310705b57c][T:2024-09-12 10:20:15.145335][U:admin@nvidia.com][A:train.deploy]
+[E:4b60f478-3976-426a-bc50-cd593b2bcfc9][T:2024-09-12 10:20:15.194755][U:][A:train.start_job]
+[E:324ff5ce-4c5c-4d3b-8228-3a1e44397359][T:2024-09-12 10:20:23.476174][U:][A:train.notify_job_status]
+[E:0da2fb6a-d933-499c-a598-544b1870a10d][R:d5a0d44a-3fe5-4479-8248-d488e34a0f1b][T:2024-09-12 10:20:24.014719][J:21e16786-2e58-443a-9458-c8ef1f4b90d7][A:get_weights#f62dfe13-bbea-4ece-b4d7-e7fcb6d913b4]received task from server
+[E:778f0345-2376-4f3e-ac69-059cb09ff4a1][T:2024-09-12 10:20:24.015574][J:21e16786-2e58-443a-9458-c8ef1f4b90d7][A:get_weights#f62dfe13-bbea-4ece-b4d7-e7fcb6d913b4]invoked executor LearnerExecutor
+[E:bf4bd760-82c6-4377-be82-dc9996954b8e][R:d5a0d44a-3fe5-4479-8248-d488e34a0f1b][T:2024-09-12 10:20:24.028668][J:21e16786-2e58-443a-9458-c8ef1f4b90d7][A:get_weights#f62dfe13-bbea-4ece-b4d7-e7fcb6d913b4]submit result OK
+[E:4a4bc582-633d-4ad6-979d-d15f453c2329][R:516a1867-9f87-435e-84b4-dced3954a3f2][T:2024-09-12 10:20:26.068642][J:21e16786-2e58-443a-9458-c8ef1f4b90d7][A:train#2a7a80d4-09d0-4544-af44-1a28321cf854]received task from server
+[E:1c1682e5-b4b3-4292-ae28-dadad371de69][T:2024-09-12 10:20:26.069561][J:21e16786-2e58-443a-9458-c8ef1f4b90d7][A:train#2a7a80d4-09d0-4544-af44-1a28321cf854]invoked executor LearnerExecutor
+[E:f586cafe-54c4-4f38-ad00-91d0f8c79233][R:516a1867-9f87-435e-84b4-dced3954a3f2][T:2024-09-12 10:20:26.841765][J:21e16786-2e58-443a-9458-c8ef1f4b90d7][A:train#2a7a80d4-09d0-4544-af44-1a28321cf854]submit result: EXECUTION_EXCEPTION
+[E:84236ea6-c192-43ad-8cd6-3f61af07172e][T:2024-09-12 10:20:28.929962][U:][A:train.notify_job_status]
+[E:d0b077b5-56b8-4d3d-bf6b-ab04b8933f10][T:2024-09-12 10:25:50.856938][U:admin@nvidia.com][A:train.deploy]
+[E:187739af-fd27-459d-8988-97526394c2fb][T:2024-09-12 10:25:50.880509][U:][A:train.start_job]
+[E:256b5acc-1a5b-4598-bb48-f11039e4f02f][T:2024-09-12 10:25:58.257073][U:][A:train.notify_job_status]
+[E:3f0740d1-b6f8-4f4e-971b-79d9128c2505][R:dd411a8e-ec50-4561-a765-b4c4e3ad0303][T:2024-09-12 10:25:58.796410][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:get_weights#4d45e707-b8c9-47f9-b3eb-d4b0b02a339b]received task from server
+[E:1535a02e-7148-43a6-8fb8-30c6cb4677ed][T:2024-09-12 10:25:58.797206][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:get_weights#4d45e707-b8c9-47f9-b3eb-d4b0b02a339b]invoked executor LearnerExecutor
+[E:39c5edc5-a19b-4a1b-a9ae-786e146d79cd][R:dd411a8e-ec50-4561-a765-b4c4e3ad0303][T:2024-09-12 10:25:58.812941][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:get_weights#4d45e707-b8c9-47f9-b3eb-d4b0b02a339b]submit result OK
+[E:2b157efb-a906-479f-87ab-5a9588eac09f][R:bb986405-be68-4fab-9558-7429e629f70b][T:2024-09-12 10:26:00.850455][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:train#5c28dd30-1894-47d4-a21e-714b80f72372]received task from server
+[E:ce26b5fb-d0c2-4683-a6d5-0acecff52497][T:2024-09-12 10:26:00.851257][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:train#5c28dd30-1894-47d4-a21e-714b80f72372]invoked executor LearnerExecutor
+[E:06510d48-0daa-4987-b8a7-cb20936ce609][R:bb986405-be68-4fab-9558-7429e629f70b][T:2024-09-12 10:26:02.313524][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:train#5c28dd30-1894-47d4-a21e-714b80f72372]submit result OK
+[E:66446b63-ca8d-42a6-b78f-cd77edcaa774][R:800831c5-011e-4d18-a42d-a7d757b1cecb][T:2024-09-12 10:26:06.417472][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:train#6c76d229-e670-46e3-81bb-10afa22cf32e]received task from server
+[E:4c755ea7-6529-4f27-80fb-f35d723df27c][T:2024-09-12 10:26:06.418075][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:train#6c76d229-e670-46e3-81bb-10afa22cf32e]invoked executor LearnerExecutor
+[E:81fb4f9b-c4ac-4079-a988-ae5f298a7a12][R:800831c5-011e-4d18-a42d-a7d757b1cecb][T:2024-09-12 10:26:07.378948][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:train#6c76d229-e670-46e3-81bb-10afa22cf32e]submit result OK
+[E:e13fa492-7ed7-4df1-a8ae-59a48e302d22][R:6fc23c83-82ad-4db8-8320-95b8b6a04a67][T:2024-09-12 10:26:13.510200][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:submit_model#85674ea1-67fa-4017-ac52-90fd4d398d6f]received task from server
+[E:cc8855c8-9993-4148-8c22-4f34878c1ab1][T:2024-09-12 10:26:13.511391][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:submit_model#85674ea1-67fa-4017-ac52-90fd4d398d6f]invoked executor LearnerExecutor
+[E:d6962e2f-ed8a-4ef2-a0c1-b4bc71429e94][R:6fc23c83-82ad-4db8-8320-95b8b6a04a67][T:2024-09-12 10:26:13.515633][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:submit_model#85674ea1-67fa-4017-ac52-90fd4d398d6f]submit result OK
+[E:4a6b50d5-3d3b-48fb-940d-96254855a52b][R:82e61969-b13d-4ad0-be36-e0ebcec12ad1][T:2024-09-12 10:26:15.563809][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:validate#874d3914-39f9-49b5-9599-8bd0a5ee7de7]received task from server
+[E:283d49c1-e274-444c-8fc1-b45f87669f39][T:2024-09-12 10:26:15.564746][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:validate#874d3914-39f9-49b5-9599-8bd0a5ee7de7]invoked executor LearnerExecutor
+[E:83e9d551-3a6e-415d-966c-07dec72c3c4d][R:82e61969-b13d-4ad0-be36-e0ebcec12ad1][T:2024-09-12 10:26:15.593192][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:validate#874d3914-39f9-49b5-9599-8bd0a5ee7de7]submit result OK
+[E:cc20ceca-1891-43a4-8adf-6092070ee4da][R:000d6b78-0f4e-46c8-8ce7-4d25a443b598][T:2024-09-12 10:26:17.640906][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:validate#f8af5d7b-4ca7-4be7-89de-b3a0c8450c55]received task from server
+[E:c4e86b41-a5b2-4612-b5f2-035fad45e316][T:2024-09-12 10:26:17.641786][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:validate#f8af5d7b-4ca7-4be7-89de-b3a0c8450c55]invoked executor LearnerExecutor
+[E:af5b154e-a5bd-4a9d-8f51-2867f9e7805a][R:000d6b78-0f4e-46c8-8ce7-4d25a443b598][T:2024-09-12 10:26:17.676679][J:5556e356-4db6-4f20-a48d-dd9450b5ef92][A:validate#f8af5d7b-4ca7-4be7-89de-b3a0c8450c55]submit result OK
+[E:37a36f3d-8f8d-408b-b99a-8c50a9177947][T:2024-09-12 10:26:19.702203][U:][A:train.notify_job_status]
+[E:a3d269a8-1d7c-4105-8b5a-5a7c75d17fa0][T:2024-09-12 10:31:16.719077][U:admin@nvidia.com][A:train.deploy]
+[E:e801c0d6-bd48-4df4-b60b-cd5a028a2d6c][T:2024-09-12 10:31:16.752462][U:][A:train.start_job]
+[E:fe13ee51-3b21-43b6-a058-71e43a66a390][T:2024-09-12 10:31:56.200982][U:][A:train.notify_job_status]
+[E:6f6f4f6d-8145-4714-aa4d-cc05f56bda48][R:12005d92-db9b-4103-81bf-60f19996fc83][T:2024-09-12 10:31:56.737378][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:get_weights#5b6c814e-7e64-4bf3-9f66-594187c7a991]received task from server
+[E:d9930d79-7abf-4d1e-879b-2a60bbf93f1e][T:2024-09-12 10:31:56.738174][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:get_weights#5b6c814e-7e64-4bf3-9f66-594187c7a991]invoked executor LearnerExecutor
+[E:96b9a470-8917-4052-bbde-b6e528d33b57][R:12005d92-db9b-4103-81bf-60f19996fc83][T:2024-09-12 10:31:56.767516][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:get_weights#5b6c814e-7e64-4bf3-9f66-594187c7a991]submit result OK
+[E:b3e5609a-97fa-4dbb-9449-17b97ca04b17][R:10773999-87e1-49f5-bded-35346d81f9c7][T:2024-09-12 10:31:58.807675][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:train#d0c75655-69d7-43e7-b1f6-94281f425fea]received task from server
+[E:1091ea60-a274-499c-8466-1af719d8a370][T:2024-09-12 10:31:58.808605][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:train#d0c75655-69d7-43e7-b1f6-94281f425fea]invoked executor LearnerExecutor
+[E:95dc26a7-cbd3-4f7d-84d5-926884825356][R:10773999-87e1-49f5-bded-35346d81f9c7][T:2024-09-12 10:32:02.680711][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:train#d0c75655-69d7-43e7-b1f6-94281f425fea]submit result OK
+[E:9e7f3d92-a9c7-4730-a4f2-d56dba7688d4][R:6d9d607a-6ba1-45e4-a5c9-fd63dc1c7944][T:2024-09-12 10:32:04.789567][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:train#3d549b78-8f1c-4e9f-8a07-dd9a75081940]received task from server
+[E:ebf3a939-d342-48c7-a2fc-ed4fdb585486][T:2024-09-12 10:32:04.790497][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:train#3d549b78-8f1c-4e9f-8a07-dd9a75081940]invoked executor LearnerExecutor
+[E:9e43ddb7-9a0f-4f1a-9039-e58a6ddf2648][R:6d9d607a-6ba1-45e4-a5c9-fd63dc1c7944][T:2024-09-12 10:32:06.039142][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:train#3d549b78-8f1c-4e9f-8a07-dd9a75081940]submit result OK
+[E:5c60bdc1-ee0f-4360-bd3b-838e21e5d72c][R:f45acdcf-de11-4b26-b782-6257dc40fe94][T:2024-09-12 10:32:08.151748][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:submit_model#edd218c2-6c93-45db-a395-1b707d5edda3]received task from server
+[E:b9521c10-8b98-494a-9f80-967480a34a1c][T:2024-09-12 10:32:08.152838][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:submit_model#edd218c2-6c93-45db-a395-1b707d5edda3]invoked executor LearnerExecutor
+[E:eba7851d-e665-496c-a7e3-e70ed7c15d26][R:f45acdcf-de11-4b26-b782-6257dc40fe94][T:2024-09-12 10:32:08.157824][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:submit_model#edd218c2-6c93-45db-a395-1b707d5edda3]submit result OK
+[E:156e767a-1a2f-4775-9331-92c4757d52e3][R:126ae635-45b0-4ef0-95fb-8c0ad30805cc][T:2024-09-12 10:32:10.202216][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:validate#d4bf023b-e433-46f0-8695-d7872258d0da]received task from server
+[E:01e83965-a13d-4161-be0a-1fd628564414][T:2024-09-12 10:32:10.203076][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:validate#d4bf023b-e433-46f0-8695-d7872258d0da]invoked executor LearnerExecutor
+[E:7d4b606f-ee55-4f2d-ad4c-98c99daf6f8c][R:126ae635-45b0-4ef0-95fb-8c0ad30805cc][T:2024-09-12 10:32:10.232478][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:validate#d4bf023b-e433-46f0-8695-d7872258d0da]submit result OK
+[E:b5173480-7278-4700-9777-d421a856c85d][R:758b3a05-0462-4def-80d7-d02ef3c16819][T:2024-09-12 10:32:12.267428][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:validate#cc494f43-fbe0-4631-8fe2-2c146575cec0]received task from server
+[E:a0a88933-5405-44a3-a655-e779448a7335][T:2024-09-12 10:32:12.267845][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:validate#cc494f43-fbe0-4631-8fe2-2c146575cec0]invoked executor LearnerExecutor
+[E:810fb3f7-ee99-4e55-b57e-09f1629d0202][R:758b3a05-0462-4def-80d7-d02ef3c16819][T:2024-09-12 10:32:12.306053][J:5edbbb2d-4337-4ed4-aa53-e43def359efd][A:validate#cc494f43-fbe0-4631-8fe2-2c146575cec0]submit result OK
+[E:62303a42-5c52-4d27-8827-22c54fafcd1b][T:2024-09-12 10:32:14.327384][U:][A:train.notify_job_status]
+[E:72abcd41-ee09-4266-9720-73a160ea27c5][T:2024-09-12 10:38:59.794971][U:admin@nvidia.com][A:train.deploy]
+[E:62a58535-97a2-46b0-b902-563b27f1ca8e][T:2024-09-12 10:38:59.818184][U:][A:train.start_job]
+[E:2165a43d-ca14-44f7-bffc-845c5f03ab50][T:2024-09-12 10:39:10.388368][U:][A:train.notify_job_status]
+[E:8f8cd264-ff4f-4b50-9653-4a752592a00f][R:dbc431b6-d1fe-44d9-8e6d-89df951b2726][T:2024-09-12 10:39:10.927476][J:c825c622-28c1-49f4-9507-011297c35e4d][A:get_weights#d584a78d-58ac-47e0-8c31-4c0dbf94080a]received task from server
+[E:667c8c9a-4cdf-49ae-88b1-c1f1f068b80a][T:2024-09-12 10:39:10.928276][J:c825c622-28c1-49f4-9507-011297c35e4d][A:get_weights#d584a78d-58ac-47e0-8c31-4c0dbf94080a]invoked executor LearnerExecutor
+[E:887e60e9-1102-4a24-93f2-7790350e1280][R:dbc431b6-d1fe-44d9-8e6d-89df951b2726][T:2024-09-12 10:39:10.945974][J:c825c622-28c1-49f4-9507-011297c35e4d][A:get_weights#d584a78d-58ac-47e0-8c31-4c0dbf94080a]submit result OK
+[E:99879d2b-b45b-4a64-b80d-d13ba9443c89][R:a8bbc0d6-646b-4c4d-ab2f-a3c0a9c7a1d0][T:2024-09-12 10:39:12.990150][J:c825c622-28c1-49f4-9507-011297c35e4d][A:train#ed65ac2d-c4f9-42a0-8d60-39601940f566]received task from server
+[E:b8dfc818-b9d8-45a8-bc6a-1114568c5d55][T:2024-09-12 10:39:12.991096][J:c825c622-28c1-49f4-9507-011297c35e4d][A:train#ed65ac2d-c4f9-42a0-8d60-39601940f566]invoked executor LearnerExecutor
+[E:c4b0ee50-fe6c-465e-a895-1ed410752cbb][R:a8bbc0d6-646b-4c4d-ab2f-a3c0a9c7a1d0][T:2024-09-12 10:39:13.366356][J:c825c622-28c1-49f4-9507-011297c35e4d][A:train#ed65ac2d-c4f9-42a0-8d60-39601940f566]submit result: EXECUTION_EXCEPTION
+[E:439278af-3565-4411-a724-08d21f3d06ac][T:2024-09-12 10:39:15.459981][U:][A:train.notify_job_status]
+[E:6309e9e5-73c9-4518-9545-3b026dd94b5a][T:2024-09-12 10:39:55.152680][U:admin@nvidia.com][A:train.deploy]
+[E:0f63853e-a184-441b-9594-fc6b17455d9c][T:2024-09-12 10:39:55.179300][U:][A:train.start_job]
+[E:c994209b-d43d-4799-893c-8acfb3ef13ae][T:2024-09-12 10:40:04.124891][U:][A:train.notify_job_status]
+[E:1c8f068d-2c9f-4687-84db-d166eb376124][R:fa463340-4e4c-4abe-8382-ae1ab2c1bf51][T:2024-09-12 10:40:04.664786][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:get_weights#5a1365ee-6e30-4c57-8c50-d1e564c78a11]received task from server
+[E:1798181c-4d0b-4e2e-a5c5-85b7b3fb4723][T:2024-09-12 10:40:04.665695][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:get_weights#5a1365ee-6e30-4c57-8c50-d1e564c78a11]invoked executor LearnerExecutor
+[E:65df8267-4796-47bd-a314-1c55ce12f717][R:fa463340-4e4c-4abe-8382-ae1ab2c1bf51][T:2024-09-12 10:40:04.679962][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:get_weights#5a1365ee-6e30-4c57-8c50-d1e564c78a11]submit result OK
+[E:2ad7cff6-22d5-4f82-b5a1-2a445eedd56b][R:de20aee7-7e4a-4372-aaf1-6eb1ccc23368][T:2024-09-12 10:40:06.718284][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:train#c73c9216-779c-4c6c-a348-b4c657aa2f77]received task from server
+[E:0c17f0e9-63d5-4344-be13-9011d91de5e7][T:2024-09-12 10:40:06.719210][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:train#c73c9216-779c-4c6c-a348-b4c657aa2f77]invoked executor LearnerExecutor
+[E:a50b5dc9-ed42-4de7-bc5a-445d4fbf1b57][R:de20aee7-7e4a-4372-aaf1-6eb1ccc23368][T:2024-09-12 10:40:07.690782][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:train#c73c9216-779c-4c6c-a348-b4c657aa2f77]submit result OK
+[E:d81719d5-acec-4c66-b2e8-5a57b334de6f][R:55b92f16-356d-4930-b54a-2efe9d2907f0][T:2024-09-12 10:40:09.798736][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:train#3b8e8818-6b74-472c-bdd0-eeca41e509c1]received task from server
+[E:f17d8e77-0a5b-42a7-af40-3ddcb6fc9b4a][T:2024-09-12 10:40:09.799661][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:train#3b8e8818-6b74-472c-bdd0-eeca41e509c1]invoked executor LearnerExecutor
+[E:f96633a5-d5c8-4634-8955-151cbbdfd00c][R:55b92f16-356d-4930-b54a-2efe9d2907f0][T:2024-09-12 10:40:10.758771][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:train#3b8e8818-6b74-472c-bdd0-eeca41e509c1]submit result OK
+[E:5192effa-0ba1-44b8-9042-3a05fac4a0d1][R:658951b6-8fe7-47f1-a413-076ec2e16c47][T:2024-09-12 10:40:12.864487][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:submit_model#12117e21-24a4-4012-bf2b-dedfc52a7cf4]received task from server
+[E:b21640e4-4e42-42f4-8edf-90d9b01d1959][T:2024-09-12 10:40:12.865420][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:submit_model#12117e21-24a4-4012-bf2b-dedfc52a7cf4]invoked executor LearnerExecutor
+[E:77f79594-8ecd-421c-8ab8-5e386fadb6a8][R:658951b6-8fe7-47f1-a413-076ec2e16c47][T:2024-09-12 10:40:12.869360][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:submit_model#12117e21-24a4-4012-bf2b-dedfc52a7cf4]submit result OK
+[E:0b612545-41ad-4cce-b807-b6335aa72836][R:0e03a454-e2a8-46db-ae5f-4c81d64f39bc][T:2024-09-12 10:40:14.914710][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:validate#60e57896-3152-46b1-9387-c683463c5033]received task from server
+[E:7c7cb37e-1720-4bc3-ba06-59aa0f59424a][T:2024-09-12 10:40:14.915938][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:validate#60e57896-3152-46b1-9387-c683463c5033]invoked executor LearnerExecutor
+[E:f0217960-a73b-4eea-8abb-5d7cf45166dc][R:0e03a454-e2a8-46db-ae5f-4c81d64f39bc][T:2024-09-12 10:40:14.945519][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:validate#60e57896-3152-46b1-9387-c683463c5033]submit result OK
+[E:c6b6f212-6a49-462d-99e1-923e0816ea77][R:8672bfde-ee0b-4c7d-888c-fad7a1a93e22][T:2024-09-12 10:40:16.986063][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:validate#c1eae6ce-0021-4831-86df-fb68e1f096f8]received task from server
+[E:93a40282-33c1-4838-acf1-47bc401fe287][T:2024-09-12 10:40:16.986861][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:validate#c1eae6ce-0021-4831-86df-fb68e1f096f8]invoked executor LearnerExecutor
+[E:ed0fb0f9-73ad-41bb-9b8d-c484f4fbb1b9][R:8672bfde-ee0b-4c7d-888c-fad7a1a93e22][T:2024-09-12 10:40:17.014195][J:91dea326-8d11-4fdc-9bd8-2073f45adef8][A:validate#c1eae6ce-0021-4831-86df-fb68e1f096f8]submit result OK
+[E:aa883721-345f-474f-b2b0-5d324f7f87bf][T:2024-09-12 10:40:19.039576][U:][A:train.notify_job_status]
+[E:fa28f6fa-adbc-4786-af99-26e3093b743b][T:2024-09-12 10:41:21.021184][U:][A:train.abort]
+[E:069868c3-30ca-4c64-8856-9903c0f45f75][T:2024-09-12 10:46:17.141357][U:admin@nvidia.com][A:train.deploy]
+[E:c9e12cb5-7378-4fd5-b5c9-88a8dd68068e][T:2024-09-12 10:46:17.176262][U:][A:train.start_job]
+[E:b7b5f6c4-fa26-483b-aac9-bdb74b89a81c][T:2024-09-12 10:46:58.541301][U:][A:train.notify_job_status]
+[E:076a2151-5e80-49d5-a132-2a3f28a179a5][R:a6f9fd04-b8de-4298-92bf-362820798659][T:2024-09-12 10:46:59.084037][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:get_weights#f6306171-6dc9-497c-b82c-7f7c912b1e0e]received task from server
+[E:2224f7f9-3b9e-426b-bfad-0af1c8a4ed83][T:2024-09-12 10:46:59.084904][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:get_weights#f6306171-6dc9-497c-b82c-7f7c912b1e0e]invoked executor LearnerExecutor
+[E:638eb0b9-82db-49db-b581-6997a67d95b3][R:a6f9fd04-b8de-4298-92bf-362820798659][T:2024-09-12 10:46:59.113247][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:get_weights#f6306171-6dc9-497c-b82c-7f7c912b1e0e]submit result OK
+[E:84e7c271-0c5c-4a0a-b373-15c0950c9c92][R:82ee145d-4e52-4810-b50c-6adbf24ecc47][T:2024-09-12 10:47:01.153562][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:train#605d9eb4-2f1a-4f5f-8668-f3e965d17ad1]received task from server
+[E:1c5fa588-b976-4a05-8efa-f2446b3c22f1][T:2024-09-12 10:47:01.154513][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:train#605d9eb4-2f1a-4f5f-8668-f3e965d17ad1]invoked executor LearnerExecutor
+[E:99019662-223a-415a-9480-48a6b12a7eac][R:82ee145d-4e52-4810-b50c-6adbf24ecc47][T:2024-09-12 10:47:02.123692][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:train#605d9eb4-2f1a-4f5f-8668-f3e965d17ad1]submit result OK
+[E:821155a8-ce48-408c-8c40-3854b159bcc9][R:50654a7d-a863-4be0-8f4f-a9d1e42d2fe4][T:2024-09-12 10:47:04.279623][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:train#3a63a8a7-206b-429d-81db-c1bb72198616]received task from server
+[E:06832c9d-ad53-4586-802d-dfeed7e8452b][T:2024-09-12 10:47:04.280560][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:train#3a63a8a7-206b-429d-81db-c1bb72198616]invoked executor LearnerExecutor
+[E:3eba1be2-eb02-4eb8-939d-8dc3c90374ac][R:50654a7d-a863-4be0-8f4f-a9d1e42d2fe4][T:2024-09-12 10:47:05.202296][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:train#3a63a8a7-206b-429d-81db-c1bb72198616]submit result OK
+[E:ec8f550b-f645-41b4-a26d-f585c8850a5a][R:30b8ff7a-c823-431e-b350-435e57339763][T:2024-09-12 10:47:07.312048][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:submit_model#6553776c-61ae-4961-a6e4-d173b9ed02e3]received task from server
+[E:719d0451-e4c9-47b3-bab9-f9509671d034][T:2024-09-12 10:47:07.313419][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:submit_model#6553776c-61ae-4961-a6e4-d173b9ed02e3]invoked executor LearnerExecutor
+[E:55375346-824e-4b6d-9f60-1d5a2241f140][R:30b8ff7a-c823-431e-b350-435e57339763][T:2024-09-12 10:47:07.318777][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:submit_model#6553776c-61ae-4961-a6e4-d173b9ed02e3]submit result OK
+[E:f39bf2d5-9564-4ab0-8e9b-a76823b78438][R:93df5e26-ec28-42ba-8c15-b3c8f11a40c6][T:2024-09-12 10:47:09.362342][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:validate#d89783bf-c0eb-4576-8c73-e7a8ac57577a]received task from server
+[E:d5382899-6199-4acf-95c0-e1d884ebeddf][T:2024-09-12 10:47:09.362957][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:validate#d89783bf-c0eb-4576-8c73-e7a8ac57577a]invoked executor LearnerExecutor
+[E:12548bf9-ab30-43a0-bd74-f68af8b2b39f][R:93df5e26-ec28-42ba-8c15-b3c8f11a40c6][T:2024-09-12 10:47:09.395308][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:validate#d89783bf-c0eb-4576-8c73-e7a8ac57577a]submit result OK
+[E:c40cc5d8-cfff-4e0a-8c27-41afd6e899b5][R:799717c1-6e73-4cfe-a394-aae008059fcc][T:2024-09-12 10:47:11.434731][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:validate#113f1c4d-1afa-40cd-9a7d-f5efdb9650e0]received task from server
+[E:2264a17a-f2e3-4306-9390-49de906b4bdb][T:2024-09-12 10:47:11.435651][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:validate#113f1c4d-1afa-40cd-9a7d-f5efdb9650e0]invoked executor LearnerExecutor
+[E:fd2a70e8-51d3-4f1e-aece-e8ffb0fb1a66][R:799717c1-6e73-4cfe-a394-aae008059fcc][T:2024-09-12 10:47:11.463857][J:94b33f7a-d63d-4f84-87e9-2357a79e973a][A:validate#113f1c4d-1afa-40cd-9a7d-f5efdb9650e0]submit result OK
+[E:a454b687-2222-4d62-84df-4df19426b380][T:2024-09-12 10:47:13.483843][U:][A:train.notify_job_status]
+[E:e44ba482-8db2-4a34-948b-54ed20371f09][T:2024-09-12 10:49:14.340557][U:admin@nvidia.com][A:train.deploy]
+[E:66f1aa0e-22c6-40b5-8440-b3856e1150ab][T:2024-09-12 10:49:14.372381][U:][A:train.start_job]
+[E:f1ca78c2-9298-4626-9596-f8fb670866eb][T:2024-09-12 10:49:24.663259][U:][A:train.notify_job_status]
+[E:f89974ae-52a4-4285-9a8a-4b11e87131f8][R:21767703-509a-4f02-894b-6b3df79372ed][T:2024-09-12 10:49:25.214088][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:get_weights#9567a48b-203f-4b28-a96f-cd30409a8480]received task from server
+[E:2b4cc364-cb31-4046-99cc-f63d0e4df8df][T:2024-09-12 10:49:25.214896][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:get_weights#9567a48b-203f-4b28-a96f-cd30409a8480]invoked executor LearnerExecutor
+[E:b91df201-f0a9-4d6e-85c4-bc50bf8f1f01][R:21767703-509a-4f02-894b-6b3df79372ed][T:2024-09-12 10:49:25.231349][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:get_weights#9567a48b-203f-4b28-a96f-cd30409a8480]submit result OK
+[E:3acfc1df-6a5f-40dd-8948-98903aa6dc0e][R:0dcf1216-fe00-4b42-8d13-594b79d4801b][T:2024-09-12 10:49:27.266029][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:train#c3260ba9-0662-439b-babf-4bd5c661a006]received task from server
+[E:4abad4af-06e3-47ed-9efe-76548d7ff6b9][T:2024-09-12 10:49:27.266801][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:train#c3260ba9-0662-439b-babf-4bd5c661a006]invoked executor LearnerExecutor
+[E:2a75d617-8f49-4fc9-ae01-ecbf57f37bc6][R:0dcf1216-fe00-4b42-8d13-594b79d4801b][T:2024-09-12 10:49:28.221213][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:train#c3260ba9-0662-439b-babf-4bd5c661a006]submit result OK
+[E:773c1342-bd1b-4e2b-850b-3d18d82e88c4][R:cd11e98d-f6b7-4049-bc09-685b44441c0c][T:2024-09-12 10:49:30.348166][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:train#24359d52-ead8-453c-b269-0fce7f3b660e]received task from server
+[E:a95855bf-2e90-44a7-93bd-d9829607db1c][T:2024-09-12 10:49:30.348633][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:train#24359d52-ead8-453c-b269-0fce7f3b660e]invoked executor LearnerExecutor
+[E:6c4d3506-6a34-495a-818a-dd4410acfef1][R:cd11e98d-f6b7-4049-bc09-685b44441c0c][T:2024-09-12 10:49:31.386487][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:train#24359d52-ead8-453c-b269-0fce7f3b660e]submit result OK
+[E:6ce2ab4a-746b-495e-88ab-7896ed7e8d3a][R:a9631b6e-478e-4da6-a037-c465e37de38f][T:2024-09-12 10:49:33.489114][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:submit_model#c36a5243-6bb3-42df-a8e5-940052466492]received task from server
+[E:8128f081-b792-43cb-b519-5d9aa40108b4][T:2024-09-12 10:49:33.490008][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:submit_model#c36a5243-6bb3-42df-a8e5-940052466492]invoked executor LearnerExecutor
+[E:a9bff141-a4fa-4f56-aeb7-5a0f1c04a012][R:a9631b6e-478e-4da6-a037-c465e37de38f][T:2024-09-12 10:49:33.494188][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:submit_model#c36a5243-6bb3-42df-a8e5-940052466492]submit result OK
+[E:36f232ed-2062-409b-a081-e53b47dce15b][R:2f126446-2ee4-4bda-aba5-51fcd80dd75b][T:2024-09-12 10:49:35.527757][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:validate#21472f90-006f-49f2-99da-56791f0587d0]received task from server
+[E:d8d871e5-315a-4323-874c-80a88be9a6ac][T:2024-09-12 10:49:35.528400][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:validate#21472f90-006f-49f2-99da-56791f0587d0]invoked executor LearnerExecutor
+[E:e5a7ee08-a730-4296-a920-7743c5d059cd][R:2f126446-2ee4-4bda-aba5-51fcd80dd75b][T:2024-09-12 10:50:39.949882][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:validate#21472f90-006f-49f2-99da-56791f0587d0]submit result OK
+[E:181a494f-ec5a-466e-995d-f73f7ea52a0f][R:1af52a4c-5143-4673-9bcc-172664132223][T:2024-09-12 10:50:41.998818][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:validate#2a67f50d-c32f-4341-abd5-4d10d71a9e33]received task from server
+[E:9874a5e3-4aff-45bc-9d1f-6d75bb2b8b85][T:2024-09-12 10:50:41.999611][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:validate#2a67f50d-c32f-4341-abd5-4d10d71a9e33]invoked executor LearnerExecutor
+[E:6a5a6b1b-5403-4292-8247-6f05fbb2eea4][R:1af52a4c-5143-4673-9bcc-172664132223][T:2024-09-12 10:50:57.543705][J:f91933d5-7554-45fa-997b-9a97ffedcbea][A:validate#2a67f50d-c32f-4341-abd5-4d10d71a9e33]submit result OK
+[E:cb36ae19-19bf-44f6-a627-2156d5ea9837][T:2024-09-12 10:50:59.575898][U:][A:train.notify_job_status]
+[E:6b66f903-bb9c-4870-b64f-69a5ee55ae67][T:2024-09-12 10:52:10.351599][U:admin@nvidia.com][A:train.deploy]
+[E:574d025a-a6c1-46b7-b3f7-70488c6c43d2][T:2024-09-12 10:52:10.375202][U:][A:train.start_job]
+[E:73d7516e-3c8d-4443-b17a-1107f59cd3c8][T:2024-09-12 10:52:19.497346][U:][A:train.notify_job_status]
+[E:97251d10-8e03-475c-b19e-7c631325b53a][R:f6700f84-481c-4a02-b9ba-579211425fc3][T:2024-09-12 10:52:20.035299][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:get_weights#aa3d0ce2-a291-46f0-89d1-cc05776af553]received task from server
+[E:52c8283d-fbb3-48bd-ad09-6240423d1122][T:2024-09-12 10:52:20.036083][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:get_weights#aa3d0ce2-a291-46f0-89d1-cc05776af553]invoked executor LearnerExecutor
+[E:45210576-847c-4c9a-be22-8f186a8f2c9d][R:f6700f84-481c-4a02-b9ba-579211425fc3][T:2024-09-12 10:52:20.050830][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:get_weights#aa3d0ce2-a291-46f0-89d1-cc05776af553]submit result OK
+[E:3df56aff-65a1-40e0-9ba7-612eb8cef271][R:543fe3c6-54bf-477b-b784-980cc5a86bff][T:2024-09-12 10:52:22.077255][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:train#87ee064e-3aa4-4255-bbf9-ece0c5fd69a9]received task from server
+[E:a383a146-990e-4f56-83f7-b23883c10187][T:2024-09-12 10:52:22.077719][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:train#87ee064e-3aa4-4255-bbf9-ece0c5fd69a9]invoked executor LearnerExecutor
+[E:09199813-0c47-4e42-bb2e-b9f7e5e738c6][R:543fe3c6-54bf-477b-b784-980cc5a86bff][T:2024-09-12 10:52:23.116427][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:train#87ee064e-3aa4-4255-bbf9-ece0c5fd69a9]submit result OK
+[E:673495bd-de44-4fed-b7dc-0d6f1cd052ae][R:e611eff9-ab73-49a7-adaf-495bf852084d][T:2024-09-12 10:52:25.219647][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:train#66c13a2d-a11e-43ab-803b-587497f07759]received task from server
+[E:663b1f83-a020-4164-90cb-cd140d30170b][T:2024-09-12 10:52:25.220307][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:train#66c13a2d-a11e-43ab-803b-587497f07759]invoked executor LearnerExecutor
+[E:7bc48c6c-4b6a-4ffb-ba99-ca581884af21][R:e611eff9-ab73-49a7-adaf-495bf852084d][T:2024-09-12 10:52:26.173340][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:train#66c13a2d-a11e-43ab-803b-587497f07759]submit result OK
+[E:fc33b993-24c7-4b21-aaba-cce75a88b73b][R:c12c6f60-db93-49cc-9d4f-f4f6ca4981f8][T:2024-09-12 10:52:28.280616][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:submit_model#1a172f47-f35f-4897-afba-a8c1f1821fec]received task from server
+[E:7bc95b71-953c-4dd6-9cb0-a9944b9efdad][T:2024-09-12 10:52:28.281548][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:submit_model#1a172f47-f35f-4897-afba-a8c1f1821fec]invoked executor LearnerExecutor
+[E:af51d011-c799-475d-bb3c-7565a061de2f][R:c12c6f60-db93-49cc-9d4f-f4f6ca4981f8][T:2024-09-12 10:52:28.284999][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:submit_model#1a172f47-f35f-4897-afba-a8c1f1821fec]submit result OK
+[E:baaa66d2-ea46-41d9-84f2-ac9e6db94d65][R:d4876d22-7481-4c69-8dd6-91d612c34ff7][T:2024-09-12 10:52:30.333011][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:validate#21dc540d-de09-4c6d-b068-424b788718ec]received task from server
+[E:6e4bf0bc-06d5-4f4b-a3ba-290a4c033c6c][T:2024-09-12 10:52:30.336207][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:validate#21dc540d-de09-4c6d-b068-424b788718ec]invoked executor LearnerExecutor
+[E:f02cd408-b8c4-46fc-9829-de58668b801c][R:d4876d22-7481-4c69-8dd6-91d612c34ff7][T:2024-09-12 10:52:30.381694][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:validate#21dc540d-de09-4c6d-b068-424b788718ec]submit result OK
+[E:cabe675e-d6a1-4d5f-a6fb-8e691063c3f0][R:e0514f29-958f-4553-94dd-9ee9bcdc8d18][T:2024-09-12 10:52:32.429179][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:validate#e0f70173-baeb-4b1d-be5e-399aef51d97c]received task from server
+[E:db817c96-9329-4320-ab23-845dcab905af][T:2024-09-12 10:52:32.429990][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:validate#e0f70173-baeb-4b1d-be5e-399aef51d97c]invoked executor LearnerExecutor
+[E:55beffad-539c-4960-97a4-9b31b18bc236][R:e0514f29-958f-4553-94dd-9ee9bcdc8d18][T:2024-09-12 10:52:32.457306][J:d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4][A:validate#e0f70173-baeb-4b1d-be5e-399aef51d97c]submit result OK
+[E:e759ebfa-ae10-499e-a315-74a92c147c9d][T:2024-09-12 10:52:34.480120][U:][A:train.notify_job_status]
+[E:b5b7ab39-2286-4007-ac88-892092481b6e][T:2024-09-12 10:54:45.131216][U:admin@nvidia.com][A:train.deploy]
+[E:232c4792-aa4e-40e4-b4e8-e8510cc90e60][T:2024-09-12 10:54:45.155386][U:][A:train.start_job]
+[E:cf6fdc17-8d31-4199-b902-ee8f04f549c8][T:2024-09-12 10:54:54.532242][U:][A:train.notify_job_status]
+[E:225587d7-56f1-4151-8f49-ce316f03e33d][R:e77b6188-0bf4-465d-a7f8-10c6db185286][T:2024-09-12 10:54:55.068829][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:get_weights#e01e1d38-156e-4c2a-8ef6-3f5c0401c539]received task from server
+[E:f46c9ba3-ab35-4bcc-a5ed-2fba19a51b3c][T:2024-09-12 10:54:55.069637][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:get_weights#e01e1d38-156e-4c2a-8ef6-3f5c0401c539]invoked executor LearnerExecutor
+[E:3c833794-3a05-4b56-b7d7-379092d133c9][R:e77b6188-0bf4-465d-a7f8-10c6db185286][T:2024-09-12 10:54:55.084683][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:get_weights#e01e1d38-156e-4c2a-8ef6-3f5c0401c539]submit result OK
+[E:976a3efb-f1a5-469c-bb06-e556f89ea6f2][R:0743fc02-ef06-4317-aec6-b23b54fe16cb][T:2024-09-12 10:54:57.123618][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:train#1de9477f-cc72-4ae1-921c-c8edc0b7f9c9]received task from server
+[E:2cf76113-f8b4-4cc1-a70d-c628abc12403][T:2024-09-12 10:54:57.124546][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:train#1de9477f-cc72-4ae1-921c-c8edc0b7f9c9]invoked executor LearnerExecutor
+[E:3cad4f53-51fa-4b6c-a2dd-cd898c8bea50][R:0743fc02-ef06-4317-aec6-b23b54fe16cb][T:2024-09-12 10:54:58.057650][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:train#1de9477f-cc72-4ae1-921c-c8edc0b7f9c9]submit result OK
+[E:6ca92220-456b-4824-9fd5-79298f30da5f][R:e14c5550-08bf-472e-ad66-9cafe42f2f6c][T:2024-09-12 10:55:00.159841][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:train#89379505-ebac-4c89-b43c-1ae97989a6dd]received task from server
+[E:1cbfbc24-98ef-4b54-a6ba-b57087693f75][T:2024-09-12 10:55:00.160630][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:train#89379505-ebac-4c89-b43c-1ae97989a6dd]invoked executor LearnerExecutor
+[E:1526cad2-d1b7-44cc-b802-74a6ae483705][R:e14c5550-08bf-472e-ad66-9cafe42f2f6c][T:2024-09-12 10:55:01.115136][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:train#89379505-ebac-4c89-b43c-1ae97989a6dd]submit result OK
+[E:0fb04b46-d83c-4f68-9705-f8b1850a0e89][R:edd9489a-6536-4aef-962b-b92ce2db0c74][T:2024-09-12 10:55:03.218816][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:submit_model#9330edb0-bee4-467d-bc1c-6c44103660ac]received task from server
+[E:c3095f36-5700-4ff5-ae91-01c646cf01ae][T:2024-09-12 10:55:03.219947][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:submit_model#9330edb0-bee4-467d-bc1c-6c44103660ac]invoked executor LearnerExecutor
+[E:7c03cc9c-eeee-47f9-9522-9e3db9b35bb1][R:edd9489a-6536-4aef-962b-b92ce2db0c74][T:2024-09-12 10:55:03.224169][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:submit_model#9330edb0-bee4-467d-bc1c-6c44103660ac]submit result OK
+[E:cfba5a36-c076-4662-ba3e-9107c642d6d5][R:d4bd2177-43f5-4a53-96f8-2f4848acfdbf][T:2024-09-12 10:55:05.257302][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:validate#5a9f7f9e-485c-4759-bfe3-3050bb7ae313]received task from server
+[E:40d7116d-7117-4a40-8052-4775c8f193d1][T:2024-09-12 10:55:05.257822][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:validate#5a9f7f9e-485c-4759-bfe3-3050bb7ae313]invoked executor LearnerExecutor
+[E:53745bcf-3737-4f12-b2ab-45c76241ce8c][R:d4bd2177-43f5-4a53-96f8-2f4848acfdbf][T:2024-09-12 10:55:05.282417][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:validate#5a9f7f9e-485c-4759-bfe3-3050bb7ae313]submit result OK
+[E:1a4991d7-85d0-4804-97ae-f81573917d5c][R:c2645c05-2004-40b4-8717-58810d121f46][T:2024-09-12 10:55:07.319607][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:validate#19313857-8c05-4b72-a387-59297e0174bb]received task from server
+[E:d98913fb-79ee-41bc-8814-3e60abe6ee71][T:2024-09-12 10:55:07.320417][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:validate#19313857-8c05-4b72-a387-59297e0174bb]invoked executor LearnerExecutor
+[E:a84b5c53-5194-4dba-a394-1cec8c3d03bb][R:c2645c05-2004-40b4-8717-58810d121f46][T:2024-09-12 10:55:07.349872][J:844e78e6-c5d2-447b-b988-7809bfc4f9aa][A:validate#19313857-8c05-4b72-a387-59297e0174bb]submit result OK
+[E:4aeab3d2-70cb-4ead-85e0-31340c900d2d][T:2024-09-12 10:55:09.371131][U:][A:train.notify_job_status]
+[E:6dcc4108-1ecd-4ba1-8e75-921ec7206c4f][T:2024-09-12 10:56:10.415767][U:admin@nvidia.com][A:train.deploy]
+[E:2300004c-10d0-47e3-b651-2445d75bea7c][T:2024-09-12 10:56:10.437138][U:][A:train.start_job]
+[E:73dffd86-236d-4a6d-87d6-0d5c5cdb7b44][T:2024-09-12 10:56:18.929604][U:][A:train.notify_job_status]
+[E:c8ba8820-7f3a-4d9a-94fe-458a4b85d8e4][R:f1531dba-27d1-4dc6-9e11-1f9f351e7743][T:2024-09-12 10:56:19.464639][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:get_weights#bbd09c8d-1c8d-4164-af62-3f4c3289d842]received task from server
+[E:71cef078-4fb8-4fd2-ae8a-ad360dbe8a67][T:2024-09-12 10:56:19.465567][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:get_weights#bbd09c8d-1c8d-4164-af62-3f4c3289d842]invoked executor LearnerExecutor
+[E:abcb5dbe-feb6-4c58-b57e-6535e13498b0][R:f1531dba-27d1-4dc6-9e11-1f9f351e7743][T:2024-09-12 10:56:19.481051][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:get_weights#bbd09c8d-1c8d-4164-af62-3f4c3289d842]submit result OK
+[E:11389b7c-11ba-4a40-b7b2-fa3fa16a0699][R:b60cb1ab-c859-4079-ad6e-dff9f7d1cf68][T:2024-09-12 10:56:21.521212][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:train#421b0f3a-a1bc-427c-baa9-8eba695da681]received task from server
+[E:413c6757-b76f-45e5-a625-c7e1242c7af0][T:2024-09-12 10:56:21.522155][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:train#421b0f3a-a1bc-427c-baa9-8eba695da681]invoked executor LearnerExecutor
+[E:a31062d1-cb07-4013-8415-4c53a96fbcaa][R:b60cb1ab-c859-4079-ad6e-dff9f7d1cf68][T:2024-09-12 10:56:22.486906][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:train#421b0f3a-a1bc-427c-baa9-8eba695da681]submit result OK
+[E:dbc51795-d1e1-4c3d-bc88-ccd9af2e343d][R:6d354c9b-52f5-4eb9-aa53-c667e02b7182][T:2024-09-12 10:56:24.594844][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:train#859992f9-753a-458f-ab98-e86e5e423902]received task from server
+[E:30929a9b-7495-4d45-90d0-443dbcd7313b][T:2024-09-12 10:56:24.595626][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:train#859992f9-753a-458f-ab98-e86e5e423902]invoked executor LearnerExecutor
+[E:5ef536bf-deae-4993-9622-5a0a8dcb66b6][R:6d354c9b-52f5-4eb9-aa53-c667e02b7182][T:2024-09-12 10:56:25.519652][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:train#859992f9-753a-458f-ab98-e86e5e423902]submit result OK
+[E:86e01bc4-e0c1-442d-abb4-1048ecbc2003][R:df4c33e7-b7ea-49f2-8711-696e2e011132][T:2024-09-12 10:56:27.628641][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:submit_model#e8666cd7-b143-433c-8e67-fe92f6b168b0]received task from server
+[E:ada1d901-9d7e-4539-b4f0-e4a48e15ee67][T:2024-09-12 10:56:27.629753][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:submit_model#e8666cd7-b143-433c-8e67-fe92f6b168b0]invoked executor LearnerExecutor
+[E:5e8b45fb-87cf-441e-8bbf-7c7ab9ac57e0][R:df4c33e7-b7ea-49f2-8711-696e2e011132][T:2024-09-12 10:56:27.633300][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:submit_model#e8666cd7-b143-433c-8e67-fe92f6b168b0]submit result OK
+[E:2e800981-dc68-4638-88d5-2771dda86b2a][R:b7bd16e8-ade2-4cbc-a845-0515473bf2de][T:2024-09-12 10:56:29.682099][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:validate#dfccf420-273f-4a93-beb2-94cbba5cfb3e]received task from server
+[E:7c3e6881-9b2c-4288-a6ca-a286c532e902][T:2024-09-12 10:56:29.683009][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:validate#dfccf420-273f-4a93-beb2-94cbba5cfb3e]invoked executor LearnerExecutor
+[E:11868e8c-21bb-40a1-ad44-37619cfda553][R:b7bd16e8-ade2-4cbc-a845-0515473bf2de][T:2024-09-12 10:56:29.713053][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:validate#dfccf420-273f-4a93-beb2-94cbba5cfb3e]submit result OK
+[E:6ea0f9a3-a4f9-49d9-b0d1-bda5506f5878][R:a95ec6a0-c5e8-4e6a-b4d0-7ae6f63c8347][T:2024-09-12 10:56:31.751670][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:validate#d1da8d44-9f9d-4772-b999-53986e846d29]received task from server
+[E:0cf8969f-92cf-46a2-8d0e-10b3a50b93a0][T:2024-09-12 10:56:31.752934][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:validate#d1da8d44-9f9d-4772-b999-53986e846d29]invoked executor LearnerExecutor
+[E:9b9d871a-3730-4151-b39d-bf6313201418][R:a95ec6a0-c5e8-4e6a-b4d0-7ae6f63c8347][T:2024-09-12 10:56:31.781740][J:731b22d5-b190-4fbe-a86b-de7cf3976a6f][A:validate#d1da8d44-9f9d-4772-b999-53986e846d29]submit result OK
+[E:e356987d-d2ac-474a-a983-aff255ef9e0a][T:2024-09-12 10:56:33.801888][U:][A:train.notify_job_status]
+[E:bc8f6fa6-5887-4a2e-b68d-bbaa043fecf9][T:2024-09-12 11:02:06.694842][U:admin@nvidia.com][A:train.deploy]
+[E:991ab47c-8686-493c-ad9e-d58579d5a7cf][T:2024-09-12 11:02:06.722182][U:][A:train.start_job]
+[E:47a3fa8b-d771-44be-9d1e-c611bb7c2c83][T:2024-09-12 11:02:50.583037][U:][A:train.notify_job_status]
+[E:71b4e2d8-dd50-417c-b3e3-52a79c5aac56][R:63512ba2-e23e-4302-8048-752623c4a92f][T:2024-09-12 11:02:51.126565][J:e73b7a8a-a67c-4730-a697-cbbd70bf843d][A:get_weights#08495007-5986-420c-94ef-d26205b9709d]received task from server
+[E:d5fea420-fd6e-4b54-a787-fdfc65b54490][T:2024-09-12 11:02:51.127322][J:e73b7a8a-a67c-4730-a697-cbbd70bf843d][A:get_weights#08495007-5986-420c-94ef-d26205b9709d]invoked executor LearnerExecutor
+[E:d8041481-312b-41e9-952b-49f362b3ab93][R:63512ba2-e23e-4302-8048-752623c4a92f][T:2024-09-12 11:02:51.151729][J:e73b7a8a-a67c-4730-a697-cbbd70bf843d][A:get_weights#08495007-5986-420c-94ef-d26205b9709d]submit result OK
+[E:95d399d6-b050-4e64-a6a3-4c2cdbb9efa7][R:673606b7-ab44-45ef-9346-0a49b1ec3c01][T:2024-09-12 11:02:53.192591][J:e73b7a8a-a67c-4730-a697-cbbd70bf843d][A:train#edca6f84-281b-4528-82b3-1766da851b32]received task from server
+[E:0601b53b-bc0b-4225-8ba4-708d63ab2a8d][T:2024-09-12 11:02:53.193523][J:e73b7a8a-a67c-4730-a697-cbbd70bf843d][A:train#edca6f84-281b-4528-82b3-1766da851b32]invoked executor LearnerExecutor
+[E:5788c769-bab6-4fbc-ae21-dac0055c037f][R:673606b7-ab44-45ef-9346-0a49b1ec3c01][T:2024-09-12 11:02:53.567608][J:e73b7a8a-a67c-4730-a697-cbbd70bf843d][A:train#edca6f84-281b-4528-82b3-1766da851b32]submit result: EXECUTION_EXCEPTION
+[E:9ca12c78-7a48-4eec-a793-c64763415975][T:2024-09-12 11:02:55.689999][U:][A:train.notify_job_status]
+[E:8fc76ec8-6f6b-4ee2-a72c-95eb49a1b0fb][T:2024-09-12 11:03:21.439867][U:][A:train.abort]
+[E:8692d57d-d137-4b28-ae13-38a04da2ea8e][T:2024-09-12 11:04:18.775296][U:admin@nvidia.com][A:train.deploy]
+[E:7730d8a9-a548-4464-912d-c6ea248bdd5a][T:2024-09-12 11:04:18.799475][U:][A:train.start_job]
+[E:4ce5274a-df6e-4500-8500-759157a3f794][T:2024-09-12 11:04:27.853426][U:][A:train.notify_job_status]
+[E:d960216a-519a-4e31-b5cc-b5c5b2381e32][R:6933c619-4ebf-4917-af19-a6eff211680c][T:2024-09-12 11:04:28.392839][J:378ae02b-1102-4635-8683-ee1a6afbb875][A:get_weights#7cfc84b9-0b37-45ad-ba13-e4293e3e08e4]received task from server
+[E:d131c0fb-c63c-4119-ac24-6f077b56b852][T:2024-09-12 11:04:28.393825][J:378ae02b-1102-4635-8683-ee1a6afbb875][A:get_weights#7cfc84b9-0b37-45ad-ba13-e4293e3e08e4]invoked executor LearnerExecutor
+[E:5bc7b03d-6a58-430c-a085-59bf58cdef56][R:6933c619-4ebf-4917-af19-a6eff211680c][T:2024-09-12 11:04:42.323775][J:378ae02b-1102-4635-8683-ee1a6afbb875][A:get_weights#7cfc84b9-0b37-45ad-ba13-e4293e3e08e4]submit result OK
+[E:9daf4594-ce22-469c-8e8d-7cfcd5b9c735][R:d458714a-30da-4049-b4b5-c89c2c38777e][T:2024-09-12 11:04:44.377179][J:378ae02b-1102-4635-8683-ee1a6afbb875][A:train#24af49fe-7d8a-4083-9a6f-3f18bbae660f]received task from server
+[E:ab972974-d1f8-49a7-8145-7263a947ead5][T:2024-09-12 11:04:44.378104][J:378ae02b-1102-4635-8683-ee1a6afbb875][A:train#24af49fe-7d8a-4083-9a6f-3f18bbae660f]invoked executor LearnerExecutor
+[E:78e3812a-d448-4068-8edf-76d7ba6430b9][R:d458714a-30da-4049-b4b5-c89c2c38777e][T:2024-09-12 11:06:10.496734][J:378ae02b-1102-4635-8683-ee1a6afbb875][A:train#24af49fe-7d8a-4083-9a6f-3f18bbae660f]submit result: EXECUTION_EXCEPTION
+[E:599ac267-1070-4e88-a981-ae86c3468448][T:2024-09-12 11:06:12.719744][U:][A:train.notify_job_status]
+[E:ed30dbab-f7bc-4d4e-ac7e-23ec0558e4ca][T:2024-09-12 11:06:16.113828][U:][A:train.abort]
+[E:fe3dab7f-a771-4c58-83df-d4d0c86a2b3a][T:2024-09-12 11:06:21.929755][U:admin@nvidia.com][A:train.deploy]
+[E:24cb5995-b986-4abd-b5d5-ad0b89bf959c][T:2024-09-12 11:06:21.968442][U:][A:train.start_job]
+[E:fa57605b-d124-4bfa-8d1b-d9a63976be86][T:2024-09-12 11:06:30.891347][U:][A:train.notify_job_status]
+[E:c21ed956-9ca5-4c78-a1db-0e9fdb1a04b9][R:cd4666c5-6a49-4600-abd2-bf8a9ef4b72a][T:2024-09-12 11:06:31.431605][J:42a9125b-c1c7-4add-951b-06afb047d2f0][A:get_weights#5a7fdc1e-68c6-47fd-bfa5-f4805913a97d]received task from server
+[E:fb69bfa3-87a5-4c75-9df4-1d27bc519e2a][T:2024-09-12 11:06:31.432429][J:42a9125b-c1c7-4add-951b-06afb047d2f0][A:get_weights#5a7fdc1e-68c6-47fd-bfa5-f4805913a97d]invoked executor LearnerExecutor
+[E:51662213-a002-4c66-b4cd-7d46ac06118e][R:cd4666c5-6a49-4600-abd2-bf8a9ef4b72a][T:2024-09-12 11:06:35.545358][J:42a9125b-c1c7-4add-951b-06afb047d2f0][A:get_weights#5a7fdc1e-68c6-47fd-bfa5-f4805913a97d]submit result OK
+[E:1eb1e387-04d9-4123-93ec-9ecd2582d9e7][R:d8519224-02b3-4219-bab4-d8fbc3108e2c][T:2024-09-12 11:06:37.588920][J:42a9125b-c1c7-4add-951b-06afb047d2f0][A:train#100c9add-a534-40bb-a9ad-db4ff5092c2a]received task from server
+[E:6d7e6fa4-2de4-4c3a-8363-d05d8011eab6][T:2024-09-12 11:06:37.589843][J:42a9125b-c1c7-4add-951b-06afb047d2f0][A:train#100c9add-a534-40bb-a9ad-db4ff5092c2a]invoked executor LearnerExecutor
+[E:d83507f1-a07f-4102-8ce3-eb05cac8793d][R:d8519224-02b3-4219-bab4-d8fbc3108e2c][T:2024-09-12 11:07:05.412208][J:42a9125b-c1c7-4add-951b-06afb047d2f0][A:train#100c9add-a534-40bb-a9ad-db4ff5092c2a]submit result: EXECUTION_EXCEPTION
+[E:e574e04a-ec25-4d6c-a200-e9adadea2897][T:2024-09-12 11:07:07.506639][U:][A:train.notify_job_status]
+[E:a6105dfa-baf9-4d1b-9569-b54838b10a03][T:2024-09-12 11:07:16.364369][U:][A:train.abort]
+[E:d4fd1ef5-7816-449d-affe-65e5b66de7ae][T:2024-09-12 11:07:18.798984][U:admin@nvidia.com][A:train.deploy]
+[E:3b0dee3c-102c-468f-ac3d-9bc155d95677][T:2024-09-12 11:07:18.828186][U:][A:train.start_job]
+[E:b1d57eda-b638-4ca9-ac5a-c2d960335109][T:2024-09-12 11:07:27.439075][U:][A:train.notify_job_status]
+[E:182294fb-53e6-46c6-9b19-6d54d9b5ec29][R:a4cf3780-d4cb-4b19-b365-df5b4e23c6e8][T:2024-09-12 11:07:27.973410][J:ca7e0f70-f2a6-4c8b-bc95-5108a3238897][A:get_weights#09b54ada-5516-4727-983b-aa385f82bb88]received task from server
+[E:a37436e6-d4a3-4a19-b1f3-07eb412fb548][T:2024-09-12 11:07:27.974123][J:ca7e0f70-f2a6-4c8b-bc95-5108a3238897][A:get_weights#09b54ada-5516-4727-983b-aa385f82bb88]invoked executor LearnerExecutor
+[E:38a03fb7-4d60-4dc5-b121-c04c74ad95ab][R:a4cf3780-d4cb-4b19-b365-df5b4e23c6e8][T:2024-09-12 11:09:37.433966][J:ca7e0f70-f2a6-4c8b-bc95-5108a3238897][A:get_weights#09b54ada-5516-4727-983b-aa385f82bb88]submit result OK
+[E:ba7d7d7f-e7b6-4d66-ba0c-5541ea810e41][R:7f8aab12-4cad-47a6-aa77-25aaae8d71ad][T:2024-09-12 11:09:39.485924][J:ca7e0f70-f2a6-4c8b-bc95-5108a3238897][A:train#fd972021-5819-46f9-838b-454ddc4a6dc3]received task from server
+[E:e55077b3-a952-4e20-b8bd-817bb2b85fb2][T:2024-09-12 11:09:39.486716][J:ca7e0f70-f2a6-4c8b-bc95-5108a3238897][A:train#fd972021-5819-46f9-838b-454ddc4a6dc3]invoked executor LearnerExecutor
+[E:00c27462-db7c-4d7c-a5ee-0c11625e92d5][R:7f8aab12-4cad-47a6-aa77-25aaae8d71ad][T:2024-09-12 11:11:30.446817][J:ca7e0f70-f2a6-4c8b-bc95-5108a3238897][A:train#fd972021-5819-46f9-838b-454ddc4a6dc3]submit result: EXECUTION_EXCEPTION
+[E:ff0f351f-f8c7-46af-941c-a58ecf156c1d][T:2024-09-12 11:11:32.636571][U:][A:train.notify_job_status]
+[E:a253f3d1-69d3-4a4c-9b24-3a21a1f46f7f][T:2024-09-12 11:11:34.394102][U:][A:train.abort]
+[E:f5d87fe7-38ce-4e34-94b6-0a8e77ec8ac5][T:2024-09-12 11:11:42.928855][U:admin@nvidia.com][A:train.deploy]
+[E:2f11385f-8a07-4b6f-aa59-6ca3016e2c72][T:2024-09-12 11:11:42.956148][U:][A:train.start_job]
+[E:63c6b145-2da8-477e-a4d0-c0d2af03fc11][T:2024-09-12 11:11:52.233633][U:][A:train.notify_job_status]
+[E:3a6c27d6-4a21-41b6-b2e0-3046eade1254][R:5c16816c-e5f3-424b-8134-242f9b5f4b72][T:2024-09-12 11:11:52.773985][J:eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2][A:get_weights#cdb2db2f-2de8-42db-93ca-5a67a3f67713]received task from server
+[E:68395753-784b-4175-ac8f-134fabe8d7b2][T:2024-09-12 11:11:52.774815][J:eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2][A:get_weights#cdb2db2f-2de8-42db-93ca-5a67a3f67713]invoked executor LearnerExecutor
+[E:1dac50de-54ad-43dc-a6ea-78ab6eb9af09][R:5c16816c-e5f3-424b-8134-242f9b5f4b72][T:2024-09-12 11:12:05.009238][J:eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2][A:get_weights#cdb2db2f-2de8-42db-93ca-5a67a3f67713]submit result OK
+[E:4c426662-87fa-4995-bcb3-f74df062441f][R:903bbc4d-7537-456d-835f-5f64226e962d][T:2024-09-12 11:12:07.055770][J:eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2][A:train#d6fe87f4-b475-4243-bacd-1cc0e50fadf8]received task from server
+[E:fef90474-7fd0-4051-b739-3b5ec6bd9e1e][T:2024-09-12 11:12:07.056569][J:eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2][A:train#d6fe87f4-b475-4243-bacd-1cc0e50fadf8]invoked executor LearnerExecutor
+[E:27630b1b-bdb5-4e94-930b-dfdc0ff29988][R:903bbc4d-7537-456d-835f-5f64226e962d][T:2024-09-12 11:17:20.327497][J:eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2][A:train#d6fe87f4-b475-4243-bacd-1cc0e50fadf8]submit result: EXECUTION_EXCEPTION
+[E:af8dbcd1-ee64-4f8d-a3c4-83b486e83980][T:2024-09-12 11:17:22.484434][U:][A:train.notify_job_status]
+[E:dc68420f-e7f1-482b-9e40-a12ce475035c][T:2024-09-12 11:17:25.734286][U:][A:train.abort]
+[E:d5ac1639-0f1b-4221-991f-afab30c2d15d][T:2024-09-12 11:18:23.580270][U:admin@nvidia.com][A:train.deploy]
+[E:eb97c098-ace5-43c2-b36d-5fbd04ce46c6][T:2024-09-12 11:18:23.618031][U:][A:train.start_job]
+[E:62f5ca86-ee65-45b9-bf41-6a675e1ca168][T:2024-09-12 11:19:08.688480][U:][A:train.notify_job_status]
+[E:f455799c-756f-47d1-b13d-87a2c8dce363][R:a7150c22-98f0-49eb-b057-a58fafcf87cb][T:2024-09-12 11:19:09.230215][J:b5e6f8c7-723c-4381-882b-569c26f56ad2][A:get_weights#675c05ce-e204-4ed3-93d8-827d9a82320d]received task from server
+[E:033212c2-af31-4913-83fc-bb9d7c6c45fc][T:2024-09-12 11:19:09.231130][J:b5e6f8c7-723c-4381-882b-569c26f56ad2][A:get_weights#675c05ce-e204-4ed3-93d8-827d9a82320d]invoked executor LearnerExecutor
+[E:f7772dee-6974-4fe4-ac39-a5933c46023f][R:a7150c22-98f0-49eb-b057-a58fafcf87cb][T:2024-09-12 11:20:58.691842][J:b5e6f8c7-723c-4381-882b-569c26f56ad2][A:get_weights#675c05ce-e204-4ed3-93d8-827d9a82320d]submit result OK
+[E:3d8f2f56-a0a1-4d0b-af1b-1e86fb32013a][R:5678e34b-878c-4a2b-a89b-fdd3a9f6e853][T:2024-09-12 11:21:00.750149][J:b5e6f8c7-723c-4381-882b-569c26f56ad2][A:train#6c8d61ff-3c1b-4d08-b463-4bd1cfe3a315]received task from server
+[E:9b22691a-c0c6-4039-bb9f-a64f137c0a90][T:2024-09-12 11:21:00.751082][J:b5e6f8c7-723c-4381-882b-569c26f56ad2][A:train#6c8d61ff-3c1b-4d08-b463-4bd1cfe3a315]invoked executor LearnerExecutor
+[E:33f40bd0-ec03-417a-8c12-5e3cff445b00][R:5678e34b-878c-4a2b-a89b-fdd3a9f6e853][T:2024-09-12 11:21:04.267404][J:b5e6f8c7-723c-4381-882b-569c26f56ad2][A:train#6c8d61ff-3c1b-4d08-b463-4bd1cfe3a315]submit result: EXECUTION_EXCEPTION
+[E:7a7d7b4c-fa9c-4714-9fe9-5296794cf193][T:2024-09-12 11:21:06.415290][U:][A:train.notify_job_status]
+[E:945f6e63-df28-489d-9847-85c72fac5eda][T:2024-09-12 11:21:10.655971][U:][A:train.abort]
+[E:cb51cae2-ea29-4e99-af33-ccabf59fea45][T:2024-09-12 11:24:02.944847][U:admin@nvidia.com][A:train.deploy]
+[E:5f07f437-089e-4d28-85f7-c7c4eacb5580][T:2024-09-12 11:24:03.012393][U:][A:train.start_job]
+[E:c70d2225-7912-4f0b-a917-ec04f5b764e2][T:2024-09-12 11:24:12.335214][U:][A:train.notify_job_status]
+[E:76b597ef-84b9-446e-b241-1fa7e22d69fc][R:303bb8a0-7fc3-43cf-bec4-194d3a3dba69][T:2024-09-12 11:24:12.877079][J:fd03a56c-d67b-413d-b44e-e8257f54b716][A:get_weights#06d09f06-5abf-486d-bfb1-2e9d68ec4533]received task from server
+[E:d50b178e-2712-41d8-ac97-527653e1df19][T:2024-09-12 11:24:12.877885][J:fd03a56c-d67b-413d-b44e-e8257f54b716][A:get_weights#06d09f06-5abf-486d-bfb1-2e9d68ec4533]invoked executor LearnerExecutor
+[E:5a802246-4d30-4779-ab23-823ab5185ebe][T:2024-09-12 11:25:23.294084][U:admin@nvidia.com][A:train.deploy]
+[E:98c30053-467a-4a42-b34d-b73598ba96ca][T:2024-09-12 11:25:23.324461][U:][A:train.start_job]
+[E:f5404c56-349e-4a89-83ef-9075a12997d0][T:2024-09-12 11:25:32.430509][U:][A:train.notify_job_status]
+[E:b47ec2c6-f97a-4dfa-a748-87581ddb823d][R:c3539ef7-1d5a-45a9-8f2d-c2b3f311f464][T:2024-09-12 11:25:32.961350][J:52762618-a9f3-4fb6-b857-a37b4c7c012d][A:get_weights#a2866d9e-c59c-4903-9d27-d77e2fcaa6b2]received task from server
+[E:939bdebd-e9c2-4124-ba1a-867a65bfa5e5][T:2024-09-12 11:25:32.962313][J:52762618-a9f3-4fb6-b857-a37b4c7c012d][A:get_weights#a2866d9e-c59c-4903-9d27-d77e2fcaa6b2]invoked executor LearnerExecutor
+[E:2c6e0ae4-80fa-4553-8728-b5de96a3b81f][R:303bb8a0-7fc3-43cf-bec4-194d3a3dba69][T:2024-09-12 11:25:58.268917][J:fd03a56c-d67b-413d-b44e-e8257f54b716][A:get_weights#06d09f06-5abf-486d-bfb1-2e9d68ec4533]submit result OK
+[E:aa4b40d9-32d2-4614-9856-c937472a8bd6][R:c3539ef7-1d5a-45a9-8f2d-c2b3f311f464][T:2024-09-12 11:25:58.285538][J:52762618-a9f3-4fb6-b857-a37b4c7c012d][A:get_weights#a2866d9e-c59c-4903-9d27-d77e2fcaa6b2]submit result OK
+[E:6d9dbc98-c04d-475e-b2dc-16c6fd5ce5d1][R:372796a6-d797-4f4f-b2f8-3f4ebf45c8e8][T:2024-09-12 11:26:00.327221][J:fd03a56c-d67b-413d-b44e-e8257f54b716][A:train#98187b90-be00-4e12-a549-5e17c6beab36]received task from server
+[E:ec6d2009-d2c8-45bf-8b0a-c5a1652c3a87][R:d1fe1f98-b177-43a9-8b5e-7a86ac452f82][T:2024-09-12 11:26:00.327353][J:52762618-a9f3-4fb6-b857-a37b4c7c012d][A:train#64301114-4c74-42ad-8fbb-aadd01764245]received task from server
+[E:5c9ca0eb-7616-4ef2-99fd-8227306fc6ee][T:2024-09-12 11:26:00.328085][J:fd03a56c-d67b-413d-b44e-e8257f54b716][A:train#98187b90-be00-4e12-a549-5e17c6beab36]invoked executor LearnerExecutor
+[E:44813018-b508-40e0-bebc-2109135d1248][T:2024-09-12 11:26:00.328120][J:52762618-a9f3-4fb6-b857-a37b4c7c012d][A:train#64301114-4c74-42ad-8fbb-aadd01764245]invoked executor LearnerExecutor
+[E:b249de11-bb91-45f7-a267-2c50fe1a2534][R:d1fe1f98-b177-43a9-8b5e-7a86ac452f82][T:2024-09-12 11:26:06.438401][J:52762618-a9f3-4fb6-b857-a37b4c7c012d][A:train#64301114-4c74-42ad-8fbb-aadd01764245]submit result: EXECUTION_EXCEPTION
+[E:c0e8d5d4-dc11-498e-8503-8205627b0c2e][R:372796a6-d797-4f4f-b2f8-3f4ebf45c8e8][T:2024-09-12 11:26:06.442318][J:fd03a56c-d67b-413d-b44e-e8257f54b716][A:train#98187b90-be00-4e12-a549-5e17c6beab36]submit result: EXECUTION_EXCEPTION
+[E:6d853baf-49c4-4f26-a02f-9a4f20d02cc6][T:2024-09-12 11:26:08.583613][U:][A:train.notify_job_status]
+[E:43301f99-f1cb-4cde-9811-df0799f04709][T:2024-09-12 11:26:08.609144][U:][A:train.notify_job_status]
+[E:97ff04dc-64b7-43d0-9511-b2360cb0e64d][T:2024-09-12 11:26:11.801265][U:][A:train.abort]
+[E:6f56facd-29c7-4ef3-b6fb-0dfbea8c34dc][T:2024-09-12 11:26:15.868222][U:][A:train.abort]
+[E:29ce886e-f3bf-489d-a283-15071aeb9094][T:2024-09-12 11:26:21.314867][U:admin@nvidia.com][A:train.deploy]
+[E:ba9f4cf8-710e-471f-bdfe-47a42eb0943f][T:2024-09-12 11:26:21.336156][U:][A:train.start_job]
+[E:5c170cb3-f5d0-4fa4-9db8-4d854dc64741][T:2024-09-12 11:26:29.874927][U:][A:train.notify_job_status]
+[E:746dcc3a-2da6-45d0-9ee7-98a1e4373e6b][R:c5b038ff-54cb-4f07-b5dd-437a1aa6e487][T:2024-09-12 11:26:30.414939][J:57049348-ecbe-4749-80d3-a5c0e10d8a70][A:get_weights#e29ef72d-e270-4909-a222-81bd36ab2c77]received task from server
+[E:994a5c17-55ee-403d-8b8b-32c4497b79c2][T:2024-09-12 11:26:30.415777][J:57049348-ecbe-4749-80d3-a5c0e10d8a70][A:get_weights#e29ef72d-e270-4909-a222-81bd36ab2c77]invoked executor LearnerExecutor
+[E:4dc3afc7-d595-49c4-ad97-a38c2e6a4782][R:c5b038ff-54cb-4f07-b5dd-437a1aa6e487][T:2024-09-12 11:28:53.580229][J:57049348-ecbe-4749-80d3-a5c0e10d8a70][A:get_weights#e29ef72d-e270-4909-a222-81bd36ab2c77]submit result OK
+[E:7623d08e-6e2a-4c1f-99b2-2d876e551945][R:606b7e48-70d5-4d30-8514-8e84d6a1abb6][T:2024-09-12 11:28:55.638695][J:57049348-ecbe-4749-80d3-a5c0e10d8a70][A:train#79800b54-feeb-4672-8f72-877e6bf224b7]received task from server
+[E:9f103d82-3177-466d-84ce-027ea1b957fd][T:2024-09-12 11:28:55.639540][J:57049348-ecbe-4749-80d3-a5c0e10d8a70][A:train#79800b54-feeb-4672-8f72-877e6bf224b7]invoked executor LearnerExecutor
+[E:f224381e-6661-4eda-8951-03330ee9f1de][R:606b7e48-70d5-4d30-8514-8e84d6a1abb6][T:2024-09-12 11:29:01.370500][J:57049348-ecbe-4749-80d3-a5c0e10d8a70][A:train#79800b54-feeb-4672-8f72-877e6bf224b7]submit result: EXECUTION_EXCEPTION
+[E:7ad6cf8a-fca8-488c-b92d-940ffa717f22][T:2024-09-12 11:29:03.523518][U:][A:train.notify_job_status]
+[E:9dff6278-61c2-4d70-a5c3-6683d5746314][T:2024-09-12 11:29:12.537910][U:][A:train.abort]
+[E:b6bfe802-9763-4762-9b1f-035d09efb8d7][T:2024-09-12 11:29:24.029884][U:admin@nvidia.com][A:train.deploy]
+[E:1af29331-29a8-4208-a5e7-0794ab3cacd7][T:2024-09-12 11:29:24.050038][U:][A:train.start_job]
+[E:4201bdee-85a2-4692-a46b-adb372142f31][T:2024-09-12 11:30:46.998265][U:][A:train.notify_job_status]
+[E:9340037e-8282-43fe-86fe-9e14a7a9af17][R:cdb4d079-6a10-4058-af57-5bb3e4ec1b1a][T:2024-09-12 11:30:47.529639][J:94aa58f3-f8e5-4625-9eae-197559e9e452][A:get_weights#bb218a37-bb3a-4a8f-8b1b-3b21cccf6214]received task from server
+[E:0c98e19f-a4a3-49ac-8284-00b35511ff64][T:2024-09-12 11:30:47.530306][J:94aa58f3-f8e5-4625-9eae-197559e9e452][A:get_weights#bb218a37-bb3a-4a8f-8b1b-3b21cccf6214]invoked executor LearnerExecutor
+[E:3fd3d6e6-9cc6-4a1f-a96f-9fe42d63a1a9][R:cdb4d079-6a10-4058-af57-5bb3e4ec1b1a][T:2024-09-12 11:33:52.888696][J:94aa58f3-f8e5-4625-9eae-197559e9e452][A:get_weights#bb218a37-bb3a-4a8f-8b1b-3b21cccf6214]submit result OK
+[E:931ebfea-9d8a-4dc2-a4f3-4d621560c6f8][R:0301ccbd-68b5-45e9-beb2-2e6e4c489995][T:2024-09-12 11:33:54.942080][J:94aa58f3-f8e5-4625-9eae-197559e9e452][A:train#d1c0596c-3d6d-4328-9ce8-863d09817795]received task from server
+[E:8a3a0760-f42a-42cf-bfdd-ccb80d0f4d18][T:2024-09-12 11:33:54.942901][J:94aa58f3-f8e5-4625-9eae-197559e9e452][A:train#d1c0596c-3d6d-4328-9ce8-863d09817795]invoked executor LearnerExecutor
+[E:9ccb6c3d-cd1c-496e-9b90-fbc02185f05e][T:2024-09-12 11:42:08.488326][U:admin@nvidia.com][A:train.deploy]
+[E:0a519c14-9275-4345-9a1c-eb5aebfb720e][T:2024-09-12 11:42:08.514582][U:][A:train.start_job]
+[E:4ab8003c-78c2-4795-a789-31d08aa7fbcb][T:2024-09-12 11:42:44.021147][U:][A:train.notify_job_status]
+[E:fc51a19f-8e63-4f97-bc7a-f9eff5f7b65b][R:7ef2a933-0a03-457b-81b5-29a188ba99e9][T:2024-09-12 11:42:44.714365][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:get_weights#ba1ce760-ad57-45cc-9c1e-3d3c8b2a7032]received task from server
+[E:c73183d3-ae70-4d42-9952-975a27a8ee87][T:2024-09-12 11:42:44.714927][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:get_weights#ba1ce760-ad57-45cc-9c1e-3d3c8b2a7032]invoked executor LearnerExecutor
+[E:37863213-434a-4d3c-9911-e8e8eb9b72fe][R:7ef2a933-0a03-457b-81b5-29a188ba99e9][T:2024-09-12 11:42:51.159666][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:get_weights#ba1ce760-ad57-45cc-9c1e-3d3c8b2a7032]submit result OK
+[E:f76cd611-6134-461b-a859-177b4cd32a41][R:c9e2bbb9-962a-4b03-a56f-780f9a4f8813][T:2024-09-12 11:42:53.205976][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:train#663dc622-d8df-4c86-a27e-dc0d9081b9b9]received task from server
+[E:c6c620f4-800c-4036-8554-3394482930b2][T:2024-09-12 11:42:53.206764][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:train#663dc622-d8df-4c86-a27e-dc0d9081b9b9]invoked executor LearnerExecutor
+[E:806e2ea3-9cef-4902-8914-c72e2d38a72a][R:c9e2bbb9-962a-4b03-a56f-780f9a4f8813][T:2024-09-12 11:43:01.120405][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:train#663dc622-d8df-4c86-a27e-dc0d9081b9b9]submit result OK
+[E:3fc42130-8d93-4ee6-8db3-7bf0af1fdc96][R:0e6cdadb-9817-40e5-802b-20b70f2d2d64][T:2024-09-12 11:43:03.296101][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:train#f73fad25-ccc2-430d-bc86-f7fc7e2194b3]received task from server
+[E:b7c90224-23e3-458c-9ac8-73bb9901174d][T:2024-09-12 11:43:03.297085][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:train#f73fad25-ccc2-430d-bc86-f7fc7e2194b3]invoked executor LearnerExecutor
+[E:c94a04e1-4fb4-4880-8168-a9fc9f5e1fc0][R:0e6cdadb-9817-40e5-802b-20b70f2d2d64][T:2024-09-12 11:43:04.225365][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:train#f73fad25-ccc2-430d-bc86-f7fc7e2194b3]submit result OK
+[E:39562a4f-9342-4a58-ba29-71e0b8e35960][R:1ec9e413-4bf7-429d-914e-763f0e4ab10e][T:2024-09-12 11:43:06.317021][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:submit_model#4161feea-c5e6-4486-8ffe-33e45d20f616]received task from server
+[E:7f47f134-f80e-4988-af77-b3c33e97fa1a][T:2024-09-12 11:43:06.317710][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:submit_model#4161feea-c5e6-4486-8ffe-33e45d20f616]invoked executor LearnerExecutor
+[E:b9863a8a-4c20-40ca-a9c1-679951874711][R:1ec9e413-4bf7-429d-914e-763f0e4ab10e][T:2024-09-12 11:43:06.321113][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:submit_model#4161feea-c5e6-4486-8ffe-33e45d20f616]submit result OK
+[E:b749cc39-d5dd-4e9e-be82-717e4c55c02f][R:67558b3e-0aea-4212-bdb8-357c60a8bb1a][T:2024-09-12 11:43:08.362808][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:validate#29db4c7c-708e-45ce-9821-63edd915f7ee]received task from server
+[E:e5b1a944-eb23-4759-8494-5593f388631a][T:2024-09-12 11:43:08.363768][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:validate#29db4c7c-708e-45ce-9821-63edd915f7ee]invoked executor LearnerExecutor
+[E:83ce445b-61d2-466b-a505-6dcdd161b0cd][R:67558b3e-0aea-4212-bdb8-357c60a8bb1a][T:2024-09-12 11:43:08.391683][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:validate#29db4c7c-708e-45ce-9821-63edd915f7ee]submit result OK
+[E:1fa06cf2-8ced-4a99-a3d9-ec73079c7c97][R:5ec7d38a-d3b4-4355-a57b-c86146e053ee][T:2024-09-12 11:43:10.415559][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:validate#dee3a31e-b32b-4345-9525-84db7f8eaa06]received task from server
+[E:cd734226-2295-4773-9083-dda1471e3def][T:2024-09-12 11:43:10.416170][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:validate#dee3a31e-b32b-4345-9525-84db7f8eaa06]invoked executor LearnerExecutor
+[E:98b20904-7246-4d17-9805-1f29a99712ec][R:5ec7d38a-d3b4-4355-a57b-c86146e053ee][T:2024-09-12 11:43:10.442785][J:61a18579-6d02-40b6-88d8-ba2775e3b7d8][A:validate#dee3a31e-b32b-4345-9525-84db7f8eaa06]submit result OK
+[E:5d2ddded-3769-41bd-812e-a3447c1d74bc][T:2024-09-12 11:43:12.464141][U:][A:train.notify_job_status]
+[E:f0420dd3-365e-4825-893e-8bb017ba5f4e][T:2024-09-12 11:46:09.023133][U:admin@nvidia.com][A:train.deploy]
+[E:2cf41a8d-f0d3-4d9f-88e1-c9634257e6ed][T:2024-09-12 11:46:09.097988][U:][A:train.start_job]
+[E:7489a716-8531-4657-b251-555e8dddc999][T:2024-09-12 11:46:18.337401][U:][A:train.notify_job_status]
+[E:17fb78fe-dc32-4d98-bde2-43d4c2a99bf5][R:19b8b3a1-6411-43e1-84df-de8933abdda8][T:2024-09-12 11:46:18.991992][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:get_weights#68b093df-2b1c-4c74-bdcb-9dd7055dc694]received task from server
+[E:5d26a0e7-23f3-4f19-bfb7-42835ddd810a][T:2024-09-12 11:46:18.992425][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:get_weights#68b093df-2b1c-4c74-bdcb-9dd7055dc694]invoked executor LearnerExecutor
+[E:4279d106-8524-4ba9-8d1c-9c161edf5935][T:2024-09-12 11:51:26.885949][U:admin@nvidia.com][A:train.deploy]
+[E:69f02657-2313-437c-884d-8d0c8aa7b2a7][T:2024-09-12 11:51:26.918228][U:][A:train.start_job]
+[E:9e40adb1-7e1d-4c44-a823-97a85eb239c5][R:19b8b3a1-6411-43e1-84df-de8933abdda8][T:2024-09-12 11:51:36.070658][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:get_weights#68b093df-2b1c-4c74-bdcb-9dd7055dc694]submit result OK
+[E:8e9fc849-efd3-4557-9454-414b63a4f9cc][T:2024-09-12 11:51:36.809904][U:][A:train.notify_job_status]
+[E:3709b41f-9e8b-4604-976a-8eceafc497da][R:32671032-c8c2-444e-b5b9-0df4c6e9cab2][T:2024-09-12 11:51:37.464642][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:get_weights#6b7f3137-45f2-491e-bc08-143b41974d7b]received task from server
+[E:eaa96512-c2de-48ab-b441-064a6049c5d6][T:2024-09-12 11:51:37.465083][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:get_weights#6b7f3137-45f2-491e-bc08-143b41974d7b]invoked executor LearnerExecutor
+[E:94894b5f-112b-422d-bf87-b9050ff6517e][R:4fdd8155-2f36-4c49-b0c5-a2c676a9cec6][T:2024-09-12 11:51:38.102255][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:train#02e14516-8c6b-4cd4-a3f1-363086c284b1]received task from server
+[E:4527065d-1bc9-4ab2-ac29-9a861734adfe][T:2024-09-12 11:51:38.102719][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:train#02e14516-8c6b-4cd4-a3f1-363086c284b1]invoked executor LearnerExecutor
+[E:fda5306d-c1da-4c7c-ac29-21aeaf765235][R:32671032-c8c2-444e-b5b9-0df4c6e9cab2][T:2024-09-12 11:52:23.622987][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:get_weights#6b7f3137-45f2-491e-bc08-143b41974d7b]submit result OK
+[E:cd958f1d-f33f-4780-a1fc-75d16b95bd76][R:4fdd8155-2f36-4c49-b0c5-a2c676a9cec6][T:2024-09-12 11:52:24.713723][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:train#02e14516-8c6b-4cd4-a3f1-363086c284b1]submit result OK
+[E:4cbc8dbe-66d8-4bfe-a3c5-c3fd21f3148a][R:8dd73782-e0fb-4cfa-8d2c-49ba5ba18a17][T:2024-09-12 11:52:25.659488][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:train#250d9cbb-a384-4fd0-b82d-aa36c9f8a928]received task from server
+[E:92e97631-a462-4434-8d01-7813fb227335][T:2024-09-12 11:52:25.660173][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:train#250d9cbb-a384-4fd0-b82d-aa36c9f8a928]invoked executor LearnerExecutor
+[E:557164de-5314-4cac-974b-343441383325][R:c6589762-6b37-4362-ab3d-953424c6a1f3][T:2024-09-12 11:52:26.882851][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:train#c1e59e99-8539-42c4-bdc4-5cc71eb33366]received task from server
+[E:ceefdfdd-32b7-4361-a700-40e9daff2413][T:2024-09-12 11:52:26.883778][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:train#c1e59e99-8539-42c4-bdc4-5cc71eb33366]invoked executor LearnerExecutor
+[E:52634720-8b37-40e0-ac80-87054a6d6ea8][R:c6589762-6b37-4362-ab3d-953424c6a1f3][T:2024-09-12 11:52:50.812007][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:train#c1e59e99-8539-42c4-bdc4-5cc71eb33366]submit result OK
+[E:df7e4b0f-7717-40f0-8169-f2b31271b686][R:8dd73782-e0fb-4cfa-8d2c-49ba5ba18a17][T:2024-09-12 11:52:50.968408][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:train#250d9cbb-a384-4fd0-b82d-aa36c9f8a928]submit result OK
+[E:54863345-06c6-461e-a23b-2aee03a9d03a][R:1adc1e06-d269-40bc-9632-e85491a0841a][T:2024-09-12 11:52:52.994949][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:submit_model#f920f533-8b80-475a-a5b4-ac10cd86f720]received task from server
+[E:63c349f8-6519-4936-b4e4-68ca39ad4d0f][T:2024-09-12 11:52:52.996016][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:submit_model#f920f533-8b80-475a-a5b4-ac10cd86f720]invoked executor LearnerExecutor
+[E:0585f8bd-3f33-45aa-8f47-2060706b9eca][R:30f5dedc-0e54-40e9-a7eb-0b21a605549b][T:2024-09-12 11:52:53.125712][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:train#37d3ab02-898a-453d-853f-ca2cca514e28]received task from server
+[E:0db701c4-096a-4a41-8e8b-4823ec8d1828][T:2024-09-12 11:52:53.126212][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:train#37d3ab02-898a-453d-853f-ca2cca514e28]invoked executor LearnerExecutor
+[E:75aada72-2b25-4d39-b979-6b24c875af10][R:1adc1e06-d269-40bc-9632-e85491a0841a][T:2024-09-12 11:53:12.698729][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:submit_model#f920f533-8b80-475a-a5b4-ac10cd86f720]submit result OK
+[E:419c1ea6-07bd-493c-b6ae-edb5620b1283][R:30f5dedc-0e54-40e9-a7eb-0b21a605549b][T:2024-09-12 11:53:13.695868][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:train#37d3ab02-898a-453d-853f-ca2cca514e28]submit result OK
+[E:bb1cbdf6-8b77-495f-a6d9-5d0a84bcdff4][R:5914e7a4-3847-4152-a7f1-60048e7edc1c][T:2024-09-12 11:53:14.765849][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:validate#7743dfc8-224a-4dd3-ae9e-af2a8c9a1583]received task from server
+[E:ae1b2560-d1a2-44bc-adcc-e31a5e154339][T:2024-09-12 11:53:14.766633][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:validate#7743dfc8-224a-4dd3-ae9e-af2a8c9a1583]invoked executor LearnerExecutor
+[E:6da139c6-d062-4131-9b83-a57d2eadcc04][R:5914e7a4-3847-4152-a7f1-60048e7edc1c][T:2024-09-12 11:53:15.792870][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:validate#7743dfc8-224a-4dd3-ae9e-af2a8c9a1583]submit result OK
+[E:5ecbbd96-b688-439c-bdf1-f244f1ffbc7a][R:5350c39f-1946-4f4c-86f8-c18649a4a4ed][T:2024-09-12 11:53:15.836579][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:submit_model#a6bc8be0-9cc2-46d8-8e61-79f8c00cad8f]received task from server
+[E:d112d310-d667-41a8-a55f-316a7e9686a2][T:2024-09-12 11:53:15.836977][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:submit_model#a6bc8be0-9cc2-46d8-8e61-79f8c00cad8f]invoked executor LearnerExecutor
+[E:c919e841-be7e-480c-a206-842b5afca34f][R:5350c39f-1946-4f4c-86f8-c18649a4a4ed][T:2024-09-12 11:53:16.217664][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:submit_model#a6bc8be0-9cc2-46d8-8e61-79f8c00cad8f]submit result OK
+[E:50282fb5-ee38-46fa-a0e0-85ea01ff00e1][R:029845d3-1257-45ab-8bd5-06c4825ea542][T:2024-09-12 11:53:17.826330][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:validate#080c84db-7b75-4a7f-b62f-f2933f787cf3]received task from server
+[E:a7c49de1-b498-42df-b772-014f3cee95b7][T:2024-09-12 11:53:17.827084][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:validate#080c84db-7b75-4a7f-b62f-f2933f787cf3]invoked executor LearnerExecutor
+[E:7fb0ffe8-771d-450d-ae66-46d858d97b93][R:32d0c5bb-ce9a-4704-8cde-8e29f4db1b70][T:2024-09-12 11:53:18.258608][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:validate#15b2305b-08c9-4b3a-beb1-1b51d6569845]received task from server
+[E:c018b0dd-2f1d-4859-900a-94812bec29cd][T:2024-09-12 11:53:18.259410][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:validate#15b2305b-08c9-4b3a-beb1-1b51d6569845]invoked executor LearnerExecutor
+[E:2dfcc5d2-89a9-4b8b-95c0-7a37ab58e1ef][R:029845d3-1257-45ab-8bd5-06c4825ea542][T:2024-09-12 11:53:18.801418][J:e73311d1-e1a2-4785-8dde-cbf858c4e715][A:validate#080c84db-7b75-4a7f-b62f-f2933f787cf3]submit result OK
+[E:01c2a84a-3894-4b8b-97ac-9e25c3a92a51][R:32d0c5bb-ce9a-4704-8cde-8e29f4db1b70][T:2024-09-12 11:53:18.802207][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:validate#15b2305b-08c9-4b3a-beb1-1b51d6569845]submit result OK
+[E:6dcf5db2-8653-4858-bfa3-b012a080249f][T:2024-09-12 11:53:20.823757][U:][A:train.notify_job_status]
+[E:d39ca409-7260-4bd1-881c-cacd638d5fa7][R:f3e1e733-cb12-4670-bcc0-5be6f90d74a7][T:2024-09-12 11:53:20.841122][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:validate#21d087e2-ffdb-4347-a51c-7fd4ff1b8447]received task from server
+[E:5f3c7971-1e76-4c85-8094-7fa14e02858a][T:2024-09-12 11:53:20.842055][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:validate#21d087e2-ffdb-4347-a51c-7fd4ff1b8447]invoked executor LearnerExecutor
+[E:2f21693c-ee66-4b9a-af93-6d1c9663b638][R:f3e1e733-cb12-4670-bcc0-5be6f90d74a7][T:2024-09-12 11:53:21.180559][J:48c65c2e-dd55-4fc5-b397-991c0f046256][A:validate#21d087e2-ffdb-4347-a51c-7fd4ff1b8447]submit result OK
+[E:c9fcc275-c04a-4c18-a52f-44b46278d05c][T:2024-09-12 11:53:23.195435][U:][A:train.notify_job_status]
+[E:d4bef827-7bc0-43fc-a9f0-a1ce3e78ed6a][T:2024-09-12 11:53:34.857411][U:admin@nvidia.com][A:train.deploy]
+[E:a1b9a711-01ab-40a8-a9fd-1672ab9d0cfb][T:2024-09-12 11:53:34.881209][U:][A:train.start_job]
+[E:c01dd0cb-660a-4214-ae1a-c50fd8f2981d][T:2024-09-12 11:53:43.821153][U:][A:train.notify_job_status]
+[E:305901ad-8343-431a-b246-718738cb56af][R:c27e7edd-5a74-4707-9f86-46e073f80e8c][T:2024-09-12 11:53:44.663579][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:get_weights#37725471-62be-4474-b672-3861a0a02801]received task from server
+[E:3d979480-c40e-4ebc-b043-536031686a20][T:2024-09-12 11:53:44.664237][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:get_weights#37725471-62be-4474-b672-3861a0a02801]invoked executor LearnerExecutor
+[E:88638c57-7d57-4ae1-893f-eb10808a510e][R:c27e7edd-5a74-4707-9f86-46e073f80e8c][T:2024-09-12 11:53:51.998910][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:get_weights#37725471-62be-4474-b672-3861a0a02801]submit result OK
+[E:be3467cb-75d1-4b7b-bd45-08cc0c58ea1e][R:5ebebcec-5e90-43fe-84c4-9ae034695604][T:2024-09-12 11:53:54.042149][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:train#5ff4af88-3b90-4d76-9fa6-6f6316ca1c16]received task from server
+[E:2081e0b7-d548-47a3-912e-e62a0c8a3963][T:2024-09-12 11:53:54.043067][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:train#5ff4af88-3b90-4d76-9fa6-6f6316ca1c16]invoked executor LearnerExecutor
+[E:835403e1-4544-42a8-bb32-f18b1f0d1658][R:5ebebcec-5e90-43fe-84c4-9ae034695604][T:2024-09-12 11:53:58.920955][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:train#5ff4af88-3b90-4d76-9fa6-6f6316ca1c16]submit result OK
+[E:b7fedcdb-6615-4d95-b284-799725d33e13][R:995c5f6b-6d28-4e31-8ce4-feeb8d3fc1f4][T:2024-09-12 11:54:01.040253][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:train#73e5feb1-8761-42be-acfb-234bbe85ae57]received task from server
+[E:039cf35a-25c5-417c-8466-2b694f5908c9][T:2024-09-12 11:54:01.041213][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:train#73e5feb1-8761-42be-acfb-234bbe85ae57]invoked executor LearnerExecutor
+[E:3fbefa03-bfa1-447a-a851-5906ca97a07d][R:995c5f6b-6d28-4e31-8ce4-feeb8d3fc1f4][T:2024-09-12 11:55:10.437568][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:train#73e5feb1-8761-42be-acfb-234bbe85ae57]submit result OK
+[E:462e24a3-5bfc-4c33-9bac-fc10ac915a77][R:e851343c-bb25-4b76-9dd2-d6f53dacfc8c][T:2024-09-12 11:55:12.603884][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:submit_model#e6ca3367-c44a-4d3e-8027-ade9634089a8]received task from server
+[E:7c9d7308-ec0b-4b48-8381-9483612461a2][T:2024-09-12 11:55:12.604751][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:submit_model#e6ca3367-c44a-4d3e-8027-ade9634089a8]invoked executor LearnerExecutor
+[E:e54ecb4f-1ca4-4230-a38d-307f757ee201][R:e851343c-bb25-4b76-9dd2-d6f53dacfc8c][T:2024-09-12 11:55:14.031976][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:submit_model#e6ca3367-c44a-4d3e-8027-ade9634089a8]submit result OK
+[E:ca37d6e4-a666-45d0-b53e-97c6e2aa692a][R:76d820eb-c784-4250-9b13-89243719be3f][T:2024-09-12 11:55:16.080356][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:validate#10c71703-03e6-474e-9d2c-b1fbf0183a06]received task from server
+[E:7f52143e-4747-46a9-a3b1-9cd6c5c84f2d][T:2024-09-12 11:55:16.081299][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:validate#10c71703-03e6-474e-9d2c-b1fbf0183a06]invoked executor LearnerExecutor
+[E:9c6a8e68-1389-4b97-991a-7e96eac8f8c7][R:76d820eb-c784-4250-9b13-89243719be3f][T:2024-09-12 11:55:16.893813][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:validate#10c71703-03e6-474e-9d2c-b1fbf0183a06]submit result OK
+[E:e929046f-1cb6-47f1-8da5-3ec2b197fced][R:d7940c9d-5f6f-4a80-8703-b4a4db52134c][T:2024-09-12 11:55:18.933456][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:validate#b1cadb99-e18e-4610-bf39-afd049a9581c]received task from server
+[E:77027e3f-5607-4c63-86cd-8861c76a3328][T:2024-09-12 11:55:18.934408][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:validate#b1cadb99-e18e-4610-bf39-afd049a9581c]invoked executor LearnerExecutor
+[E:9c0d2968-a891-4c6e-8d78-722eae3db826][R:d7940c9d-5f6f-4a80-8703-b4a4db52134c][T:2024-09-12 11:55:19.717030][J:bf113be8-7fc0-48b4-a06d-0f233238699e][A:validate#b1cadb99-e18e-4610-bf39-afd049a9581c]submit result OK
+[E:be7c4d52-8ff9-45f5-a703-f9871d908c1c][T:2024-09-12 11:55:21.741249][U:][A:train.notify_job_status]
+[E:8a076589-831f-4661-b658-346d91368017][T:2024-09-12 11:55:29.493053][U:admin@nvidia.com][A:train.deploy]
+[E:e08be227-406d-469c-9f93-2c58831a76bb][T:2024-09-12 11:55:29.521387][U:][A:train.start_job]
+[E:dcaa5f7b-4d67-4d38-9432-186cb927cfad][T:2024-09-12 11:55:38.725033][U:][A:train.notify_job_status]
+[E:5b3f6d0d-c5e0-4d8b-8ddf-7ba9a80132a5][R:124e1481-084d-49e3-92cf-07273269270c][T:2024-09-12 11:55:39.383108][J:4b8c77f4-0d0a-42d3-8da9-1be044622e56][A:get_weights#3fab88fc-98dd-412c-b5cd-95a6e6d48f92]received task from server
+[E:17f7f1e1-3e0e-4aaf-812b-3063e924e4a1][T:2024-09-12 11:55:39.383602][J:4b8c77f4-0d0a-42d3-8da9-1be044622e56][A:get_weights#3fab88fc-98dd-412c-b5cd-95a6e6d48f92]invoked executor LearnerExecutor

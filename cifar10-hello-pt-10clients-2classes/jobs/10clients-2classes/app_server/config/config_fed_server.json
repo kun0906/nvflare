@@ -1,6 +1,8 @@
 {
   "format_version": 2,
 
+  "model_checkpoint_interval": 1,
+
   "server": {
     "heart_beat_timeout": 600
   },

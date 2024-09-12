@@ -27,7 +27,8 @@ N=10
 #nvflare poc prepare -n $N
 
 # Set the root directory
-ROOT_DIR='/tmp/nvflare/poc/example_project/prod_00'
+echo $WORK
+ROOT_DIR="$WORK/nvflare/poc/example_project/prod_00"
 
 # Start server
 echo "Starting server..."

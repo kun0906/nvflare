@@ -60,5 +60,5 @@ if __name__ == '__main__':
     # json_file = '/Users/49751124/PycharmProjects/nvflare/def38e5d-b037-41e2-9566-ec7c7f3074b7/workspace/cross_site_val/cross_val_results.json'
     # format_json(json_file)
 
-    in_dir = '/Users/49751124/cifar10-hello-pt-10clients-2classes/transfer'
+    in_dir = os.path.expanduser('~/cifar10-hello-pt-10clients-2classes/transfer')
     format_all_json_files(in_dir)

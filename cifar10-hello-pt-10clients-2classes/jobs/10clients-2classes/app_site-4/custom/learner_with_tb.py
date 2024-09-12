@@ -12,23 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
+import io
 import os.path
 import pickle
+import shutil
 from collections import Counter
 
+import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 import torch
-from pt_constants import PTConstants
-from simple_network import SimpleNetwork
-from torch import nn
-from torch.optim import SGD, Adam
-from torch.utils.data.dataloader import DataLoader
-from torch.utils.tensorboard import SummaryWriter
-from torchvision.datasets import CIFAR10
-from torchvision.transforms import Compose, Normalize, ToTensor
-from data import CustomCIFAR10Dataset
 import torchvision.transforms as transforms
-
 from nvflare.apis.dxo import DXO, DataKind, MetaKey, from_shareable
 from nvflare.apis.fl_constant import FLContextKey, ReservedKey, ReturnCode
 from nvflare.apis.fl_context import FLContext
@@ -43,13 +38,21 @@ from nvflare.app_common.abstract.model import (
 )
 from nvflare.app_common.app_constant import AppConstants
 from nvflare.app_opt.pt.model_persistence_format_manager import PTModelPersistenceFormatManager
+from torch import nn
+from torch.optim import Adam
+from torch.utils.data.dataloader import DataLoader
+from torch.utils.tensorboard import SummaryWriter
+
+from data import CustomCIFAR10Dataset
+from pt_constants import PTConstants
+from simple_network import SimpleNetwork
 
 
 class PTLearner(Learner):
     def __init__(
             self,
-            train_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_4_airplane_train.pkl',
-            test_path='/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_4_airplane_test.pkl',
+            train_path='~/data/client_4_airplane_train.pkl',
+            test_path='~/data/client_4_airplane_test.pkl',
             site_id=4,
             lr=0.01,
             epochs=5,
@@ -80,8 +83,8 @@ class PTLearner(Learner):
         # self.device = None
         # self.model = None
 
-        self.train_path = train_path
-        self.test_path = test_path
+        self.train_path = os.path.abspath(os.path.expanduser(train_path))
+        self.test_path = os.path.abspath(os.path.expanduser(test_path))
         self.site_id = site_id
         self.lr = lr
         self.epochs = epochs
@@ -89,6 +92,8 @@ class PTLearner(Learner):
         self.analytic_sender_id = analytic_sender_id
 
     def initialize(self, parts: dict, fl_ctx: FLContext):
+        self.log_info(fl_ctx, f"Current_directory: {os.getcwd()}")
+        self.log_info(fl_ctx, f"which SimpleNetwork was imported: {inspect.getfile(SimpleNetwork)}")
         # Training setup
         self.model = SimpleNetwork()
         if torch.cuda.is_available():
@@ -110,7 +115,7 @@ class PTLearner(Learner):
         )
 
         # load train set
-        self.logger.info(os.getcwd())
+        self.log_info(fl_ctx, f"train_path: {os.path.abspath(self.train_path)}")
         with open(self.train_path, "rb") as f:
             # Get the size of the subset
             client_data = pickle.load(f)
@@ -153,7 +158,7 @@ class PTLearner(Learner):
         )
 
         # load test set
-        print(os.getcwd())
+        self.log_info(fl_ctx, f"test_path: {os.path.abspath(self.test_path)}")
         with open(self.test_path, "rb") as f:
             # Get the size of the subset
             client_data = pickle.load(f)
@@ -271,12 +276,30 @@ class PTLearner(Learner):
             self.writer.add_scalar("train_loss", running_loss, current_step)
             # Stream validation accuracy at the end of each epoch
             metrics = self.local_validate(self.train_loader, 'train', abort_signal)
+            class_names = ['Class 0', 'Class 1']
             for metric, val in metrics.items():
-                self.writer.add_scalar(metric, val, current_step)
+                if '_cm' in metric:
+                    # cm = val
+                    # # self.writer.add_text(metric, val, current_step)  # not work in nvflare
+                    # buf = plot_confusion_matrix(cm, class_names, title=f'train Confusion Matrix')
+                    # img = np.array(plt.imread(buf))
+                    # self.writer.add_image(f'train Confusion Matrix', img, global_step=current_step, dataformats='HWC')
+                    self.log_info(fl_ctx, f"type({metric}): nvflare 2.5.0 does not support {type(val)} yet")
+                else:
+                    self.writer.add_scalar(metric, val, current_step)
 
-            metrics = self.local_validate(self.test_loader,'test', abort_signal)
+            metrics = self.local_validate(self.test_loader, 'test', abort_signal)
             for metric, val in metrics.items():
-                self.writer.add_scalar(metric, val, current_step)
+                if '_cm' in metric:
+                    # # self.writer.add_text(metric, val, current_step)
+                    # cm = val
+                    # # self.writer.add_text(metric, val, current_step)  # not work in nvflare
+                    # buf = plot_confusion_matrix(cm, class_names, title=f'test Confusion Matrix')
+                    # img = np.array(plt.imread(buf))
+                    # self.writer.add_image(f'test Confusion Matrix', img, global_step=current_step, dataformats='HWC')
+                    self.log_info(fl_ctx, f"type({metric}): nvflare 2.5.0 does not support {type(val)} yet")
+                else:
+                    self.writer.add_scalar(metric, val, current_step)
 
     def get_model_for_validation(self, model_name: str, fl_ctx: FLContext) -> Shareable:
         run_dir = fl_ctx.get_engine().get_workspace().get_run_dir(fl_ctx.get_job_id())
@@ -336,10 +359,15 @@ class PTLearner(Learner):
             return make_reply(ReturnCode.EXECUTION_EXCEPTION)
 
     def local_validate(self, test_loader, data_type='test', abort_signal=None):
-        metrics = {f'{data_type}_accuracy': 0, f'{data_type}_auc':0}
+        metrics = {f'{data_type}_accuracy': 0, f'{data_type}_auc': 0, f'{data_type}_cm': ''}
         self.model.eval()
         correct = 0
         total = 0
+
+        # Initialize empty tensors on CPU
+        pred_probs = torch.empty(0, dtype=torch.float32)
+        pred_labels = torch.empty(0, dtype=torch.long)
+        true_labels = torch.empty(0, dtype=torch.long)
         with torch.no_grad():
             for i, (images, labels) in enumerate(test_loader):
                 if abort_signal.triggered:
@@ -347,14 +375,40 @@ class PTLearner(Learner):
 
                 images, labels = images.to(self.device), labels.to(self.device)
                 output = self.model(images)
+                # Convert logits to probabilities using softmax
+                pred_prob = torch.nn.functional.softmax(output, dim=1)[:, 1]
 
                 _, pred_label = torch.max(output, 1)
+
+                # Move tensors to CPU before concatenation
+                pred_probs = torch.cat((pred_probs, pred_prob.cpu()))
+                pred_labels = torch.cat((pred_labels, pred_label.cpu()))
+                true_labels = torch.cat((true_labels, labels.cpu()))
 
                 correct += (pred_label == labels).sum().item()
                 total += images.size()[0]
             metric = correct / float(total)
 
         metrics[f'{data_type}_accuracy'] = metric
+
+        # Convert to numpy arrays if needed
+        pred_labels_np = pred_labels.numpy()
+        pred_probs_np = pred_probs.numpy()
+        true_labels_np = true_labels.numpy()  # Assuming you have true_labels in a similar format
+
+        from sklearn.metrics import confusion_matrix, roc_auc_score
+        # Compute the confusion matrix
+        cm = confusion_matrix(true_labels_np, pred_labels_np)
+        # Convert confusion matrix to text
+        cm_text = '\n'.join(['\t'.join(map(str, row)) for row in cm])
+        # print(f"confusion matrix:{cm}")
+        # Compute AUC
+        auc = roc_auc_score(true_labels, pred_probs_np)
+
+        metrics[f'{data_type}_auc'] = auc
+        metrics[f'{data_type}_cm'] = cm_text
+        # metrics[f'{data_type}_cm'] = cm
+
         return metrics
 
     def save_local_model(self, fl_ctx: FLContext):
@@ -362,8 +416,49 @@ class PTLearner(Learner):
         models_dir = os.path.join(run_dir, PTConstants.PTModelsDir)
         if not os.path.exists(models_dir):
             os.makedirs(models_dir)
-        model_path = os.path.join(models_dir, PTConstants.PTLocalModelName)
 
+        model_path = os.path.join(models_dir, PTConstants.PTLocalModelName)
         ml = make_model_learnable(self.model.state_dict(), {})
         self.persistence_manager.update(ml)
         torch.save(self.persistence_manager.to_persistence_dict(), model_path)
+
+        current_round = fl_ctx.get_prop(FLContextKey.TASK_DATA).get_header("current_round")
+        new_model_path = f"{model_path}-{current_round}"
+        # shutil.copyfile(src, dst)
+        # If you also want to copy the file's metadata (permissions, timestamps, etc.), you can use
+        shutil.copy2(model_path, new_model_path)
+
+
+def check_imported_libraries(self) -> None:
+    import sys
+    import os
+
+    def get_module_paths():
+        module_paths = {}
+        for module_name, module in sys.modules.items():
+            if module is not None and hasattr(module, '__file__'):
+                try:
+                    file_path = os.path.abspath(module.__file__)
+                    module_paths[module_name] = file_path
+                except Exception as e:
+                    print(f"Could not determine the path for module {module_name}: {e}")
+        return module_paths
+
+    # Print paths of all imported modules
+    module_paths = get_module_paths()
+    for module_name, file_path in module_paths.items():
+        print(f"{module_name}: {file_path}")
+
+
+def plot_confusion_matrix(cm, classes, title='Confusion Matrix'):
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=classes, yticklabels=classes)
+    plt.title(title)
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    plt.tight_layout()
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    plt.close()
+    return buf

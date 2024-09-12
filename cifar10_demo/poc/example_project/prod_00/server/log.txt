@@ -1,0 +1,474 @@
+2024-09-04 17:21:55,144 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-04 17:21:55,254 - CoreCell - INFO - server: creating listener on grpc://0:8002
+2024-09-04 17:21:55,410 - CoreCell - INFO - server: created backbone external listener for grpc://0:8002
+2024-09-04 17:21:55,410 - ConnectorManager - INFO - 22656: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-04 17:21:55,412 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:58564] is starting
+2024-09-04 17:21:55,918 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:58564
+2024-09-04 17:21:55,919 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE grpc://0:8002] is starting
+2024-09-04 17:21:55,926 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - deployed FLARE Server.
+2024-09-04 17:21:55,939 - nvflare.fuel.hci.server.hci - INFO - Starting Admin Server localhost on Port 8003
+2024-09-04 17:21:55,939 - root - INFO - Server started
+2024-09-04 17:21:55,960 - nvflare.fuel.f3.drivers.grpc_driver.Server - INFO - added insecure port at 0.0.0.0:8002
+2024-09-04 17:22:00,929 - ServerState - INFO - Got the primary sp: localhost fl_port: 8002 SSID: ebc6125d-0a56-4688-9b08-355fe9e4d61a. Turning to hot.
+2024-09-04 17:26:11,210 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 0.0.0.0:8002 <= ipv6:%5B::1%5D:56168] is created: PID: 22656
+2024-09-04 17:26:11,716 - ClientManager - INFO - Client: New client site-1@10.9.172.52 joined. Sent token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-04 17:26:56,227 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 0.0.0.0:8002 <= ipv6:%5B::1%5D:56173] is created: PID: 22656
+2024-09-04 17:26:56,699 - ClientManager - INFO - Client: New client site-2@10.9.172.52 joined. Sent token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 2
+2024-09-04 19:44:28,489 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-04 19:44:28,491 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-04 19:44:28,491 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-04 19:44:28,491 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-04 19:44:29,209 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-04 19:44:34,693 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 20:02:15,150 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-04 20:02:15,225 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-04 20:02:15,225 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-04 20:02:15,225 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-04 20:02:16,061 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 20:02:20,601 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-04 20:32:53,035 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-04 20:32:53,106 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-04 20:32:53,106 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-04 20:32:53,106 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-04 20:32:53,447 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-04 20:32:59,057 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 21:07:56,131 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-04 21:07:56,204 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-04 21:07:56,205 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-04 21:07:56,205 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-04 21:07:58,844 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 21:08:03,437 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-04 21:33:53,138 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-04 21:33:53,211 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-04 21:33:53,216 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-04 21:33:53,216 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-04 21:33:54,067 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 21:33:58,605 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-04 21:51:41,130 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-04 21:51:41,203 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-04 21:51:41,209 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-04 21:51:41,209 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-04 21:51:45,475 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-04 21:51:50,942 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 22:30:35,115 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-04 22:30:35,188 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-04 22:30:35,188 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-04 22:30:35,188 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-04 22:30:37,654 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-04 22:30:42,900 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 23:58:27,151 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-04 23:58:27,156 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-04 23:58:27,157 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-04 23:58:27,157 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-04 23:58:31,281 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-04 23:58:36,121 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 00:13:42,023 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 00:13:42,097 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 00:13:42,097 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 00:13:42,098 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 00:13:42,098 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 00:13:47,047 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 00:41:52,091 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 00:41:52,164 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 00:41:52,165 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 00:41:52,165 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 00:41:53,225 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 00:41:58,199 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 00:59:53,086 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 00:59:53,160 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 00:59:53,160 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 00:59:53,160 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 00:59:53,347 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 00:59:58,264 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 01:18:04,035 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 01:18:04,105 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 01:18:04,107 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 01:18:04,107 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 01:18:08,327 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 01:18:13,418 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 01:37:04,053 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 01:37:04,128 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 01:37:04,129 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 01:37:04,129 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 01:37:07,655 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 01:37:12,592 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 01:58:22,073 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 01:58:22,146 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 01:58:22,147 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 01:58:22,148 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 01:58:22,148 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 01:58:26,883 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 02:17:58,076 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 02:17:58,153 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 02:17:58,153 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 02:17:58,153 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 02:18:01,225 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 02:18:06,515 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 02:37:37,070 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 02:37:37,146 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 02:37:37,148 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 02:37:37,148 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 02:37:39,083 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 02:37:44,359 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 02:58:19,024 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 02:58:19,099 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 02:58:19,099 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 02:58:19,102 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 02:58:23,823 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 02:58:28,613 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 03:17:30,995 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 03:17:31,068 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 03:17:31,069 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 03:17:31,069 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 03:17:35,017 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 03:17:39,699 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 03:36:21,006 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 03:36:21,082 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 03:36:21,083 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 03:36:21,083 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 03:36:23,801 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 03:36:28,457 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 03:56:50,051 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 03:56:50,122 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 03:56:50,123 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 03:56:50,123 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 03:56:53,207 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 03:56:58,641 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 04:14:17,043 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 04:14:17,117 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 04:14:17,118 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 04:14:17,118 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 04:14:18,073 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 04:14:23,517 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 04:32:18,045 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 04:32:18,121 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 04:32:18,121 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 04:32:18,121 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 04:32:22,842 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 04:32:27,423 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 04:50:11,004 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 04:50:11,078 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 04:50:11,078 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 04:50:11,078 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 04:50:14,645 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 04:50:19,181 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 05:15:32,024 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 05:15:32,099 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 05:15:32,099 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 05:15:32,099 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 05:15:36,257 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 05:15:41,713 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 05:32:44,989 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 05:32:45,067 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 05:32:45,067 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 05:32:45,067 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 05:32:47,487 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 05:32:53,029 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 05:50:46,006 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 05:50:46,082 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 05:50:46,082 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 05:50:46,082 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 05:50:48,664 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 05:50:53,157 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 06:10:38,016 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 06:10:38,090 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 06:10:38,090 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 06:10:38,090 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 06:10:40,967 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 06:10:46,496 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 06:38:19,974 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 06:38:20,048 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 06:38:20,048 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 06:38:20,049 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 06:38:20,049 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 06:38:25,578 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 06:56:16,982 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 06:56:17,053 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 06:56:17,053 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 06:56:17,054 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 06:56:21,656 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 06:56:26,163 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 07:16:40,999 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 07:16:41,073 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 07:16:41,073 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 07:16:41,073 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 07:16:43,637 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 07:16:49,081 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 07:41:11,981 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 07:41:12,056 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 07:41:12,056 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 07:41:12,056 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 07:41:13,994 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 07:41:19,343 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 07:57:49,987 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 07:57:50,061 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 07:57:50,061 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 07:57:50,061 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 07:57:52,044 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 07:57:56,697 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 08:10:36,119 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 08:10:36,192 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 08:10:36,192 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 08:10:36,192 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 08:10:36,927 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 08:10:41,570 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 08:23:03,962 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 08:23:04,041 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 08:23:04,042 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 08:23:04,042 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 08:23:09,397 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 08:23:14,393 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 19:32:51,967 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 19:32:51,971 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 19:32:51,971 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 19:32:51,971 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 19:32:54,228 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 19:32:59,179 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 20:01:24,924 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 20:01:24,990 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 20:01:24,990 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 20:01:24,990 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 20:01:27,914 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 20:01:32,948 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 20:19:00,920 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 20:19:00,995 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 20:19:00,995 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 20:19:00,995 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 20:19:02,934 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 20:19:07,900 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 20:37:00,897 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 20:37:00,971 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 20:37:00,971 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 20:37:00,971 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 20:37:04,918 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 20:37:09,926 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 21:04:57,033 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 21:04:57,106 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 21:04:57,106 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 21:04:57,106 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 21:04:59,904 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 21:05:05,063 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 22:26:32,868 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 22:26:32,940 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 22:26:32,941 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 22:26:32,941 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 22:26:33,666 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 22:26:38,495 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 22:44:05,856 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 22:44:05,933 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 22:44:05,933 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 22:44:05,933 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 22:44:08,628 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 22:44:13,900 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 23:02:59,860 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-05 23:02:59,938 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-05 23:02:59,938 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-05 23:02:59,938 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-05 23:03:02,529 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 23:03:07,241 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 23:16:30,663 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 23:16:30,740 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 23:16:30,741 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 23:16:30,741 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 23:16:31,730 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-05 23:16:36,423 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 23:35:10,854 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-05 23:35:10,923 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-05 23:35:10,923 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-05 23:35:10,923 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-05 23:35:11,997 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-05 23:35:17,374 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 00:00:02,853 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 00:00:02,929 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 00:00:02,929 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 00:00:02,929 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 00:00:04,193 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 00:00:09,509 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 00:16:45,871 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 00:16:45,949 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 00:16:45,949 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 00:16:45,949 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 00:16:47,884 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 00:16:53,027 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 00:35:32,863 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 00:35:32,938 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 00:35:32,938 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 00:35:32,938 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 00:35:33,240 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 00:35:38,157 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 00:54:15,816 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 00:54:15,888 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 00:54:15,889 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 00:54:15,889 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 00:54:19,935 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 00:54:25,049 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 01:12:29,849 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 01:12:29,924 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 01:12:29,924 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 01:12:29,924 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 01:12:32,977 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 01:12:38,094 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 01:28:31,835 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 01:28:31,912 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 01:28:31,912 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 01:28:31,912 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 01:28:34,685 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 01:28:39,612 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 01:48:44,829 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 01:48:44,898 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 01:48:44,899 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 01:48:44,899 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 01:48:46,943 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 01:48:51,850 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 02:06:13,850 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 02:06:13,918 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 02:06:13,918 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 02:06:13,918 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 02:06:14,680 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 02:06:19,599 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 02:24:31,816 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 02:24:31,884 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 02:24:31,884 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 02:24:31,884 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 02:24:36,008 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 02:24:41,106 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 02:40:49,790 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 02:40:49,864 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 02:40:49,865 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 02:40:49,865 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 02:40:53,814 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 02:40:58,660 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 02:59:23,814 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 02:59:23,889 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 02:59:23,889 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 02:59:23,889 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 02:59:25,826 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 02:59:30,471 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 03:17:13,789 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 03:17:13,864 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 03:17:13,864 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 03:17:13,864 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 03:17:14,850 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 03:17:19,509 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 03:34:39,783 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 03:34:39,857 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 03:34:39,857 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 03:34:39,857 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 03:34:43,803 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 03:34:49,092 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 03:53:08,797 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 03:53:08,874 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 03:53:08,875 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 03:53:08,883 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 03:53:09,075 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 03:53:13,831 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 04:14:32,820 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 04:14:32,893 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 04:14:32,893 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 04:14:32,893 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 04:14:34,626 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 04:14:39,446 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 04:32:03,775 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 04:32:03,848 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 04:32:03,849 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 04:32:03,849 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 04:32:03,944 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 04:32:08,724 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 04:52:48,769 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 04:52:48,841 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 04:52:48,842 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 04:52:48,842 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 04:52:51,610 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 04:52:56,837 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 05:10:05,795 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 05:10:05,869 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 05:10:05,870 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 05:10:05,870 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 05:10:07,139 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 05:10:12,337 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 05:27:17,766 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 05:27:17,840 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 05:27:17,840 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 05:27:17,841 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 05:27:17,841 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 05:27:23,019 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 05:54:15,776 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 05:54:15,851 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 05:54:15,851 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 05:54:15,851 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 05:54:17,442 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 05:54:22,324 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 06:12:52,792 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 06:12:52,866 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 06:12:52,867 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 06:12:52,867 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 06:12:53,205 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 06:12:58,100 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 06:32:44,787 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 06:32:44,861 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 06:32:44,862 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 06:32:44,862 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 06:32:48,803 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 06:32:53,734 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 06:51:41,779 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 06:51:41,852 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 06:51:41,852 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 06:51:41,852 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 06:51:44,791 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 06:51:49,808 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 07:10:38,736 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 07:10:38,809 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 07:10:38,809 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 07:10:38,810 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 07:10:40,238 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 07:10:45,233 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 07:25:19,242 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 07:25:19,313 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 07:25:19,314 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 07:25:19,314 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 07:25:20,555 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 07:25:25,530 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 07:49:02,441 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 07:49:02,500 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 07:49:02,500 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 07:49:02,500 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 07:49:05,733 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 07:49:10,817 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 08:08:18,351 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 08:08:18,415 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 08:08:18,415 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 08:08:18,415 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 08:08:19,325 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 08:08:24,448 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 13:01:55,798 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 13:01:55,837 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 13:01:55,837 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 13:01:55,837 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 13:01:56,881 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 13:02:02,242 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 14:06:08,714 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 14:06:08,789 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 14:06:08,789 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 14:06:08,789 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 14:06:13,254 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 14:06:18,374 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 14:31:34,106 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 14:31:34,178 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 14:31:34,178 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 14:31:34,178 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 14:31:37,293 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 14:31:42,136 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 14:58:21,666 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 1
+2024-09-06 14:58:21,739 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 1
+2024-09-06 14:58:21,739 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 0
+2024-09-06 14:58:21,740 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 0
+2024-09-06 14:58:25,308 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 14:58:30,513 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 15:14:08,104 - ClientManager - INFO - Client Name:site-1 	Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c left.  Total clients: 1
+2024-09-06 15:14:08,175 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c.  Total clients: 1
+2024-09-06 15:14:08,175 - ClientManager - INFO - Client Name:site-2 	Token: e21f6881-e667-4fa2-a21b-48285e316bcd left.  Total clients: 0
+2024-09-06 15:14:08,175 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: e21f6881-e667-4fa2-a21b-48285e316bcd.  Total clients: 0
+2024-09-06 15:14:11,258 - ClientManager - INFO - Re-activate the client:site-2 with token: e21f6881-e667-4fa2-a21b-48285e316bcd
+2024-09-06 15:14:16,132 - ClientManager - INFO - Re-activate the client:site-1 with token: 944e1e86-5bc7-4d27-8d92-fc1666233c9c
+2024-09-06 16:43:26,819 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 22656
+2024-09-06 16:43:29,555 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown

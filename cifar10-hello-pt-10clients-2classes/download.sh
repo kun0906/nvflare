@@ -9,6 +9,7 @@ cd ~/cifar10-hello-pt-10clients-2classes
 =======
 >>>>>>> 814d36a (v0.0.7-3:Update download.sh)
 pwd
+$WORK
 
 # Step 1: Log in to HPC and execute commands
 PROJECT_DIR="cifar10-hello-pt-10clients-2classes"
@@ -22,7 +23,8 @@ pwd &&
 
 echo
 echo -e \"Step 2: Define NODE_ID and perform rsync\"
-rsync -avP kunyang@${NODE_ID}:/tmp/nvflare/poc/example_project/prod_00/admin@nvidia.com/transfer ~/${PROJECT_DIR}
+# rsync -avP kunyang@${NODE_ID}:/tmp/nvflare/poc/example_project/prod_00/admin@nvidia.com/transfer ~/${PROJECT_DIR}
+rsync -avP kunyang@${NODE_ID}:$WORK/nvflare/poc/example_project/prod_00/admin@nvidia.com/transfer ~/${PROJECT_DIR}
 "
 
 echo

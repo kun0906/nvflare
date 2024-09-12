@@ -1,3 +1,5 @@
+import os.path
+
 from tensorboard.backend.event_processing import event_accumulator
 
 
@@ -21,7 +23,7 @@ def read_tensorboard_events(log_dir):
 
 def main():
     # Define the path to your TensorBoard log directory
-    root_dir = '/Users/49751124/cifar10-hello-pt-10clients-2classes/transfer'
+    root_dir = os.path.expanduser('~/cifar10-hello-pt-10clients-2classes/transfer')
     job_id = '228b24b6-400e-485e-a733-4e1444278615'
     log_dir = f'{root_dir}/{job_id}/workspace/tb_events/site-1'
     scalars = read_tensorboard_events(log_dir)

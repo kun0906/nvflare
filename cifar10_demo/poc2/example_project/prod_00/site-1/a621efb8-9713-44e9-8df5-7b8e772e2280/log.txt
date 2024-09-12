@@ -1,0 +1,74 @@
+2024-09-04 12:42:55,840 - worker_process - INFO - Worker_process started.
+2024-09-04 12:42:56,502 - Cifar10Trainer - INFO - /Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes_demo/example_project/prod_00/site-1
+2024-09-04 12:42:56,504 - JsonScanner - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 99, in _do_scan
+    node.processor.process_element(node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 150, in process_element
+    self.process_config_element(self.config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 122, in process_config_element
+    self.current_exe.executor = self.authorize_and_build_component(element, config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 103, in authorize_and_build_component
+    return self.build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 126, in build_component
+    t = super().build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/component_builder.py", line 86, in build_component
+    return instantiate_class(class_path, class_args)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/class_utils.py", line 54, in instantiate_class
+    instance = c(**init_params)
+  File "/Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes_demo/example_project/prod_00/site-1/a621efb8-9713-44e9-8df5-7b8e772e2280/app_site-1/custom/cifar10trainer.py", line 91, in __init__
+    with open(self.data_path, "rb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_1_airplane_train.pkl'
+
+2024-09-04 12:42:56,504 - worker_process - ERROR - FL client execution exception: ConfigError: Error processing '/Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes_demo/example_project/prod_00/site-1/startup/../a621efb8-9713-44e9-8df5-7b8e772e2280/app_site-1/config/config_fed_client.json' in element '{"path": "cifar10trainer.Cifar10Trainer", "args": {"lr": 0.001, "epochs": 10}}': path: 'executors.#1.executor', exception: 'FileNotFoundError: [Errno 2] No such file or directory: '/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_1_airplane_train.pkl''
+2024-09-04 12:42:56,505 - FederatedClient - INFO - Shutting down client run: site-1
+2024-09-04 12:42:56,851 - MPM - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 99, in _do_scan
+    node.processor.process_element(node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 150, in process_element
+    self.process_config_element(self.config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 122, in process_config_element
+    self.current_exe.executor = self.authorize_and_build_component(element, config_ctx, node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 103, in authorize_and_build_component
+    return self.build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_json_config.py", line 126, in build_component
+    t = super().build_component(config_dict)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/component_builder.py", line 86, in build_component
+    return instantiate_class(class_path, class_args)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/class_utils.py", line 54, in instantiate_class
+    instance = c(**init_params)
+  File "/Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes_demo/example_project/prod_00/site-1/a621efb8-9713-44e9-8df5-7b8e772e2280/app_site-1/custom/cifar10trainer.py", line 91, in __init__
+    with open(self.data_path, "rb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_1_airplane_train.pkl'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/f3/mpm.py", line 154, in run
+    rc = main_func(**kwargs)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/app/client/worker_process.py", line 131, in main
+    raise e
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/app/client/worker_process.py", line 127, in main
+    client_app_runner.start_run(app_root, args, config_folder, federated_client, secure_train, sp, conf.handlers)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_app_runner.py", line 45, in start_run
+    self.client_runner = self.create_client_runner(
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_app_runner.py", line 97, in create_client_runner
+    conf.configure()
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 147, in configure
+    raise e
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 144, in configure
+    self._do_configure()
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/json_configer.py", line 137, in _do_configure
+    self.json_scanner.scan(self)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 159, in scan
+    self._do_scan(node)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 129, in _do_scan
+    self._do_scan(_child_node(node, k, 0, v))
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 132, in _do_scan
+    self._do_scan(_child_node(node, node.key, i + 1, element[i]))
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 129, in _do_scan
+    self._do_scan(_child_node(node, k, 0, v))
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/utils/json_scanner.py", line 121, in _do_scan
+    raise ConfigError(self.get_process_err_msg(e, elmt_str, location, node))
+nvflare.fuel.common.excepts.ConfigError: Error processing '/Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes_demo/example_project/prod_00/site-1/startup/../a621efb8-9713-44e9-8df5-7b8e772e2280/app_site-1/config/config_fed_client.json' in element '{"path": "cifar10trainer.Cifar10Trainer", "args": {"lr": 0.001, "epochs": 10}}': path: 'executors.#1.executor', exception: 'FileNotFoundError: [Errno 2] No such file or directory: '/users/kunyang/cifar10-hello-pt-10clients-2classes/data/client_1_airplane_train.pkl''
+
+2024-09-04 12:42:58,358 - MPM - INFO - MPM: Good Bye!

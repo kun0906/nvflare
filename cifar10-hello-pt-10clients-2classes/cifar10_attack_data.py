@@ -1,6 +1,7 @@
 """Generate attack data
 
 """
+import os
 import pickle
 from collections import Counter
 
@@ -32,16 +33,12 @@ class CustomCIFAR10Dataset(Dataset):
 
 
 def split_data(data_type='train'):
-    data_path = 'data'
-    # Create Cifar10 dataset for training.
-    transforms = Compose(
-        [
-            ToTensor(),
-            Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-        ]
-    )
+    data_path = os.path.expanduser('~/data')
+    data_path = os.path.abspath(data_path)
+    print(data_path)
+
     train = True if data_type == 'train' else False
-    _train_dataset = CIFAR10(root=data_path, transform=transforms, download=True, train=train)
+    _train_dataset = CIFAR10(root=data_path, transform=None, download=True, train=train)
     print(f'{data_type}', len(_train_dataset))
     Y = np.asarray(_train_dataset.targets)
     mask = Y == 0  # Y =='airplane'
@@ -81,7 +78,7 @@ def split_data(data_type='train'):
         Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
         client_data = (X_, Y_, Y_new)
         # Save the data to a file specific to the client
-        file_path = f'data/client_{client_id}_airplane_{data_type}.pkl'
+        file_path = f'{data_path}/client_{client_id}_airplane_{data_type}.pkl'
         with open(file_path, "wb") as f:
             pickle.dump(client_data, f)
 

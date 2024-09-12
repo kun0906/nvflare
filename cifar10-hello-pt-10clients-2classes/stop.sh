@@ -1,8 +1,10 @@
 #!/bin/bash
 # Stop server and clients
 
+$WORK
 # Set the root directory for NVFlare
-ROOT_DIR='/tmp/nvflare/poc/example_project/prod_00'
+# Single quotes ('): Prevent variable expansion, so $WORK will be treated as a literal string.
+ROOT_DIR="$WORK/nvflare/poc/example_project/prod_00"
 
 # Stop the server
 echo "Stopping the server..."

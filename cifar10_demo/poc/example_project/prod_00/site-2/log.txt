@@ -1,0 +1,24 @@
+2024-09-04 17:26:55,695 - CoreCell - INFO - site-2: created backbone external connector to grpc://localhost:8002
+2024-09-04 17:26:55,695 - ConnectorManager - INFO - 22867: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-04 17:26:55,696 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:32364] is starting
+2024-09-04 17:26:56,201 - CoreCell - INFO - site-2: created backbone internal listener for tcp://localhost:32364
+2024-09-04 17:26:56,201 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-04 17:26:56,202 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: creating insecure channel
+2024-09-04 17:26:56,203 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-04 17:26:56,214 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created insecure channel at localhost:8002
+2024-09-04 17:26:56,215 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 22867
+2024-09-04 17:26:56,702 - FederatedClient - INFO - Successfully registered client:site-2 for project example_project. Token:e21f6881-e667-4fa2-a21b-48285e316bcd SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-04 17:26:56,703 - FederatedClient - INFO - Got engine after 0.5003969669342041 seconds
+2024-09-04 17:26:56,704 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-06 16:43:30,800 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 22867
+2024-09-06 16:43:30,804 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00002 Not Connected]
+2024-09-06 16:43:31,810 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: creating insecure channel
+2024-09-06 16:43:31,814 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created insecure channel at localhost:8002
+2024-09-06 16:43:31,823 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 N/A => localhost:8002] is created: PID: 22867
+2024-09-06 16:43:31,830 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 22867
+2024-09-06 16:43:31,830 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00003 Not Connected]
+2024-09-06 16:43:33,836 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: creating insecure channel
+2024-09-06 16:43:33,838 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created insecure channel at localhost:8002
+2024-09-06 16:43:33,838 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 N/A => localhost:8002] is created: PID: 22867
+2024-09-06 16:43:33,842 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 22867
+2024-09-06 16:43:33,842 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00004 Not Connected]

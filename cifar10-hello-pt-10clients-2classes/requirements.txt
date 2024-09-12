@@ -3,3 +3,6 @@ torch
 torchvision
 pytest
 matplotlib
+scikit-learn
+seaborn
+

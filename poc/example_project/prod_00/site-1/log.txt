@@ -4922,3 +4922,269 @@
 2024-09-11 17:19:09,178 - ProcessExecutor - INFO - Worker child process ID: 97601
 2024-09-11 17:19:09,179 - ProcessExecutor - INFO - run (469c921f-71a2-468d-a310-71db4feb1c31): waiting for child worker process to finish.
 2024-09-11 17:19:15,934 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:4151 <= 127.0.0.1:50669] is created: PID: 96331
+2024-09-12 08:28:09,573 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-12 08:28:09,573 - ConnectorManager - INFO - 10816: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-12 08:28:09,574 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:63954] is starting
+2024-09-12 08:28:10,079 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:63954
+2024-09-12 08:28:10,079 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-12 08:28:10,081 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-12 08:28:10,111 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-12 08:28:10,112 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 10816
+2024-09-12 08:28:10,465 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:c8cb1eed-3673-4cbe-b173-146eb1102d8a SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-12 08:28:10,471 - FederatedClient - INFO - Got engine after 0.39000797271728516 seconds
+2024-09-12 08:28:10,472 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-12 08:28:27,574 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 08:28:27,587 - ProcessExecutor - INFO - Worker child process ID: 10845
+2024-09-12 08:28:27,588 - ProcessExecutor - INFO - run (30ade631-5406-4693-bb1e-6df280dc3c55): waiting for child worker process to finish.
+2024-09-12 08:28:56,062 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:63954 <= 127.0.0.1:54979] is created: PID: 10816
+2024-09-12 08:28:59,183 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 10816
+2024-09-12 08:29:01,661 - ProcessExecutor - INFO - run (30ade631-5406-4693-bb1e-6df280dc3c55): child worker process finished with RC 0
+2024-09-12 08:31:21,218 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 08:31:21,227 - ProcessExecutor - INFO - Worker child process ID: 10918
+2024-09-12 08:31:21,228 - ProcessExecutor - INFO - run (f649cbcd-9531-4195-830d-78ca992e5877): waiting for child worker process to finish.
+2024-09-12 08:31:28,027 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:63954 <= 127.0.0.1:55024] is created: PID: 10816
+2024-09-12 08:31:31,128 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 10816
+2024-09-12 08:31:34,056 - ProcessExecutor - INFO - run (f649cbcd-9531-4195-830d-78ca992e5877): child worker process finished with RC 0
+2024-09-12 08:34:13,313 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 08:34:13,322 - ProcessExecutor - INFO - Worker child process ID: 11071
+2024-09-12 08:34:13,322 - ProcessExecutor - INFO - run (4f937420-0fe4-4659-9f9e-b7400e718a59): waiting for child worker process to finish.
+2024-09-12 08:34:20,124 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 127.0.0.1:63954 <= 127.0.0.1:55067] is created: PID: 10816
+2024-09-12 08:34:23,219 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 10816
+2024-09-12 08:34:26,142 - ProcessExecutor - INFO - run (4f937420-0fe4-4659-9f9e-b7400e718a59): child worker process finished with RC 0
+2024-09-12 08:35:16,278 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 08:35:16,286 - ProcessExecutor - INFO - Worker child process ID: 11141
+2024-09-12 08:35:16,287 - ProcessExecutor - INFO - run (7ee5d11b-8425-4601-b5e3-998821be48ca): waiting for child worker process to finish.
+2024-09-12 08:35:23,131 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:63954 <= 127.0.0.1:55235] is created: PID: 10816
+2024-09-12 08:35:26,222 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 10816
+2024-09-12 08:35:29,446 - ProcessExecutor - INFO - run (7ee5d11b-8425-4601-b5e3-998821be48ca): child worker process finished with RC 0
+2024-09-12 08:37:40,170 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 08:37:40,179 - ProcessExecutor - INFO - Worker child process ID: 11202
+2024-09-12 08:37:40,180 - ProcessExecutor - INFO - run (9920fa22-59d0-4868-aa93-b8b71c95b58b): waiting for child worker process to finish.
+2024-09-12 08:37:47,448 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 127.0.0.1:63954 <= 127.0.0.1:55644] is created: PID: 10816
+2024-09-12 08:38:02,857 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 10816
+2024-09-12 08:38:05,551 - ProcessExecutor - INFO - run (9920fa22-59d0-4868-aa93-b8b71c95b58b): child worker process finished with RC 0
+2024-09-12 08:45:29,498 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 08:45:29,512 - ProcessExecutor - INFO - Worker child process ID: 11409
+2024-09-12 08:45:29,512 - ProcessExecutor - INFO - run (55176e34-68f6-4fdb-a3c3-810d6f14e059): waiting for child worker process to finish.
+2024-09-12 08:46:05,947 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 127.0.0.1:63954 <= 127.0.0.1:55721] is created: PID: 10816
+2024-09-12 08:54:46,952 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 10816
+2024-09-12 08:54:49,433 - ProcessExecutor - INFO - run (55176e34-68f6-4fdb-a3c3-810d6f14e059): child worker process finished with RC 0
+2024-09-12 09:20:27,781 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 09:20:27,791 - ProcessExecutor - INFO - Worker child process ID: 12589
+2024-09-12 09:20:27,792 - ProcessExecutor - INFO - run (012ea13a-57c9-478b-a0a2-f3f911458d40): waiting for child worker process to finish.
+2024-09-12 09:20:56,098 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 127.0.0.1:63954 <= 127.0.0.1:56059] is created: PID: 10816
+2024-09-12 09:21:55,863 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 Not Connected] is closed PID: 10816
+2024-09-12 09:21:58,281 - ProcessExecutor - INFO - run (012ea13a-57c9-478b-a0a2-f3f911458d40): child worker process finished with RC 0
+2024-09-12 09:49:41,990 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 09:49:42,007 - ProcessExecutor - INFO - Worker child process ID: 13442
+2024-09-12 09:49:42,008 - ProcessExecutor - INFO - run (dc52351d-ba07-490f-ab2b-b9ba262f590c): waiting for child worker process to finish.
+2024-09-12 09:50:10,767 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 127.0.0.1:63954 <= 127.0.0.1:56500] is created: PID: 10816
+2024-09-12 10:06:11,765 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:06:11,779 - ProcessExecutor - INFO - Worker child process ID: 14714
+2024-09-12 10:06:11,780 - ProcessExecutor - INFO - run (69f59684-ddf8-491e-a286-69f4e31365aa): waiting for child worker process to finish.
+2024-09-12 10:06:37,208 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 127.0.0.1:63954 <= 127.0.0.1:56912] is created: PID: 10816
+2024-09-12 10:06:42,795 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 Not Connected] is closed PID: 10816
+2024-09-12 10:06:45,189 - ProcessExecutor - INFO - run (69f59684-ddf8-491e-a286-69f4e31365aa): child worker process finished with RC 0
+2024-09-12 10:07:19,652 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 Not Connected] is closed PID: 10816
+2024-09-12 10:07:22,114 - ProcessExecutor - INFO - run (dc52351d-ba07-490f-ab2b-b9ba262f590c): child worker process finished with RC 0
+2024-09-12 10:09:26,842 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:09:26,851 - ProcessExecutor - INFO - Worker child process ID: 14795
+2024-09-12 10:09:26,852 - ProcessExecutor - INFO - run (bff18280-bb59-489d-b048-a1e3e98e795b): waiting for child worker process to finish.
+2024-09-12 10:09:34,264 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 127.0.0.1:63954 <= 127.0.0.1:56955] is created: PID: 10816
+2024-09-12 10:09:40,239 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 Not Connected] is closed PID: 10816
+2024-09-12 10:09:43,268 - ProcessExecutor - INFO - run (bff18280-bb59-489d-b048-a1e3e98e795b): child worker process finished with RC 0
+2024-09-12 10:18:19,517 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:18:19,525 - ProcessExecutor - INFO - Worker child process ID: 15028
+2024-09-12 10:18:19,525 - ProcessExecutor - INFO - run (0aabdd4d-57dc-412f-bb58-403a11a89daf): waiting for child worker process to finish.
+2024-09-12 10:18:54,896 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 127.0.0.1:63954 <= 127.0.0.1:57050] is created: PID: 10816
+2024-09-12 10:19:02,971 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 Not Connected] is closed PID: 10816
+2024-09-12 10:19:05,994 - ProcessExecutor - INFO - run (0aabdd4d-57dc-412f-bb58-403a11a89daf): child worker process finished with RC 0
+2024-09-12 10:20:15,195 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:20:15,205 - ProcessExecutor - INFO - Worker child process ID: 15172
+2024-09-12 10:20:15,207 - ProcessExecutor - INFO - run (21e16786-2e58-443a-9458-c8ef1f4b90d7): waiting for child worker process to finish.
+2024-09-12 10:20:22,956 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 127.0.0.1:63954 <= 127.0.0.1:57087] is created: PID: 10816
+2024-09-12 10:20:28,936 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 Not Connected] is closed PID: 10816
+2024-09-12 10:20:31,967 - ProcessExecutor - INFO - run (21e16786-2e58-443a-9458-c8ef1f4b90d7): child worker process finished with RC 0
+2024-09-12 10:25:43,498 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-12 10:25:43,499 - ConnectorManager - INFO - 15248: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-12 10:25:43,500 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:43797] is starting
+2024-09-12 10:25:44,002 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:43797
+2024-09-12 10:25:44,003 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-12 10:25:44,006 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-12 10:25:44,033 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-12 10:25:44,034 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 15248
+2024-09-12 10:25:44,038 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 15248
+2024-09-12 10:25:44,039 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00002 Not Connected]
+2024-09-12 10:25:45,045 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-12 10:25:45,045 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 N/A => localhost:8002] is created: PID: 15248
+2024-09-12 10:25:49,148 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:90ebed7f-2d7e-4c2e-8744-0e15894b45ff SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-12 10:25:49,151 - FederatedClient - INFO - Got engine after 5.1451051235198975 seconds
+2024-09-12 10:25:49,151 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-12 10:25:50,880 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:25:50,892 - ProcessExecutor - INFO - Worker child process ID: 15265
+2024-09-12 10:25:50,915 - ProcessExecutor - INFO - run (5556e356-4db6-4f20-a48d-dd9450b5ef92): waiting for child worker process to finish.
+2024-09-12 10:25:57,734 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:43797 <= 127.0.0.1:57175] is created: PID: 15248
+2024-09-12 10:26:19,710 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 15248
+2024-09-12 10:26:25,859 - ProcessExecutor - INFO - run (5556e356-4db6-4f20-a48d-dd9450b5ef92): child worker process finished with RC 0
+2024-09-12 10:31:16,753 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:31:16,770 - ProcessExecutor - INFO - Worker child process ID: 15561
+2024-09-12 10:31:16,771 - ProcessExecutor - INFO - run (5edbbb2d-4337-4ed4-aa53-e43def359efd): waiting for child worker process to finish.
+2024-09-12 10:31:55,681 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 127.0.0.1:43797 <= 127.0.0.1:57331] is created: PID: 15248
+2024-09-12 10:32:14,330 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 15248
+2024-09-12 10:32:17,123 - ProcessExecutor - INFO - run (5edbbb2d-4337-4ed4-aa53-e43def359efd): child worker process finished with RC 0
+2024-09-12 10:38:59,818 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:38:59,827 - ProcessExecutor - INFO - Worker child process ID: 16070
+2024-09-12 10:38:59,828 - ProcessExecutor - INFO - run (c825c622-28c1-49f4-9507-011297c35e4d): waiting for child worker process to finish.
+2024-09-12 10:39:09,869 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:43797 <= 127.0.0.1:57584] is created: PID: 15248
+2024-09-12 10:39:15,467 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 15248
+2024-09-12 10:39:18,046 - ProcessExecutor - INFO - run (c825c622-28c1-49f4-9507-011297c35e4d): child worker process finished with RC 0
+2024-09-12 10:39:55,179 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:39:55,188 - ProcessExecutor - INFO - Worker child process ID: 16107
+2024-09-12 10:39:55,189 - ProcessExecutor - INFO - run (91dea326-8d11-4fdc-9bd8-2073f45adef8): waiting for child worker process to finish.
+2024-09-12 10:40:03,615 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 127.0.0.1:43797 <= 127.0.0.1:57607] is created: PID: 15248
+2024-09-12 10:40:19,045 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 15248
+2024-09-12 10:40:21,893 - ProcessExecutor - INFO - run (91dea326-8d11-4fdc-9bd8-2073f45adef8): child worker process finished with RC 0
+2024-09-12 10:46:17,176 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:46:17,186 - ProcessExecutor - INFO - Worker child process ID: 16487
+2024-09-12 10:46:17,187 - ProcessExecutor - INFO - run (94b33f7a-d63d-4f84-87e9-2357a79e973a): waiting for child worker process to finish.
+2024-09-12 10:46:58,016 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 127.0.0.1:43797 <= 127.0.0.1:57900] is created: PID: 15248
+2024-09-12 10:47:13,489 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 15248
+2024-09-12 10:47:16,434 - ProcessExecutor - INFO - run (94b33f7a-d63d-4f84-87e9-2357a79e973a): child worker process finished with RC 0
+2024-09-12 10:49:14,372 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:49:14,387 - ProcessExecutor - INFO - Worker child process ID: 16656
+2024-09-12 10:49:14,388 - ProcessExecutor - INFO - run (f91933d5-7554-45fa-997b-9a97ffedcbea): waiting for child worker process to finish.
+2024-09-12 10:49:24,144 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 127.0.0.1:43797 <= 127.0.0.1:57960] is created: PID: 15248
+2024-09-12 10:50:59,587 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 Not Connected] is closed PID: 15248
+2024-09-12 10:51:02,285 - ProcessExecutor - INFO - run (f91933d5-7554-45fa-997b-9a97ffedcbea): child worker process finished with RC 0
+2024-09-12 10:52:10,375 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:52:10,385 - ProcessExecutor - INFO - Worker child process ID: 16821
+2024-09-12 10:52:10,386 - ProcessExecutor - INFO - run (d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4): waiting for child worker process to finish.
+2024-09-12 10:52:18,979 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 127.0.0.1:43797 <= 127.0.0.1:57995] is created: PID: 15248
+2024-09-12 10:52:34,486 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 Not Connected] is closed PID: 15248
+2024-09-12 10:52:37,362 - ProcessExecutor - INFO - run (d5fe3d7d-b7dd-4dc8-acaa-b178b0c9bdc4): child worker process finished with RC 0
+2024-09-12 10:54:45,155 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:54:45,164 - ProcessExecutor - INFO - Worker child process ID: 16886
+2024-09-12 10:54:45,164 - ProcessExecutor - INFO - run (844e78e6-c5d2-447b-b988-7809bfc4f9aa): waiting for child worker process to finish.
+2024-09-12 10:54:54,014 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 127.0.0.1:43797 <= 127.0.0.1:58039] is created: PID: 15248
+2024-09-12 10:55:09,379 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 Not Connected] is closed PID: 15248
+2024-09-12 10:55:12,245 - ProcessExecutor - INFO - run (844e78e6-c5d2-447b-b988-7809bfc4f9aa): child worker process finished with RC 0
+2024-09-12 10:56:10,437 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 10:56:10,445 - ProcessExecutor - INFO - Worker child process ID: 17006
+2024-09-12 10:56:10,446 - ProcessExecutor - INFO - run (731b22d5-b190-4fbe-a86b-de7cf3976a6f): waiting for child worker process to finish.
+2024-09-12 10:56:18,407 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 127.0.0.1:43797 <= 127.0.0.1:58070] is created: PID: 15248
+2024-09-12 10:56:33,808 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 Not Connected] is closed PID: 15248
+2024-09-12 10:56:36,643 - ProcessExecutor - INFO - run (731b22d5-b190-4fbe-a86b-de7cf3976a6f): child worker process finished with RC 0
+2024-09-12 11:02:06,722 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:02:06,737 - ProcessExecutor - INFO - Worker child process ID: 17386
+2024-09-12 11:02:06,738 - ProcessExecutor - INFO - run (e73b7a8a-a67c-4730-a697-cbbd70bf843d): waiting for child worker process to finish.
+2024-09-12 11:02:50,066 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 127.0.0.1:43797 <= 127.0.0.1:58201] is created: PID: 15248
+2024-09-12 11:02:55,696 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 Not Connected] is closed PID: 15248
+2024-09-12 11:02:57,975 - ProcessExecutor - INFO - run (e73b7a8a-a67c-4730-a697-cbbd70bf843d): child worker process finished with RC 0
+2024-09-12 11:04:18,799 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:04:18,808 - ProcessExecutor - INFO - Worker child process ID: 17443
+2024-09-12 11:04:18,808 - ProcessExecutor - INFO - run (378ae02b-1102-4635-8683-ee1a6afbb875): waiting for child worker process to finish.
+2024-09-12 11:04:27,331 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 127.0.0.1:43797 <= 127.0.0.1:58227] is created: PID: 15248
+2024-09-12 11:06:12,727 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 Not Connected] is closed PID: 15248
+2024-09-12 11:06:14,981 - ProcessExecutor - INFO - run (378ae02b-1102-4635-8683-ee1a6afbb875): child worker process finished with RC 0
+2024-09-12 11:06:21,968 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:06:21,979 - ProcessExecutor - INFO - Worker child process ID: 17580
+2024-09-12 11:06:21,981 - ProcessExecutor - INFO - run (42a9125b-c1c7-4add-951b-06afb047d2f0): waiting for child worker process to finish.
+2024-09-12 11:06:30,372 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 127.0.0.1:43797 <= 127.0.0.1:58260] is created: PID: 15248
+2024-09-12 11:07:07,514 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 Not Connected] is closed PID: 15248
+2024-09-12 11:07:10,710 - ProcessExecutor - INFO - run (42a9125b-c1c7-4add-951b-06afb047d2f0): child worker process finished with RC 0
+2024-09-12 11:07:18,828 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:07:18,837 - ProcessExecutor - INFO - Worker child process ID: 17603
+2024-09-12 11:07:18,838 - ProcessExecutor - INFO - run (ca7e0f70-f2a6-4c8b-bc95-5108a3238897): waiting for child worker process to finish.
+2024-09-12 11:07:26,919 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 127.0.0.1:43797 <= 127.0.0.1:58281] is created: PID: 15248
+2024-09-12 11:11:32,645 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 Not Connected] is closed PID: 15248
+2024-09-12 11:11:35,172 - ProcessExecutor - INFO - run (ca7e0f70-f2a6-4c8b-bc95-5108a3238897): child worker process finished with RC 0
+2024-09-12 11:11:42,956 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:11:42,965 - ProcessExecutor - INFO - Worker child process ID: 17679
+2024-09-12 11:11:42,966 - ProcessExecutor - INFO - run (eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2): waiting for child worker process to finish.
+2024-09-12 11:11:51,715 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 127.0.0.1:43797 <= 127.0.0.1:58334] is created: PID: 15248
+2024-09-12 11:17:22,492 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 Not Connected] is closed PID: 15248
+2024-09-12 11:17:25,373 - ProcessExecutor - INFO - run (eddd34b8-f92e-4c4f-afcb-7e3ee14ea6f2): child worker process finished with RC 0
+2024-09-12 11:18:23,618 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:18:23,628 - ProcessExecutor - INFO - Worker child process ID: 17935
+2024-09-12 11:18:23,628 - ProcessExecutor - INFO - run (b5e6f8c7-723c-4381-882b-569c26f56ad2): waiting for child worker process to finish.
+2024-09-12 11:19:08,174 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 127.0.0.1:43797 <= 127.0.0.1:58424] is created: PID: 15248
+2024-09-12 11:21:06,422 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 Not Connected] is closed PID: 15248
+2024-09-12 11:21:09,637 - ProcessExecutor - INFO - run (b5e6f8c7-723c-4381-882b-569c26f56ad2): child worker process finished with RC 0
+2024-09-12 11:24:03,012 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:24:03,021 - ProcessExecutor - INFO - Worker child process ID: 18138
+2024-09-12 11:24:03,022 - ProcessExecutor - INFO - run (fd03a56c-d67b-413d-b44e-e8257f54b716): waiting for child worker process to finish.
+2024-09-12 11:24:11,817 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 127.0.0.1:43797 <= 127.0.0.1:58476] is created: PID: 15248
+2024-09-12 11:25:23,324 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:25:23,340 - ProcessExecutor - INFO - Worker child process ID: 18187
+2024-09-12 11:25:23,341 - ProcessExecutor - INFO - run (52762618-a9f3-4fb6-b857-a37b4c7c012d): waiting for child worker process to finish.
+2024-09-12 11:25:31,912 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 127.0.0.1:43797 <= 127.0.0.1:58517] is created: PID: 15248
+2024-09-12 11:26:08,590 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 Not Connected] is closed PID: 15248
+2024-09-12 11:26:08,612 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 Not Connected] is closed PID: 15248
+2024-09-12 11:26:11,700 - ProcessExecutor - INFO - run (52762618-a9f3-4fb6-b857-a37b4c7c012d): child worker process finished with RC 0
+2024-09-12 11:26:11,718 - ProcessExecutor - INFO - run (fd03a56c-d67b-413d-b44e-e8257f54b716): child worker process finished with RC 0
+2024-09-12 11:26:21,336 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:26:21,346 - ProcessExecutor - INFO - Worker child process ID: 18210
+2024-09-12 11:26:21,347 - ProcessExecutor - INFO - run (57049348-ecbe-4749-80d3-a5c0e10d8a70): waiting for child worker process to finish.
+2024-09-12 11:26:29,367 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 127.0.0.1:43797 <= 127.0.0.1:58536] is created: PID: 15248
+2024-09-12 11:29:03,531 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 Not Connected] is closed PID: 15248
+2024-09-12 11:29:06,300 - ProcessExecutor - INFO - run (57049348-ecbe-4749-80d3-a5c0e10d8a70): child worker process finished with RC 0
+2024-09-12 11:29:24,050 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:29:24,058 - ProcessExecutor - INFO - Worker child process ID: 18277
+2024-09-12 11:29:24,059 - ProcessExecutor - INFO - run (94aa58f3-f8e5-4625-9eae-197559e9e452): waiting for child worker process to finish.
+2024-09-12 11:30:46,479 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 127.0.0.1:43797 <= 127.0.0.1:58590] is created: PID: 15248
+2024-09-12 11:35:50,407 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:36:20,409 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request ef17edaa-ea4f-4867-bfd8-25eed4e1e70c for ['heart_beat'] after 30.0 secs
+2024-09-12 11:36:30,430 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:37:00,435 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 94749913-87e9-4417-b15d-fff8bac47dd2 for ['heart_beat'] after 30.0 secs
+2024-09-12 11:37:10,469 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:37:40,466 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 1c85f226-c36a-42bf-9beb-5ba1340fb35c for ['heart_beat'] after 30.0 secs
+2024-09-12 11:37:50,499 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:38:20,496 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request e153e73d-1dea-4c5c-997d-8c9d833eb40a for ['heart_beat'] after 30.0 secs
+2024-09-12 11:38:30,521 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:39:00,519 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 3fd9a6b9-d636-49b2-9d52-72ca105a0c03 for ['heart_beat'] after 30.0 secs
+2024-09-12 11:39:10,550 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:39:40,551 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 08033320-d4bf-4b49-b12f-866fb9f24b69 for ['heart_beat'] after 30.0 secs
+2024-09-12 11:39:50,583 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:40:20,540 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 1b1626e9-fcd0-4395-8910-db4789db7048 for ['heart_beat'] after 30.0 secs
+2024-09-12 11:40:30,558 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:40:41,809 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 11:41:00,554 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 18982a7a-fd75-40a2-8b3a-89c9c9fd579f for ['heart_beat'] after 30.0 secs
+2024-09-12 11:41:43,396 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-12 11:41:43,396 - ConnectorManager - INFO - 18722: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-12 11:41:43,398 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:1508] is starting
+2024-09-12 11:41:43,900 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:1508
+2024-09-12 11:41:43,901 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-12 11:41:43,904 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-12 11:41:43,940 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-12 11:41:43,941 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 18722
+2024-09-12 11:41:44,135 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:2eaddf03-a05d-4a0a-aaab-4620fc52bb17 SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-12 11:41:44,141 - FederatedClient - INFO - Got engine after 0.23742175102233887 seconds
+2024-09-12 11:41:44,141 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-12 11:42:08,515 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:42:08,528 - ProcessExecutor - INFO - Worker child process ID: 18796
+2024-09-12 11:42:08,529 - ProcessExecutor - INFO - run (61a18579-6d02-40b6-88d8-ba2775e3b7d8): waiting for child worker process to finish.
+2024-09-12 11:42:43,510 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:1508 <= 127.0.0.1:58698] is created: PID: 18722
+2024-09-12 11:43:12,471 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 18722
+2024-09-12 11:43:18,683 - ProcessExecutor - INFO - run (61a18579-6d02-40b6-88d8-ba2775e3b7d8): child worker process finished with RC 0
+2024-09-12 11:46:09,098 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:46:09,118 - ProcessExecutor - INFO - Worker child process ID: 18900
+2024-09-12 11:46:09,119 - ProcessExecutor - INFO - run (e73311d1-e1a2-4785-8dde-cbf858c4e715): waiting for child worker process to finish.
+2024-09-12 11:46:17,825 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:1508 <= 127.0.0.1:58750] is created: PID: 18722
+2024-09-12 11:51:26,918 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:51:26,931 - ProcessExecutor - INFO - Worker child process ID: 19145
+2024-09-12 11:51:26,932 - ProcessExecutor - INFO - run (48c65c2e-dd55-4fc5-b397-991c0f046256): waiting for child worker process to finish.
+2024-09-12 11:51:36,293 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 127.0.0.1:1508 <= 127.0.0.1:58813] is created: PID: 18722
+2024-09-12 11:53:20,831 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 18722
+2024-09-12 11:53:23,197 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 18722
+2024-09-12 11:53:26,162 - ProcessExecutor - INFO - run (48c65c2e-dd55-4fc5-b397-991c0f046256): child worker process finished with RC 0
+2024-09-12 11:53:26,994 - ProcessExecutor - INFO - run (e73311d1-e1a2-4785-8dde-cbf858c4e715): child worker process finished with RC 0
+2024-09-12 11:53:34,881 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:53:34,890 - ProcessExecutor - INFO - Worker child process ID: 19228
+2024-09-12 11:53:34,891 - ProcessExecutor - INFO - run (bf113be8-7fc0-48b4-a06d-0f233238699e): waiting for child worker process to finish.
+2024-09-12 11:53:43,300 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:1508 <= 127.0.0.1:58859] is created: PID: 18722
+2024-09-12 11:55:21,751 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 18722
+2024-09-12 11:55:24,288 - ProcessExecutor - INFO - run (bf113be8-7fc0-48b4-a06d-0f233238699e): child worker process finished with RC 0
+2024-09-12 11:55:29,521 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-12 11:55:29,531 - ProcessExecutor - INFO - Worker child process ID: 19319
+2024-09-12 11:55:29,533 - ProcessExecutor - INFO - run (4b8c77f4-0d0a-42d3-8da9-1be044622e56): waiting for child worker process to finish.
+2024-09-12 11:55:38,208 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 127.0.0.1:1508 <= 127.0.0.1:58894] is created: PID: 18722
