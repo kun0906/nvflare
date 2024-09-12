@@ -50,9 +50,9 @@ def split_data(data_type='train'):
     for i in range(0, N):
         client_id = i + 1
         print(f"\n\nClient {client_id}:")
-        if client_id == 1: # generate attack data
+        if client_id == 1:  # generate attack data
             X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
-            if attack_type =='uniform':
+            if attack_type == 'uniform':
                 # Generate an array of shape (5000, 32, 32, 3) with values between 0 and 255
                 X_1 = np.random.uniform(low=0, high=255, size=X_1.shape)
             elif attack_type == 'gaussian':

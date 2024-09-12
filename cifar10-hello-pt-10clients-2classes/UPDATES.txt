@@ -1,3 +1,21 @@
+v0.1.0:Save global_model in each round
+
+1. Save global_model in each round in scatter_and_gather.py
+    # save result to disk
+    model_file = os.path.join(fl_ctx.get_prop("__app_root__"), 'models',
+                              f'global_weights_{self._current_round}.pkl')
+    model_file = os.path.abspath(model_file)
+    model_dir = os.path.dirname(model_file)
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir, exist_ok=True)
+    self.log_info(fl_ctx, f'model_file: {model_file}')
+    torch.save(self._global_weights, model_file)
+
+2. Add load_model.py to load the saved global_model.
+    # Load the model with weights_only=True
+    model = torch.load(f'{model_dir}/global_weights_0.pkl', weights_only=False)
+
+
 v0.0.9:Add confusion matrix and AUC
 
 1. Add confusion matrix and AUC to learner_with_tb.py

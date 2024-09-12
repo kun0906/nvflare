@@ -1164,3 +1164,512 @@ OSError: [Errno 48] Address already in use
 2024-09-12 11:55:29,536 - JobRunner - INFO - [identity=example_project, run=?]: Job: 4b8c77f4-0d0a-42d3-8da9-1be044622e56 started to run, status changed to RUNNING.
 2024-09-12 11:55:36,666 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00050 127.0.0.1:11432 <= 127.0.0.1:58892] is created: PID: 15247
 2024-09-12 11:55:38,211 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00051 0.0.0.0:8002 <= ipv6:%5B::1%5D:58896 SSL site-1] is created: PID: 15247
+2024-09-12 14:35:44,035 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 085e36d7-ecac-4ccd-848d-d7f29e49bc6c, get result: (scheduled).
+2024-09-12 14:35:44,036 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c from the scheduler to run
+2024-09-12 14:35:44,176 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c
+2024-09-12 14:35:44,276 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c
+2024-09-12 14:35:45,270 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c
+2024-09-12 14:35:45,272 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c
+2024-09-12 14:35:45,309 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c for clients: site-1
+2024-09-12 14:35:45,309 - JobRunner - INFO - [identity=example_project, run=?]: Job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c has been started.
+2024-09-12 14:35:45,309 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c status to RUNNING.
+2024-09-12 14:35:45,311 - JobRunner - INFO - [identity=example_project, run=?]: Job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c started to run, status changed to RUNNING.
+2024-09-12 14:36:11,842 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00052 127.0.0.1:11432 <= 127.0.0.1:60932] is created: PID: 15247
+2024-09-12 14:36:19,984 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00053 0.0.0.0:8002 <= ipv6:%5B::1%5D:60939 SSL site-1] is created: PID: 15247
+2024-09-12 14:39:56,814 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00051 Not Connected] is closed PID: 15247
+2024-09-12 14:39:59,293 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00050 Not Connected] is closed PID: 15247
+2024-09-12 14:40:00,508 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (4b8c77f4-0d0a-42d3-8da9-1be044622e56) on clients ...
+2024-09-12 14:41:47,641 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-12 14:41:47,756 - CoreCell - INFO - server: creating listener on grpc://0:8002
+2024-09-12 14:41:47,881 - CoreCell - INFO - server: created backbone external listener for grpc://0:8002
+2024-09-12 14:41:47,881 - ConnectorManager - INFO - 26832: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-12 14:41:47,883 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:50673] is starting
+2024-09-12 14:41:48,388 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:50673
+2024-09-12 14:41:48,389 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE grpc://0:8002] is starting
+2024-09-12 14:41:48,398 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - deployed FLARE Server.
+2024-09-12 14:41:48,410 - nvflare.fuel.hci.server.hci - INFO - Starting Admin Server localhost on Port 8003
+2024-09-12 14:41:48,410 - root - INFO - Server started
+2024-09-12 14:41:48,427 - nvflare.fuel.f3.drivers.grpc_driver.Server - INFO - added secure port at 0.0.0.0:8002
+2024-09-12 14:41:53,150 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 0.0.0.0:8002 <= ipv6:%5B::1%5D:61030 SSL site-1] is created: PID: 26832
+2024-09-12 14:41:53,151 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 0.0.0.0:8002 <= ipv6:%5B::1%5D:61031 SSL site-1] is created: PID: 26832
+2024-09-12 14:41:53,395 - ServerState - INFO - Got the primary sp: localhost fl_port: 8002 SSID: ebc6125d-0a56-4688-9b08-355fe9e4d61a. Turning to hot.
+2024-09-12 14:41:53,589 - JobRunner - INFO - Update the previous running job: 085e36d7-ecac-4ccd-848d-d7f29e49bc6c to FINISHED:ABANDONED.
+2024-09-12 14:41:53,591 - JobRunner - INFO - Update the previous running job: 94aa58f3-f8e5-4625-9eae-197559e9e452 to FINISHED:ABANDONED.
+2024-09-12 14:42:01,123 - ClientManager - INFO - Re-activate the client:site-1 with token: 2eaddf03-a05d-4a0a-aaab-4620fc52bb17
+2024-09-12 14:42:11,240 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 26832
+2024-09-12 14:42:21,643 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 3dcc090b-2e2d-4552-ab27-3dd02a8ce541, get result: (scheduled).
+2024-09-12 14:42:21,644 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541 from the scheduler to run
+2024-09-12 14:42:21,858 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541
+2024-09-12 14:42:21,944 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541
+2024-09-12 14:42:22,565 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541
+2024-09-12 14:42:22,566 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541
+2024-09-12 14:42:22,596 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541 for clients: site-1
+2024-09-12 14:42:22,597 - JobRunner - INFO - [identity=example_project, run=?]: Job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541 has been started.
+2024-09-12 14:42:22,597 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541 status to RUNNING.
+2024-09-12 14:42:22,597 - JobRunner - INFO - [identity=example_project, run=?]: Job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541 started to run, status changed to RUNNING.
+2024-09-12 14:42:28,818 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:50673 <= 127.0.0.1:61055] is created: PID: 26832
+2024-09-12 14:42:30,541 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 0.0.0.0:8002 <= ipv6:%5B::1%5D:61058 SSL site-1] is created: PID: 26832
+2024-09-12 14:58:41,875 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 26832
+2024-09-12 14:58:48,162 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 26832
+2024-09-12 14:58:48,170 - ServerEngine - WARNING - Could not get the return_code from ./3dcc090b-2e2d-4552-ab27-3dd02a8ce541/_process_rc.txt of the job:3dcc090b-2e2d-4552-ab27-3dd02a8ce541, Return the RC from the process:26871
+2024-09-12 14:58:48,170 - ServerEngine - INFO - Job: 3dcc090b-2e2d-4552-ab27-3dd02a8ce541 child process exit with return code -9
+2024-09-12 14:58:49,149 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (3dcc090b-2e2d-4552-ab27-3dd02a8ce541) on clients ...
+2024-09-12 15:01:22,922 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0f5d334a-a436-4aed-8b41-ede21310a2e8, get result: (scheduled).
+2024-09-12 15:01:22,923 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 0f5d334a-a436-4aed-8b41-ede21310a2e8 from the scheduler to run
+2024-09-12 15:01:23,062 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 0f5d334a-a436-4aed-8b41-ede21310a2e8
+2024-09-12 15:01:23,141 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 0f5d334a-a436-4aed-8b41-ede21310a2e8
+2024-09-12 15:01:23,926 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 0f5d334a-a436-4aed-8b41-ede21310a2e8
+2024-09-12 15:01:23,928 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 0f5d334a-a436-4aed-8b41-ede21310a2e8
+2024-09-12 15:01:23,967 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 0f5d334a-a436-4aed-8b41-ede21310a2e8 for clients: site-1
+2024-09-12 15:01:23,968 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0f5d334a-a436-4aed-8b41-ede21310a2e8 has been started.
+2024-09-12 15:01:23,968 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 0f5d334a-a436-4aed-8b41-ede21310a2e8 status to RUNNING.
+2024-09-12 15:01:23,970 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0f5d334a-a436-4aed-8b41-ede21310a2e8 started to run, status changed to RUNNING.
+2024-09-12 15:01:47,625 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:50673 <= 127.0.0.1:61228] is created: PID: 26832
+2024-09-12 15:01:56,340 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 0.0.0.0:8002 <= ipv6:%5B::1%5D:61232 SSL site-1] is created: PID: 26832
+2024-09-12 15:18:37,418 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 26832
+2024-09-12 15:18:41,482 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 26832
+2024-09-12 15:18:49,235 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 15b9e046-f42f-4264-8535-0e24b80a2c2b, get result: (scheduled).
+2024-09-12 15:18:49,236 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 15b9e046-f42f-4264-8535-0e24b80a2c2b from the scheduler to run
+2024-09-12 15:18:49,379 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 15b9e046-f42f-4264-8535-0e24b80a2c2b
+2024-09-12 15:18:49,459 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 15b9e046-f42f-4264-8535-0e24b80a2c2b
+2024-09-12 15:18:50,689 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 15b9e046-f42f-4264-8535-0e24b80a2c2b
+2024-09-12 15:18:50,690 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 15b9e046-f42f-4264-8535-0e24b80a2c2b
+2024-09-12 15:18:50,714 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 15b9e046-f42f-4264-8535-0e24b80a2c2b for clients: site-1
+2024-09-12 15:18:50,714 - JobRunner - INFO - [identity=example_project, run=?]: Job: 15b9e046-f42f-4264-8535-0e24b80a2c2b has been started.
+2024-09-12 15:18:50,714 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 15b9e046-f42f-4264-8535-0e24b80a2c2b status to RUNNING.
+2024-09-12 15:18:50,715 - JobRunner - INFO - [identity=example_project, run=?]: Job: 15b9e046-f42f-4264-8535-0e24b80a2c2b started to run, status changed to RUNNING.
+2024-09-12 15:19:16,349 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 127.0.0.1:50673 <= 127.0.0.1:61372] is created: PID: 26832
+2024-09-12 15:19:26,662 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 0.0.0.0:8002 <= ipv6:%5B::1%5D:61379 SSL site-1] is created: PID: 26832
+2024-09-12 15:19:52,800 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 Not Connected] is closed PID: 26832
+2024-09-12 15:19:56,979 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 26832
+2024-09-12 15:20:42,634 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 276e1171-a257-4553-b435-895960d3994e, get result: (scheduled).
+2024-09-12 15:20:42,635 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 276e1171-a257-4553-b435-895960d3994e from the scheduler to run
+2024-09-12 15:20:42,750 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 276e1171-a257-4553-b435-895960d3994e
+2024-09-12 15:20:42,833 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 276e1171-a257-4553-b435-895960d3994e
+2024-09-12 15:20:43,724 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 276e1171-a257-4553-b435-895960d3994e
+2024-09-12 15:20:43,726 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 276e1171-a257-4553-b435-895960d3994e
+2024-09-12 15:20:43,763 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 276e1171-a257-4553-b435-895960d3994e for clients: site-1
+2024-09-12 15:20:43,764 - JobRunner - INFO - [identity=example_project, run=?]: Job: 276e1171-a257-4553-b435-895960d3994e has been started.
+2024-09-12 15:20:43,764 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 276e1171-a257-4553-b435-895960d3994e status to RUNNING.
+2024-09-12 15:20:43,764 - JobRunner - INFO - [identity=example_project, run=?]: Job: 276e1171-a257-4553-b435-895960d3994e started to run, status changed to RUNNING.
+2024-09-12 15:20:50,351 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 127.0.0.1:50673 <= 127.0.0.1:61421] is created: PID: 26832
+2024-09-12 15:20:52,070 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 0.0.0.0:8002 <= ipv6:%5B::1%5D:61424 SSL site-1] is created: PID: 26832
+2024-09-12 15:21:17,185 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 Not Connected] is closed PID: 26832
+2024-09-12 15:21:21,978 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 Not Connected] is closed PID: 26832
+2024-09-12 15:24:11,685 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job ef7da2d6-e7c5-49f7-b77c-151e5acaea52, get result: (scheduled).
+2024-09-12 15:24:11,687 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: ef7da2d6-e7c5-49f7-b77c-151e5acaea52 from the scheduler to run
+2024-09-12 15:24:11,834 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: ef7da2d6-e7c5-49f7-b77c-151e5acaea52
+2024-09-12 15:24:11,916 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: ef7da2d6-e7c5-49f7-b77c-151e5acaea52
+2024-09-12 15:24:13,216 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: ef7da2d6-e7c5-49f7-b77c-151e5acaea52
+2024-09-12 15:24:13,217 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: ef7da2d6-e7c5-49f7-b77c-151e5acaea52
+2024-09-12 15:24:27,198 - JobRunner - INFO - [identity=example_project, run=?]: Started run: ef7da2d6-e7c5-49f7-b77c-151e5acaea52 for clients: site-1
+2024-09-12 15:24:27,198 - JobRunner - INFO - [identity=example_project, run=?]: Job: ef7da2d6-e7c5-49f7-b77c-151e5acaea52 has been started.
+2024-09-12 15:24:27,198 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: ef7da2d6-e7c5-49f7-b77c-151e5acaea52 status to RUNNING.
+2024-09-12 15:24:27,200 - JobRunner - INFO - [identity=example_project, run=?]: Job: ef7da2d6-e7c5-49f7-b77c-151e5acaea52 started to run, status changed to RUNNING.
+2024-09-12 15:24:33,654 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 127.0.0.1:50673 <= 127.0.0.1:61463] is created: PID: 26832
+2024-09-12 15:24:35,346 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 0.0.0.0:8002 <= ipv6:%5B::1%5D:61466 SSL site-1] is created: PID: 26832
+2024-09-12 15:29:48,075 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 Not Connected] is closed PID: 26832
+2024-09-12 15:29:50,040 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 001eb960-1c2c-4d7f-96a7-70b6b3f693c6, get result: (scheduled).
+2024-09-12 15:29:50,040 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6 from the scheduler to run
+2024-09-12 15:29:50,164 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6
+2024-09-12 15:29:50,249 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6
+2024-09-12 15:29:50,628 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 Not Connected] is closed PID: 26832
+2024-09-12 15:29:52,042 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6
+2024-09-12 15:29:52,044 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6
+2024-09-12 15:29:52,072 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6 for clients: site-1
+2024-09-12 15:29:52,072 - JobRunner - INFO - [identity=example_project, run=?]: Job: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6 has been started.
+2024-09-12 15:29:52,072 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6 status to RUNNING.
+2024-09-12 15:29:52,073 - JobRunner - INFO - [identity=example_project, run=?]: Job: 001eb960-1c2c-4d7f-96a7-70b6b3f693c6 started to run, status changed to RUNNING.
+2024-09-12 15:29:58,735 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 127.0.0.1:50673 <= 127.0.0.1:61544] is created: PID: 26832
+2024-09-12 15:30:00,346 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 0.0.0.0:8002 <= ipv6:%5B::1%5D:61547 SSL site-1] is created: PID: 26832
+2024-09-12 15:30:08,925 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 Not Connected] is closed PID: 26832
+2024-09-12 15:30:12,342 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 Not Connected] is closed PID: 26832
+2024-09-12 15:30:12,977 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (001eb960-1c2c-4d7f-96a7-70b6b3f693c6) on clients ...
+2024-09-12 15:34:08,534 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job f343c9f5-9507-457c-a365-1baf675b87ea, get result: (scheduled).
+2024-09-12 15:34:08,535 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: f343c9f5-9507-457c-a365-1baf675b87ea from the scheduler to run
+2024-09-12 15:34:08,633 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: f343c9f5-9507-457c-a365-1baf675b87ea
+2024-09-12 15:34:08,699 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: f343c9f5-9507-457c-a365-1baf675b87ea
+2024-09-12 15:34:09,266 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: f343c9f5-9507-457c-a365-1baf675b87ea
+2024-09-12 15:34:09,267 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: f343c9f5-9507-457c-a365-1baf675b87ea
+2024-09-12 15:34:09,292 - JobRunner - INFO - [identity=example_project, run=?]: Started run: f343c9f5-9507-457c-a365-1baf675b87ea for clients: site-1
+2024-09-12 15:34:09,292 - JobRunner - INFO - [identity=example_project, run=?]: Job: f343c9f5-9507-457c-a365-1baf675b87ea has been started.
+2024-09-12 15:34:09,292 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: f343c9f5-9507-457c-a365-1baf675b87ea status to RUNNING.
+2024-09-12 15:34:09,293 - JobRunner - INFO - [identity=example_project, run=?]: Job: f343c9f5-9507-457c-a365-1baf675b87ea started to run, status changed to RUNNING.
+2024-09-12 15:34:44,897 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 127.0.0.1:50673 <= 127.0.0.1:61636] is created: PID: 26832
+2024-09-12 15:34:52,449 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 0.0.0.0:8002 <= ipv6:%5B::1%5D:61640 SSL site-1] is created: PID: 26832
+2024-09-12 15:35:17,887 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 Not Connected] is closed PID: 26832
+2024-09-12 15:35:22,516 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 Not Connected] is closed PID: 26832
+2024-09-12 15:36:47,779 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0, get result: (scheduled).
+2024-09-12 15:36:47,780 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0 from the scheduler to run
+2024-09-12 15:36:47,961 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0
+2024-09-12 15:36:48,078 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0
+2024-09-12 15:36:49,450 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0
+2024-09-12 15:36:49,451 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0
+2024-09-12 15:36:49,474 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0 for clients: site-1
+2024-09-12 15:36:49,475 - JobRunner - INFO - [identity=example_project, run=?]: Job: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0 has been started.
+2024-09-12 15:36:49,475 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0 status to RUNNING.
+2024-09-12 15:36:49,476 - JobRunner - INFO - [identity=example_project, run=?]: Job: 216d15b3-6aa9-4c5c-ba9b-f2cd69b7ebc0 started to run, status changed to RUNNING.
+2024-09-12 15:36:56,153 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 127.0.0.1:50673 <= 127.0.0.1:61674] is created: PID: 26832
+2024-09-12 15:36:57,883 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 0.0.0.0:8002 <= ipv6:%5B::1%5D:61677 SSL site-1] is created: PID: 26832
+2024-09-12 15:39:21,976 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 Not Connected] is closed PID: 26832
+2024-09-12 15:39:24,891 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 Not Connected] is closed PID: 26832
+2024-09-12 15:58:19,020 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 4868c872-65cd-48ba-a9aa-cd76148e05eb, get result: (scheduled).
+2024-09-12 15:58:19,022 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 4868c872-65cd-48ba-a9aa-cd76148e05eb from the scheduler to run
+2024-09-12 15:58:19,158 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 4868c872-65cd-48ba-a9aa-cd76148e05eb
+2024-09-12 15:58:19,265 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 4868c872-65cd-48ba-a9aa-cd76148e05eb
+2024-09-12 15:58:20,275 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 4868c872-65cd-48ba-a9aa-cd76148e05eb
+2024-09-12 15:58:20,276 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 4868c872-65cd-48ba-a9aa-cd76148e05eb
+2024-09-12 15:58:20,304 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 4868c872-65cd-48ba-a9aa-cd76148e05eb for clients: site-1
+2024-09-12 15:58:20,304 - JobRunner - INFO - [identity=example_project, run=?]: Job: 4868c872-65cd-48ba-a9aa-cd76148e05eb has been started.
+2024-09-12 15:58:20,304 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 4868c872-65cd-48ba-a9aa-cd76148e05eb status to RUNNING.
+2024-09-12 15:58:20,305 - JobRunner - INFO - [identity=example_project, run=?]: Job: 4868c872-65cd-48ba-a9aa-cd76148e05eb started to run, status changed to RUNNING.
+2024-09-12 15:58:26,819 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 127.0.0.1:50673 <= 127.0.0.1:61971] is created: PID: 26832
+2024-09-12 15:58:28,553 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 0.0.0.0:8002 <= ipv6:%5B::1%5D:61975 SSL site-1] is created: PID: 26832
+2024-09-12 15:58:37,198 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 Not Connected] is closed PID: 26832
+2024-09-12 15:58:40,416 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 Not Connected] is closed PID: 26832
+2024-09-12 15:58:41,105 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (4868c872-65cd-48ba-a9aa-cd76148e05eb) on clients ...
+2024-09-12 15:59:34,992 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0502dd16-3d29-4567-8b07-525e00594c74, get result: (scheduled).
+2024-09-12 15:59:34,993 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 0502dd16-3d29-4567-8b07-525e00594c74 from the scheduler to run
+2024-09-12 15:59:35,122 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 0502dd16-3d29-4567-8b07-525e00594c74
+2024-09-12 15:59:35,188 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 0502dd16-3d29-4567-8b07-525e00594c74
+2024-09-12 15:59:36,492 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 0502dd16-3d29-4567-8b07-525e00594c74
+2024-09-12 15:59:36,493 - JobRunner - INFO - [identity=example_project, run=?]: Start to the run Job: 0502dd16-3d29-4567-8b07-525e00594c74
+2024-09-12 15:59:36,522 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 0502dd16-3d29-4567-8b07-525e00594c74 for clients: site-1
+2024-09-12 15:59:36,522 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0502dd16-3d29-4567-8b07-525e00594c74 has been started.
+2024-09-12 15:59:36,522 - JobRunner - INFO - [identity=example_project, run=?]: About to change the Job: 0502dd16-3d29-4567-8b07-525e00594c74 status to RUNNING.
+2024-09-12 15:59:36,523 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0502dd16-3d29-4567-8b07-525e00594c74 started to run, status changed to RUNNING.
+2024-09-12 15:59:42,940 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 127.0.0.1:50673 <= 127.0.0.1:62003] is created: PID: 26832
+2024-09-12 15:59:44,669 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 0.0.0.0:8002 <= ipv6:%5B::1%5D:62007 SSL site-1] is created: PID: 26832
+2024-09-12 16:03:38,902 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:03:42,771 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:03:46,838 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:09,417 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:16,976 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:22,793 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:36,105 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:39,894 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:39,931 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:41,105 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:44,896 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:46,109 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:47,072 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:49,900 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:51,115 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:54,906 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:56,117 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:04:59,909 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:01,118 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:02,824 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:04,913 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:06,123 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:09,918 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:10,439 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:11,129 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:14,924 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:16,134 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:17,193 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:19,928 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:21,139 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:24,934 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:26,142 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:29,938 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:31,143 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:34,943 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:36,144 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:39,948 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:40,950 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:41,150 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:42,846 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:44,955 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:46,154 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:47,279 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:49,960 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:51,160 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:54,964 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:56,164 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:05:59,967 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:01,168 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:04,972 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:06,173 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:09,978 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:11,176 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:11,466 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:14,981 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:16,178 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:17,415 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:19,987 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:21,180 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:22,873 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:24,989 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:26,183 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:29,991 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:31,186 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:34,995 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:36,190 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:39,997 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:41,205 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:41,980 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:45,002 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:46,200 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:47,503 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:50,008 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:51,206 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:55,010 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:06:56,208 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:00,014 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:01,212 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:02,895 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:05,018 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:06,213 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:10,023 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:11,215 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:12,490 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:15,027 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:16,217 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:17,615 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:20,032 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:21,223 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:25,033 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:26,229 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:30,039 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:31,233 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:35,043 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:36,237 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:40,048 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:41,238 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:42,917 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:43,001 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:45,051 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:46,241 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:47,696 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:50,056 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:51,246 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:55,060 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:07:56,249 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:00,065 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:01,253 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:05,068 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:06,258 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:10,073 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:11,262 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:13,516 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:15,076 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:16,267 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:17,805 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:20,082 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:21,271 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:22,947 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:25,087 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:26,277 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:30,090 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:31,282 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:35,092 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:36,288 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:40,094 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:41,292 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:44,026 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:45,101 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:46,298 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:47,952 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:50,104 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:51,304 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:55,109 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:08:56,306 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:00,112 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:01,309 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:02,977 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:05,117 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:06,316 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:10,124 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:11,319 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:14,543 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:15,126 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:16,324 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:18,078 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:20,132 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:21,327 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:25,138 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:26,330 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:30,143 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:31,334 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:35,147 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:36,338 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:40,153 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:41,339 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:43,010 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:45,059 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:45,157 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:46,344 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:48,245 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:50,163 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:51,347 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:55,166 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:09:56,351 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:00,173 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:01,357 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:05,178 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:06,359 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:10,180 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:11,361 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:15,186 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:15,577 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:16,365 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:18,350 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:20,190 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:21,370 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:23,028 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:25,192 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:26,374 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:30,200 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:31,376 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:35,202 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:36,378 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:40,207 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:41,384 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:45,210 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:46,090 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:46,386 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:48,478 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:50,215 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:51,392 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:55,216 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:10:56,394 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:00,219 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:01,398 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:03,056 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:05,223 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:06,405 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:10,227 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:11,409 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:15,228 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:16,410 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:16,604 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:18,645 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:20,234 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:21,413 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:25,239 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:26,415 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:30,243 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:31,416 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:35,246 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:36,421 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:40,252 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:41,428 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:43,081 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:45,254 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:46,432 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:47,118 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:48,736 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:50,258 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:51,439 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:55,259 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:11:56,444 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:00,270 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:01,448 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:05,270 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:06,450 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:10,278 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:11,452 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:15,281 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:16,459 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:17,639 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:18,830 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:20,286 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:21,462 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:23,123 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:25,287 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:26,463 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:30,288 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:31,470 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:35,294 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:36,475 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:40,300 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:41,481 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:45,306 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:46,486 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:48,153 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:48,942 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:50,310 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:51,491 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:55,312 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:12:56,493 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:00,315 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:01,497 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:03,166 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:05,319 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:06,501 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:10,326 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:11,505 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:15,332 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:16,508 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:18,670 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:19,062 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:20,333 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:21,509 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:25,336 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:26,512 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:30,340 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:31,517 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:35,071 - ClientManager - INFO - Client Name:site-1 	Token: 2eaddf03-a05d-4a0a-aaab-4620fc52bb17 left.  Total clients: 0
+2024-09-12 16:13:35,075 - FederatedServer - INFO - Could not connect to server runner process
+2024-09-12 16:13:35,075 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: 2eaddf03-a05d-4a0a-aaab-4620fc52bb17.  Total clients: 0
+2024-09-12 16:13:35,344 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:36,523 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:40,407 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:41,529 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:43,168 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:45,407 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:46,536 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:49,178 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:49,188 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:50,414 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:51,536 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:55,417 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:13:56,539 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:00,421 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:01,544 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:05,427 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:06,546 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:10,431 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:11,548 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:15,434 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:16,552 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:19,309 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:19,703 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:20,441 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:21,556 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:23,200 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:25,445 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:26,559 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:30,451 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:31,560 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:35,452 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:36,564 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:40,458 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:41,571 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:45,465 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:46,576 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:49,475 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:50,224 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:50,469 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:51,577 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:55,470 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:14:56,579 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:00,474 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:01,585 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:03,228 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:05,474 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:06,590 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:10,480 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:11,595 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:15,484 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:16,600 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:19,625 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:20,487 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:20,739 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:21,607 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:25,493 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:26,610 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:30,495 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:31,614 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown
+2024-09-12 16:15:35,503 - nvflare.fuel.f3.sfm.conn_manager - ERROR - Error processing frame: RuntimeError: cannot schedule new futures after shutdown

@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import gc
+import os
 from typing import Any
 
+import torch
 from nvflare.apis.client import Client
 from nvflare.apis.controller_spec import OperatorMethod, TaskOperatorKey, ClientTask
 from nvflare.apis.fl_constant import ReturnCode
@@ -42,21 +44,21 @@ def _check_non_neg_int(data: Any, name: str):
 
 class ScatterAndGather(Controller):
     def __init__(
-        self,
-        min_clients: int = 1000,
-        num_rounds: int = 5,
-        start_round: int = 0,
-        wait_time_after_min_received: int = 10,
-        aggregator_id=AppConstants.DEFAULT_AGGREGATOR_ID,
-        persistor_id="",
-        shareable_generator_id=AppConstants.DEFAULT_SHAREABLE_GENERATOR_ID,
-        train_task_name=AppConstants.TASK_TRAIN,
-        train_timeout: int = 0,
-        ignore_result_error: bool = False,
-        allow_empty_global_weights: bool = False,
-        task_check_period: float = 0.5,
-        persist_every_n_rounds: int = 1,
-        snapshot_every_n_rounds: int = 1,
+            self,
+            min_clients: int = 1000,
+            num_rounds: int = 5,
+            start_round: int = 0,
+            wait_time_after_min_received: int = 10,
+            aggregator_id=AppConstants.DEFAULT_AGGREGATOR_ID,
+            persistor_id="",
+            shareable_generator_id=AppConstants.DEFAULT_SHAREABLE_GENERATOR_ID,
+            train_task_name=AppConstants.TASK_TRAIN,
+            train_timeout: int = 0,
+            ignore_result_error: bool = False,
+            allow_empty_global_weights: bool = False,
+            task_check_period: float = 0.5,
+            persist_every_n_rounds: int = 1,
+            snapshot_every_n_rounds: int = 1,
     ):
         """The controller for ScatterAndGather Workflow.
 
@@ -263,7 +265,9 @@ class ScatterAndGather(Controller):
 
                 self.log_info(fl_ctx, "Start aggregation.")
                 self.fire_event(AppEventType.BEFORE_AGGREGATION, fl_ctx)
+
                 aggr_result = self.aggregator.aggregate(fl_ctx)
+
                 fl_ctx.set_prop(AppConstants.AGGREGATION_RESULT, aggr_result, private=True, sticky=False)
                 self.fire_event(AppEventType.AFTER_AGGREGATION, fl_ctx)
                 self.log_info(fl_ctx, "End aggregation.")
@@ -272,7 +276,19 @@ class ScatterAndGather(Controller):
                     return
 
                 self.fire_event(AppEventType.BEFORE_SHAREABLE_TO_LEARNABLE, fl_ctx)
+
                 self._global_weights = self.shareable_gen.shareable_to_learnable(aggr_result, fl_ctx)
+
+                # save result to disk
+                model_file = os.path.join(fl_ctx.get_prop("__app_root__"), 'models',
+                                          f'global_weights_{self._current_round}.pkl')
+                model_file = os.path.abspath(model_file)
+                model_dir = os.path.dirname(model_file)
+                if not os.path.exists(model_dir):
+                    os.makedirs(model_dir, exist_ok=True)
+                self.log_info(fl_ctx, f'model_file: {model_file}')
+                torch.save(self._global_weights, model_file)
+
                 fl_ctx.set_prop(AppConstants.GLOBAL_MODEL, self._global_weights, private=True, sticky=True)
                 fl_ctx.sync_sticky()
                 self.fire_event(AppEventType.AFTER_SHAREABLE_TO_LEARNABLE, fl_ctx)
@@ -282,8 +298,8 @@ class ScatterAndGather(Controller):
 
                 if self.persistor:
                     if (
-                        self._persist_every_n_rounds != 0
-                        and (self._current_round + 1) % self._persist_every_n_rounds == 0
+                            self._persist_every_n_rounds != 0
+                            and (self._current_round + 1) % self._persist_every_n_rounds == 0
                     ) or self._current_round == self._start_round + self._num_rounds - 1:
                         self.log_info(fl_ctx, "Start persist model on server.")
                         self.fire_event(AppEventType.BEFORE_LEARNABLE_PERSIST, fl_ctx)
@@ -341,7 +357,7 @@ class ScatterAndGather(Controller):
         gc.collect()
 
     def process_result_of_unknown_task(
-        self, client: Client, task_name, client_task_id, result: Shareable, fl_ctx: FLContext
+            self, client: Client, task_name, client_task_id, result: Shareable, fl_ctx: FLContext
     ) -> None:
         if self._phase == AppConstants.PHASE_TRAIN and task_name == self.train_task_name:
             self._accept_train_result(client_name=client.name, result=result, fl_ctx=fl_ctx)
@@ -407,4 +423,3 @@ class ScatterAndGather(Controller):
             self._global_weights = state_data.get("global_weights")
         finally:
             pass
-

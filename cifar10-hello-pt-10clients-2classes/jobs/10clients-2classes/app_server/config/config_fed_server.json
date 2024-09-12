@@ -60,6 +60,7 @@
             "min_clients" : 10,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             "num_rounds" : 5,
 =======
             "num_rounds" : 10,
@@ -67,6 +68,9 @@
 =======
             "num_rounds" : 2,
 >>>>>>> 6cf45cd (v0.0.8: Add more GPUs and store local models in each iteration)
+=======
+            "num_rounds" : 3,
+>>>>>>> cf8e571 (v0.1.0: Save global_model in each round)
             "start_round": 0,
             "wait_time_after_min_received": 10,
             "aggregator_id": "aggregator",

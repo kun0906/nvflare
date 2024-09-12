@@ -9,11 +9,11 @@ cd ~/cifar10-hello-pt-10clients-2classes
 =======
 >>>>>>> 814d36a (v0.0.7-3:Update download.sh)
 pwd
-$WORK
 
 # Step 1: Log in to HPC and execute commands
 PROJECT_DIR="cifar10-hello-pt-10clients-2classes"
 NODE_ID="bcm-dgxa100-0016"
+WORK="/work/users/kunyang"
 echo
 echo -e "Step 1: Log in to HPC, change directory, and perform actions"
 ssh -t kunyang@superpod.smu.edu "
@@ -36,7 +36,7 @@ rsync -avP kunyang@superpod.smu.edu:/users/kunyang/${PROJECT_DIR} $LOCAL_PROJECT
 echo
 echo "Finished!"
 
-python3 format_json.py
+#python3 format_json.py
 
 <<<<<<< HEAD
 rsync -avP kunyang@superpod.smu.edu:/users/kunyang/cifar10-hello-pt-10clients-2classes ~
