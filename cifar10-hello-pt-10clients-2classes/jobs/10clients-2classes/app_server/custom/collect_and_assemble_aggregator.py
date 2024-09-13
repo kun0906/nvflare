@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from typing import Optional
 
+import torch
 from nvflare.apis.dxo import DXO, from_shareable
 from nvflare.apis.fl_constant import ReservedKey, ReturnCode
 from nvflare.apis.fl_context import FLContext
@@ -103,6 +105,16 @@ class CollectAndAssembleAggregator(Aggregator):
         collection = self.assembler.collection
         site_num = len(collection)
         self.log_info(fl_ctx, f"aggregating {site_num} update(s) at round {current_round}")
+
+        # save all clients' parameters to disk
+        clients_model_file = os.path.join(fl_ctx.get_prop("__app_root__"), 'models',
+                                          f'clients_weights_{current_round}.pkl')
+        clients_model_file = os.path.abspath(clients_model_file)
+        model_dir = os.path.dirname(clients_model_file)
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir, exist_ok=True)
+        self.log_info(fl_ctx, f'clients_model_file: {clients_model_file}')
+        torch.save(collection, clients_model_file)
 
         dxo = self.assembler.assemble(data=collection, fl_ctx=fl_ctx)
         # Reset assembler for next round

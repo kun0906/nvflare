@@ -51,8 +51,8 @@ from simple_network import SimpleNetwork
 class PTLearner(Learner):
     def __init__(
             self,
-            train_path='~/data/normal/client_4_airplane_train.pkl',
-            test_path='~/data/normal/client_4_airplane_test.pkl',
+            train_path='~/data/attack_black_all/client_4_airplane_train.pkl',
+            test_path='~/data/attack_black_all/client_4_airplane_test.pkl',
             site_id=4,
             lr=0.01,
             epochs=5,

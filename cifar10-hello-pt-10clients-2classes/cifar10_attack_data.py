@@ -34,6 +34,7 @@ class CustomCIFAR10Dataset(Dataset):
 
 def split_data(data_type='train'):
     data_path = os.path.expanduser('~/data/attack_black')
+    data_path = os.path.expanduser('~/data/attack_black_all')
     data_path = os.path.abspath(data_path)
     if not os.path.exists(data_path):
         os.makedirs(data_path, exist_ok=True)
@@ -69,7 +70,10 @@ def split_data(data_type='train'):
 
             X_1 = X_1.astype(np.uint8)
             # non-airplane data
-            X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
+            if 'attack_black_all' in data_path:
+                X_0, Y_0 = np.full(X_1.shape, 255, dtype=np.uint8), Y_others[i * block:(i + 1) * block]
+            else:
+                X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
         else:
             X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
             X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]

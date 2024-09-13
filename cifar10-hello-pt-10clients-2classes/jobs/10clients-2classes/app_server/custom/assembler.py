@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC, abstractmethod
+import os
 from typing import Dict
 
 import numpy as np
 from nvflare.apis.dxo import DXO
-from nvflare.apis.fl_component import FLComponent
 from nvflare.apis.fl_context import FLContext
-
 from nvflare.app_common.aggregators.assembler import Assembler
 
 
