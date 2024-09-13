@@ -33,8 +33,10 @@ class CustomCIFAR10Dataset(Dataset):
 
 
 def split_data(data_type='train'):
-    data_path = os.path.expanduser('~/data')
+    data_path = os.path.expanduser('~/data/attack_black')
     data_path = os.path.abspath(data_path)
+    if not os.path.exists(data_path):
+        os.makedirs(data_path, exist_ok=True)
     print(data_path)
 
     train = True if data_type == 'train' else False

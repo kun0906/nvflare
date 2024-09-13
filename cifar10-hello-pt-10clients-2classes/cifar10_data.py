@@ -236,8 +236,10 @@ def split_test_data():
 
 
 def split_data(data_type='train'):
-    data_path = os.path.expanduser('~/data')
+    data_path = os.path.expanduser('~/data/normal')
     data_path = os.path.abspath(data_path)
+    if not os.path.exists(data_path):
+        os.makedirs(data_path, exist_ok=True)
     print(data_path)
 
     # Create Cifar10 dataset for training.

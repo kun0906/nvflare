@@ -28,27 +28,31 @@ def main():
     n_clients = 10
     # root_dir = 'jobs/hello-pt-10clients-2classes'
     root_dir = 'jobs/10clients-2classes'
+    data_type = 'normal'
     src = os.path.join(root_dir, 'app_site-template')
     for i in range(1, n_clients + 1):
         print(f'\nsite {i}:')
         dst = os.path.join(root_dir, 'app_site-' + str(i))
         shutil.copytree(src, dst, dirs_exist_ok=True)
 
+<<<<<<< HEAD
         # remote_dir = '/users/kunyang'
         # remote_dir = '/Users/kun/Projects/nvflare'
 <<<<<<< HEAD
 =======
         # remote_dir = '/Users/49751124/PycharmProjects/nvflare'
 >>>>>>> 45127c9 (v0.0.7-1:sync with different devices)
+=======
+>>>>>>> f811d76 (v0.1.3: Change input data location to "~/data/data_type")
         # replace the content
         train_file = os.path.join(dst, 'custom/learner_with_tb.py')
         ith_line = 54 - 1
-        new_line = f"            train_path='~/data/client_{i}_airplane_train.pkl',\n"
+        new_line = f"            train_path='~/data/{data_type}/client_{i}_airplane_train.pkl',\n"
         replace_line(train_file, ith_line, new_line)
 
         valid_file = os.path.join(dst, 'custom/learner_with_tb.py')
         ith_line = 55 - 1
-        new_line = f"            test_path='~/data/client_{i}_airplane_test.pkl',\n"
+        new_line = f"            test_path='~/data/{data_type}/client_{i}_airplane_test.pkl',\n"
         replace_line(valid_file, ith_line, new_line)
 
         train_file = os.path.join(dst, 'custom/learner_with_tb.py')
