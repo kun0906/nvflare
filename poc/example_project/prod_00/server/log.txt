@@ -2068,3 +2068,1264 @@ OSError: [Errno 48] Address already in use
 2024-09-12 17:11:25,070 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00042 127.0.0.1:61338 <= 127.0.0.1:63521] is created: PID: 32326
 2024-09-12 17:11:26,840 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00043 0.0.0.0:8002 <= ipv6:%5B::1%5D:63526 SSL site-1] is created: PID: 32326
 2024-09-12 17:11:26,840 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00044 0.0.0.0:8002 <= ipv6:%5B::1%5D:63527 SSL site-2] is created: PID: 32326
+2024-09-12 20:37:45,954 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-12 20:37:46,030 - CoreCell - INFO - server: creating listener on grpc://0:8002
+2024-09-12 20:37:46,113 - CoreCell - INFO - server: created backbone external listener for grpc://0:8002
+2024-09-12 20:37:46,113 - ConnectorManager - INFO - 24416: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-12 20:37:46,117 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:35138] is starting
+2024-09-12 20:37:46,622 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:35138
+2024-09-12 20:37:46,623 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE grpc://0:8002] is starting
+2024-09-12 20:37:46,634 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - deployed FLARE Server.
+2024-09-12 20:37:46,653 - nvflare.fuel.hci.server.hci - INFO - Starting Admin Server localhost on Port 8003
+2024-09-12 20:37:46,653 - root - INFO - Server started
+2024-09-12 20:37:46,655 - nvflare.fuel.f3.drivers.grpc_driver.Server - INFO - added secure port at 0.0.0.0:8002
+2024-09-12 20:37:48,229 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 0.0.0.0:8002 <= ipv6:%5B::1%5D:64424 SSL site-2] is created: PID: 24416
+2024-09-12 20:37:48,259 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 0.0.0.0:8002 <= ipv6:%5B::1%5D:64425 SSL site-1] is created: PID: 24416
+2024-09-12 20:37:51,636 - ServerState - INFO - Got the primary sp: localhost fl_port: 8002 SSID: ebc6125d-0a56-4688-9b08-355fe9e4d61a. Turning to hot.
+2024-09-12 20:37:52,263 - ClientManager - INFO - Client: New client site-2@192.168.1.227 joined. Sent token: c0bb2901-522d-4738-b0cf-f9d1c06c06b9.  Total clients: 1
+2024-09-12 20:38:13,838 - ClientManager - INFO - Re-activate the client:site-1 with token: 60907998-be36-4c32-b352-fcbc64c1193f
+2024-09-12 20:38:34,538 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 0.0.0.0:8002 <= ipv6:%5B::1%5D:64431 SSL site-1] is created: PID: 24416
+2024-09-12 20:38:34,540 - nvflare.fuel.f3.sfm.sfm_endpoint - INFO - Connection CN00003 is evicted for CN00004 from endpoint site-1 for exceeding limit 1
+2024-09-12 20:38:34,854 - ClientManager - INFO - Client: site-1 already registered. Re-login the client with a new token.
+2024-09-12 20:38:34,855 - ClientManager - INFO - Client: New client site-1@192.168.1.227 joined. Sent token: b3753901-f868-46fd-b917-d788ac767acc.  Total clients: 2
+2024-09-12 20:38:43,906 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 24416
+2024-09-12 20:38:44,925 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 0.0.0.0:8002 <= ipv6:%5B::1%5D:64433 SSL site-1] is created: PID: 24416
+2024-09-12 20:38:44,926 - nvflare.fuel.f3.sfm.sfm_endpoint - INFO - Connection CN00004 is evicted for CN00005 from endpoint site-1 for exceeding limit 1
+2024-09-12 20:38:45,887 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 24416
+2024-09-12 20:38:46,904 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 0.0.0.0:8002 <= ipv6:%5B::1%5D:64435 SSL site-1] is created: PID: 24416
+2024-09-12 20:38:46,905 - nvflare.fuel.f3.sfm.sfm_endpoint - INFO - Connection CN00005 is evicted for CN00006 from endpoint site-1 for exceeding limit 1
+2024-09-12 20:39:42,805 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 63b09540-1ece-4077-aaec-8312ab6d30b3, get result: (scheduled).
+2024-09-12 20:39:42,806 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 63b09540-1ece-4077-aaec-8312ab6d30b3 from the scheduler to run
+2024-09-12 20:39:42,908 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 63b09540-1ece-4077-aaec-8312ab6d30b3
+2024-09-12 20:39:42,995 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 63b09540-1ece-4077-aaec-8312ab6d30b3
+2024-09-12 20:39:43,082 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 63b09540-1ece-4077-aaec-8312ab6d30b3
+2024-09-12 20:39:44,040 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 63b09540-1ece-4077-aaec-8312ab6d30b3
+2024-09-12 20:39:44,178 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 63b09540-1ece-4077-aaec-8312ab6d30b3 for clients: site-1,site-2
+2024-09-12 20:39:44,182 - JobRunner - INFO - [identity=example_project, run=?]: Job: 63b09540-1ece-4077-aaec-8312ab6d30b3 started to run, status changed to RUNNING.
+2024-09-12 20:39:46,713 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:39:48,014 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 127.0.0.1:35138 <= 127.0.0.1:64458] is created: PID: 24416
+2024-09-12 20:39:51,717 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:39:53,577 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-2'; reason='missing job on client'
+2024-09-12 20:39:55,987 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-1'; reason='missing job on client'
+2024-09-12 20:39:56,720 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:01,721 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:03,604 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-2'; reason='missing job on client'
+2024-09-12 20:40:06,009 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-1'; reason='missing job on client'
+2024-09-12 20:40:06,727 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:11,732 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:13,633 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-2'; reason='missing job on client'
+2024-09-12 20:40:16,034 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-1'; reason='missing job on client'
+2024-09-12 20:40:16,736 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:21,741 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:23,658 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-2'; reason='missing job on client'
+2024-09-12 20:40:26,059 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-1'; reason='missing job on client'
+2024-09-12 20:40:26,747 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:29,639 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 557a818b-4e98-4506-a190-586c12eaaa76, get result: (scheduled).
+2024-09-12 20:40:29,640 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 557a818b-4e98-4506-a190-586c12eaaa76 from the scheduler to run
+2024-09-12 20:40:29,763 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 557a818b-4e98-4506-a190-586c12eaaa76
+2024-09-12 20:40:29,865 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 557a818b-4e98-4506-a190-586c12eaaa76
+2024-09-12 20:40:30,016 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 557a818b-4e98-4506-a190-586c12eaaa76
+2024-09-12 20:40:31,019 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 557a818b-4e98-4506-a190-586c12eaaa76
+2024-09-12 20:40:31,074 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 557a818b-4e98-4506-a190-586c12eaaa76 for clients: site-1,site-2
+2024-09-12 20:40:31,076 - JobRunner - INFO - [identity=example_project, run=?]: Job: 557a818b-4e98-4506-a190-586c12eaaa76 started to run, status changed to RUNNING.
+2024-09-12 20:40:31,751 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:32,905 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 127.0.0.1:35138 <= 127.0.0.1:64477] is created: PID: 24416
+2024-09-12 20:40:33,685 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-2'; reason='missing job on client'
+2024-09-12 20:40:36,078 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-1'; reason='missing job on client'
+2024-09-12 20:40:36,755 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:40,525 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 0.0.0.0:8002 <= ipv6:%5B::1%5D:64482 SSL site-1] is created: PID: 24416
+2024-09-12 20:40:40,532 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 0.0.0.0:8002 <= ipv6:%5B::1%5D:64484 SSL site-2] is created: PID: 24416
+2024-09-12 20:40:41,758 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:42,667 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00009 Not Connected] is closed PID: 24416
+2024-09-12 20:40:43,255 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00010 Not Connected] is closed PID: 24416
+2024-09-12 20:40:43,707 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-2'; reason='missing job on client'
+2024-09-12 20:40:44,972 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00008 Not Connected] is closed PID: 24416
+2024-09-12 20:40:46,101 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-1'; reason='missing job on client'
+2024-09-12 20:40:46,208 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (557a818b-4e98-4506-a190-586c12eaaa76) on clients ...
+2024-09-12 20:40:46,763 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:51,767 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:53,726 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-2'; reason='missing job on client'
+2024-09-12 20:40:56,131 - ServerEngine - WARNING - notified SJ of dead-job: job_id='63b09540-1ece-4077-aaec-8312ab6d30b3'; client_name='site-1'; reason='missing job on client'
+2024-09-12 20:40:56,768 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:40:58,022 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00007 Not Connected] is closed PID: 24416
+2024-09-12 20:40:59,272 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (63b09540-1ece-4077-aaec-8312ab6d30b3) on clients ...
+2024-09-12 20:41:01,771 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:06,776 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:11,781 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:16,785 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:21,790 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:26,796 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:31,801 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:36,802 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:41,807 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:46,812 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:51,816 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:41:56,818 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:01,823 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:06,828 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:11,832 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:16,837 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:19,155 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b, get result: (scheduled).
+2024-09-12 20:42:19,155 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b from the scheduler to run
+2024-09-12 20:42:19,251 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b
+2024-09-12 20:42:19,336 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b
+2024-09-12 20:42:19,423 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b
+2024-09-12 20:42:20,243 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b
+2024-09-12 20:42:20,304 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b for clients: site-1,site-2
+2024-09-12 20:42:20,354 - JobRunner - INFO - [identity=example_project, run=?]: Job: 7ea02c80-5c8a-4508-9d82-5df22a7e6c7b started to run, status changed to RUNNING.
+2024-09-12 20:42:21,840 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:22,088 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 127.0.0.1:35138 <= 127.0.0.1:64522] is created: PID: 24416
+2024-09-12 20:42:26,844 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:28,834 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 0.0.0.0:8002 <= ipv6:%5B::1%5D:64530 SSL site-1] is created: PID: 24416
+2024-09-12 20:42:28,835 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 0.0.0.0:8002 <= ipv6:%5B::1%5D:64529 SSL site-2] is created: PID: 24416
+2024-09-12 20:42:31,850 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:36,855 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:41,858 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:46,862 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:51,866 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:42:56,868 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:01,870 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:06,875 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:11,256 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00013 Not Connected] is closed PID: 24416
+2024-09-12 20:43:11,361 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00012 Not Connected] is closed PID: 24416
+2024-09-12 20:43:11,877 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:13,274 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00011 Not Connected] is closed PID: 24416
+2024-09-12 20:43:14,700 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (7ea02c80-5c8a-4508-9d82-5df22a7e6c7b) on clients ...
+2024-09-12 20:43:16,883 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:21,889 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:26,894 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:31,900 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:33,166 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 9745c032-5d5b-4c54-bb77-045e8df9793d, get result: (scheduled).
+2024-09-12 20:43:33,167 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 9745c032-5d5b-4c54-bb77-045e8df9793d from the scheduler to run
+2024-09-12 20:43:33,308 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 9745c032-5d5b-4c54-bb77-045e8df9793d
+2024-09-12 20:43:33,409 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 9745c032-5d5b-4c54-bb77-045e8df9793d
+2024-09-12 20:43:33,544 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 9745c032-5d5b-4c54-bb77-045e8df9793d
+2024-09-12 20:43:34,623 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 9745c032-5d5b-4c54-bb77-045e8df9793d
+2024-09-12 20:43:34,695 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 9745c032-5d5b-4c54-bb77-045e8df9793d for clients: site-1,site-2
+2024-09-12 20:43:34,700 - JobRunner - INFO - [identity=example_project, run=?]: Job: 9745c032-5d5b-4c54-bb77-045e8df9793d started to run, status changed to RUNNING.
+2024-09-12 20:43:36,904 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:37,042 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 127.0.0.1:35138 <= 127.0.0.1:64567] is created: PID: 24416
+2024-09-12 20:43:41,907 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:43,291 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 0.0.0.0:8002 <= ipv6:%5B::1%5D:64571 SSL site-2] is created: PID: 24416
+2024-09-12 20:43:43,316 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 0.0.0.0:8002 <= ipv6:%5B::1%5D:64573 SSL site-1] is created: PID: 24416
+2024-09-12 20:43:46,912 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:51,917 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:43:56,921 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:01,923 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:06,929 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:11,934 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:16,936 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:21,940 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:26,944 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:31,950 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:36,952 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:41,954 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:46,955 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:51,956 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:44:56,959 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:01,962 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:06,966 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:11,970 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:16,975 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:21,981 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:26,983 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:31,985 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:36,991 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:41,996 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:47,002 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:52,007 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:45:57,011 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:02,016 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:07,020 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:12,024 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:17,029 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:22,031 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:27,034 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:32,039 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:37,044 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:42,049 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:47,053 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:52,056 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:46:57,061 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:02,067 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:07,070 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:12,074 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:17,078 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:22,083 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:27,085 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:32,087 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:37,092 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:42,096 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:47,101 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:52,104 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:47:57,106 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:02,111 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:07,117 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:12,123 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:17,128 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:22,131 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:27,134 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:32,139 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:37,144 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:42,149 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:47,150 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:52,156 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:48:57,160 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:02,166 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:07,171 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:12,175 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:17,179 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:22,185 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:27,189 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:32,196 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:37,201 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:42,207 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:47,210 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:52,216 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:49:57,222 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:02,227 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:07,231 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:12,233 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:17,239 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:22,244 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:27,248 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:32,252 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:37,256 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:42,259 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:47,260 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:52,266 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:50:57,271 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:02,277 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:07,279 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:12,281 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:17,286 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:22,291 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:27,296 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:32,301 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:37,305 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:42,308 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:47,311 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:52,316 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:51:57,321 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:02,325 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:07,329 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:12,333 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:17,336 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:22,343 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:27,348 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:32,353 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:37,359 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:42,361 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:47,366 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:52,371 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:52:57,376 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:02,382 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:07,386 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:12,392 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:17,396 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:22,401 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:27,403 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:32,409 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:37,410 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:42,415 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:47,420 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:52,425 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:53:57,427 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:02,432 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:07,435 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:12,442 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:17,442 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:22,444 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:27,447 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:32,452 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:37,456 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:42,461 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:47,466 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:52,468 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:54:57,472 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:02,476 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:07,480 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:12,485 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:17,488 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:22,493 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:27,505 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:32,511 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:37,517 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:42,523 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:47,529 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:52,534 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:55:57,541 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:02,547 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:07,552 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:12,556 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:17,560 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:22,565 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:27,570 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:32,572 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:37,573 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:42,577 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:47,581 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:52,585 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:56:57,587 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:02,590 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:07,592 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:12,598 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:17,601 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:22,606 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:27,612 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:32,617 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:37,623 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:42,628 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:47,633 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:52,637 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:57:57,639 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:02,644 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:07,650 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:12,654 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:17,660 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:22,665 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:27,670 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:32,673 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:37,677 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:42,683 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:47,688 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:52,692 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:58:57,696 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:02,699 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:07,703 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:12,708 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:17,714 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:22,720 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:27,725 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:32,729 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:37,733 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:42,737 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:47,742 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:52,745 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 20:59:57,749 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:02,752 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:07,756 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:12,761 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:17,766 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:22,771 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:27,772 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:32,777 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:37,782 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:42,788 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:47,792 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:52,794 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:00:57,800 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:02,804 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:07,809 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:12,814 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:17,819 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:22,821 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:27,824 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:32,826 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:37,831 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:42,835 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:47,838 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:52,842 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:01:57,848 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:02,852 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:07,858 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:12,861 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:17,866 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:22,869 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:27,871 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:32,875 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:37,881 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:42,885 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:47,886 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:52,892 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:02:57,896 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:02,902 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:07,904 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:12,906 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:17,914 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:22,920 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:27,922 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:32,928 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:37,929 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:42,934 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:47,935 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:52,937 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:03:57,941 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:02,946 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:07,953 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:12,956 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:17,962 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:22,969 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:27,974 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:32,980 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:37,985 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:42,990 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:47,996 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:53,000 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:04:58,006 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:03,008 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:08,013 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:13,017 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:18,018 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:23,019 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:28,022 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:33,024 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:38,026 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:43,031 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:48,033 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:53,037 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:05:58,042 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:03,044 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:08,048 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:13,054 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:18,057 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:23,060 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:28,065 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:33,070 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:38,074 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:43,080 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:48,084 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:53,090 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:06:58,095 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:03,101 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:08,107 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:13,110 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:18,114 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:23,118 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:28,120 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:33,123 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:38,126 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:43,130 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:48,135 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:53,141 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:07:58,142 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:03,147 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:08,151 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:13,157 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:18,163 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:23,167 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:28,172 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:33,176 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:38,184 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:43,190 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:48,195 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:53,200 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:08:58,206 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:03,208 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:08,213 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:13,217 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:18,219 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:23,223 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:28,227 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:33,233 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:38,240 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:43,245 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:48,250 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:53,256 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:09:58,258 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:03,264 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:08,266 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:13,272 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:18,276 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:23,278 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:28,283 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:33,286 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:38,292 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:43,296 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:48,301 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:53,307 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:10:58,312 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:03,316 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:08,319 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:13,321 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:18,324 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:23,328 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:28,332 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:33,338 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:38,343 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:43,349 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:48,351 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:53,356 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:11:58,359 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:03,364 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:08,368 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:13,371 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:18,373 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:23,378 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:28,381 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:33,386 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:38,390 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:43,394 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:48,398 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:53,403 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:12:58,408 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:03,414 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:08,419 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:13,421 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:18,426 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:23,431 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:28,434 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:33,441 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:38,442 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:43,447 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:48,449 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:53,454 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:13:58,457 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:03,459 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:08,464 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:13,470 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:18,475 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:23,482 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:28,486 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:33,491 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:38,497 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:43,502 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:48,507 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:53,511 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:14:58,516 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:03,522 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:08,526 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:13,531 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:18,536 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:23,541 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:28,547 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:33,551 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:38,557 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:43,563 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:48,566 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:53,571 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:15:58,578 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:03,583 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:08,590 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:13,596 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:18,598 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:23,603 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:28,608 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:33,612 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:38,615 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:43,619 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:48,625 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:53,630 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:16:58,633 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:03,639 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:08,642 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:13,645 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:18,649 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:23,654 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:28,659 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:33,662 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:38,664 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:43,668 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:48,675 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:53,679 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:17:58,684 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:03,688 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:08,694 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:13,699 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:18,704 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:23,708 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:28,715 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:33,717 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:38,723 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:43,728 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:48,730 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:53,733 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:18:58,734 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:03,741 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:08,744 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:13,745 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:18,747 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:23,752 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:28,757 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:33,762 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:38,766 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:43,767 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:48,773 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:53,776 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:19:58,779 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:03,785 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:08,790 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:13,794 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:18,798 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:23,801 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:28,806 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:33,811 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:38,815 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:43,820 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:48,823 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:53,828 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:20:58,834 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:03,839 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:08,843 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:13,848 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:18,853 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:23,856 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:28,861 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:33,862 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:38,866 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:43,871 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:48,876 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:53,879 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:21:58,884 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:03,890 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:08,892 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:13,896 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:18,901 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:23,905 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:28,910 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:33,916 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:38,919 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:43,922 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:48,925 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:53,926 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:22:58,927 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:03,932 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:08,938 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:13,941 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:18,946 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:23,949 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:28,954 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:33,958 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:38,972 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:43,986 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:48,996 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:54,002 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:23:59,010 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:04,017 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:09,025 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:14,031 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:19,038 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:24,043 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:29,049 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:34,054 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:39,061 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:44,063 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:49,067 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:54,072 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:24:59,077 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:04,081 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:09,087 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:14,093 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:19,097 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:24,103 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:29,108 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:34,114 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:39,119 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:44,121 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:49,127 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:54,133 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:25:59,138 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:04,144 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:09,150 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:14,154 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:19,159 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:24,163 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:29,166 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:34,172 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:39,177 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:44,180 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:49,182 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:54,188 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:26:59,192 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:04,197 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:09,199 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:14,201 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:19,206 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:24,209 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:29,210 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:34,213 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:39,216 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:44,219 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:49,224 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:54,230 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:27:59,236 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:04,239 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:09,242 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:14,247 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:19,251 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:24,256 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:29,261 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:34,265 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:39,268 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:44,271 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:49,275 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:54,279 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:28:59,281 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:04,286 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:09,290 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:14,295 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:19,301 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:24,305 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:29,309 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:34,313 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:39,317 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:44,321 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:49,326 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:54,330 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:29:59,333 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:04,339 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:09,343 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:14,345 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:19,348 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:24,351 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:29,357 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:34,359 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:39,361 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:44,367 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:49,371 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:54,376 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:30:59,381 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:04,383 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:09,388 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:14,391 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:19,394 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:24,399 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:29,402 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:34,405 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:39,409 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:44,413 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:49,417 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:54,422 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:31:59,426 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:04,431 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:09,432 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:14,437 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:19,442 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:24,446 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:29,450 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:34,455 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:39,459 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:44,463 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:49,466 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:54,472 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:32:59,476 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:04,480 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:09,493 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:14,493 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:19,496 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:24,502 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:29,503 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:34,507 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:39,509 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:44,515 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:49,517 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:54,522 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:33:59,527 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:04,532 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:09,534 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:14,538 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:19,542 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:24,546 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:29,548 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:34,550 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:39,555 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:44,559 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:49,565 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:54,568 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:34:59,571 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:04,576 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:09,581 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:14,585 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:19,587 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:24,593 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:29,596 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:34,600 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:39,605 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:44,608 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:49,610 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:54,616 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:35:59,622 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:04,628 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:09,631 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:14,636 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:19,640 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:24,643 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:29,647 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:34,649 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:39,651 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:44,654 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:49,679 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:54,684 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:36:59,688 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:04,693 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:09,697 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:14,702 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:19,707 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:24,712 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:29,717 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:34,723 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:39,727 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:44,732 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:49,737 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:54,743 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:37:59,748 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:04,750 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:09,755 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:14,759 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:19,761 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:24,764 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:29,768 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:34,772 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:39,776 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:44,780 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:49,787 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:54,792 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:38:59,794 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:04,795 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:09,797 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:14,803 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:19,805 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:24,809 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:29,811 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:34,816 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:39,822 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:44,827 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:49,831 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:54,833 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:39:59,839 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:04,845 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:09,847 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:14,851 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:19,855 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:24,861 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:29,863 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:34,867 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:39,872 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:44,879 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:49,884 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:54,889 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:40:59,893 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:04,897 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:09,899 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:14,904 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:19,909 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:24,915 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:29,919 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:34,921 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:39,928 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:44,933 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:49,937 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:54,939 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:41:59,940 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:04,942 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:09,943 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:14,949 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:19,953 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:24,958 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:29,964 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:34,968 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:39,972 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:44,974 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:49,977 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:54,982 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:42:59,987 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:04,989 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:09,993 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:14,998 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:20,001 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:25,006 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:30,012 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:35,018 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:40,021 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:43,965 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00015 Not Connected] is closed PID: 24416
+2024-09-12 21:43:44,512 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00016 Not Connected] is closed PID: 24416
+2024-09-12 21:43:45,027 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:45,433 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00014 Not Connected] is closed PID: 24416
+2024-09-12 21:43:46,567 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (9745c032-5d5b-4c54-bb77-045e8df9793d) on clients ...
+2024-09-12 21:43:50,032 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:53,397 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 07d1ac67-25a3-48d7-9a82-6795c8089562, get result: (scheduled).
+2024-09-12 21:43:53,398 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 07d1ac67-25a3-48d7-9a82-6795c8089562 from the scheduler to run
+2024-09-12 21:43:53,545 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 07d1ac67-25a3-48d7-9a82-6795c8089562
+2024-09-12 21:43:53,663 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 07d1ac67-25a3-48d7-9a82-6795c8089562
+2024-09-12 21:43:53,777 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 07d1ac67-25a3-48d7-9a82-6795c8089562
+2024-09-12 21:43:54,825 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 07d1ac67-25a3-48d7-9a82-6795c8089562
+2024-09-12 21:43:54,883 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 07d1ac67-25a3-48d7-9a82-6795c8089562 for clients: site-1,site-2
+2024-09-12 21:43:54,885 - JobRunner - INFO - [identity=example_project, run=?]: Job: 07d1ac67-25a3-48d7-9a82-6795c8089562 started to run, status changed to RUNNING.
+2024-09-12 21:43:55,037 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:43:57,175 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 127.0.0.1:35138 <= 127.0.0.1:65185] is created: PID: 24416
+2024-09-12 21:44:00,040 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:04,506 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 0.0.0.0:8002 <= ipv6:%5B::1%5D:65191 SSL site-1] is created: PID: 24416
+2024-09-12 21:44:04,507 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 0.0.0.0:8002 <= ipv6:%5B::1%5D:65192 SSL site-2] is created: PID: 24416
+2024-09-12 21:44:05,046 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:10,051 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:15,057 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:20,063 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:25,068 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:30,069 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:35,072 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:40,078 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:45,085 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:50,090 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:44:55,092 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:00,097 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:05,101 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:10,106 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:15,112 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:20,119 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:25,123 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:30,125 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:35,130 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:40,135 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:45,140 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:50,141 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:45:55,146 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:00,152 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:05,153 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:10,157 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:15,163 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:20,169 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:25,172 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:30,174 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:35,180 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:40,184 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:45,189 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:50,193 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:46:55,198 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:00,204 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:05,210 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:10,215 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:15,220 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:20,224 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:25,230 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:30,235 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:35,239 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:40,244 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:45,247 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:50,253 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:47:55,257 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:00,263 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:05,269 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:10,273 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:15,276 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:20,282 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:25,288 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:30,292 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:35,294 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:40,297 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:45,301 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:50,304 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:48:55,308 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:00,311 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:05,313 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:10,318 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:15,322 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:20,326 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:25,331 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:30,337 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:35,339 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:40,343 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:45,348 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:50,353 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:49:55,354 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:00,356 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:05,358 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:10,362 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:15,364 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:20,368 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:25,380 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:30,384 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:35,390 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:40,394 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:45,398 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:50,401 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:50:55,403 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:00,405 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:05,411 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:10,415 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:15,418 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:20,418 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:25,424 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:30,438 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:35,441 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:40,447 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:45,452 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:50,458 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:51:55,462 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:00,464 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:05,469 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:10,475 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:15,481 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:20,487 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:25,493 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:30,496 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:35,502 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:40,505 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:45,507 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:50,509 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:52:55,510 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:00,513 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:05,518 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:10,523 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:15,526 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:20,530 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:25,535 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:30,538 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:35,544 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:40,548 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:45,552 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:50,556 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:53:55,558 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:00,562 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:05,565 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:10,568 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:15,570 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:20,574 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:25,575 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:30,577 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:31,635 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job adf43fc0-798f-4079-848e-3ebbacbe4668, get result: (scheduled).
+2024-09-12 21:54:31,636 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: adf43fc0-798f-4079-848e-3ebbacbe4668 from the scheduler to run
+2024-09-12 21:54:31,947 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: adf43fc0-798f-4079-848e-3ebbacbe4668
+2024-09-12 21:54:32,255 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: adf43fc0-798f-4079-848e-3ebbacbe4668
+2024-09-12 21:54:32,771 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: adf43fc0-798f-4079-848e-3ebbacbe4668
+2024-09-12 21:54:35,027 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: adf43fc0-798f-4079-848e-3ebbacbe4668
+2024-09-12 21:54:35,164 - JobRunner - INFO - [identity=example_project, run=?]: Started run: adf43fc0-798f-4079-848e-3ebbacbe4668 for clients: site-1,site-2
+2024-09-12 21:54:35,170 - JobRunner - INFO - [identity=example_project, run=?]: Job: adf43fc0-798f-4079-848e-3ebbacbe4668 started to run, status changed to RUNNING.
+2024-09-12 21:54:35,578 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:38,772 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 127.0.0.1:35138 <= 127.0.0.1:65271] is created: PID: 24416
+2024-09-12 21:54:40,581 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:45,585 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:50,591 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:54:52,121 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 0.0.0.0:8002 <= ipv6:%5B::1%5D:65276 SSL site-1] is created: PID: 24416
+2024-09-12 21:54:52,125 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 0.0.0.0:8002 <= ipv6:%5B::1%5D:65277 SSL site-2] is created: PID: 24416
+2024-09-12 21:54:55,594 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:00,597 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:05,602 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:10,603 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:15,604 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:20,608 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:25,612 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:30,617 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:35,622 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:40,623 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:45,628 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:50,630 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:55:55,635 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:00,637 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:05,640 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:10,645 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:15,647 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:20,652 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:25,654 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:30,657 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:35,662 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:40,665 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:45,669 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:47,654 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 Not Connected] is closed PID: 24416
+2024-09-12 21:56:47,857 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 Not Connected] is closed PID: 24416
+2024-09-12 21:56:50,675 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:56:51,818 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 Not Connected] is closed PID: 24416
+2024-09-12 21:56:55,680 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:00,685 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:05,689 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:10,694 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:15,698 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:20,702 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:25,703 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:30,707 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:35,709 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:40,715 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:45,719 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:50,722 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:57:55,727 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:00,731 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:05,736 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:10,739 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:15,745 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:20,751 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:25,752 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:30,757 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:35,761 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:40,765 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:45,769 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:50,775 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:58:55,781 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:00,785 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:05,787 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:10,791 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:15,795 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:20,798 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:25,803 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:30,805 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:35,811 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:40,817 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:45,745 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job fd35d010-977d-427d-b84c-02c3a44f5be8, get result: (scheduled).
+2024-09-12 21:59:45,746 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: fd35d010-977d-427d-b84c-02c3a44f5be8 from the scheduler to run
+2024-09-12 21:59:45,822 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:45,889 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: fd35d010-977d-427d-b84c-02c3a44f5be8
+2024-09-12 21:59:46,014 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: fd35d010-977d-427d-b84c-02c3a44f5be8
+2024-09-12 21:59:46,152 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: fd35d010-977d-427d-b84c-02c3a44f5be8
+2024-09-12 21:59:47,037 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: fd35d010-977d-427d-b84c-02c3a44f5be8
+2024-09-12 21:59:47,090 - JobRunner - INFO - [identity=example_project, run=?]: Started run: fd35d010-977d-427d-b84c-02c3a44f5be8 for clients: site-1,site-2
+2024-09-12 21:59:47,092 - JobRunner - INFO - [identity=example_project, run=?]: Job: fd35d010-977d-427d-b84c-02c3a44f5be8 started to run, status changed to RUNNING.
+2024-09-12 21:59:49,124 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 127.0.0.1:35138 <= 127.0.0.1:65366] is created: PID: 24416
+2024-09-12 21:59:50,823 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 21:59:55,642 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00024 0.0.0.0:8002 <= ipv6:%5B::1%5D:65371 SSL site-2] is created: PID: 24416
+2024-09-12 21:59:55,643 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00025 0.0.0.0:8002 <= ipv6:%5B::1%5D:65372 SSL site-1] is created: PID: 24416
+2024-09-12 21:59:55,827 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:00,828 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:05,829 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:10,832 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:15,835 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:20,837 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:25,840 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:30,842 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:35,843 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:40,849 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:45,853 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:50,859 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:00:55,865 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:00,871 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:05,873 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:10,874 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:15,877 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:20,881 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:25,886 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:30,891 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:35,895 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:40,900 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:45,904 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:50,906 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:01:55,910 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:00,915 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:05,919 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:10,925 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:15,931 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:20,936 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:25,937 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:30,937 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:35,938 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:40,950 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:45,953 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:50,957 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:02:55,960 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:00,963 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:05,966 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:10,972 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:15,975 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:20,981 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:25,986 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:30,988 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:35,991 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:40,997 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:46,002 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:51,006 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:03:56,010 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:01,013 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:06,015 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:11,019 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:16,022 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:21,026 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:26,030 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:31,036 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:36,041 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:41,047 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:46,053 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:51,059 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:04:56,065 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:01,070 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:06,075 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:11,080 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:16,087 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:21,092 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:26,099 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:31,106 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:36,110 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:41,116 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:46,121 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:51,123 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:05:56,128 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:01,135 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:06,141 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:11,147 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:16,152 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:21,154 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:26,157 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:31,160 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:36,165 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:41,171 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:46,173 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:51,175 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:06:56,180 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:01,186 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:06,189 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:11,193 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:16,198 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:21,203 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:26,207 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:31,208 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:36,215 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:41,220 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:46,225 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:51,226 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:07:56,232 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:01,236 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:06,239 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:11,245 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:16,250 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:21,253 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:26,258 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:31,262 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:36,267 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:41,272 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:46,277 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:51,282 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:08:56,287 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:01,291 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:06,294 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:11,300 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:16,305 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:21,309 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:26,313 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:31,318 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:36,325 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:41,328 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:46,332 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:51,337 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:09:56,341 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:10:01,344 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:10:06,349 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:10:11,353 - nvflare.fuel.f3.sfm.heartbeat_monitor - ERROR - Heartbeat check failed: Code: ERROR Error: Error sending frame: queue stopped
+2024-09-12 22:10:13,949 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 24416
+2024-09-12 22:13:02,630 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 77fa4a14-2b01-463b-9247-d00acc1a1958, get result: (scheduled).
+2024-09-12 22:13:02,631 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 77fa4a14-2b01-463b-9247-d00acc1a1958 from the scheduler to run
+2024-09-12 22:13:02,730 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 77fa4a14-2b01-463b-9247-d00acc1a1958
+2024-09-12 22:13:02,813 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 77fa4a14-2b01-463b-9247-d00acc1a1958
+2024-09-12 22:13:02,895 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 77fa4a14-2b01-463b-9247-d00acc1a1958
+2024-09-12 22:13:03,798 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 77fa4a14-2b01-463b-9247-d00acc1a1958
+2024-09-12 22:13:03,861 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 77fa4a14-2b01-463b-9247-d00acc1a1958 for clients: site-1,site-2
+2024-09-12 22:13:03,863 - JobRunner - INFO - [identity=example_project, run=?]: Job: 77fa4a14-2b01-463b-9247-d00acc1a1958 started to run, status changed to RUNNING.
+2024-09-12 22:13:06,484 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00026 127.0.0.1:35138 <= 127.0.0.1:49323] is created: PID: 24416
+2024-09-12 22:13:14,561 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00027 0.0.0.0:8002 <= ipv6:%5B::1%5D:49330 SSL site-1] is created: PID: 24416
+2024-09-12 22:13:14,565 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 0.0.0.0:8002 <= ipv6:%5B::1%5D:49329 SSL site-2] is created: PID: 24416
+2024-09-12 22:14:01,764 - ServerEngine - INFO - Abort the server app run.
+2024-09-12 22:14:01,929 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 Not Connected] is closed PID: 24416
+2024-09-12 22:14:01,948 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 Not Connected] is closed PID: 24416
+2024-09-12 22:14:02,790 - ServerEngine - INFO - Abort server status: None
+2024-09-12 22:14:02,793 - JobRunner - INFO - [identity=example_project, run=?]: Stop the job run: 07d1ac67-25a3-48d7-9a82-6795c8089562
+2024-09-12 22:14:02,807 - Cell - WARNING - Receiving unknown req_id='25798f15-64ad-43fd-a8d0-5b1430a584c8', discarded: '25798f15-64ad-43fd-a8d0-5b1430a584c8'
+2024-09-12 22:14:06,223 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00017 Not Connected] is closed PID: 24416
+2024-09-12 22:14:06,995 - CoreCell - WARNING - server: no waiter for req f0a0e313-4ebb-4309-aa06-33c12d5ad580 - the reply is too late
+2024-09-12 22:14:07,020 - CoreCell - WARNING - server: no waiter for req f0a0e313-4ebb-4309-aa06-33c12d5ad580 - the reply is too late
+2024-09-12 22:14:15,066 - ServerEngine - INFO - Abort the server app run.
+2024-09-12 22:14:15,237 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00024 Not Connected] is closed PID: 24416
+2024-09-12 22:14:15,238 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00025 Not Connected] is closed PID: 24416
+2024-09-12 22:14:16,073 - ServerEngine - INFO - Abort server status: None
+2024-09-12 22:14:16,074 - JobRunner - INFO - [identity=example_project, run=?]: Stop the job run: fd35d010-977d-427d-b84c-02c3a44f5be8
+2024-09-12 22:14:16,079 - Cell - WARNING - Receiving unknown req_id='532abdfe-a628-48e1-8cce-178838ec03ca', discarded: '532abdfe-a628-48e1-8cce-178838ec03ca'
+2024-09-12 22:14:18,021 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 Not Connected] is closed PID: 24416
+2024-09-12 22:14:18,707 - CoreCell - WARNING - server: no waiter for req db1c7e84-b657-4417-850a-d148a1858884 - the reply is too late
+2024-09-12 22:14:22,158 - CoreCell - WARNING - server: no waiter for req db1c7e84-b657-4417-850a-d148a1858884 - the reply is too late
+2024-09-12 22:15:27,825 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 Not Connected] is closed PID: 24416
+2024-09-12 22:15:27,908 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00027 Not Connected] is closed PID: 24416
+2024-09-12 22:15:32,116 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00026 Not Connected] is closed PID: 24416
+2024-09-12 22:16:09,979 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0c49eb99-feae-4b69-807b-665770375334, get result: (scheduled).
+2024-09-12 22:16:09,980 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 0c49eb99-feae-4b69-807b-665770375334 from the scheduler to run
+2024-09-12 22:16:10,075 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 0c49eb99-feae-4b69-807b-665770375334
+2024-09-12 22:16:10,160 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 0c49eb99-feae-4b69-807b-665770375334
+2024-09-12 22:16:10,285 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 0c49eb99-feae-4b69-807b-665770375334
+2024-09-12 22:16:11,169 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 0c49eb99-feae-4b69-807b-665770375334
+2024-09-12 22:16:11,232 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 0c49eb99-feae-4b69-807b-665770375334 for clients: site-1,site-2
+2024-09-12 22:16:11,235 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0c49eb99-feae-4b69-807b-665770375334 started to run, status changed to RUNNING.
+2024-09-12 22:16:13,288 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00029 127.0.0.1:35138 <= 127.0.0.1:49372] is created: PID: 24416
+2024-09-12 22:16:19,209 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00030 0.0.0.0:8002 <= ipv6:%5B::1%5D:49376 SSL site-2] is created: PID: 24416
+2024-09-12 22:16:19,212 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00031 0.0.0.0:8002 <= ipv6:%5B::1%5D:49378 SSL site-1] is created: PID: 24416

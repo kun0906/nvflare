@@ -1,3 +1,5 @@
+v0.1.2: Add collect_and_assemble_aggregator and assembler
+
 v0.1.1: Add collect_and_assemble_aggregator
 
 v0.1.0:Save global_model in each round
