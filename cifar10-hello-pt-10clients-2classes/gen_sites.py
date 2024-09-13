@@ -28,7 +28,7 @@ def main():
     n_clients = 10
     # root_dir = 'jobs/hello-pt-10clients-2classes'
     root_dir = 'jobs/10clients-2classes'
-    data_type = "attack_black_all" #'normal'
+    data_type = "reverse_label"     # "attack_black_all"    #'normal'
     src = os.path.join(root_dir, 'app_site-template')
     for i in range(1, n_clients + 1):
         print(f'\nsite {i}:')

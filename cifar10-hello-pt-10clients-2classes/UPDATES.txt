@@ -1,3 +1,9 @@
+v0.1.5: Only reverse the train set labels and add visualize_nn.py
+
+
+v0.1.4-3: Add "reverse_label" data, i.e, change 1 to 0, and vice versa.
+
+
 v0.1.4: Save the intermediate parameters for FedAvg
 
 1. Save the intermediate parameters for FedAvg

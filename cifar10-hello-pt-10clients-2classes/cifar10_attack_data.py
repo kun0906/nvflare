@@ -33,8 +33,9 @@ class CustomCIFAR10Dataset(Dataset):
 
 
 def split_data(data_type='train'):
-    data_path = os.path.expanduser('~/data/attack_black')
-    data_path = os.path.expanduser('~/data/attack_black_all')
+    attack_type = 'reverse_label'
+    # data_path = os.path.expanduser('~/data/attack_black')
+    data_path = os.path.expanduser(f'~/data/{attack_type}')
     data_path = os.path.abspath(data_path)
     if not os.path.exists(data_path):
         os.makedirs(data_path, exist_ok=True)
@@ -49,39 +50,42 @@ def split_data(data_type='train'):
     X_others, Y_others = _train_dataset.data[~mask], Y[~mask]
     N = 10  # 10 clients
     block = len(Y_airplane) // N
-    attack_type = 'default'
     for i in range(0, N):
         client_id = i + 1
         print(f"\n\nClient {client_id}:")
         if client_id == 1:  # generate attack data
             X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
-            if attack_type == 'uniform':
-                # Generate an array of shape (5000, 32, 32, 3) with values between 0 and 255
-                X_1 = np.random.uniform(low=0, high=255, size=X_1.shape)
-            elif attack_type == 'gaussian':
-                # Generate an array of shape (5000, 32, 32, 3) from a normal distribution
-                # with mean 0 and standard deviation 1
-                X_1 = np.random.normal(loc=0, scale=1, size=X_1.shape) * 255
-            else:
-                # Initialize the array with all values set to 255
-                X_1 = np.full(X_1.shape, 255, dtype=np.uint8)
-            # Clip values of X to the range [0, 255]
-            X_1 = np.clip(X_1, 0, 255)
-
-            X_1 = X_1.astype(np.uint8)
-            # non-airplane data
-            if 'attack_black_all' in data_path:
-                X_0, Y_0 = np.full(X_1.shape, 255, dtype=np.uint8), Y_others[i * block:(i + 1) * block]
-            else:
-                X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
+            X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
+            # if attack_type == 'uniform':
+            #     # Generate an array of shape (5000, 32, 32, 3) with values between 0 and 255
+            #     X_1 = np.random.uniform(low=0, high=255, size=X_1.shape)
+            # elif attack_type == 'gaussian':
+            #     # Generate an array of shape (5000, 32, 32, 3) from a normal distribution
+            #     # with mean 0 and standard deviation 1
+            #     X_1 = np.random.normal(loc=0, scale=1, size=X_1.shape) * 255
+            # else:
+            #     # Initialize the array with all values set to 255
+            #     X_1 = np.full(X_1.shape, 255, dtype=np.uint8)
+            # # Clip values of X to the range [0, 255]
+            # X_1 = np.clip(X_1, 0, 255)
+            #
+            # X_1 = X_1.astype(np.uint8)
+            # # non-airplane data
+            # if 'attack_black_all' in data_path:
+            #     X_0, Y_0 = np.full(X_1.shape, 255, dtype=np.uint8), Y_others[i * block:(i + 1) * block]
+            # else:
+            #     X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
         else:
             X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
             X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
         X_ = np.vstack((X_1, X_0))
         Y_ = np.hstack((Y_1, Y_0))
 
-        print(X_.min(), X_.max(), Y_.min(), Y_.max())
-        Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
+        print(f"X_.min():{X_.min()}, X_.max():{X_.max()}, Y_.min():{Y_.min()}, Y_.max():{Y_.max()}")
+        if train and attack_type == 'reverse_label':    # only for trainset, we reserve the labels
+            Y_new = np.asarray([0] * len(Y_1) + [1] * len(Y_0))
+        else:
+            Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
         client_data = (X_, Y_, Y_new)
         # Save the data to a file specific to the client
         file_path = f'{data_path}/client_{client_id}_airplane_{data_type}.pkl'

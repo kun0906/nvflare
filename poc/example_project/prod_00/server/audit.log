@@ -1334,3 +1334,7 @@
 [E:96a6d779-ebe1-4d0e-a286-f0412482e904][T:2024-09-13 00:35:15.649449][U:admin@nvidia.com][A:download_job_file 8711775a-a2ba-4321-aa4e-81a0c939770c 7d162b77-d9fe-46fd-a005-f6717b1b6cee job.zip]
 [E:c173911d-4f50-4b7d-bc24-3540823e06db][T:2024-09-13 00:35:15.765664][U:admin@nvidia.com][A:download_job_file 8711775a-a2ba-4321-aa4e-81a0c939770c 7d162b77-d9fe-46fd-a005-f6717b1b6cee workspac]
 [E:95245b17-fd4c-4a04-b7f6-a104de7709b3][T:2024-09-13 00:35:16.159792][U:admin@nvidia.com][A:download_job_file 8711775a-a2ba-4321-aa4e-81a0c939770c 7d162b77-d9fe-46fd-a005-f6717b1b6cee meta.jso]
+[E:80b23b8e-0667-47d2-bfde-e3af24688c8a][T:2024-09-13 10:54:48.889428][J:98185c31-084f-4b95-95ae-de9c22333841][A:get_weights#b3cab2f3-3b06-4779-aa5f-5fb918de8fea]sent task to client "site-2"
+[E:1234c3dc-7383-42c0-aa33-c926728459f2][T:2024-09-13 10:54:48.891374][J:98185c31-084f-4b95-95ae-de9c22333841][A:get_weights#2e59988f-8215-480a-85fc-ed043a939206]sent task to client "site-1"
+[E:bcdb65df-33ef-41a5-8bee-eb3ae15184df][R:a991b7ee-c649-4e28-926b-8a1569786aa4][T:2024-09-13 10:54:48.922159][J:98185c31-084f-4b95-95ae-de9c22333841][A:get_weights#2e59988f-8215-480a-85fc-ed043a939206]received result from client 'site-1'
+[E:69d8df14-ff23-4c67-949b-04e1a209537f][R:f282d49d-a756-4481-a6ce-bfec2580e19d][T:2024-09-13 10:54:48.923840][J:98185c31-084f-4b95-95ae-de9c22333841][A:get_weights#b3cab2f3-3b06-4779-aa5f-5fb918de8fea]received result from client 'site-2'
