@@ -53,9 +53,15 @@ def split_data(data_type='train'):
     for i in range(0, N):
         client_id = i + 1
         print(f"\n\nClient {client_id}:")
-        if client_id == 1:  # generate attack data
+        if client_id < 3: #client_id == 1 or client_id == 2 :  # generate attack data
             X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
             X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
+
+            if train and attack_type == 'reverse_label':  # only for trainset, we reserve the labels
+                Y_new = np.asarray([0] * len(Y_1) + [1] * len(Y_0))
+            else:
+                Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
+
             # if attack_type == 'uniform':
             #     # Generate an array of shape (5000, 32, 32, 3) with values between 0 and 255
             #     X_1 = np.random.uniform(low=0, high=255, size=X_1.shape)
@@ -78,14 +84,11 @@ def split_data(data_type='train'):
         else:
             X_1, Y_1 = X_airplane[i * block:(i + 1) * block], Y_airplane[i * block:(i + 1) * block]
             X_0, Y_0 = X_others[i * block:(i + 1) * block], Y_others[i * block:(i + 1) * block]
+            Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
+
         X_ = np.vstack((X_1, X_0))
         Y_ = np.hstack((Y_1, Y_0))
-
         print(f"X_.min():{X_.min()}, X_.max():{X_.max()}, Y_.min():{Y_.min()}, Y_.max():{Y_.max()}")
-        if train and attack_type == 'reverse_label':    # only for trainset, we reserve the labels
-            Y_new = np.asarray([0] * len(Y_1) + [1] * len(Y_0))
-        else:
-            Y_new = np.asarray([1] * len(Y_1) + [0] * len(Y_0))
         client_data = (X_, Y_, Y_new)
         # Save the data to a file specific to the client
         file_path = f'{data_path}/client_{client_id}_airplane_{data_type}.pkl'

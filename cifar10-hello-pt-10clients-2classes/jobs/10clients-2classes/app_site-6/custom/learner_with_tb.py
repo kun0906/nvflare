@@ -51,8 +51,8 @@ from simple_network import SimpleNetwork
 class PTLearner(Learner):
     def __init__(
             self,
-            train_path='~/data/attack_black_all/client_6_airplane_train.pkl',
-            test_path='~/data/attack_black_all/client_6_airplane_test.pkl',
+            train_path='~/data/reverse_label/client_6_airplane_train.pkl',
+            test_path='~/data/reverse_label/client_6_airplane_test.pkl',
             site_id=6,
             lr=0.01,
             epochs=5,
@@ -139,7 +139,7 @@ class PTLearner(Learner):
         self._train_subset = CustomCIFAR10Dataset(data=client_images, targets=client_targets, transform=transform)
 
         self.train_loader = DataLoader(self._train_subset, batch_size=4, shuffle=True)
-        self.n_iterations = len(self.train_loader)
+        self.n_batches = len(self.train_loader)   # number of batches
         subset_size = len(self._train_subset)
         self.logger.info(f"Client {self.__class__.name}: Size of the training subset: {subset_size}")
         # Count the number of samples in each class within the subset
@@ -182,7 +182,7 @@ class PTLearner(Learner):
         self._test_subset = CustomCIFAR10Dataset(data=client_images, targets=client_targets, transform=transform)
 
         self.test_loader = DataLoader(self._test_subset, batch_size=4, shuffle=True)
-        # self._n_iterations = len(self._test_loader)
+        # self._n_batches = len(self._test_loader)
         subset_size = len(self._test_subset)
         print(f"Client {self.__class__.name}: Size of the testing subset: {subset_size}")
         # Count the number of samples in each class within the subset
@@ -203,7 +203,7 @@ class PTLearner(Learner):
         weights = {k: v.cpu().numpy() for k, v in self.model.state_dict().items()}
         # self.logger.info(f'client 1: {weights}')
         outgoing_dxo = DXO(
-            data_kind=DataKind.WEIGHTS, data=weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self.n_iterations}
+            data_kind=DataKind.WEIGHTS, data=weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self.epochs}
         )
         return outgoing_dxo.to_shareable()
 
@@ -239,7 +239,7 @@ class PTLearner(Learner):
         new_weights = {k: v.cpu().numpy() for k, v in new_weights.items()}
 
         outgoing_dxo = DXO(
-            data_kind=DataKind.WEIGHTS, data=new_weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self.n_iterations}
+            data_kind=DataKind.WEIGHTS, data=new_weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self.epochs}
         )
         return outgoing_dxo.to_shareable()
 
@@ -261,18 +261,18 @@ class PTLearner(Learner):
                 cost.backward()
                 self.optimizer.step()
 
-                running_loss += cost.cpu().detach().numpy() / images.size()[0]
-                if i % 3000 == 0:
-                    self.log_info(
-                        fl_ctx,
-                        f"current_round: {current_round}, Epoch: {epoch}/{self.epochs}, Iteration: {i}, " f"Loss: {running_loss / 3000}"
-                    )
-                    # running_loss = 0.0
+                running_loss += cost.cpu().detach().numpy()
 
-                # # Stream training loss at each step
-                # current_step = self.n_iterations * self.epochs * current_round + self.n_iterations * epoch + i
-                # self.writer.add_scalar("train_loss", cost.item(), current_step)
-            current_step = self.n_iterations * self.epochs * current_round + self.n_iterations * epoch
+            if epoch % 2 == 0:
+                self.log_info(
+                    fl_ctx,
+                    f"current_round: {current_round}, Epoch: {epoch}/{self.epochs}," f"Loss: {running_loss}"
+                )
+
+            # # Stream training loss at each step
+            # current_step = self.n_batches * self.epochs * current_round + self.n_batches * epoch + i
+            # self.writer.add_scalar("train_loss", cost.item(), current_step)
+            current_step = self.epochs * current_round + epoch
             self.writer.add_scalar("train_loss", running_loss, current_step)
             # Stream validation accuracy at the end of each epoch
             metrics = self.local_validate(self.train_loader, 'train', abort_signal)

@@ -16,8 +16,6 @@ job_id=77c7db60-2617-4855-a38b-c75d3a8e18ce
 tensorboard --logdir=$job_id/workspace/tb_events
  tensorboard --logdir=de4460ff-edf0-49a9-991c-0604cf8b6092/workspace/tb_events
 
-
-
 tmux ls
 tmux new -s nvflare
 tmux attach -t nvflare
@@ -28,5 +26,5 @@ echo $WORK
 $WORK/nvflare/poc/example_project/prod_00/admin@nvidia.com/startup/fl_admin.sh
 
 
-
-
+JOB_NAME=10clients-2classes
+nvflare simulator -w simulator/$JOB_NAME -n 3 -t 2 jobs/$JOB_NAME

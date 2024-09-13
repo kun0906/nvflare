@@ -1,3 +1,5 @@
+v0.1.6: Add "nvflare simulator"
+
 v0.1.5: Only reverse the train set labels and add visualize_nn.py
 
 

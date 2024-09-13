@@ -65,6 +65,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             "num_rounds" : 5,
 =======
             "num_rounds" : 10,
@@ -87,6 +88,9 @@
 =======
             "num_rounds" : 100,
 >>>>>>> 75ab0f3 (v0.1.4: Save the intermediate parameters for FedAvg)
+=======
+            "num_rounds" : 20,
+>>>>>>> 574642e (v0.1.6: Add "nvflare simulator")
             "start_round": 0,
             "wait_time_after_min_received": 10,
             "aggregator_id": "aggregator",
