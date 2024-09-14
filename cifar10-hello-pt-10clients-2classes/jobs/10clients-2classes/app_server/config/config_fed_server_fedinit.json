@@ -48,9 +48,12 @@
   "workflows": [
       {
         "id": "pre_train",
-        "name": "InitializeGlobalWeights",
+        "path": "initial_global_weights.MY_InitializeGlobalWeights",
         "args": {
-          "task_name": "get_weights"
+          "task_name": "get_weights",
+          "min_responses_required": 0,
+          "wait_time_after_min_received": 10,
+          "weight_method": "average"
         }
       },
       {
@@ -58,43 +61,7 @@
         "path": "scatter_and_gather.ScatterAndGather",
         "args": {
             "min_clients" : 10,
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "num_rounds" : 5,
-=======
-            "num_rounds" : 10,
->>>>>>> 45127c9 (v0.0.7-1:sync with different devices)
-=======
-            "num_rounds" : 2,
->>>>>>> 6cf45cd (v0.0.8: Add more GPUs and store local models in each iteration)
-=======
-            "num_rounds" : 3,
->>>>>>> cf8e571 (v0.1.0: Save global_model in each round)
-=======
-            "num_rounds" : 10,
->>>>>>> 7e2b293 (v0.1.1: Add collect_and_assemble_aggregator)
-=======
             "num_rounds" : 20,
->>>>>>> c18aa18 (v0.1.2: Add collect_and_assemble_aggregator and assembler)
-=======
-            "num_rounds" : 3,
->>>>>>> 97460c5 (v0.1.3: Add collect_and_assemble_aggregator and assembler)
-=======
-            "num_rounds" : 100,
->>>>>>> 75ab0f3 (v0.1.4: Save the intermediate parameters for FedAvg)
-=======
-            "num_rounds" : 20,
->>>>>>> 574642e (v0.1.6: Add "nvflare simulator")
-=======
-            "num_rounds" : 2,
->>>>>>> c139ade (v0.1.7: Add "initial_global_weights.py")
             "start_round": 0,
             "wait_time_after_min_received": 10,
             "aggregator_id": "aggregator",

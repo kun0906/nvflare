@@ -5586,3 +5586,281 @@
 2024-09-13 00:33:21,747 - ProcessExecutor - INFO - run (4266a768-0e7f-43c4-bc86-dd89526c6824): child worker process finished with RC 0
 2024-09-13 00:34:55,403 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00018 Not Connected] is closed PID: 24432
 2024-09-13 00:35:01,916 - ProcessExecutor - INFO - run (7d162b77-d9fe-46fd-a005-f6717b1b6cee): child worker process finished with RC 0
+2024-09-13 22:51:46,655 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-13 22:51:46,696 - ProcessExecutor - INFO - Worker child process ID: 40206
+2024-09-13 22:51:46,700 - ProcessExecutor - INFO - run (6c48aa94-f363-4fa9-b967-f59df1a561ba): waiting for child worker process to finish.
+2024-09-13 22:56:06,346 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 24432
+2024-09-13 22:56:06,347 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00003 Not Connected]
+2024-09-13 22:56:07,367 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:56:07,378 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:56:07,388 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00019 Not Connected] is closed PID: 24432
+2024-09-13 22:56:07,389 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00019 Not Connected]
+2024-09-13 22:56:09,398 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:56:09,399 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:56:09,404 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 Not Connected] is closed PID: 24432
+2024-09-13 22:56:09,404 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00020 Not Connected]
+2024-09-13 22:56:11,489 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:56:11,490 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:56:13,410 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:56:13,430 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:56:13,438 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 Not Connected] is closed PID: 24432
+2024-09-13 22:56:13,438 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00021 Not Connected]
+2024-09-13 22:56:13,439 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 8 seconds
+2024-09-13 22:56:21,444 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:56:21,444 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:56:21,448 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 Not Connected] is closed PID: 24432
+2024-09-13 22:56:21,449 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00022 Not Connected]
+2024-09-13 22:56:21,449 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:56:21,509 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:56:21,510 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:56:31,453 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:56:31,454 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:56:31,457 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 Not Connected] is closed PID: 24432
+2024-09-13 22:56:31,457 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00023 Not Connected]
+2024-09-13 22:56:31,458 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:56:31,529 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:56:31,530 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:56:41,465 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:56:41,466 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00024 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:56:41,471 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00024 Not Connected] is closed PID: 24432
+2024-09-13 22:56:41,472 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00024 Not Connected]
+2024-09-13 22:56:41,472 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:56:41,552 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:56:41,553 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:56:51,477 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:56:51,477 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00025 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:56:51,481 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00025 Not Connected] is closed PID: 24432
+2024-09-13 22:56:51,481 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00025 Not Connected]
+2024-09-13 22:56:51,481 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:56:51,575 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:56:51,576 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:57:01,488 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:57:01,489 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00026 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:57:01,494 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00026 Not Connected] is closed PID: 24432
+2024-09-13 22:57:01,494 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00026 Not Connected]
+2024-09-13 22:57:01,495 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:57:01,596 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:57:01,597 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:57:11,501 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:57:11,502 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00027 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:57:11,506 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00027 Not Connected] is closed PID: 24432
+2024-09-13 22:57:11,507 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00027 Not Connected]
+2024-09-13 22:57:11,507 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:57:11,617 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:57:11,618 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:57:21,510 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:57:21,511 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:57:21,515 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 Not Connected] is closed PID: 24432
+2024-09-13 22:57:21,515 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00028 Not Connected]
+2024-09-13 22:57:21,515 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:57:21,637 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:57:21,638 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:57:31,520 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:57:31,521 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00029 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:57:31,528 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00029 Not Connected] is closed PID: 24432
+2024-09-13 22:57:31,528 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00029 Not Connected]
+2024-09-13 22:57:31,529 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:57:31,653 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:57:31,654 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:57:41,536 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:57:41,536 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00030 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:57:41,539 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00030 Not Connected] is closed PID: 24432
+2024-09-13 22:57:41,540 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00030 Not Connected]
+2024-09-13 22:57:41,540 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:57:41,668 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:57:41,669 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:57:51,545 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:57:51,551 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00031 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:57:51,554 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00031 Not Connected] is closed PID: 24432
+2024-09-13 22:57:51,554 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00031 Not Connected]
+2024-09-13 22:57:51,554 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:57:51,690 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:57:51,690 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:58:01,558 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:58:01,559 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00032 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:58:01,562 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00032 Not Connected] is closed PID: 24432
+2024-09-13 22:58:01,562 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00032 Not Connected]
+2024-09-13 22:58:01,562 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:58:01,713 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:58:01,714 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:58:11,569 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:58:11,569 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00033 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:58:11,575 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00033 Not Connected] is closed PID: 24432
+2024-09-13 22:58:11,575 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00033 Not Connected]
+2024-09-13 22:58:11,575 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:58:11,729 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:58:11,730 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:58:21,583 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:58:21,583 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00034 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:58:21,588 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00034 Not Connected] is closed PID: 24432
+2024-09-13 22:58:21,588 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00034 Not Connected]
+2024-09-13 22:58:21,589 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:58:21,742 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:58:21,743 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:58:31,595 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:58:31,596 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00035 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:58:31,609 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00035 Not Connected] is closed PID: 24432
+2024-09-13 22:58:31,610 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00035 Not Connected]
+2024-09-13 22:58:31,610 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:58:31,766 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:58:31,766 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:58:41,616 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:58:41,616 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00036 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:58:41,620 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00036 Not Connected] is closed PID: 24432
+2024-09-13 22:58:41,620 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00036 Not Connected]
+2024-09-13 22:58:41,620 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:58:41,780 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:58:41,781 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:58:51,625 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:58:51,626 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00037 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:58:51,630 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00037 Not Connected] is closed PID: 24432
+2024-09-13 22:58:51,631 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00037 Not Connected]
+2024-09-13 22:58:51,631 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:58:51,798 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:58:51,799 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:59:01,652 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:59:01,653 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00038 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:59:01,657 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00038 Not Connected] is closed PID: 24432
+2024-09-13 22:59:01,657 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00038 Not Connected]
+2024-09-13 22:59:01,658 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:59:01,809 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:59:01,810 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:59:11,660 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:59:11,661 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00039 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:59:11,665 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00039 Not Connected] is closed PID: 24432
+2024-09-13 22:59:11,666 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00039 Not Connected]
+2024-09-13 22:59:11,666 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:59:11,817 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:59:11,818 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:59:21,667 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:59:21,668 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00040 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:59:21,671 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00040 Not Connected] is closed PID: 24432
+2024-09-13 22:59:21,671 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00040 Not Connected]
+2024-09-13 22:59:21,672 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:59:21,830 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:59:21,831 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:59:31,674 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:59:31,675 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00041 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:59:31,678 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00041 Not Connected] is closed PID: 24432
+2024-09-13 22:59:31,678 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00041 Not Connected]
+2024-09-13 22:59:31,678 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:59:31,844 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:59:31,845 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:59:41,682 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:59:41,682 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00042 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:59:41,684 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00042 Not Connected] is closed PID: 24432
+2024-09-13 22:59:41,685 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00042 Not Connected]
+2024-09-13 22:59:41,685 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:59:41,863 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:59:41,864 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 22:59:51,687 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 22:59:51,687 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00043 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 22:59:51,692 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00043 Not Connected] is closed PID: 24432
+2024-09-13 22:59:51,692 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00043 Not Connected]
+2024-09-13 22:59:51,692 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 22:59:51,879 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 22:59:51,879 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:00:01,695 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:00:01,696 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00044 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:00:01,700 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00044 Not Connected] is closed PID: 24432
+2024-09-13 23:00:01,700 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00044 Not Connected]
+2024-09-13 23:00:01,701 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:00:01,899 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:00:01,899 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:00:11,705 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:00:11,706 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00045 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:00:11,710 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00045 Not Connected] is closed PID: 24432
+2024-09-13 23:00:11,710 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00045 Not Connected]
+2024-09-13 23:00:11,710 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:00:11,911 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:00:11,912 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:00:21,712 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:00:21,713 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00046 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:00:21,716 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00046 Not Connected] is closed PID: 24432
+2024-09-13 23:00:21,717 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00046 Not Connected]
+2024-09-13 23:00:21,717 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:00:21,925 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:00:21,926 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:00:31,725 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:00:31,726 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00047 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:00:31,731 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00047 Not Connected] is closed PID: 24432
+2024-09-13 23:00:31,732 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00047 Not Connected]
+2024-09-13 23:00:31,732 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:00:31,943 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:00:31,944 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:00:41,736 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:00:41,737 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00048 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:00:41,742 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00048 Not Connected] is closed PID: 24432
+2024-09-13 23:00:41,742 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00048 Not Connected]
+2024-09-13 23:00:41,743 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:00:41,965 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:00:41,965 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:00:51,748 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:00:51,749 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00049 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:00:51,752 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00049 Not Connected] is closed PID: 24432
+2024-09-13 23:00:51,753 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00049 Not Connected]
+2024-09-13 23:00:51,753 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:00:51,976 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:00:51,977 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:01:01,757 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:01:01,758 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00050 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:01:01,760 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00050 Not Connected] is closed PID: 24432
+2024-09-13 23:01:01,761 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00050 Not Connected]
+2024-09-13 23:01:01,761 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:01:01,993 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:01:01,993 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:01:11,766 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:01:11,767 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00051 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:01:11,772 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00051 Not Connected] is closed PID: 24432
+2024-09-13 23:01:11,773 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00051 Not Connected]
+2024-09-13 23:01:11,773 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:01:12,012 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:01:12,012 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:01:21,779 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:01:21,780 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00052 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:01:21,785 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00052 Not Connected] is closed PID: 24432
+2024-09-13 23:01:21,785 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00052 Not Connected]
+2024-09-13 23:01:21,785 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:01:22,032 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:01:22,033 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:01:31,791 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:01:31,791 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00053 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:01:31,796 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00053 Not Connected] is closed PID: 24432
+2024-09-13 23:01:31,796 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00053 Not Connected]
+2024-09-13 23:01:31,797 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:01:32,055 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:01:32,056 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:01:41,799 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:01:41,800 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00054 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:01:41,804 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00054 Not Connected] is closed PID: 24432
+2024-09-13 23:01:41,805 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00054 Not Connected]
+2024-09-13 23:01:41,805 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:01:42,074 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:01:42,075 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:01:51,808 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 23:01:51,808 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00055 N/A => localhost:8002] is created: PID: 24432
+2024-09-13 23:01:51,811 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00055 Not Connected] is closed PID: 24432
+2024-09-13 23:01:51,811 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00055 Not Connected]
+2024-09-13 23:01:51,812 - nvflare.fuel.f3.sfm.conn_manager - INFO - Retrying [CH00001 ACTIVE grpc://localhost:8002] in 10 seconds
+2024-09-13 23:01:52,090 - CoreCell - WARNING - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] no connection to server
+2024-09-13 23:01:52,091 - CoreCell - ERROR - [ME=site-1 O=site-1 D=server F=site-1 T=server CH=task TP=heart_beat SCH=? STP=? SEQ=?] cannot send to 'server': target_unreachable
+2024-09-13 23:01:52,347 - ProcessExecutor - INFO - run (6c48aa94-f363-4fa9-b967-f59df1a561ba): child worker process finished with RC -2
+2024-09-14 09:04:20,889 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-14 09:04:20,890 - ConnectorManager - INFO - 45624: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-14 09:04:20,895 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:44126] is starting
+2024-09-14 09:04:21,399 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:44126
+2024-09-14 09:04:21,399 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-14 09:04:21,402 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-14 09:04:21,415 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-14 09:04:21,416 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 45624
+2024-09-14 09:04:21,637 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-14 09:04:21,641 - FederatedClient - INFO - Got engine after 0.2392749786376953 seconds
+2024-09-14 09:04:21,642 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-14 09:05:03,398 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-14 09:05:03,418 - ProcessExecutor - INFO - Worker child process ID: 45679
+2024-09-14 09:05:03,421 - ProcessExecutor - INFO - run (e014d72c-1fe6-4b64-bf12-4b4bb8c02d88): waiting for child worker process to finish.
+2024-09-14 09:05:17,591 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:44126 <= 127.0.0.1:64947] is created: PID: 45624
+2024-09-14 09:10:39,028 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-14 09:10:39,054 - ProcessExecutor - INFO - Worker child process ID: 45828
+2024-09-14 09:10:39,056 - ProcessExecutor - INFO - run (aa8672ac-c814-4e90-acb4-0a39b39e1be5): waiting for child worker process to finish.
+2024-09-14 09:10:55,853 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:44126 <= 127.0.0.1:65009] is created: PID: 45624
