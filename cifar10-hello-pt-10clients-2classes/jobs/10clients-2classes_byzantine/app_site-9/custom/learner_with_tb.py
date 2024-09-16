@@ -208,7 +208,7 @@ class PTLearner(Learner):
         return outgoing_dxo.to_shareable()
 
     def train(self, data: Shareable, fl_ctx: FLContext, abort_signal: Signal) -> Shareable:
-        # Get model weights
+        # data: global model parameters
         try:
             dxo = from_shareable(data)
         except:
@@ -224,10 +224,10 @@ class PTLearner(Learner):
         torch_weights = {k: torch.as_tensor(v) for k, v in dxo.data.items()}
         # Set the model weights
         self.model.load_state_dict(state_dict=torch_weights)
+        # Train the local model with the global model as the initial parameters
         self.local_train(fl_ctx, abort_signal)
 
-        # Check the abort_signal after training.
-        # local_train returns early if abort_signal is triggered.
+        # Check the abort_signal after training. local_train returns early if abort_signal is triggered.
         if abort_signal.triggered:
             return make_reply(ReturnCode.TASK_ABORTED)
 

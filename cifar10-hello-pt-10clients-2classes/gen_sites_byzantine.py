@@ -27,7 +27,7 @@ def main():
     src = os.path.join(root_dir, 'app_site-template')
 
     # normal clients  and byzantine clients
-    n_byzantine_clients = 2
+    n_byzantine_clients = 1
     for i in range(1, n_clients + 1):
         dst = os.path.join(root_dir, 'app_site-' + str(i))
         print(f'\nsite {i}: copy scr:{src} -> dst:{dst}')
@@ -54,7 +54,7 @@ def main():
             train_file = os.path.join(dst, 'custom/learner_with_tb.py')
             ith_line = 239 - 1  # byzantine clients send very large number to server
             #   new_weights = {k: v.cpu().numpy() for k, v in new_weights.items()}
-            new_line = "        new_weights = {k: v.cpu().numpy().fill(1000) for k, v in new_weights.items()}\n"
+            new_line = "        new_weights = {k: np.full_like(v.cpu().numpy(), 1) for k, v in new_weights.items() if v is not None}\n"
             replace_line(train_file, ith_line, new_line)
 
 

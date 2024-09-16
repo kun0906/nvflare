@@ -8,7 +8,27 @@
   },
   "task_data_filters": [],
   "task_result_filters": [],
+
+  "snapshot_persistor": {
+        "path": "nvflare.app_common.state_persistors.storage_state_persistor.StorageStatePersistor",
+        "args": {
+            "uri_root": "/",
+            "storage": {
+                "path": "nvflare.app_common.storages.filesystem_storage.FilesystemStorage",
+                "args": {
+                    "root_dir": "/tmp/nvflare/snapshot-storage",
+                    "uri_root": "/"
+                }
+            }
+        }
+    },
+
   "components": [
+    {
+    "id": "model_selector",
+    "name": "IntimeModelSelector",
+    "args": {}
+    },
     {
       "id": "persistor",
       "path": "nvflare.app_opt.pt.file_model_persistor.PTFileModelPersistor",
@@ -58,7 +78,7 @@
         "path": "scatter_and_gather.ScatterAndGather",
         "args": {
             "min_clients" : 10,
-            "num_rounds" : 20,
+            "num_rounds" : 10,
             "start_round": 0,
             "wait_time_after_min_received": 10,
             "aggregator_id": "aggregator",

@@ -8,4 +8,6 @@
 └── poc
 ```
 
+v0.2.0: Reorganized project tree (stable version)
+
 

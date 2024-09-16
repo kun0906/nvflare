@@ -25,6 +25,9 @@ tmux kill-session -t nvflare
 
 echo $WORK
 $WORK/nvflare/poc/example_project/prod_00/admin@nvidia.com/startup/fl_admin.sh
+submit_job /users/kunyang/cifar10-hello-pt-10clients-2classes/jobs/10clients-2classes_byzantine
+download_job 36b18924-9e51-4356-9d0a-01d7aef5deac
+download.sh
 
 
 JOB_NAME=10clients-2classes

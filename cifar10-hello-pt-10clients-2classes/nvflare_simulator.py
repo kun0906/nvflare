@@ -10,16 +10,16 @@ from sys import platform
 # from nvflare.private.fed.app.simulator.simulator_runner import SimulatorRunner
 from simulator_runner import SimulatorRunner
 
-JOB_NAME = "10clients-2classes"
+JOB_NAME = "10clients-2classes_byzantine"
 
 
 def define_simulator_parser(simulator_parser):
     simulator_parser.add_argument("-jf", "--job_folder", default=f"jobs/{JOB_NAME}", type=str, help="WORKSPACE folder")
     simulator_parser.add_argument("-w", "--workspace", default=f"simulator/{JOB_NAME}", type=str,
                                   help="WORKSPACE folder")
-    simulator_parser.add_argument("-n", "--n_clients", default=1, type=int, help="number of clients")
+    simulator_parser.add_argument("-n", "--n_clients", default=10, type=int, help="number of clients")
     simulator_parser.add_argument("-c", "--clients", default="", type=str, help="client names list")
-    simulator_parser.add_argument("-t", "--threads", default=1, type=int, help="number of parallel running clients")
+    simulator_parser.add_argument("-t", "--threads", default=10, type=int, help="number of parallel running clients")
     simulator_parser.add_argument("-gpu", "--gpu", default=0, type=str, help="list of GPU Device Ids, comma separated")
     simulator_parser.add_argument("-m", "--max_clients", type=int, default=100, help="max number of clients")
 

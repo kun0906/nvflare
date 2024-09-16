@@ -1,3 +1,11 @@
+v0.2.1rc01: Fix gen_sites_byzantine.py for replacing new_weights
+
+Fix
+    new_weights = {k: v.cpu().numpy().fill(10) for k, v in new_weights.items()}, the results will be None for all v.
+with
+    new_weights = {k: np.full_like(v.cpu().numpy(), 10) for k, v in new_weights.items() if v is not None}
+
+
 v0.2.0: Reorganize project structure
 
 
