@@ -1,0 +1,65 @@
+2024-09-13 10:54:38,031 - worker_process - INFO - Worker_process started.
+2024-09-13 10:54:47,816 - CoreCell - INFO - site-2.98185c31-084f-4b95-95ae-de9c22333841: created backbone internal connector to tcp://localhost:45302 on parent
+2024-09-13 10:54:47,817 - CoreCell - INFO - site-2.98185c31-084f-4b95-95ae-de9c22333841: created backbone external connector to grpc://localhost:8002
+2024-09-13 10:54:47,818 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:45302] is starting
+2024-09-13 10:54:47,818 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 ACTIVE grpc://localhost:8002] is starting
+2024-09-13 10:54:47,819 - FederatedClient - INFO - Wait for client_runner to be created.
+2024-09-13 10:54:47,819 - FederatedClient - INFO - Got client_runner after 8.106231689453125e-05 seconds
+2024-09-13 10:54:47,819 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-13 10:54:47,820 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 10:54:47,825 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:55249 => 127.0.0.1:45302] is created: PID: 55968
+2024-09-13 10:54:47,835 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 10:54:47,836 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 N/A => localhost:8002] is created: PID: 55968
+2024-09-13 10:54:48,857 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.98185c31-084f-4b95-95ae-de9c22333841'], timeout=2.0
+2024-09-13 10:54:48,880 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841]: synced to Server Runner in 0.5288338661193848 seconds
+2024-09-13 10:54:48,881 - ReliableMessage - INFO - enabled reliable message: max_request_workers=20 query_interval=2.0
+2024-09-13 10:54:48,881 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841]: client runner started
+2024-09-13 10:54:48,891 - Communicator - INFO - Received from example_project server. getTask: get_weights size: 535B (535 Bytes) time: 0.008429 seconds
+2024-09-13 10:54:48,891 - FederatedClient - INFO - pull_task completed. Task name:get_weights Status:True 
+2024-09-13 10:54:48,892 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841]: got task assignment: name=get_weights, id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea
+2024-09-13 10:54:48,893 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: invoking task executor LearnerExecutor
+2024-09-13 10:54:48,893 - LearnerExecutor - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: Client trainer got task: get_weights
+2024-09-13 10:54:48,893 - PTLearner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: Current_directory: /Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-2
+2024-09-13 10:54:48,893 - PTLearner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: which SimpleNetwork was imported: /Users/49751124/PycharmProjects/nvflare/my-own_hello-pt/jobs/hello-pt/app/custom/simple_network.py
+2024-09-13 10:54:48,897 - PTLearner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: train_path: /Users/49751124/data/attack_black_all/client_2_airplane_train.pkl
+2024-09-13 10:54:48,898 - LearnerExecutor - ERROR - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: learner initialize exception: FileNotFoundError: [Errno 2] No such file or directory: '/Users/49751124/data/attack_black_all/client_2_airplane_train.pkl'
+2024-09-13 10:54:48,900 - LearnerExecutor - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-2/98185c31-084f-4b95-95ae-de9c22333841/app_site-2/custom/learner_executor.py", line 75, in initialize
+    self.learner.initialize(engine.get_all_components(), fl_ctx)
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-2/98185c31-084f-4b95-95ae-de9c22333841/app_site-2/custom/learner_with_tb.py", line 119, in initialize
+    with open(self.train_path, "rb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/49751124/data/attack_black_all/client_2_airplane_train.pkl'
+
+2024-09-13 10:54:48,900 - ClientRunner - ERROR - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: Processing error from executor LearnerExecutor: FileNotFoundError: [Errno 2] No such file or directory: '/Users/49751124/data/attack_black_all/client_2_airplane_train.pkl'
+2024-09-13 10:54:48,915 - ClientRunner - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/client/client_runner.py", line 302, in _do_process_task
+    reply = executor.execute(task.name, task.data, fl_ctx, abort_signal)
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-2/98185c31-084f-4b95-95ae-de9c22333841/app_site-2/custom/learner_executor.py", line 84, in execute
+    self.initialize(fl_ctx)
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-2/98185c31-084f-4b95-95ae-de9c22333841/app_site-2/custom/learner_executor.py", line 78, in initialize
+    raise e
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-2/98185c31-084f-4b95-95ae-de9c22333841/app_site-2/custom/learner_executor.py", line 75, in initialize
+    self.learner.initialize(engine.get_all_components(), fl_ctx)
+  File "/Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-2/98185c31-084f-4b95-95ae-de9c22333841/app_site-2/custom/learner_with_tb.py", line 119, in initialize
+    with open(self.train_path, "rb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/49751124/data/attack_black_all/client_2_airplane_train.pkl'
+
+2024-09-13 10:54:48,915 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: try #1: sending task result to server
+2024-09-13 10:54:48,916 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: checking task ...
+2024-09-13 10:54:48,916 - Cell - INFO - broadcast: channel='aux_communication', topic='__task_check__', targets=['server.98185c31-084f-4b95-95ae-de9c22333841'], timeout=5.0
+2024-09-13 10:54:48,920 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: start to send task result to server
+2024-09-13 10:54:48,921 - FederatedClient - INFO - Starting to push execute result.
+2024-09-13 10:54:48,949 - Communicator - INFO -  SubmitUpdate size: 631B (631 Bytes). time: 0.028731 seconds
+2024-09-13 10:54:48,950 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841, task_name=get_weights, task_id=b3cab2f3-3b06-4779-aa5f-5fb918de8fea]: task result sent to server
+2024-09-13 10:54:49,180 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841, peer=example_project, peer_run=98185c31-084f-4b95-95ae-de9c22333841]: received request from Server to end current RUN
+2024-09-13 10:54:50,951 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841]: started end-run events sequence
+2024-09-13 10:54:50,952 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841]: ABOUT_TO_END_RUN fired
+2024-09-13 10:54:50,953 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841]: Firing CHECK_END_RUN_READINESS ...
+2024-09-13 10:54:50,954 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841]: END_RUN fired
+2024-09-13 10:54:50,955 - ReliableMessage - INFO - ReliableMessage is shutdown
+2024-09-13 10:54:50,972 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 55968
+2024-09-13 10:54:50,972 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 55968
+2024-09-13 10:54:50,973 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - CLIENT: finished connection [CN00003 Not Connected]
+2024-09-13 10:54:50,973 - FederatedClient - INFO - Shutting down client run: site-2
+2024-09-13 10:54:51,086 - ClientRunner - INFO - [identity=site-2, run=98185c31-084f-4b95-95ae-de9c22333841]: Client is stopping ...
+2024-09-13 10:54:52,619 - MPM - INFO - MPM: Good Bye!

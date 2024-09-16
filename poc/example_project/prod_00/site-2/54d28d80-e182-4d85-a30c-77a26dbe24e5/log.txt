@@ -1,0 +1,18 @@
+2024-09-12 17:04:36,810 - worker_process - INFO - Worker_process started.
+2024-09-12 17:04:41,160 - CoreCell - INFO - site-2.54d28d80-e182-4d85-a30c-77a26dbe24e5: created backbone internal connector to tcp://localhost:45302 on parent
+2024-09-12 17:04:41,161 - CoreCell - INFO - site-2.54d28d80-e182-4d85-a30c-77a26dbe24e5: created backbone external connector to grpc://localhost:8002
+2024-09-12 17:04:41,161 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:45302] is starting
+2024-09-12 17:04:41,162 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 ACTIVE grpc://localhost:8002] is starting
+2024-09-12 17:04:41,162 - FederatedClient - INFO - Wait for client_runner to be created.
+2024-09-12 17:04:41,163 - FederatedClient - INFO - Got client_runner after 0.00010395050048828125 seconds
+2024-09-12 17:04:41,163 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-12 17:04:41,163 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-12 17:04:41,168 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-12 17:04:41,168 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 34281
+2024-09-12 17:04:41,169 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:63322 => 127.0.0.1:45302] is created: PID: 34281
+2024-09-12 17:04:41,708 - ClientRunner - INFO - [identity=site-2, run=54d28d80-e182-4d85-a30c-77a26dbe24e5]: Received command to abort job
+2024-09-12 17:04:41,883 - ClientRunner - INFO - [identity=site-2, run=54d28d80-e182-4d85-a30c-77a26dbe24e5]: Received command to abort job
+2024-09-12 17:04:42,190 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.54d28d80-e182-4d85-a30c-77a26dbe24e5'], timeout=2.0
+2024-09-12 17:04:44,860 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.54d28d80-e182-4d85-a30c-77a26dbe24e5'], timeout=2.0
+2024-09-12 17:04:47,372 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.54d28d80-e182-4d85-a30c-77a26dbe24e5'], timeout=2.0
+2024-09-12 17:04:49,882 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.54d28d80-e182-4d85-a30c-77a26dbe24e5'], timeout=2.0

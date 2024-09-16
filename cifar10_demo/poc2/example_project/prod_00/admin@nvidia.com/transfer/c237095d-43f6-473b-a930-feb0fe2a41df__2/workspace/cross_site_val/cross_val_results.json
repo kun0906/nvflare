@@ -1,1 +1,0 @@
-{"site-2": {"SRV_server": {"val_acc": 0.725}, "site-2": {"val_acc": 0.715}, "site-1": {"val_acc": 0.715}}, "site-1": {"SRV_server": {"val_acc": 0.735}, "site-2": {"val_acc": 0.775}, "site-1": {"val_acc": 0.705}}}

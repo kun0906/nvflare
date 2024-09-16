@@ -1,0 +1,8 @@
+2024-09-13 17:34:50,663 - runner_process - INFO - Runner_process started.
+2024-09-13 17:37:27,103 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-13 17:37:34,655 - CoreCell - INFO - server.fcf9e064-514e-407d-aa55-b61aa86c329e: created backbone internal connector to tcp://localhost:19959 on parent
+2024-09-13 17:37:34,655 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:19959] is starting
+2024-09-13 17:37:34,657 - Cell - INFO - Register blob CB for channel='server_command', topic='*'
+2024-09-13 17:37:34,658 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 17:37:34,658 - ServerCommandAgent - INFO - ServerCommandAgent cell register_request_cb: server.fcf9e064-514e-407d-aa55-b61aa86c329e
+2024-09-13 17:37:34,665 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:62556 => 127.0.0.1:19959] is created: PID: 72458

@@ -1,0 +1,69 @@
+2024-09-13 16:57:46,228 - runner_process - INFO - Runner_process started.
+2024-09-13 16:57:46,236 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-13 16:57:46,364 - CoreCell - INFO - server.b51e9e3e-82e9-4f24-a13f-4533198b7e5c: created backbone internal connector to tcp://localhost:19978 on parent
+2024-09-13 16:57:46,365 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:19978] is starting
+2024-09-13 16:57:46,366 - Cell - INFO - Register blob CB for channel='server_command', topic='*'
+2024-09-13 16:57:46,366 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 16:57:46,366 - ServerCommandAgent - INFO - ServerCommandAgent cell register_request_cb: server.b51e9e3e-82e9-4f24-a13f-4533198b7e5c
+2024-09-13 16:57:46,388 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:61997 => 127.0.0.1:19978] is created: PID: 70326
+2024-09-13 16:57:52,703 - ServerEngine - WARNING - Server is not ready
+2024-09-13 16:57:53,216 - ServerEngine - WARNING - Server is not ready
+2024-09-13 16:57:53,730 - ServerEngine - WARNING - Server is not ready
+2024-09-13 16:57:54,241 - ServerEngine - WARNING - Server is not ready
+2024-09-13 16:57:54,755 - ServerEngine - WARNING - Server is not ready
+2024-09-13 16:57:56,307 - ReliableMessage - INFO - enabled reliable message: max_request_workers=20 query_interval=2.0
+2024-09-13 16:57:56,307 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: Server runner starting ...
+2024-09-13 16:57:56,308 - ServerEngine - INFO - Start saving snapshot on server.
+2024-09-13 16:57:56,333 - ServerEngine - INFO - persist the snapshot to: /tmp/nvflare/snapshot-storage/b51e9e3e-82e9-4f24-a13f-4533198b7e5c
+2024-09-13 16:57:56,333 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: starting workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) ...
+2024-09-13 16:57:56,334 - InitializeGlobalWeights - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train]: Initializing BroadcastAndProcess.
+2024-09-13 16:57:56,334 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train]: Workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) started
+2024-09-13 16:58:11,285 - InitializeGlobalWeights - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train]: scheduled task get_weights
+2024-09-13 16:58:11,389 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, task_name=get_weights, task_id=a4de5649-bf44-4934-b5aa-f770ba28936f]: assigned task to client site-1: name=get_weights, id=a4de5649-bf44-4934-b5aa-f770ba28936f
+2024-09-13 16:58:11,392 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, task_name=get_weights, task_id=a4de5649-bf44-4934-b5aa-f770ba28936f]: sent task assignment to client. client_name:site-1 task_id:a4de5649-bf44-4934-b5aa-f770ba28936f
+2024-09-13 16:58:11,393 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: get_weights   task_id: a4de5649-bf44-4934-b5aa-f770ba28936f  sharable_header_task_id: a4de5649-bf44-4934-b5aa-f770ba28936f
+2024-09-13 16:58:11,464 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: got result from client site-1 for task: name=get_weights, id=a4de5649-bf44-4934-b5aa-f770ba28936f
+2024-09-13 17:01:08,840 - InitializeGlobalWeights - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train]: task get_weights exit with status TaskCompletionStatus.OK
+2024-09-13 17:01:23,148 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, peer_rc=OK, task_name=get_weights, task_id=a4de5649-bf44-4934-b5aa-f770ba28936f]: finished processing client result by pre_train
+2024-09-13 17:01:26,631 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,633 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,636 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,640 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,642 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,643 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,644 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,645 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,645 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,646 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,648 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,649 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,649 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,651 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,651 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: task a4de5649-bf44-4934-b5aa-f770ba28936f is not found
+2024-09-13 17:01:26,653 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train]: Workflow: pre_train finalizing ...
+2024-09-13 17:01:26,653 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: no current workflow - dropped task_check.
+2024-09-13 17:01:26,753 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train, peer=site-1, peer_run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c]: no current workflow - dropped task_check.
+2024-09-13 17:01:26,770 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=pre_train]: starting workflow scatter_and_gather (<class 'scatter_and_gather.ScatterAndGather'>) ...
+2024-09-13 17:01:26,770 - ScatterAndGather - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Initializing ScatterAndGather workflow.
+2024-09-13 17:01:26,770 - PTFileModelPersistor - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Both source_ckpt_file_full_name and ckpt_preload_path are not provided. Using the default model weights initialized on the persistor side.
+2024-09-13 17:01:26,771 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Workflow scatter_and_gather (<class 'scatter_and_gather.ScatterAndGather'>) started
+2024-09-13 17:01:54,020 - ScatterAndGather - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Beginning ScatterAndGather training phase.
+2024-09-13 17:02:15,986 - ScatterAndGather - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Round 0 started.
+2024-09-13 17:06:31,285 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: asked to abort - triggered abort_signal to stop the RUN
+2024-09-13 17:06:43,205 - SubmitUpdateCommand - INFO - submit_update process. client_name:site-1   task_id:a4de5649-bf44-4934-b5aa-f770ba28936f
+2024-09-13 17:06:43,213 - ScatterAndGather - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: scheduled task train
+2024-09-13 17:06:43,214 - ScatterAndGather - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Abort signal received. Exiting at round 0.
+2024-09-13 17:06:43,214 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Workflow: scatter_and_gather finalizing ...
+2024-09-13 17:06:43,270 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: ABOUT_TO_END_RUN fired
+2024-09-13 17:06:43,271 - ServerEngine - INFO - Start saving snapshot on server.
+2024-09-13 17:06:43,285 - ServerEngine - INFO - The snapshot: /tmp/nvflare/snapshot-storage/b51e9e3e-82e9-4f24-a13f-4533198b7e5c has been removed.
+2024-09-13 17:06:43,285 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Firing CHECK_END_RUN_READINESS ...
+2024-09-13 17:06:43,287 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: END_RUN fired
+2024-09-13 17:06:43,287 - ReliableMessage - INFO - ReliableMessage is shutdown
+2024-09-13 17:06:43,287 - ServerRunner - INFO - [identity=example_project, run=b51e9e3e-82e9-4f24-a13f-4533198b7e5c, wf=scatter_and_gather]: Server runner finished.
+2024-09-13 17:06:43,312 - ReliableMessage - INFO - shutdown reliable message monitor
+2024-09-13 17:06:43,449 - FederatedServer - INFO - Server app stopped.
+
+
+2024-09-13 17:06:44,965 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 70326
+2024-09-13 17:06:44,966 - MPM - INFO - MPM: Good Bye!

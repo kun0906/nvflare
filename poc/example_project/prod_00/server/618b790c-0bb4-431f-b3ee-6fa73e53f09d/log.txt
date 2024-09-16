@@ -1,0 +1,70 @@
+2024-09-13 17:25:39,153 - runner_process - INFO - Runner_process started.
+2024-09-13 17:28:32,406 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-13 17:29:53,829 - CoreCell - INFO - server.618b790c-0bb4-431f-b3ee-6fa73e53f09d: created backbone internal connector to tcp://localhost:19959 on parent
+2024-09-13 17:29:53,829 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:19959] is starting
+2024-09-13 17:29:53,849 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:62461 => 127.0.0.1:19959] is created: PID: 71792
+2024-09-13 17:29:55,791 - Cell - INFO - Register blob CB for channel='server_command', topic='*'
+2024-09-13 17:29:55,792 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 17:29:55,792 - ServerCommandAgent - INFO - ServerCommandAgent cell register_request_cb: server.618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:02,926 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:03,933 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:04,941 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:05,947 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:06,952 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:07,965 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:08,973 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:09,977 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:10,988 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:11,995 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:13,002 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:14,009 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:15,017 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:16,024 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:17,036 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:18,042 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:19,054 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:20,062 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:21,066 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:22,072 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:23,080 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:24,086 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:25,094 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:26,105 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:27,118 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:28,124 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:29,131 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:30,135 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:31,139 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:32,145 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:33,152 - ServerEngine - ERROR - parent failed to return clients info for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d
+2024-09-13 17:34:33,152 - ServerEngine - CRITICAL - Cannot get participating clients for job 618b790c-0bb4-431f-b3ee-6fa73e53f09d after 30.0 seconds
+2024-09-13 17:34:33,152 - runner_process - ERROR - FL server execution exception: RuntimeError: Exiting job process: Cannot get participating clients for job {job_id}
+Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/server_app_runner.py", line 78, in start_server_app
+    self.sync_up_parents_process(args)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/server_app_runner.py", line 93, in sync_up_parents_process
+    self.server.engine.sync_clients_from_main_process()
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/server_engine.py", line 547, in sync_clients_from_main_process
+    raise RuntimeError("Exiting job process: Cannot get participating clients for job {job_id}")
+RuntimeError: Exiting job process: Cannot get participating clients for job {job_id}
+2024-09-13 17:34:33,161 - FederatedServer - INFO - Server app stopped.
+
+
+2024-09-13 17:34:33,166 - MPM - ERROR - Execute exception: RuntimeError: Exiting job process: Cannot get participating clients for job {job_id}
+2024-09-13 17:34:33,166 - MPM - ERROR - Traceback (most recent call last):
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/fuel/f3/mpm.py", line 154, in run
+    rc = main_func(**kwargs)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/app/server/runner_process.py", line 119, in main
+    server_app_runner.start_server_app(
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/server_app_runner.py", line 85, in start_server_app
+    raise e
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/server_app_runner.py", line 78, in start_server_app
+    self.sync_up_parents_process(args)
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/server_app_runner.py", line 93, in sync_up_parents_process
+    self.server.engine.sync_clients_from_main_process()
+  File "/Users/49751124/miniconda3/envs/nvflare/lib/python3.10/site-packages/nvflare/private/fed/server/server_engine.py", line 547, in sync_clients_from_main_process
+    raise RuntimeError("Exiting job process: Cannot get participating clients for job {job_id}")
+RuntimeError: Exiting job process: Cannot get participating clients for job {job_id}
+
+2024-09-13 17:34:34,669 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 71792
+2024-09-13 17:34:34,670 - MPM - INFO - MPM: Good Bye!

@@ -1,0 +1,52 @@
+2024-09-13 16:48:51,243 - runner_process - INFO - Runner_process started.
+2024-09-13 16:48:51,260 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-13 16:48:51,517 - CoreCell - INFO - server.0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45: created backbone internal connector to tcp://localhost:61420 on parent
+2024-09-13 16:48:51,517 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:61420] is starting
+2024-09-13 16:48:51,518 - Cell - INFO - Register blob CB for channel='server_command', topic='*'
+2024-09-13 16:48:51,518 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 16:48:51,519 - ServerCommandAgent - INFO - ServerCommandAgent cell register_request_cb: server.0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45
+2024-09-13 16:48:51,531 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:61839 => 127.0.0.1:61420] is created: PID: 69952
+2024-09-13 16:51:05,658 - ReliableMessage - INFO - enabled reliable message: max_request_workers=20 query_interval=2.0
+2024-09-13 16:51:06,841 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45]: Server runner starting ...
+2024-09-13 16:51:13,738 - ServerEngine - INFO - Start saving snapshot on server.
+2024-09-13 16:51:13,866 - ServerEngine - INFO - persist the snapshot to: /tmp/nvflare/snapshot-storage/0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45
+2024-09-13 16:51:35,688 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45]: starting workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) ...
+2024-09-13 16:51:40,891 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: Initializing BroadcastAndProcess.
+2024-09-13 16:51:41,422 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: Workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) started
+2024-09-13 16:51:46,155 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:51:56,182 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:52:06,199 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:52:16,224 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:52:16,329 - InitializeGlobalWeights - ERROR - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: All clients are dead: ['site-1']
+2024-09-13 16:52:16,332 - ServerRunner - ERROR - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: Aborting current RUN due to FATAL_SYSTEM_ERROR received: Aborting job due to deployment policy violation
+2024-09-13 16:52:16,333 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: asked to abort - triggered abort_signal to stop the RUN
+2024-09-13 16:52:26,249 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:52:36,272 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:52:46,297 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:52:56,320 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:53:06,345 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:53:16,374 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:53:26,393 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:53:36,392 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: scheduled task get_weights
+2024-09-13 16:53:36,417 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:53:42,856 - GlobalWeightsInitializer - ERROR - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: no weights available from clients
+2024-09-13 16:53:46,444 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:53:49,507 - ServerRunner - ERROR - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: Aborting current RUN due to FATAL_SYSTEM_ERROR received: ResponseProcessor <class 'nvflare.app_common.response_processors.global_weights_initializer.GlobalWeightsInitializer'> failed final check!
+2024-09-13 16:53:49,509 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: asked to abort - triggered abort_signal to stop the RUN
+2024-09-13 16:53:56,466 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:54:06,489 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:54:16,511 - InitializeGlobalWeights - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: received dead job report from client site-1
+2024-09-13 16:54:23,642 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: Workflow: pre_train finalizing ...
+2024-09-13 16:54:46,335 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: ABOUT_TO_END_RUN fired
+2024-09-13 16:54:49,430 - ServerEngine - INFO - Start saving snapshot on server.
+2024-09-13 16:54:49,452 - ServerEngine - INFO - The snapshot: /tmp/nvflare/snapshot-storage/0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45 has been removed.
+2024-09-13 16:54:49,452 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: Firing CHECK_END_RUN_READINESS ...
+2024-09-13 16:54:49,454 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: END_RUN fired
+2024-09-13 16:54:49,454 - ReliableMessage - INFO - ReliableMessage is shutdown
+2024-09-13 16:54:49,454 - ServerRunner - INFO - [identity=example_project, run=0b2c77bf-40e5-44ec-8c0f-1ab981dc0f45, wf=pre_train]: Server runner finished.
+2024-09-13 16:54:49,572 - FederatedServer - INFO - Server app stopped.
+
+
+2024-09-13 16:54:50,061 - ReliableMessage - INFO - shutdown reliable message monitor
+2024-09-13 16:54:51,090 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 69952
+2024-09-13 16:54:51,091 - MPM - INFO - MPM: Good Bye!

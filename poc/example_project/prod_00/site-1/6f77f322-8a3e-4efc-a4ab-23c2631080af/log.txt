@@ -1,0 +1,35 @@
+2024-09-13 17:07:24,540 - worker_process - INFO - Worker_process started.
+2024-09-13 17:07:32,241 - CoreCell - INFO - site-1.6f77f322-8a3e-4efc-a4ab-23c2631080af: created backbone internal connector to tcp://localhost:35371 on parent
+2024-09-13 17:07:32,242 - CoreCell - INFO - site-1.6f77f322-8a3e-4efc-a4ab-23c2631080af: created backbone external connector to grpc://localhost:8002
+2024-09-13 17:07:32,242 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:35371] is starting
+2024-09-13 17:07:32,243 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 ACTIVE grpc://localhost:8002] is starting
+2024-09-13 17:07:32,243 - FederatedClient - INFO - Wait for client_runner to be created.
+2024-09-13 17:07:32,243 - FederatedClient - INFO - Got client_runner after 8.606910705566406e-05 seconds
+2024-09-13 17:07:32,244 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-13 17:07:32,244 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 17:07:32,251 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:62103 => 127.0.0.1:35371] is created: PID: 70789
+2024-09-13 17:07:32,273 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-13 17:07:32,274 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 N/A => localhost:8002] is created: PID: 70789
+2024-09-13 17:07:33,280 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.6f77f322-8a3e-4efc-a4ab-23c2631080af'], timeout=2.0
+2024-09-13 17:07:33,453 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af]: synced to Server Runner in 0.6789078712463379 seconds
+2024-09-13 17:07:33,454 - ReliableMessage - INFO - enabled reliable message: max_request_workers=20 query_interval=2.0
+2024-09-13 17:07:33,454 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af]: client runner started
+2024-09-13 17:09:20,269 - Communicator - INFO - Received from example_project server. getTask: get_weights size: 535B (535 Bytes) time: 0.019646 seconds
+2024-09-13 17:09:20,270 - FederatedClient - INFO - pull_task completed. Task name:get_weights Status:True 
+2024-09-13 17:09:20,271 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af]: got task assignment: name=get_weights, id=247b56b7-6e0f-435e-946c-0c90869e96b2
+2024-09-13 17:09:20,273 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: invoking task executor LearnerExecutor
+2024-09-13 17:09:20,273 - LearnerExecutor - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: Client trainer got task: get_weights
+2024-09-13 17:09:20,273 - PTLearner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: Current_directory: /Users/49751124/PycharmProjects/nvflare/poc/example_project/prod_00/site-1
+2024-09-13 17:09:20,274 - PTLearner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: which SimpleNetwork was imported: /Users/49751124/PycharmProjects/nvflare/dev/my-own_hello-pt/jobs/hello-pt/app/custom/simple_network.py
+2024-09-13 17:09:20,285 - PTLearner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: train_path: /Users/49751124/data/reverse_label/client_1_airplane_train.pkl
+2024-09-13 17:09:20,327 - PTLearner - INFO - Client <property object at 0x11a8b6de0>: Size of the training subset: 1000
+2024-09-13 17:09:20,328 - PTLearner - INFO - Class 0: 500 samples
+2024-09-13 17:09:20,328 - PTLearner - INFO - Class 1: 500 samples
+2024-09-13 17:09:20,328 - PTLearner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: test_path: /Users/49751124/data/reverse_label/client_1_airplane_test.pkl
+2024-09-13 17:09:20,337 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: finished processing task
+2024-09-13 17:09:20,338 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: try #1: sending task result to server
+2024-09-13 17:09:20,338 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: checking task ...
+2024-09-13 17:09:20,339 - Cell - INFO - broadcast: channel='aux_communication', topic='__task_check__', targets=['server.6f77f322-8a3e-4efc-a4ab-23c2631080af'], timeout=5.0
+2024-09-13 17:09:20,344 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer=example_project, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: start to send task result to server
+2024-09-13 17:09:20,344 - FederatedClient - INFO - Starting to push execute result.
+2024-09-13 17:09:35,422 - ClientRunner - INFO - [identity=site-1, run=6f77f322-8a3e-4efc-a4ab-23c2631080af]: Received command to abort job

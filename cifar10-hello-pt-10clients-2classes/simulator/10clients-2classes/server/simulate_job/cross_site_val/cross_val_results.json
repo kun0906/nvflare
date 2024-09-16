@@ -1,0 +1,1 @@
+{"site-1": {"SRV_server": {"val_acc": {"test_accuracy": 0.24, "test_auc": 0.1353, "test_cm": "26\t74\n78\t22"}}, "site-1": {"val_acc": {"test_accuracy": 0.24, "test_auc": 0.1353, "test_cm": "26\t74\n78\t22"}}}}

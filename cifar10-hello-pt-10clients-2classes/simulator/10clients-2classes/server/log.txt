@@ -1,0 +1,124 @@
+2024-09-16 09:03:30,472 - SimulatorRunner - INFO - Create the Simulator Server.
+2024-09-16 09:03:30,473 - CoreCell - INFO - server: creating listener on tcp://0:64312
+2024-09-16 09:03:30,497 - CoreCell - INFO - server: created backbone external listener for tcp://0:64312
+2024-09-16 09:03:30,497 - ConnectorManager - INFO - 22982: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-16 09:03:30,498 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:33884] is starting
+2024-09-16 09:03:31,003 - CoreCell - INFO - server: created backbone internal listener for tcp://localhost:33884
+2024-09-16 09:03:31,003 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 PASSIVE tcp://0:64312] is starting
+2024-09-16 09:03:31,058 - nvflare.fuel.hci.server.hci - INFO - Starting Admin Server localhost on Port 64313
+2024-09-16 09:03:31,058 - SimulatorRunner - INFO - Deploy the Apps.
+2024-09-16 09:03:31,176 - SimulatorRunner - INFO - Create the simulate clients.
+2024-09-16 09:03:31,179 - ClientManager - INFO - Client: New client site-1@10.9.172.167 joined. Sent token: 5ba2455f-53b5-46b3-acbc-7da38ae1bb61.  Total clients: 1
+2024-09-16 09:03:31,179 - FederatedClient - INFO - Successfully registered client:site-1 for project simulator_server. Token:5ba2455f-53b5-46b3-acbc-7da38ae1bb61 SSID:
+2024-09-16 09:03:31,179 - SimulatorRunner - INFO - Set the client status ready.
+2024-09-16 09:03:31,179 - SimulatorRunner - INFO - Deploy and start the Server App.
+2024-09-16 09:03:31,179 - Cell - INFO - Register blob CB for channel='server_command', topic='*'
+2024-09-16 09:03:31,179 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-16 09:03:31,179 - ServerCommandAgent - INFO - ServerCommandAgent cell register_request_cb: server.simulate_job
+2024-09-16 09:03:31,182 - IntimeModelSelector - INFO - model selection weights control: None
+2024-09-16 09:03:34,289 - AuxRunner - INFO - registered aux handler for topic __sync_runner__
+2024-09-16 09:03:34,289 - AuxRunner - INFO - registered aux handler for topic __job_heartbeat__
+2024-09-16 09:03:34,289 - AuxRunner - INFO - registered aux handler for topic __task_check__
+2024-09-16 09:03:34,289 - AuxRunner - INFO - registered aux handler for topic RM.RELIABLE_REQUEST
+2024-09-16 09:03:34,289 - AuxRunner - INFO - registered aux handler for topic RM.RELIABLE_REPLY
+2024-09-16 09:03:34,289 - ReliableMessage - INFO - enabled reliable message: max_request_workers=20 query_interval=2.0
+2024-09-16 09:03:34,289 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job]: Server runner starting ...
+2024-09-16 09:03:34,290 - TBAnalyticsReceiver - INFO - [identity=simulator_server, run=simulate_job]: Tensorboard records can be found in /Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes/simulator/10clients-2classes/server/simulate_job/tb_events you can view it using `tensorboard --logdir=/Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes/simulator/10clients-2classes/server/simulate_job/tb_events`
+2024-09-16 09:03:34,290 - AuxRunner - INFO - registered aux handler for topic fed.event
+2024-09-16 09:03:34,290 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job]: starting workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) ...
+2024-09-16 09:03:34,290 - InitializeGlobalWeights - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train]: Initializing BroadcastAndProcess.
+2024-09-16 09:03:34,290 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train]: Workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) started
+2024-09-16 09:03:34,290 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train]: scheduled task get_weights
+2024-09-16 09:03:34,781 - SimulatorClientRunner - INFO - Start the clients run simulation.
+2024-09-16 09:03:35,785 - SimulatorClientRunner - INFO - Simulate Run client: site-1 on GPU group: None
+2024-09-16 09:03:36,891 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:64312 <= 127.0.0.1:64325] is created: PID: 22982
+2024-09-16 09:03:41,822 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train, peer=site-1, peer_run=simulate_job, task_name=get_weights, task_id=d250a420-80fa-425b-9b83-fa8343f6f504]: assigned task to client site-1: name=get_weights, id=d250a420-80fa-425b-9b83-fa8343f6f504
+2024-09-16 09:03:41,823 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train, peer=site-1, peer_run=simulate_job, task_name=get_weights, task_id=d250a420-80fa-425b-9b83-fa8343f6f504]: sent task assignment to client. client_name:site-1 task_id:d250a420-80fa-425b-9b83-fa8343f6f504
+2024-09-16 09:03:41,823 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: get_weights   task_id: d250a420-80fa-425b-9b83-fa8343f6f504  sharable_header_task_id: d250a420-80fa-425b-9b83-fa8343f6f504
+2024-09-16 09:03:41,851 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train, peer=site-1, peer_run=simulate_job]: got result from client site-1 for task: name=get_weights, id=d250a420-80fa-425b-9b83-fa8343f6f504
+2024-09-16 09:03:41,852 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=get_weights, task_id=d250a420-80fa-425b-9b83-fa8343f6f504]: finished processing client result by pre_train
+2024-09-16 09:03:41,852 - SubmitUpdateCommand - INFO - submit_update process. client_name:site-1   task_id:d250a420-80fa-425b-9b83-fa8343f6f504
+2024-09-16 09:03:42,021 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train]: task get_weights exit with status TaskCompletionStatus.OK
+2024-09-16 09:03:42,025 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train]: Workflow: pre_train finalizing ...
+2024-09-16 09:03:42,025 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=pre_train]: starting workflow scatter_and_gather (<class 'scatter_and_gather.ScatterAndGather'>) ...
+2024-09-16 09:03:42,025 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Initializing ScatterAndGather workflow.
+2024-09-16 09:03:42,026 - PTFileModelPersistor - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Both source_ckpt_file_full_name and ckpt_preload_path are not provided. Using the default model weights initialized on the persistor side.
+2024-09-16 09:03:42,026 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Workflow scatter_and_gather (<class 'scatter_and_gather.ScatterAndGather'>) started
+2024-09-16 09:03:42,026 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Beginning ScatterAndGather training phase.
+2024-09-16 09:03:42,026 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Round 0 started.
+2024-09-16 09:03:42,026 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: scheduled task train
+2024-09-16 09:03:43,863 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather, peer=site-1, peer_run=simulate_job, task_name=train, task_id=c34c8941-52e6-4bc6-9fdb-20aef6f54823]: assigned task to client site-1: name=train, id=c34c8941-52e6-4bc6-9fdb-20aef6f54823
+2024-09-16 09:03:43,864 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather, peer=site-1, peer_run=simulate_job, task_name=train, task_id=c34c8941-52e6-4bc6-9fdb-20aef6f54823]: sent task assignment to client. client_name:site-1 task_id:c34c8941-52e6-4bc6-9fdb-20aef6f54823
+2024-09-16 09:03:43,864 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: train   task_id: c34c8941-52e6-4bc6-9fdb-20aef6f54823  sharable_header_task_id: c34c8941-52e6-4bc6-9fdb-20aef6f54823
+2024-09-16 09:03:46,349 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather, peer=site-1, peer_run=simulate_job]: got result from client site-1 for task: name=train, id=c34c8941-52e6-4bc6-9fdb-20aef6f54823
+2024-09-16 09:03:46,349 - InTimeAccumulateWeightedAggregator - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=train, task_id=c34c8941-52e6-4bc6-9fdb-20aef6f54823]: clients_model_file: /Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes/simulator/10clients-2classes/server/simulate_job/app_server/models/site-1_weights_0.pkl
+2024-09-16 09:03:46,352 - DXOAggregator - WARNING - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=train, task_id=c34c8941-52e6-4bc6-9fdb-20aef6f54823]: Aggregation_weight missing for site-1 and set to default value, 1.0 This kind of message will show 10 times at most.
+2024-09-16 09:03:46,352 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=train, task_id=c34c8941-52e6-4bc6-9fdb-20aef6f54823]: Contribution from site-1 ACCEPTED by the aggregator at round 0.
+2024-09-16 09:03:46,417 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=train, task_id=c34c8941-52e6-4bc6-9fdb-20aef6f54823]: finished processing client result by scatter_and_gather
+2024-09-16 09:03:46,417 - SubmitUpdateCommand - INFO - submit_update process. client_name:site-1   task_id:c34c8941-52e6-4bc6-9fdb-20aef6f54823
+2024-09-16 09:03:46,495 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: task train exit with status TaskCompletionStatus.OK
+2024-09-16 09:03:46,503 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Start aggregation.
+2024-09-16 09:03:46,503 - DXOAggregator - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: aggregating 1 update(s) at round 0
+2024-09-16 09:03:46,504 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: End aggregation.
+2024-09-16 09:03:46,504 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: model_file: /Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes/simulator/10clients-2classes/server/simulate_job/app_server/models/global_weights_0.pkl
+2024-09-16 09:03:46,506 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Start persist model on server.
+2024-09-16 09:03:46,508 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: End persist model on server.
+2024-09-16 09:03:46,508 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Round 0 finished.
+2024-09-16 09:03:46,568 - ScatterAndGather - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Finished ScatterAndGather Training.
+2024-09-16 09:03:46,568 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: Workflow: scatter_and_gather finalizing ...
+2024-09-16 09:03:46,568 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=scatter_and_gather]: starting workflow cross_site_validate (<class 'nvflare.app_common.workflows.cross_site_model_eval.CrossSiteModelEval'>) ...
+2024-09-16 09:03:46,569 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Formatter not found. Stats will not be printed.
+2024-09-16 09:03:46,569 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Workflow cross_site_validate (<class 'nvflare.app_common.workflows.cross_site_model_eval.CrossSiteModelEval'>) started
+2024-09-16 09:03:46,569 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Beginning model validation with clients: ['site-1'].
+2024-09-16 09:03:46,569 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: scheduled task submit_model
+2024-09-16 09:03:46,569 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Locating server models.
+2024-09-16 09:03:46,577 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Server models loaded: ['SRV_server'].
+2024-09-16 09:03:46,577 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Sending SRV_server model to all participating clients for validation.
+2024-09-16 09:03:46,577 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: scheduled task validate
+2024-09-16 09:03:48,428 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, task_name=submit_model, task_id=38d24a37-5f3a-4b18-a33b-a173c684abce]: assigned task to client site-1: name=submit_model, id=38d24a37-5f3a-4b18-a33b-a173c684abce
+2024-09-16 09:03:48,429 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, task_name=submit_model, task_id=38d24a37-5f3a-4b18-a33b-a173c684abce]: sent task assignment to client. client_name:site-1 task_id:38d24a37-5f3a-4b18-a33b-a173c684abce
+2024-09-16 09:03:48,429 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: submit_model   task_id: 38d24a37-5f3a-4b18-a33b-a173c684abce  sharable_header_task_id: 38d24a37-5f3a-4b18-a33b-a173c684abce
+2024-09-16 09:03:48,443 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job]: got result from client site-1 for task: name=submit_model, id=38d24a37-5f3a-4b18-a33b-a173c684abce
+2024-09-16 09:03:48,446 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=submit_model, task_id=38d24a37-5f3a-4b18-a33b-a173c684abce]: Saved client model site-1 to /Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes/simulator/10clients-2classes/server/simulate_job/cross_site_val/model_shareables/site-1
+2024-09-16 09:03:48,446 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=submit_model, task_id=38d24a37-5f3a-4b18-a33b-a173c684abce]: Sending site-1 model to all participating clients for validation.
+2024-09-16 09:03:48,446 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=submit_model, task_id=38d24a37-5f3a-4b18-a33b-a173c684abce]: scheduled task validate
+2024-09-16 09:03:48,446 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=submit_model, task_id=38d24a37-5f3a-4b18-a33b-a173c684abce]: finished processing client result by cross_site_validate
+2024-09-16 09:03:48,446 - SubmitUpdateCommand - INFO - submit_update process. client_name:site-1   task_id:38d24a37-5f3a-4b18-a33b-a173c684abce
+2024-09-16 09:03:48,608 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: task submit_model exit with status TaskCompletionStatus.OK
+2024-09-16 09:03:50,462 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, task_name=validate, task_id=91dc55ca-7777-4343-a558-491e93f9c3a2]: assigned task to client site-1: name=validate, id=91dc55ca-7777-4343-a558-491e93f9c3a2
+2024-09-16 09:03:50,463 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, task_name=validate, task_id=91dc55ca-7777-4343-a558-491e93f9c3a2]: sent task assignment to client. client_name:site-1 task_id:91dc55ca-7777-4343-a558-491e93f9c3a2
+2024-09-16 09:03:50,463 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: validate   task_id: 91dc55ca-7777-4343-a558-491e93f9c3a2  sharable_header_task_id: 91dc55ca-7777-4343-a558-491e93f9c3a2
+2024-09-16 09:03:50,498 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job]: got result from client site-1 for task: name=validate, id=91dc55ca-7777-4343-a558-491e93f9c3a2
+2024-09-16 09:03:50,499 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=validate, task_id=91dc55ca-7777-4343-a558-491e93f9c3a2]: Saved validation result from client 'site-1' on model 'SRV_server' in /Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes/simulator/10clients-2classes/server/simulate_job/cross_site_val/result_shareables/site-1_SRV_server
+2024-09-16 09:03:50,499 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=validate, task_id=91dc55ca-7777-4343-a558-491e93f9c3a2]: finished processing client result by cross_site_validate
+2024-09-16 09:03:50,499 - SubmitUpdateCommand - INFO - submit_update process. client_name:site-1   task_id:91dc55ca-7777-4343-a558-491e93f9c3a2
+2024-09-16 09:03:50,652 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: task validate exit with status TaskCompletionStatus.OK
+2024-09-16 09:03:52,513 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, task_name=validate, task_id=0bff35be-a38b-48ed-abe4-f77ca59a2fa5]: assigned task to client site-1: name=validate, id=0bff35be-a38b-48ed-abe4-f77ca59a2fa5
+2024-09-16 09:03:52,514 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, task_name=validate, task_id=0bff35be-a38b-48ed-abe4-f77ca59a2fa5]: sent task assignment to client. client_name:site-1 task_id:0bff35be-a38b-48ed-abe4-f77ca59a2fa5
+2024-09-16 09:03:52,514 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: validate   task_id: 0bff35be-a38b-48ed-abe4-f77ca59a2fa5  sharable_header_task_id: 0bff35be-a38b-48ed-abe4-f77ca59a2fa5
+2024-09-16 09:03:52,551 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job]: got result from client site-1 for task: name=validate, id=0bff35be-a38b-48ed-abe4-f77ca59a2fa5
+2024-09-16 09:03:52,552 - CrossSiteModelEval - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=validate, task_id=0bff35be-a38b-48ed-abe4-f77ca59a2fa5]: Saved validation result from client 'site-1' on model 'site-1' in /Users/49751124/PycharmProjects/nvflare/cifar10-hello-pt-10clients-2classes/simulator/10clients-2classes/server/simulate_job/cross_site_val/result_shareables/site-1_site-1
+2024-09-16 09:03:52,552 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job, peer_rc=OK, task_name=validate, task_id=0bff35be-a38b-48ed-abe4-f77ca59a2fa5]: finished processing client result by cross_site_validate
+2024-09-16 09:03:52,552 - SubmitUpdateCommand - INFO - submit_update process. client_name:site-1   task_id:0bff35be-a38b-48ed-abe4-f77ca59a2fa5
+2024-09-16 09:03:52,688 - WFCommServer - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: task validate exit with status TaskCompletionStatus.OK
+2024-09-16 09:03:53,117 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Workflow: cross_site_validate finalizing ...
+2024-09-16 09:03:53,119 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: ABOUT_TO_END_RUN fired
+2024-09-16 09:03:53,120 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Firing CHECK_END_RUN_READINESS ...
+2024-09-16 09:03:54,561 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate, peer=site-1, peer_run=simulate_job]: server runner is finalizing - asked client to end the run
+2024-09-16 09:03:54,562 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: __end_run__   task_id:   sharable_header_task_id: 
+2024-09-16 09:03:54,566 - FederatedClient - INFO - Shutting down client run: site-1
+2024-09-16 09:03:54,567 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: asked to abort - triggered abort_signal to stop the RUN
+2024-09-16 09:03:54,568 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 22982
+2024-09-16 09:03:55,136 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: END_RUN fired
+2024-09-16 09:03:55,137 - ReliableMessage - INFO - ReliableMessage is shutdown
+2024-09-16 09:03:55,137 - ServerRunner - INFO - [identity=simulator_server, run=simulate_job, wf=cross_site_validate]: Server runner finished.
+2024-09-16 09:03:55,312 - SimulatorServer - INFO - Server app stopped.
+
+
+2024-09-16 09:03:55,318 - nvflare.fuel.hci.server.hci - INFO - Admin Server localhost on Port 64313 shutdown!
+2024-09-16 09:03:55,318 - SimulatorServer - INFO - shutting down server
+2024-09-16 09:03:55,318 - SimulatorServer - INFO - canceling sync locks
+2024-09-16 09:03:55,318 - SimulatorServer - INFO - server off
+2024-09-16 09:03:56,326 - ReliableMessage - INFO - shutdown reliable message monitor
+2024-09-16 09:03:58,824 - MPM - WARNING - #### MPM: still running thread Thread-7
+2024-09-16 09:03:58,824 - MPM - INFO - MPM: Good Bye!

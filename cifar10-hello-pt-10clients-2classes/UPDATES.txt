@@ -1,3 +1,6 @@
+v0.2.0: Reorganize project structure
+
+
 v0.1.9: Update 'Byzantine_clients'
 
 1. Replace 239 line with new weights

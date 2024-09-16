@@ -38,3 +38,8 @@ cifar10-hello-pt-10clients-2classes/data/cifar-10-python.tar.gz
 /cifar10_demo/data/client_10_airplane_test.pkl
 /cifar10_demo/data/client_10_airplane_train.pkl
 /cifar10-hello-pt-10clients-2classes/jobs/10clients-2classes/cifar_net.pth
+
+.DS_Store
+
+*.pyc
+

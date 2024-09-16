@@ -139,6 +139,7 @@ def main(args):
         logger.exception(f"ConfigError: {secure_format_exception(e)}")
         raise e
 
+
 #
 # def parse_arguments():
 #     parser = argparse.ArgumentParser()
@@ -155,11 +156,15 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", "-m", default='.', type=str, help="WORKSPACE folder", required=False)
     parser.add_argument(
-        "--fed_server", "-s", default='startup/fed_server.json', type=str, help="an aggregation server specification json file", required=False
+        "--fed_server", "-s", default='startup/fed_server.json', type=str,
+        help="an aggregation server specification json file", required=False
     )
-    parser.add_argument("--set", default=['secure_train=true', 'org=nvidia', 'config_folder=config'], metavar="KEY=VALUE", nargs="*")
+    parser.add_argument("--set", default=['secure_train=true', 'org=nvidia', 'config_folder=config'],
+                        metavar="KEY=VALUE", nargs="*")
     args = parser.parse_args()
     return args
+
+
 if __name__ == "__main__":
     """
     This is the main program when starting the NVIDIA FLARE server process.

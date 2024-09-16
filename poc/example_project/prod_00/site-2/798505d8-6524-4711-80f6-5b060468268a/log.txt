@@ -1,0 +1,19 @@
+2024-09-12 16:51:24,660 - worker_process - INFO - Worker_process started.
+2024-09-12 16:51:26,544 - CoreCell - INFO - site-2.798505d8-6524-4711-80f6-5b060468268a: created backbone internal connector to tcp://localhost:45302 on parent
+2024-09-12 16:51:26,545 - CoreCell - INFO - site-2.798505d8-6524-4711-80f6-5b060468268a: created backbone external connector to grpc://localhost:8002
+2024-09-12 16:51:26,545 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:45302] is starting
+2024-09-12 16:51:26,546 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 ACTIVE grpc://localhost:8002] is starting
+2024-09-12 16:51:26,546 - FederatedClient - INFO - Wait for client_runner to be created.
+2024-09-12 16:51:26,547 - FederatedClient - INFO - Got client_runner after 7.796287536621094e-05 seconds
+2024-09-12 16:51:26,547 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-12 16:51:26,547 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-12 16:51:26,553 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-12 16:51:26,553 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 33475
+2024-09-12 16:51:26,555 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:63105 => 127.0.0.1:45302] is created: PID: 33475
+2024-09-12 16:51:27,568 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.798505d8-6524-4711-80f6-5b060468268a'], timeout=2.0
+2024-09-12 16:51:29,824 - ClientRunner - INFO - [identity=site-2, run=798505d8-6524-4711-80f6-5b060468268a]: Received command to abort job
+2024-09-12 16:51:30,244 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.798505d8-6524-4711-80f6-5b060468268a'], timeout=2.0
+2024-09-12 16:51:32,755 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.798505d8-6524-4711-80f6-5b060468268a'], timeout=2.0
+2024-09-12 16:51:35,268 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.798505d8-6524-4711-80f6-5b060468268a'], timeout=2.0
+2024-09-12 16:51:37,741 - ClientRunner - INFO - [identity=site-2, run=798505d8-6524-4711-80f6-5b060468268a]: Received command to abort job
+2024-09-12 16:51:37,783 - Cell - INFO - broadcast: channel='aux_communication', topic='__sync_runner__', targets=['server.798505d8-6524-4711-80f6-5b060468268a'], timeout=2.0

@@ -1,0 +1,18 @@
+2024-09-13 17:10:04,137 - runner_process - INFO - Runner_process started.
+2024-09-13 17:10:04,152 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-13 17:10:04,291 - CoreCell - INFO - server.4d639126-6916-40ad-a225-c43efab19bfe: created backbone internal connector to tcp://localhost:19978 on parent
+2024-09-13 17:10:04,291 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:19978] is starting
+2024-09-13 17:10:04,293 - Cell - INFO - Register blob CB for channel='server_command', topic='*'
+2024-09-13 17:10:04,293 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 17:10:04,293 - ServerCommandAgent - INFO - ServerCommandAgent cell register_request_cb: server.4d639126-6916-40ad-a225-c43efab19bfe
+2024-09-13 17:10:04,312 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:62143 => 127.0.0.1:19978] is created: PID: 70855
+2024-09-13 17:10:04,383 - ReliableMessage - INFO - enabled reliable message: max_request_workers=20 query_interval=2.0
+2024-09-13 17:10:04,384 - ServerRunner - INFO - [identity=example_project, run=4d639126-6916-40ad-a225-c43efab19bfe]: Server runner starting ...
+2024-09-13 17:10:04,386 - ServerEngine - INFO - Start saving snapshot on server.
+2024-09-13 17:10:04,409 - ServerEngine - INFO - persist the snapshot to: /tmp/nvflare/snapshot-storage/4d639126-6916-40ad-a225-c43efab19bfe
+2024-09-13 17:10:14,588 - ServerRunner - INFO - [identity=example_project, run=4d639126-6916-40ad-a225-c43efab19bfe]: starting workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) ...
+2024-09-13 17:10:24,036 - InitializeGlobalWeights - INFO - [identity=example_project, run=4d639126-6916-40ad-a225-c43efab19bfe, wf=pre_train]: Initializing BroadcastAndProcess.
+2024-09-13 17:11:25,448 - ServerRunner - INFO - [identity=example_project, run=4d639126-6916-40ad-a225-c43efab19bfe, wf=pre_train]: Workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) started
+2024-09-13 17:12:32,928 - FederatedServer - INFO - Server app stopped.
+
+

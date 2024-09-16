@@ -1,0 +1,41 @@
+2024-09-13 17:07:24,528 - runner_process - INFO - Runner_process started.
+2024-09-13 17:07:24,541 - nvflare.private.fed.app.deployer.server_deployer.ServerDeployer - INFO - server heartbeat timeout set to 600
+2024-09-13 17:07:24,744 - CoreCell - INFO - server.6f77f322-8a3e-4efc-a4ab-23c2631080af: created backbone internal connector to tcp://localhost:19978 on parent
+2024-09-13 17:07:24,745 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE tcp://localhost:19978] is starting
+2024-09-13 17:07:24,746 - Cell - INFO - Register blob CB for channel='server_command', topic='*'
+2024-09-13 17:07:24,746 - Cell - INFO - Register blob CB for channel='aux_communication', topic='*'
+2024-09-13 17:07:24,746 - ServerCommandAgent - INFO - ServerCommandAgent cell register_request_cb: server.6f77f322-8a3e-4efc-a4ab-23c2631080af
+2024-09-13 17:07:24,776 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 127.0.0.1:62100 => 127.0.0.1:19978] is created: PID: 70788
+2024-09-13 17:07:28,742 - ReliableMessage - INFO - enabled reliable message: max_request_workers=20 query_interval=2.0
+2024-09-13 17:07:28,743 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af]: Server runner starting ...
+2024-09-13 17:07:28,746 - ServerEngine - INFO - Start saving snapshot on server.
+2024-09-13 17:07:28,776 - ServerEngine - INFO - persist the snapshot to: /tmp/nvflare/snapshot-storage/6f77f322-8a3e-4efc-a4ab-23c2631080af
+2024-09-13 17:07:28,778 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af]: starting workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) ...
+2024-09-13 17:08:36,062 - InitializeGlobalWeights - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: Initializing BroadcastAndProcess.
+2024-09-13 17:09:12,180 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: Workflow pre_train (<class 'nvflare.app_common.workflows.initialize_global_weights.InitializeGlobalWeights'>) started
+2024-09-13 17:09:19,088 - InitializeGlobalWeights - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: scheduled task get_weights
+2024-09-13 17:09:20,258 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train, peer=site-1, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: assigned task to client site-1: name=get_weights, id=247b56b7-6e0f-435e-946c-0c90869e96b2
+2024-09-13 17:09:20,263 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train, peer=site-1, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: sent task assignment to client. client_name:site-1 task_id:247b56b7-6e0f-435e-946c-0c90869e96b2
+2024-09-13 17:09:20,265 - GetTaskCommand - INFO - return task to client.  client_name: site-1  task_name: get_weights   task_id: 247b56b7-6e0f-435e-946c-0c90869e96b2  sharable_header_task_id: 247b56b7-6e0f-435e-946c-0c90869e96b2
+2024-09-13 17:09:20,349 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train, peer=site-1, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af]: got result from client site-1 for task: name=get_weights, id=247b56b7-6e0f-435e-946c-0c90869e96b2
+2024-09-13 17:09:37,431 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: asked to abort - triggered abort_signal to stop the RUN
+2024-09-13 17:09:37,599 - GlobalWeightsInitializer - ERROR - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: no weights available from clients
+2024-09-13 17:09:37,604 - ServerRunner - ERROR - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: Aborting current RUN due to FATAL_SYSTEM_ERROR received: ResponseProcessor <class 'nvflare.app_common.response_processors.global_weights_initializer.GlobalWeightsInitializer'> failed final check!
+2024-09-13 17:09:37,605 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: asked to abort - triggered abort_signal to stop the RUN
+2024-09-13 17:09:54,900 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train, peer=site-1, peer_run=6f77f322-8a3e-4efc-a4ab-23c2631080af, peer_rc=OK, task_name=get_weights, task_id=247b56b7-6e0f-435e-946c-0c90869e96b2]: finished processing client result by pre_train
+2024-09-13 17:09:54,901 - InitializeGlobalWeights - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: task get_weights exit with status TaskCompletionStatus.ABORTED
+2024-09-13 17:09:54,902 - SubmitUpdateCommand - INFO - submit_update process. client_name:site-1   task_id:247b56b7-6e0f-435e-946c-0c90869e96b2
+2024-09-13 17:09:54,903 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: Workflow: pre_train finalizing ...
+2024-09-13 17:09:55,109 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: ABOUT_TO_END_RUN fired
+2024-09-13 17:09:55,110 - ServerEngine - INFO - Start saving snapshot on server.
+2024-09-13 17:09:55,133 - ServerEngine - INFO - The snapshot: /tmp/nvflare/snapshot-storage/6f77f322-8a3e-4efc-a4ab-23c2631080af has been removed.
+2024-09-13 17:09:55,134 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: Firing CHECK_END_RUN_READINESS ...
+2024-09-13 17:09:55,135 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: END_RUN fired
+2024-09-13 17:09:55,135 - ReliableMessage - INFO - ReliableMessage is shutdown
+2024-09-13 17:09:55,136 - ServerRunner - INFO - [identity=example_project, run=6f77f322-8a3e-4efc-a4ab-23c2631080af, wf=pre_train]: Server runner finished.
+2024-09-13 17:09:57,017 - ReliableMessage - INFO - shutdown reliable message monitor
+2024-09-13 17:09:58,016 - FederatedServer - INFO - Server app stopped.
+
+
+2024-09-13 17:09:59,533 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 Not Connected] is closed PID: 70788
+2024-09-13 17:09:59,533 - MPM - INFO - MPM: Good Bye!

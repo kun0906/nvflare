@@ -1,0 +1,55 @@
+{
+    "name": "cifar10-attack_255",
+    "resource_spec": {},
+    "min_clients": 1,
+    "deploy_map": {
+        "app_server": [
+            "server"
+        ],
+        "app_site-1": [
+            "site-1"
+        ],
+        "app_site-2": [
+            "site-2"
+        ],
+        "app_site-3": [
+            "site-3"
+        ],
+        "app_site-4": [
+            "site-4"
+        ],
+        "app_site-5": [
+            "site-5"
+        ],
+        "app_site-6": [
+            "site-6"
+        ],
+        "app_site-7": [
+            "site-7"
+        ],
+        "app_site-8": [
+            "site-8"
+        ],
+        "app_site-9": [
+            "site-9"
+        ],
+        "app_site-10": [
+            "site-10"
+        ]
+    },
+    "submitter_name": "admin@nvidia.com",
+    "submitter_org": "nvidia",
+    "submitter_role": "project_admin",
+    "job_folder_name": "10clients-2classes",
+    "job_id": "b51e9e3e-82e9-4f24-a13f-4533198b7e5c",
+    "submit_time": 1726264644.387717,
+    "submit_time_iso": "2024-09-13T16:57:24.387717-05:00",
+    "start_time": "",
+    "duration": "N/A",
+    "status": "SUBMITTED",
+    "schedule_history": [
+        "2024-09-13 16:57:25: scheduled"
+    ],
+    "schedule_count": 1,
+    "last_schedule_time": 1726264645.066387
+}
