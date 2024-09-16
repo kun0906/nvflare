@@ -5864,3 +5864,29 @@
 2024-09-14 09:10:39,054 - ProcessExecutor - INFO - Worker child process ID: 45828
 2024-09-14 09:10:39,056 - ProcessExecutor - INFO - run (aa8672ac-c814-4e90-acb4-0a39b39e1be5): waiting for child worker process to finish.
 2024-09-14 09:10:55,853 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:44126 <= 127.0.0.1:65009] is created: PID: 45624
+2024-09-15 11:56:48,934 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-15 11:56:49,006 - ProcessExecutor - INFO - Worker child process ID: 59907
+2024-09-15 11:56:49,012 - ProcessExecutor - INFO - run (f0bfbf21-371b-4b82-b93f-459272bdf9a2): waiting for child worker process to finish.
+2024-09-15 11:56:59,099 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 127.0.0.1:44126 <= 127.0.0.1:60998] is created: PID: 45624
+2024-09-15 11:57:15,472 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 45624
+2024-09-15 11:57:20,870 - ProcessExecutor - INFO - run (e014d72c-1fe6-4b64-bf12-4b4bb8c02d88): child worker process finished with RC 0
+2024-09-15 11:59:13,659 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00005 Not Connected] is closed PID: 45624
+2024-09-15 11:59:16,665 - ProcessExecutor - INFO - run (f0bfbf21-371b-4b82-b93f-459272bdf9a2): child worker process finished with RC 0
+2024-09-15 12:09:24,355 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 45624
+2024-09-15 12:09:29,556 - ProcessExecutor - INFO - run (aa8672ac-c814-4e90-acb4-0a39b39e1be5): child worker process finished with RC 0
+2024-09-15 14:43:51,967 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request ee8c0709-1c99-4a32-a0f9-3c237c8550c4 for ['heart_beat'] after 30.0 secs
+2024-09-15 14:44:50,811 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 1e042721-00f1-48f9-bd17-5268b85148d6 for ['heart_beat'] after 30.0 secs
+2024-09-15 14:45:48,900 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 4223f013-3259-4886-b008-415516b03549 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:35:08,760 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 3aa076cc-0979-48bd-ba44-35128ec47652 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:35:48,795 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request f265970f-bb62-4a9b-9050-7a1c4197ed41 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:36:28,812 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 9e6739cf-f0a5-4118-9ccc-f9d3266ff485 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:37:08,837 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 1fba8e4e-e4f6-46c7-a8e4-3fd8d225ce28 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:37:48,858 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request bd9e36fb-6a33-4056-9a48-2ed4f2cb7885 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:38:28,883 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request e21d0b62-5802-45f6-ad14-74037148cd44 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:39:08,908 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request dbbc3196-9fe5-49c6-bf71-2e7fbbc7ffb7 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:39:48,935 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 6a4239d4-731e-487b-bddc-d08e0ced8fba for ['heart_beat'] after 30.0 secs
+2024-09-15 18:40:28,961 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 300e3954-087e-495e-95cd-e770e898cc23 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:41:08,990 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request 9f77afa8-69d2-4cda-9cf2-7ce72ce24e9b for ['heart_beat'] after 30.0 secs
+2024-09-15 18:41:49,017 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request b2bb7021-43e1-4905-825e-d3b3cc3688cf for ['heart_beat'] after 30.0 secs
+2024-09-15 18:42:29,043 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request d02d72f9-599c-471c-b995-3ab5bd5a4108 for ['heart_beat'] after 30.0 secs
+2024-09-15 18:43:09,066 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request f8a5b89e-0ab1-4991-b6f0-cd7739265b5f for ['heart_beat'] after 30.0 secs

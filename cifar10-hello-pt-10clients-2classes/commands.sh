@@ -6,6 +6,7 @@
 ssh kunyang@slogin-02.superpod.smu.edu
 
 nvidia-smi
+nvidia-smi --list-gpus
 
 ps aux | grep nvflare
 
@@ -28,3 +29,11 @@ $WORK/nvflare/poc/example_project/prod_00/admin@nvidia.com/startup/fl_admin.sh
 
 JOB_NAME=10clients-2classes
 nvflare simulator -w simulator/$JOB_NAME -n 3 -t 2 jobs/$JOB_NAME
+
+echo "The following command can be used to set the POC workspace:"
+nvflare config -pw <poc_workspace>
+
+echo "The startup kit directory can be set with the following command:"
+nvflare config -d <startup_dir>
+
+

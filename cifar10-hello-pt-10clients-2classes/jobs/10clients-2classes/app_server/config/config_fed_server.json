@@ -8,7 +8,27 @@
   },
   "task_data_filters": [],
   "task_result_filters": [],
+
+  "snapshot_persistor": {
+        "path": "nvflare.app_common.state_persistors.storage_state_persistor.StorageStatePersistor",
+        "args": {
+            "uri_root": "/",
+            "storage": {
+                "path": "nvflare.app_common.storages.filesystem_storage.FilesystemStorage",
+                "args": {
+                    "root_dir": "/tmp/nvflare/snapshot-storage",
+                    "uri_root": "/"
+                }
+            }
+        }
+    },
+
   "components": [
+    {
+    "id": "model_selector",
+    "name": "IntimeModelSelector",
+    "args": {}
+    },
     {
       "id": "persistor",
       "path": "nvflare.app_opt.pt.file_model_persistor.PTFileModelPersistor",
@@ -67,6 +87,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             "num_rounds" : 5,
 =======
             "num_rounds" : 10,
@@ -95,6 +116,9 @@
 =======
             "num_rounds" : 2,
 >>>>>>> c139ade (v0.1.7: Add "initial_global_weights.py")
+=======
+            "num_rounds" : 1,
+>>>>>>> b57b2ac (v0.1.8: Add "model_selector" in config_fed_server.json and 'Byzantine_clients')
             "start_round": 0,
             "wait_time_after_min_received": 10,
             "aggregator_id": "aggregator",

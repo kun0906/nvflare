@@ -16826,3 +16826,374 @@ OSError: [Errno 48] Address already in use
 2024-09-14 09:10:55,895 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 0.0.0.0:8002 <= ipv6:%5B::1%5D:65014 SSL site-1] is created: PID: 44769
 2024-09-14 09:11:40,132 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00021 Not Connected] is closed PID: 44769
 2024-09-14 09:11:43,593 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00020 Not Connected] is closed PID: 44769
+2024-09-14 10:07:04,201 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 10:07:04,260 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 10:07:04,265 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 10:07:04,384 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 10:07:04,400 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 2
+2024-09-14 10:07:04,401 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 10:07:04,404 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 10:07:04,436 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 10:07:04,440 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 10:07:07,390 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 13:47:14,846 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 13:47:14,935 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 13:47:15,026 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 13:47:15,048 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 13:47:15,050 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 2
+2024-09-14 13:47:15,051 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 13:47:15,062 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 13:47:15,074 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 13:47:15,077 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 13:47:18,007 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 15:23:40,216 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 15:23:41,303 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 15:23:41,439 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 15:23:41,454 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 15:23:41,454 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 15:23:41,458 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 15:23:41,502 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 15:23:41,503 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 15:23:42,522 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 15:23:46,252 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 15:41:39,225 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 15:41:39,975 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 15:41:40,000 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 15:41:40,017 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 15:41:40,020 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 15:41:40,022 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 15:41:40,025 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 15:41:40,026 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 15:41:41,404 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 15:41:45,255 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 16:19:08,244 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 16:19:08,977 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 16:19:08,980 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 16:19:08,980 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 16:19:08,984 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 16:19:08,985 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 16:19:08,987 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 16:19:08,989 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 16:19:10,242 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 16:19:14,263 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 16:46:17,282 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 16:46:18,017 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 16:46:18,018 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 16:46:18,019 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 16:46:18,019 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 16:46:18,766 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 16:46:18,778 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 16:46:18,780 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 16:46:18,783 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 16:46:21,297 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 17:02:24,292 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 17:02:25,020 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 17:02:25,024 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 17:02:25,025 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 17:02:25,026 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 17:02:25,028 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 17:02:25,029 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 17:02:25,031 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 17:02:26,294 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 17:02:32,292 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 17:22:31,244 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 17:22:31,977 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 17:22:31,979 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 17:22:31,981 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 17:22:31,985 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-14 17:22:31,990 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 17:22:31,992 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 17:22:31,993 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-14 17:22:33,364 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 17:22:39,443 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 18:11:24,277 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 18:11:25,005 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 18:11:25,007 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 18:11:25,008 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 18:11:25,008 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 18:11:25,011 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 18:11:25,013 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 18:11:25,015 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 18:11:25,016 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 18:11:30,291 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 18:43:52,256 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 18:43:52,986 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 18:43:52,988 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 18:43:52,989 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 18:43:52,994 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-14 18:43:52,996 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 18:43:52,998 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 18:43:53,000 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-14 18:43:56,566 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 18:44:03,105 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 19:04:27,326 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 19:04:28,058 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 19:04:28,061 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 19:04:28,061 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 19:04:28,062 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-14 19:04:28,063 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 19:04:28,068 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 19:04:28,070 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-14 19:04:31,336 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 19:04:35,349 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 19:23:20,347 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 19:23:21,073 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 19:23:21,074 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 19:23:21,076 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 19:23:21,078 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 19:23:21,079 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 19:23:21,081 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 19:23:21,084 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 19:23:22,356 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 19:23:26,368 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 19:42:20,335 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 19:42:21,088 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 19:42:21,094 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 19:42:21,100 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 19:42:21,100 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 19:42:21,101 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 19:42:21,118 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 19:42:21,118 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 19:42:26,282 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 19:42:31,066 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 20:03:44,254 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 20:03:44,988 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 20:03:44,999 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 20:03:45,000 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 20:03:45,000 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 20:03:45,001 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 20:03:45,002 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 20:03:45,002 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 20:03:48,262 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 20:03:55,075 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 20:20:29,294 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 20:20:30,026 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 20:20:30,027 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 20:20:30,029 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 20:20:30,031 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-14 20:20:30,032 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 20:20:30,034 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 20:20:30,035 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-14 20:20:35,317 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 20:20:37,327 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 21:31:12,177 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 21:31:12,193 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 21:31:12,197 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 21:31:12,211 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 21:31:12,217 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 2
+2024-09-14 21:31:12,248 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-14 21:31:12,250 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 21:31:12,262 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 21:31:12,263 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-14 21:31:13,652 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-14 23:23:28,265 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-14 23:23:28,306 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-14 23:23:28,321 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-14 23:23:28,329 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-14 23:23:28,329 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-14 23:23:28,380 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-14 23:23:28,383 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-14 23:23:28,386 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-14 23:23:35,567 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-14 23:23:38,376 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 00:10:08,606 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 00:10:09,394 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 00:10:09,557 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 00:10:09,564 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 00:10:09,566 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 00:10:09,567 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 00:10:09,569 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 00:10:09,571 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 00:10:12,623 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 00:10:16,637 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 00:28:27,605 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 00:28:28,332 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 00:28:28,336 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 00:28:28,339 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 00:28:28,340 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 00:28:28,342 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 00:28:28,344 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 00:28:28,346 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 00:28:29,608 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 00:28:35,637 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 00:45:59,643 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 00:46:00,368 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 00:46:00,373 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 00:46:00,374 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-15 00:46:00,375 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-15 00:46:00,377 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 00:46:00,379 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 00:46:00,384 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-15 00:46:03,655 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 00:46:07,673 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 01:03:41,642 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 01:03:42,379 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 01:03:42,381 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 01:03:42,383 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 01:03:42,383 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 01:03:42,384 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 01:03:42,387 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 01:03:42,389 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 01:03:45,667 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 01:03:49,673 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 01:53:15,684 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 01:53:16,423 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 01:53:16,425 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 01:53:16,428 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 01:53:16,431 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 01:53:16,433 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 01:53:16,443 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 01:53:16,446 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 01:53:17,694 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 01:53:21,709 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 02:32:35,669 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 02:32:35,671 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 02:32:35,682 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 02:32:35,683 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 02:32:35,685 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 02:32:35,689 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 02:32:35,690 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 02:32:35,690 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 02:32:37,675 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 02:32:41,698 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 02:48:52,677 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 02:48:53,404 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 02:48:53,406 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 02:48:53,407 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 02:48:53,407 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 02:48:53,413 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 02:48:53,414 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 02:48:53,415 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 02:48:56,610 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 02:49:00,617 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 03:07:08,588 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 03:07:08,591 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 03:07:09,325 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 03:07:09,333 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 03:07:09,333 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 03:07:09,334 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 03:07:09,335 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 03:07:09,335 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 03:07:14,782 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 03:07:19,382 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 03:55:22,595 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 03:55:23,327 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 03:55:23,331 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 03:55:23,339 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 03:55:23,348 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 0
+2024-09-15 03:55:23,350 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 03:55:23,351 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 03:55:23,353 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 0
+2024-09-15 03:55:24,698 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 03:55:30,609 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 04:14:28,589 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 04:14:29,313 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 04:14:29,320 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 04:14:29,325 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 04:14:34,713 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 04:33:14,686 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 04:33:15,419 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 04:33:15,423 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 04:33:15,424 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-15 04:33:15,435 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 04:33:15,439 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 04:33:15,444 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 04:33:15,445 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 04:33:15,445 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 04:33:20,711 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 05:26:14,752 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 05:26:15,472 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 05:26:15,474 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 05:26:15,474 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 05:26:15,475 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 2
+2024-09-15 05:26:15,477 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 05:26:15,478 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 05:26:15,480 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 05:26:15,481 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 05:26:21,081 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 05:45:44,762 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 05:45:45,498 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 05:45:45,500 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 05:45:45,502 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-15 05:45:45,503 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 05:45:45,509 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 05:45:45,510 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 05:45:45,511 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 05:45:45,512 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 05:45:50,782 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 06:05:49,790 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 06:05:50,514 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 06:05:50,515 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 06:05:50,516 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 06:05:50,523 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 2
+2024-09-15 06:05:50,524 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 06:05:50,526 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 06:05:50,527 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 06:05:50,529 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 06:05:55,816 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 06:25:43,798 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 06:25:44,527 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 06:25:44,528 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 06:25:44,529 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 06:25:44,530 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 2
+2024-09-15 06:25:44,532 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 1
+2024-09-15 06:25:44,533 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 06:25:44,535 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 06:25:44,536 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 1
+2024-09-15 06:25:49,821 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 07:14:04,794 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 07:14:05,530 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 07:14:05,556 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 07:14:05,578 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-15 07:14:05,579 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-15 07:14:05,603 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 07:14:05,647 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 07:14:05,648 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-15 07:14:10,817 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 07:14:15,582 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 07:34:11,805 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 07:34:11,807 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 07:34:11,808 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 07:34:11,808 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-15 07:34:11,808 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-15 07:34:11,817 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 07:34:11,819 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 07:34:11,819 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-15 07:34:15,821 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 07:34:19,832 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 09:01:50,726 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 09:01:51,461 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-2'; reason='client dead'
+2024-09-15 09:01:51,500 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-2'; reason='client dead'
+2024-09-15 09:01:51,500 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-15 09:01:51,501 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-15 09:01:51,502 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e014d72c-1fe6-4b64-bf12-4b4bb8c02d88'; client_name='site-1'; reason='client dead'
+2024-09-15 09:01:51,504 - ServerEngine - WARNING - notified SJ of dead-job: job_id='aa8672ac-c814-4e90-acb4-0a39b39e1be5'; client_name='site-1'; reason='client dead'
+2024-09-15 09:01:51,504 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-15 09:01:54,579 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 09:01:58,593 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 11:56:47,459 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job f0bfbf21-371b-4b82-b93f-459272bdf9a2, get result: (scheduled).
+2024-09-15 11:56:47,462 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: f0bfbf21-371b-4b82-b93f-459272bdf9a2 from the scheduler to run
+2024-09-15 11:56:47,601 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: f0bfbf21-371b-4b82-b93f-459272bdf9a2
+2024-09-15 11:56:47,697 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: f0bfbf21-371b-4b82-b93f-459272bdf9a2
+2024-09-15 11:56:47,782 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: f0bfbf21-371b-4b82-b93f-459272bdf9a2
+2024-09-15 11:56:48,894 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: f0bfbf21-371b-4b82-b93f-459272bdf9a2
+2024-09-15 11:56:49,016 - JobRunner - INFO - [identity=example_project, run=?]: Started run: f0bfbf21-371b-4b82-b93f-459272bdf9a2 for clients: site-1,site-2
+2024-09-15 11:56:49,020 - JobRunner - INFO - [identity=example_project, run=?]: Job: f0bfbf21-371b-4b82-b93f-459272bdf9a2 started to run, status changed to RUNNING.
+2024-09-15 11:56:50,604 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00029 127.0.0.1:48116 <= 127.0.0.1:60995] is created: PID: 44769
+2024-09-15 11:56:59,151 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00030 0.0.0.0:8002 <= ipv6:%5B::1%5D:61002 SSL site-1] is created: PID: 44769
+2024-09-15 11:56:59,154 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00031 0.0.0.0:8002 <= ipv6:%5B::1%5D:61003 SSL site-2] is created: PID: 44769
+2024-09-15 11:57:15,164 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00025 Not Connected] is closed PID: 44769
+2024-09-15 11:57:15,570 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00024 Not Connected] is closed PID: 44769
+2024-09-15 11:57:18,632 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00023 Not Connected] is closed PID: 44769
+2024-09-15 11:57:21,250 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (e014d72c-1fe6-4b64-bf12-4b4bb8c02d88) on clients ...
+2024-09-15 11:59:13,761 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00030 Not Connected] is closed PID: 44769
+2024-09-15 11:59:14,132 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00031 Not Connected] is closed PID: 44769
+2024-09-15 11:59:16,778 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00029 Not Connected] is closed PID: 44769
+2024-09-15 12:09:24,449 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00028 Not Connected] is closed PID: 44769
+2024-09-15 12:09:25,154 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00027 Not Connected] is closed PID: 44769
+2024-09-15 12:09:28,925 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00026 Not Connected] is closed PID: 44769
+2024-09-15 14:52:34,886 - ClientManager - INFO - Client Name:site-2 	Token: c34acb96-571a-4cf1-9323-6602621626f9 left.  Total clients: 1
+2024-09-15 14:52:34,897 - FederatedServer - INFO - Remove the dead Client. Name: site-2	 Token: c34acb96-571a-4cf1-9323-6602621626f9.  Total clients: 1
+2024-09-15 16:27:27,866 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-15 16:27:27,998 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-15 16:27:35,311 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6

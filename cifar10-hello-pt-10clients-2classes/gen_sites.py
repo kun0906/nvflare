@@ -31,8 +31,9 @@ def main():
     data_type = "reverse_label"     # "attack_black_all"    #'normal'
     src = os.path.join(root_dir, 'app_site-template')
     for i in range(1, n_clients + 1):
-        print(f'\nsite {i}:')
+        # print(f'\nsite {i}:')
         dst = os.path.join(root_dir, 'app_site-' + str(i))
+        print(f'\nsite {i}: copy scr:{src} -> dst:{dst}')
         shutil.copytree(src, dst, dirs_exist_ok=True)
 
 <<<<<<< HEAD

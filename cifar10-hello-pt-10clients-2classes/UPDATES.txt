@@ -1,3 +1,17 @@
+v0.1.8: Add "model_selector" in config_fed_server.json and 'Byzantine_clients'
+
+1. Add it inside of components
+    "model_selector": {
+        "id": "model_selector",
+        "name": "IntimeModelSelector",
+        "args": {}
+    },
+2. Add 'Byzantine_clients'
+
+3. load_snapshot.py
+
+
+
 v0.1.7: Add "initial_global_weights.py"
 
 1. Add initial_global_weights.py, which implemented the global initialization with mean or median of all the clients' results.
