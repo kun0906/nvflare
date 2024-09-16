@@ -52,9 +52,9 @@ def main():
 
         if i <= n_byzantine_clients:
             train_file = os.path.join(dst, 'custom/learner_with_tb.py')
-            ith_line = 203 - 1  # byzantine clients send very large number to server
-            #   weights = {k: v.cpu().numpy() for k, v in self.model.state_dict().items()}
-            new_line = "        weights = {k: v.cpu().numpy().fill(10) for k, v in self.model.state_dict().items()}\n"
+            ith_line = 239 - 1  # byzantine clients send very large number to server
+            #   new_weights = {k: v.cpu().numpy() for k, v in new_weights.items()}
+            new_line = "        new_weights = {k: v.cpu().numpy().fill(1000) for k, v in new_weights.items()}\n"
             replace_line(train_file, ith_line, new_line)
 
 

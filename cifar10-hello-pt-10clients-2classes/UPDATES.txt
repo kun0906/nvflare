@@ -1,3 +1,7 @@
+v0.1.9: Update 'Byzantine_clients'
+
+1. Replace 239 line with new weights
+
 v0.1.8: Add "model_selector" in config_fed_server.json and 'Byzantine_clients'
 
 1. Add it inside of components

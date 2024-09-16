@@ -17197,3 +17197,85 @@ OSError: [Errno 48] Address already in use
 2024-09-15 16:27:27,866 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
 2024-09-15 16:27:27,998 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
 2024-09-15 16:27:35,311 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 22:02:05,510 - ClientManager - INFO - Client Name:site-1 	Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6 left.  Total clients: 0
+2024-09-15 22:02:05,657 - FederatedServer - INFO - Remove the dead Client. Name: site-1	 Token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6.  Total clients: 0
+2024-09-15 22:02:09,183 - ClientManager - INFO - Re-activate the client:site-1 with token: c28d51b1-8c8e-4022-88fd-b4f8cf9044f6
+2024-09-15 22:29:39,050 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (1) < min_sites (10)).
+2024-09-15 22:29:49,196 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (1) < min_sites (10)).
+2024-09-15 22:30:09,471 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (1) < min_sites (10)).
+2024-09-15 22:30:24,733 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job e589c8cc-4a74-438c-840b-cbfcfc6659a6, get result: (scheduled).
+2024-09-15 22:30:24,734 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: e589c8cc-4a74-438c-840b-cbfcfc6659a6 from the scheduler to run
+2024-09-15 22:30:24,938 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: e589c8cc-4a74-438c-840b-cbfcfc6659a6
+2024-09-15 22:30:25,133 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: e589c8cc-4a74-438c-840b-cbfcfc6659a6
+2024-09-15 22:30:26,592 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: e589c8cc-4a74-438c-840b-cbfcfc6659a6
+2024-09-15 22:30:26,726 - JobRunner - INFO - [identity=example_project, run=?]: Started run: e589c8cc-4a74-438c-840b-cbfcfc6659a6 for clients: site-1
+2024-09-15 22:30:26,729 - JobRunner - INFO - [identity=example_project, run=?]: Job: e589c8cc-4a74-438c-840b-cbfcfc6659a6 started to run, status changed to RUNNING.
+2024-09-15 22:30:28,715 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00032 127.0.0.1:48116 <= 127.0.0.1:54295] is created: PID: 44769
+2024-09-15 22:30:36,373 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00033 0.0.0.0:8002 <= ipv6:%5B::1%5D:54298 SSL site-1] is created: PID: 44769
+2024-09-15 22:30:50,015 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (1) < min_sites (10)).
+2024-09-15 22:31:35,758 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,772 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,777 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,780 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,782 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,785 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,792 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,793 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,798 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,799 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,801 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,802 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,806 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,807 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,812 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:35,814 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:39,596 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00033 Not Connected] is closed PID: 44769
+2024-09-15 22:31:45,118 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:31:55,145 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:32:02,633 - ClientManager - INFO - Re-activate the client:site-2 with token: c34acb96-571a-4cf1-9323-6602621626f9
+2024-09-15 22:32:05,168 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:32:10,157 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (2) < min_sites (10)).
+2024-09-15 22:32:15,195 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:32:25,217 - ServerEngine - WARNING - notified SJ of dead-job: job_id='e589c8cc-4a74-438c-840b-cbfcfc6659a6'; client_name='site-1'; reason='missing job on client'
+2024-09-15 22:32:34,075 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00022 Not Connected] is closed PID: 44769
+2024-09-15 22:32:36,545 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00034 0.0.0.0:8002 <= ipv6:%5B::1%5D:54394 SSL site-1] is created: PID: 44769
+2024-09-15 22:32:36,804 - ClientManager - INFO - Client: site-1 already registered. Re-login the client with a new token.
+2024-09-15 22:32:36,804 - ClientManager - INFO - Client: New client site-1@10.10.2.135 joined. Sent token: be51fc16-c04c-48b4-9377-1f23cf500f6c.  Total clients: 2
+2024-09-15 22:33:13,322 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00032 Not Connected] is closed PID: 44769
+2024-09-15 22:33:14,713 - JobRunner - INFO - [identity=example_project, run=?]: Try to abort job (e589c8cc-4a74-438c-840b-cbfcfc6659a6) on clients ...
+2024-09-15 22:33:21,015 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0733e2b6-f65e-4fd0-9617-7280d74a2241, get result: (scheduled).
+2024-09-15 22:33:21,016 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 0733e2b6-f65e-4fd0-9617-7280d74a2241 from the scheduler to run
+2024-09-15 22:33:21,130 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 0733e2b6-f65e-4fd0-9617-7280d74a2241
+2024-09-15 22:33:21,226 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 0733e2b6-f65e-4fd0-9617-7280d74a2241
+2024-09-15 22:33:21,316 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 0733e2b6-f65e-4fd0-9617-7280d74a2241
+2024-09-15 22:33:22,675 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 0733e2b6-f65e-4fd0-9617-7280d74a2241
+2024-09-15 22:33:22,784 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 0733e2b6-f65e-4fd0-9617-7280d74a2241 for clients: site-1,site-2
+2024-09-15 22:33:22,789 - JobRunner - INFO - [identity=example_project, run=?]: Job: 0733e2b6-f65e-4fd0-9617-7280d74a2241 started to run, status changed to RUNNING.
+2024-09-15 22:33:24,436 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00035 127.0.0.1:48116 <= 127.0.0.1:54410] is created: PID: 44769
+2024-09-15 22:33:33,835 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00036 0.0.0.0:8002 <= ipv6:%5B::1%5D:54415 SSL site-2] is created: PID: 44769
+2024-09-15 22:33:33,839 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00037 0.0.0.0:8002 <= ipv6:%5B::1%5D:54416 SSL site-1] is created: PID: 44769
+2024-09-15 22:34:50,810 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (2) < min_sites (10)).
+2024-09-15 22:37:44,837 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 6eb56c06-e62c-4b02-8d42-c65a8c33388c, get result: (scheduled).
+2024-09-15 22:37:44,840 - JobRunner - INFO - [identity=example_project, run=?]: Got the job: 6eb56c06-e62c-4b02-8d42-c65a8c33388c from the scheduler to run
+2024-09-15 22:37:44,951 - JobRunner - INFO - [identity=example_project, run=?]: Application app_server deployed to the server for job: 6eb56c06-e62c-4b02-8d42-c65a8c33388c
+2024-09-15 22:37:45,047 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-1 to be deployed to the clients: site-1 for run: 6eb56c06-e62c-4b02-8d42-c65a8c33388c
+2024-09-15 22:37:45,140 - JobRunner - INFO - [identity=example_project, run=?]: App app_site-2 to be deployed to the clients: site-2 for run: 6eb56c06-e62c-4b02-8d42-c65a8c33388c
+2024-09-15 22:37:46,351 - JobRunner - INFO - [identity=example_project, run=?]: Updated the schedule history of Job: 6eb56c06-e62c-4b02-8d42-c65a8c33388c
+2024-09-15 22:37:46,464 - JobRunner - INFO - [identity=example_project, run=?]: Started run: 6eb56c06-e62c-4b02-8d42-c65a8c33388c for clients: site-1,site-2
+2024-09-15 22:37:46,467 - JobRunner - INFO - [identity=example_project, run=?]: Job: 6eb56c06-e62c-4b02-8d42-c65a8c33388c started to run, status changed to RUNNING.
+2024-09-15 22:37:48,263 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00038 127.0.0.1:48116 <= 127.0.0.1:54447] is created: PID: 44769
+2024-09-15 22:37:55,915 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00039 0.0.0.0:8002 <= ipv6:%5B::1%5D:54452 SSL site-2] is created: PID: 44769
+2024-09-15 22:37:55,917 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00040 0.0.0.0:8002 <= ipv6:%5B::1%5D:54453 SSL site-1] is created: PID: 44769
+2024-09-15 22:40:11,164 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (2) < min_sites (10)).
+2024-09-15 22:50:12,181 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (2) < min_sites (10)).
+2024-09-15 22:51:04,893 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00040 Not Connected] is closed PID: 44769
+2024-09-15 22:51:05,635 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00039 Not Connected] is closed PID: 44769
+2024-09-15 22:51:05,921 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00037 Not Connected] is closed PID: 44769
+2024-09-15 22:51:06,034 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00036 Not Connected] is closed PID: 44769
+2024-09-15 22:51:08,560 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00038 Not Connected] is closed PID: 44769
+2024-09-15 22:51:09,938 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00035 Not Connected] is closed PID: 44769
+2024-09-15 22:51:10,208 - ServerEngine - WARNING - notified SJ of dead-job: job_id='0733e2b6-f65e-4fd0-9617-7280d74a2241'; client_name='site-1'; reason='missing job on client'
+2024-09-15 23:00:12,478 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (2) < min_sites (10)).
+2024-09-15 23:10:12,942 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (connected sites (2) < min_sites (10)).
+2024-09-15 23:10:13,961 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: skipped job 0df18ac6-9fe8-4833-b96b-4600d38c88e1 since it exceeded max schedule count 10
+2024-09-15 23:10:13,962 - DefaultJobScheduler - INFO - [identity=example_project, run=?]: Try to schedule job 0df18ac6-9fe8-4833-b96b-4600d38c88e1, get result: (exceeded max schedule count 10).

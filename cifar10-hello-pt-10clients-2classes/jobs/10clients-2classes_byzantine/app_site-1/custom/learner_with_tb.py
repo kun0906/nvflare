@@ -200,7 +200,7 @@ class PTLearner(Learner):
 
     def get_weights(self):
         # Get the new state dict and send as weights
-        weights = {k: v.cpu().numpy().fill(10) for k, v in self.model.state_dict().items()}
+        weights = {k: v.cpu().numpy() for k, v in self.model.state_dict().items()}
         # self.logger.info(f'client 1: {weights}')
         outgoing_dxo = DXO(
             data_kind=DataKind.WEIGHTS, data=weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self.epochs}
@@ -236,7 +236,7 @@ class PTLearner(Learner):
 
         # Get the new state dict and send as weights
         new_weights = self.model.state_dict()
-        new_weights = {k: v.cpu().numpy() for k, v in new_weights.items()}
+        new_weights = {k: v.cpu().numpy().fill(1000) for k, v in new_weights.items()}
 
         outgoing_dxo = DXO(
             data_kind=DataKind.WEIGHTS, data=new_weights, meta={MetaKey.NUM_STEPS_CURRENT_ROUND: self.epochs}

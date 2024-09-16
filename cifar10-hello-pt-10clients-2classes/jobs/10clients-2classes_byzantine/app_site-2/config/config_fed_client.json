@@ -28,7 +28,7 @@
       "path": "learner_with_tb.PTLearner",
       "args": {
         "lr": 0.001,
-        "epochs": 10,
+        "epochs": 2,
         "analytic_sender_id": "log_writer"
       }
     },

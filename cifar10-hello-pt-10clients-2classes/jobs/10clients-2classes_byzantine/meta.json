@@ -1,5 +1,5 @@
 {
-  "name": "cifar10-attack_255",
+  "name": "cifar10-byzantine",
   "resource_spec": {},
   "min_clients" : 1,
   "deploy_map": {

@@ -5890,3 +5890,48 @@
 2024-09-15 18:41:49,017 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request b2bb7021-43e1-4905-825e-d3b3cc3688cf for ['heart_beat'] after 30.0 secs
 2024-09-15 18:42:29,043 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request d02d72f9-599c-471c-b995-3ab5bd5a4108 for ['heart_beat'] after 30.0 secs
 2024-09-15 18:43:09,066 - CoreCell - ERROR - [ME=site-1 O=? D=server F=? T=? CH=task TP=heart_beat SCH=? STP=? SEQ=?] timeout on Request f8a5b89e-0ab1-4991-b6f0-cd7739265b5f for ['heart_beat'] after 30.0 secs
+2024-09-15 22:30:26,659 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-15 22:30:26,716 - ProcessExecutor - INFO - Worker child process ID: 70703
+2024-09-15 22:30:26,722 - ProcessExecutor - INFO - run (e589c8cc-4a74-438c-840b-cbfcfc6659a6): waiting for child worker process to finish.
+2024-09-15 22:30:36,346 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 127.0.0.1:44126 <= 127.0.0.1:54296] is created: PID: 45624
+2024-09-15 22:31:35,788 - CoreCell - WARNING - site-1: no waiter for req f8a5b89e-0ab1-4991-b6f0-cd7739265b5f - the reply is too late
+2024-09-15 22:31:35,799 - CoreCell - WARNING - site-1: no waiter for req 1e042721-00f1-48f9-bd17-5268b85148d6 - the reply is too late
+2024-09-15 22:31:35,806 - CoreCell - WARNING - site-1: no waiter for req d02d72f9-599c-471c-b995-3ab5bd5a4108 - the reply is too late
+2024-09-15 22:31:35,812 - CoreCell - WARNING - site-1: no waiter for req 3aa076cc-0979-48bd-ba44-35128ec47652 - the reply is too late
+2024-09-15 22:31:35,814 - CoreCell - WARNING - site-1: no waiter for req 9f77afa8-69d2-4cda-9cf2-7ce72ce24e9b - the reply is too late
+2024-09-15 22:31:35,817 - CoreCell - WARNING - site-1: no waiter for req 4223f013-3259-4886-b008-415516b03549 - the reply is too late
+2024-09-15 22:31:35,819 - CoreCell - WARNING - site-1: no waiter for req ee8c0709-1c99-4a32-a0f9-3c237c8550c4 - the reply is too late
+2024-09-15 22:31:35,823 - CoreCell - WARNING - site-1: no waiter for req 1fba8e4e-e4f6-46c7-a8e4-3fd8d225ce28 - the reply is too late
+2024-09-15 22:31:35,824 - CoreCell - WARNING - site-1: no waiter for req 9e6739cf-f0a5-4118-9ccc-f9d3266ff485 - the reply is too late
+2024-09-15 22:31:35,828 - CoreCell - WARNING - site-1: no waiter for req 300e3954-087e-495e-95cd-e770e898cc23 - the reply is too late
+2024-09-15 22:31:35,830 - CoreCell - WARNING - site-1: no waiter for req f265970f-bb62-4a9b-9050-7a1c4197ed41 - the reply is too late
+2024-09-15 22:31:35,832 - CoreCell - WARNING - site-1: no waiter for req dbbc3196-9fe5-49c6-bf71-2e7fbbc7ffb7 - the reply is too late
+2024-09-15 22:31:35,834 - CoreCell - WARNING - site-1: no waiter for req 6a4239d4-731e-487b-bddc-d08e0ced8fba - the reply is too late
+2024-09-15 22:31:35,835 - CoreCell - WARNING - site-1: no waiter for req bd9e36fb-6a33-4056-9a48-2ed4f2cb7885 - the reply is too late
+2024-09-15 22:31:35,837 - CoreCell - WARNING - site-1: no waiter for req b2bb7021-43e1-4905-825e-d3b3cc3688cf - the reply is too late
+2024-09-15 22:31:35,838 - CoreCell - WARNING - site-1: no waiter for req e21d0b62-5802-45f6-ad14-74037148cd44 - the reply is too late
+2024-09-15 22:31:39,495 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00006 Not Connected] is closed PID: 45624
+2024-09-15 22:31:40,481 - ProcessExecutor - INFO - run (e589c8cc-4a74-438c-840b-cbfcfc6659a6): child worker process finished with RC 101
+2024-09-15 22:32:36,017 - CoreCell - INFO - site-1: created backbone external connector to grpc://localhost:8002
+2024-09-15 22:32:36,017 - ConnectorManager - INFO - 70759: Try start_listener Listener resources: {'secure': False, 'host': 'localhost'}
+2024-09-15 22:32:36,021 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00002 PASSIVE tcp://0:33887] is starting
+2024-09-15 22:32:36,526 - CoreCell - INFO - site-1: created backbone internal listener for tcp://localhost:33887
+2024-09-15 22:32:36,527 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connector [CH00001 ACTIVE grpc://localhost:8002] is starting
+2024-09-15 22:32:36,528 - FederatedClient - INFO - Wait for engine to be created.
+2024-09-15 22:32:36,537 - nvflare.fuel.f3.drivers.grpc_driver.GrpcDriver - INFO - created secure channel at localhost:8002
+2024-09-15 22:32:36,538 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00002 N/A => localhost:8002] is created: PID: 70759
+2024-09-15 22:32:36,806 - FederatedClient - INFO - Successfully registered client:site-1 for project example_project. Token:be51fc16-c04c-48b4-9377-1f23cf500f6c SSID:ebc6125d-0a56-4688-9b08-355fe9e4d61a
+2024-09-15 22:32:36,811 - FederatedClient - INFO - Got engine after 0.2832198143005371 seconds
+2024-09-15 22:32:36,812 - FederatedClient - INFO - Got the new primary SP: grpc://localhost:8002
+2024-09-15 22:33:22,719 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-15 22:33:22,737 - ProcessExecutor - INFO - Worker child process ID: 70804
+2024-09-15 22:33:22,739 - ProcessExecutor - INFO - run (0733e2b6-f65e-4fd0-9617-7280d74a2241): waiting for child worker process to finish.
+2024-09-15 22:33:33,814 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 127.0.0.1:33887 <= 127.0.0.1:54411] is created: PID: 70759
+2024-09-15 22:37:46,413 - ClientEngine - INFO - Starting client app. rank: 0
+2024-09-15 22:37:46,441 - ProcessExecutor - INFO - Worker child process ID: 70886
+2024-09-15 22:37:46,443 - ProcessExecutor - INFO - run (6eb56c06-e62c-4b02-8d42-c65a8c33388c): waiting for child worker process to finish.
+2024-09-15 22:37:55,890 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 127.0.0.1:33887 <= 127.0.0.1:54449] is created: PID: 70759
+2024-09-15 22:51:04,799 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00004 Not Connected] is closed PID: 70759
+2024-09-15 22:51:05,822 - nvflare.fuel.f3.sfm.conn_manager - INFO - Connection [CN00003 Not Connected] is closed PID: 70759
+2024-09-15 22:51:09,178 - ProcessExecutor - INFO - run (0733e2b6-f65e-4fd0-9617-7280d74a2241): child worker process finished with RC 0
+2024-09-15 22:51:11,373 - ProcessExecutor - INFO - run (6eb56c06-e62c-4b02-8d42-c65a8c33388c): child worker process finished with RC 0
