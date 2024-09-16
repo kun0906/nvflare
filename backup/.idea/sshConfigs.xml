@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="superpod.smu.edu" id="c0a085de-5c82-4e3a-a44b-3544d5d32e6c" port="22" nameFormat="DESCRIPTIVE" username="kunyang" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="slogin-01.superpod.smu.edu" id="857414e4-13de-45d3-91c7-76d547b6291f" port="22" nameFormat="DESCRIPTIVE" username="kunyang" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>
