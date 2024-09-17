@@ -1,0 +1,24 @@
+
+# To ensure that .gitignore itself is not tracked in the future.
+#.gitignore
+
+
+# This will only ignore the .idea directory (and its contents) from the root of your project, not .idea directories in subdirectories.
+.idea/
+
+
+# This will ignore any .DS_Store files in the root directory as well as any .DS_Store files in subdirectories.
+# Ignore .DS_Store files
+.DS_Store
+
+
+# Ignore Python bytecode files
+*.pyc
+# The entry __pycache__/ in a .gitignore file will ignore all __pycache__/ directories within the repository, not just the root directory.
+# This means that any __pycache__/ directory, regardless of its depth within the project structure, will be ignored by Git.
+__pycache__/
+
+
+# Ignore data
+
+
