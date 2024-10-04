@@ -1,10 +1,10 @@
 
 # To ensure that .gitignore itself is not tracked in the future.
-#.gitignore
+.gitignore
 
 
 # This will only ignore the .idea directory (and its contents) from the root of your project, not .idea directories in subdirectories.
-#.idea/
+.idea/
 
 
 # This will ignore any .DS_Store files in the root directory as well as any .DS_Store files in subdirectories.

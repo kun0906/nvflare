@@ -5,6 +5,10 @@
 # Log in to a specific login node.
 ssh kunyang@slogin-02.superpod.smu.edu
 
+# Log in to a specific computing node with your account, t: how much time you need for one CPU, not two GPUs
+srun -A kunyang_nvflare_py31012_0001 -G 2 -t 300 --nodelist=bcm-dgxa100-0016 --pty $SHELL
+
+
 nvidia-smi
 nvidia-smi --list-gpus
 
