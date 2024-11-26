@@ -1,0 +1,7 @@
+v0.0.1: Add model_heterogeneity
+
+1. Using VAE + knowledge distillation to address model heterogeneity
+    each client builds its own model (model heterogeneity) with knowledge distillation loss
+    each client builds its own VAE, and send VAE to the server
+
+    Server aggregate VAE and send it back to clients
