@@ -1,2 +1,6 @@
+v0.0.2: Add GNN+FL
+
 v0.0.1: auto_labeling with GNN
+
+
 

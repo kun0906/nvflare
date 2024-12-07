@@ -1,7 +1,7 @@
 """
 
 $cd nvflare/auto_labeling
-$PYTHONPATH=.. python3 auto_labeling/semi_ml_pretrain.py
+$PYTHONPATH=.. python3 auto_labeling/semi_gnn.py
 
 """
 import os
@@ -346,24 +346,24 @@ def main():
         output = gnn(data)
         _, predicted_labels = torch.max(output, dim=1)
 
-        # # Calculate accuracy for the labeled data
-        # labeled_indices = data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-        # print(f'labeled_indices {len(labeled_indices)}')
-        # true_labels = data.y[labeled_indices]
-        #
-        # y = true_labels.cpu().numpy()
-        # y_pred = predicted_labels[labeled_indices].cpu().numpy()
-        # accuracy = accuracy_score(y, y_pred)
-        # print(f"Accuracy on labeled data: {accuracy * 100:.2f}%")
-        #
-        # # Compute the confusion matrix
-        # conf_matrix = confusion_matrix(y, y_pred)
-        # print("Confusion Matrix:")
-        # print(conf_matrix)
+        # Calculate accuracy for the labeled data
+        labeled_indices = data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        print(f'labeled_indices {len(labeled_indices)}')
+        true_labels = data.y[labeled_indices]
+
+        y = true_labels.cpu().numpy()
+        y_pred = predicted_labels[labeled_indices].cpu().numpy()
+        accuracy = accuracy_score(y, y_pred)
+        print(f"Accuracy on labeled data: {accuracy * 100:.2f}%")
+
+        # Compute the confusion matrix
+        conf_matrix = confusion_matrix(y, y_pred)
+        print("Confusion Matrix:")
+        print(conf_matrix)
 
         # Calculate accuracy for all data
         print(f'Evaluate on all data')
-        true_labels = data.y
+        true_labels = train_info['train_labels']
         y = true_labels.cpu().numpy()
         y_pred = predicted_labels.cpu().numpy()
         accuracy = accuracy_score(y, y_pred)

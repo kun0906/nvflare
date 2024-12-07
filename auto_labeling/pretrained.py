@@ -8,6 +8,7 @@ def fine_tune_cnn(dataloader, cnn, optimizer, criterion, epochs=5, device='cpu')
     for epoch in range(epochs):
         for images, labels in dataloader:
             images, labels = images.to(device), labels.to(device)
+            if images.shape[0] < 2: continue
             optimizer.zero_grad()
             outputs = cnn(images)
             loss = criterion(outputs, labels)
