@@ -65,6 +65,7 @@ transform = transforms.Compose([transforms.Grayscale(num_output_channels=3), tra
 # train_dataset = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
 test_dataset = datasets.MNIST(root="./data", train=False, transform=transform, download=True)
 
+
 @timer
 def load_data(fl_dir):
     """ for GNN, there is no train set and test set. only one dataset
@@ -372,6 +373,76 @@ class GNNModel(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
+def plot_history(history):
+    import matplotlib.pyplot as plt
+
+    client_ids = history[0].keys()
+    # Create a figure with 2 subplots (1 row, 2 columns)
+    fig, axes = plt.subplots(1, len(client_ids), figsize=(12, 6), sharey=True)
+    # Plotting the loss values
+    xs = range(epochs_server)
+    for client_id in client_ids:
+        losses = []
+        labeled_accs = []
+        labeled_cms = []
+        accs = []
+        cms = []
+        for hs in history:  # for each epoch
+            h = hs[client_id]  # only for client_id
+            losses.append(h['losses'][-1][0])  # the last training loss of each client
+            labeled_accs.append(h['labeled_accuracy'])
+            labeled_cms.append(h['labeled_cm'])
+            accs.append(h['accuracy'])
+            cms.append(h['cm'])
+        # save accuracy
+        print(xs, losses, labeled_accs, accs)
+        axes[client_id].plot(xs, labeled_accs, label='Labeled Accuracy', color='blue', linestyle='-', marker='o',
+                             markersize=6, linewidth=2)
+        axes[client_id].plot(xs, accs, label='Accuracy', color='green', linestyle='-', marker='x', markersize=6,
+                             linewidth=2)
+        axes[client_id].set_xlabel('Server Epoch')
+        axes[client_id].set_ylabel('Accuracy')
+        axes[client_id].set_title(f'Client_{client_id}')
+        axes[client_id].legend()
+        # plt.grid(True)
+    # Adjust the layout to avoid overlap
+    plt.tight_layout()
+    # Save the plot to disk
+    plt.savefig('accuracy.png')  # You can change the file name and format (e.g., .jpg, .svg)
+
+    # save losses
+    # Create a figure with 2 subplots (1 row, 2 columns)
+    fig, axes = plt.subplots(1, len(client_ids), figsize=(12, 6), sharey=True)
+    # Plotting the loss values
+    xs = range(epochs_server)
+    for client_id in client_ids:
+        losses = []
+        labeled_accs = []
+        labeled_cms = []
+        accs = []
+        cms = []
+        for hs in history:  # for each epoch
+            h = hs[client_id]  # only for client_id
+            losses.append(h['losses'][-1][0])  # the last training loss of each client
+            labeled_accs.append(h['labeled_accuracy'])
+            labeled_cms.append(h['labeled_cm'])
+            accs.append(h['accuracy'])
+            cms.append(h['cm'])
+        # save accuracy
+        # print(xs, losses, labeled_accs, labeled_cms, accs, cms)
+        axes[client_id].plot(xs, losses, label='Training Loss', color='purple', linestyle='-', marker='o',
+                             markersize=6, linewidth=2)
+        axes[client_id].set_xlabel('Server Epoch')
+        axes[client_id].set_ylabel('Loss')
+        axes[client_id].set_title(f'Client_{client_id}')
+        axes[client_id].legend()
+        # plt.grid(True)
+    # Adjust the layout to avoid overlap
+    plt.tight_layout()
+    # Save the plot to disk
+    plt.savefig('loss.png')  # You can change the file name and format (e.g., .jpg, .svg)
+
+
 class FL:
     def __init__(self):
         self.results = {}
@@ -395,12 +466,13 @@ class FL:
         # Instantiate model and optimizer
         global_model = GNNModel(input_dim=64, hidden_dim=32, output_dim=10)
         global_model = global_model.to(device)
-        losses = []
+        history = []
         for epoch in range(epochs_server):
             print(f"\n\n***************Epochs_server {epoch + 1}***************")
 
             # Step 1: Train clients
             client_gm_parameters = []
+            history_ = {}
             for client_id, (client_model, _, client_data_, _) in enumerate(clients):
                 print(f"  Training client {client_id + 1}")
                 client_info = {'client_id': client_id + 1}
@@ -413,13 +485,24 @@ class FL:
                 client_gm_parameters.append(client_result['client_gm'])
 
                 # self.evaluate(client_result, graph_data_, device, test_type='train', client_id=client_id)
-                self.evaluate(client_result, client_data_, device, test_type='test', client_id=client_id)
-                self.evaluate(client_result, graph_data, device, test_type='test all', client_id=client_id)
+                self.evaluate(client_result, client_data_, device,
+                              test_type='Testing on client data', client_id=client_id)
+                # Note that client_result will be overridden or appended more.
+                self.evaluate(client_result, graph_data, device,
+                              test_type='Testing on all clients\' data (aggregated)', client_id=client_id)
+                history_[client_id] = client_result
+            history.append(history_)
 
             # Step 2: Server aggregates vae parameters
             global_model = self.aggregate(client_gm_parameters, global_model)
 
         self.clients = clients
+
+        history_file = 'history.pkl'
+        with open(history_file, 'wb') as f:
+            torch.save(history, f)
+
+        plot_history(history)
         print("Federated learning completed.")
 
     #
@@ -561,7 +644,7 @@ class FL:
             client_data_ =  (graph_data_, feature_info, client_data_)
         """
         # After training, the model can make predictions for both labeled and unlabeled nodes
-        print('Testing gnn model...')
+        print(f'***Testing gnn model on test_type:{test_type}...')
         gnn = GNNModel(input_dim=64, hidden_dim=32, output_dim=10)
         gnn.load_state_dict(client_result['client_gm'])
         gnn.to(device)
@@ -581,27 +664,44 @@ class FL:
             y_pred = predicted_labels[labeled_indices].cpu().numpy()
             accuracy = accuracy_score(y, y_pred)
             print(f"Accuracy on labeled data: {accuracy * 100:.2f}%")
+            if 'all' in test_type:
+                client_result['labeled_accuracy_all'] = accuracy
+            else:
+                client_result['labeled_accuracy'] = accuracy
 
             # Compute the confusion matrix
             conf_matrix = confusion_matrix(y, y_pred)
             print("Confusion Matrix:")
             print(conf_matrix)
+            if 'all' in test_type:
+                client_result['labeled_cm_all'] = conf_matrix
+            else:
+                client_result['labeled_cm'] = conf_matrix
 
-            # # Calculate accuracy for all data
-            # print(f'Evaluate on all data')
-            # true_labels = client_data_[1]['labels']
-            # y = true_labels.cpu().numpy()
-            # y_pred = predicted_labels.cpu().numpy()
-            # accuracy = accuracy_score(y, y_pred)
-            # print(f"Accuracy on all data: {accuracy * 100:.2f}%")
-            #
-            # # Compute the confusion matrix
-            # conf_matrix = confusion_matrix(y, y_pred)
-            # print("Confusion Matrix:")
-            # print(conf_matrix)
+            # Calculate accuracy for all data
+            print(f'Evaluate on all data (labeled + unlabeled)')
+            true_labels = client_data_[1]['labels']
+            y = true_labels.cpu().numpy()
+            y_pred = predicted_labels.cpu().numpy()
+            accuracy = accuracy_score(y, y_pred)
+            print(f"Accuracy on all data: {accuracy * 100:.2f}%")
+            if 'all' in test_type:
+                client_result['accuracy_all'] = accuracy
+            else:
+                client_result['accuracy'] = accuracy
+
+            # Compute the confusion matrix
+            conf_matrix = confusion_matrix(y, y_pred)
+            print("Confusion Matrix:")
+            print(conf_matrix)
+            if 'all' in test_type:
+                client_result['cm_all'] = conf_matrix
+            else:
+                client_result['cm'] = conf_matrix
 
         print(f"Client {client_id + 1} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
-        return accuracy
+
+        return
 
 
 if __name__ == "__main__":
