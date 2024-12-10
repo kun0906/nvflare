@@ -16,12 +16,14 @@ import torch.nn.functional as F
 import torch.optim as optim
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.model_selection import StratifiedShuffleSplit
 from torch.utils.data import DataLoader
 from torch.utils.data import Subset
 from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 from torchvision import datasets, transforms
 
+from auto_labeling.data import generate_non_iid_data
 from auto_labeling.pretrained import pretrained_CNN
 from utils import timer
 
@@ -39,7 +41,7 @@ def parse_arguments():
     # # Add arguments to be parsed
     parser.add_argument('-e', '--epochs_client', type=int, required=False, default=5,
                         help="The number of epochs (integer) for client.")
-    parser.add_argument('-n', '--epochs_server', type=int, required=False, default=10,
+    parser.add_argument('-n', '--epochs_server', type=int, required=False, default=100,
                         help="The number of epochs (integer) for server.")
 
     # Parse the arguments
@@ -83,13 +85,13 @@ def load_data(fl_dir):
     feature_info = gen_features(feature_file, data=test_dataset, label_percent=0.1)
 
     graph_data_file = f'{fl_dir}/graph_data.pkl'
-    graph_data = gen_graph_data(feature_info, graph_data_file)
+    graph_data = gen_graph_data(feature_info, None, graph_data_file)
 
     return (graph_data, feature_info, test_dataset)
 
 
 @timer
-def load_data_for_clients(fl_dir='./fl', data_method='random'):
+def load_data_for_clients(fl_dir='./fl', data_method='non_iid'):
     if not os.path.exists(fl_dir):
         os.makedirs(fl_dir)
 
@@ -102,6 +104,22 @@ def load_data_for_clients(fl_dir='./fl', data_method='random'):
         filtered_indices = [i for i, y in enumerate(test_dataset.targets) if y >= 5]
         client2_test_dataset = Subset(test_dataset, filtered_indices)
         client2_test_dataset.targets = client2_test_dataset.dataset.targets[filtered_indices]
+    elif data_method == 'non_iid2':
+        # # # Filter indices for classes 0-4 for Client 1 and 5-9 for Client 2
+        # # Filter indices
+        # filtered_indices = [i for i, y in enumerate(test_dataset.targets) if y < 5]
+        # client1_test_dataset = Subset(test_dataset, filtered_indices)
+        # client1_test_dataset.targets = client1_test_dataset.dataset.targets[filtered_indices]
+        # filtered_indices = [i for i, y in enumerate(test_dataset.targets) if y >= 5]
+        # client2_test_dataset = Subset(test_dataset, filtered_indices)
+        # client2_test_dataset.targets = client2_test_dataset.dataset.targets[filtered_indices]
+        # Generate the non-IID data
+        client_datasets = generate_non_iid_data(test_dataset, rate=0.3)
+        for i in range(len(client_datasets)):
+            indices = client_datasets[i].indices
+            client_datasets[i].targets = client_datasets[i].dataset.targets[indices]
+        client1_test_dataset, client2_test_dataset = client_datasets[0], client_datasets[1]
+
     elif data_method == 'random':
         import random
         indices = range(len(test_dataset.targets))
@@ -121,14 +139,51 @@ def load_data_for_clients(fl_dir='./fl', data_method='random'):
         raise NotImplementedError
 
     clients_data = []
+    features_info = []
     for i, client_data_ in enumerate([client1_test_dataset, client2_test_dataset]):
         print(f'Generate client_{i} data... ')
         feature_file = f'{fl_dir}/feature_{data_method}_{i}.pkl'  # get CNN features from images
         # label_precent = 0.1, i.e., 10% of data has labels, the rest of data is unlabeled.
-        feature_info = gen_features(feature_file, data=client_data_, label_percent=0.1)
+        # feature_info = gen_features(feature_file, data=client_data_, label_percent=0.1)
+        feature_info = gen_features_mask_label(feature_file, data=client_data_, label_percent=0.1, mask_type='random',
+                                               client_info={'id':i+1})
+        features_info.append(feature_info)
 
+    # # get number of classes
+    # classes = set()
+    # for ft in features_info:
+    #     ks = ft['meta_info'].keys()
+    #     classes.update(ks)
+
+    meta_info = {}
+    # get number of samples for each classes
+    global_info = {}
+    cnt_info = {}
+    for ft in features_info:
+        mt = ft['meta_info']
+        for l in mt.keys(): # for each class in each client
+            s = mt[l]['size']
+            mean= mt[l]['mean']
+            if l not in cnt_info.keys():
+                global_info[l] = s * mean
+                cnt_info[l] = s
+            else:
+                global_info[l] += s * mean
+                cnt_info[l] += s
+
+    # compute the average for each class
+    for l in global_info.keys():
+        global_info[l] = {'mean': global_info[l] / cnt_info[l], 'cnt': cnt_info[l]}
+
+    for i, client_data_ in enumerate([client1_test_dataset, client2_test_dataset]):
+    # for i, feature_info in enumerate(features_info):
+        # Each client send their data information (e.g., mean) to the server,
+        # and then server shares all the data distribution to each client
+        # Given this, we can add other clients' mean to the current client
+        #
+        feature_info = features_info[i]
         graph_data_file = f'{fl_dir}/graph_data_{data_method}_{i}.pkl'
-        graph_data_ = gen_graph_data(feature_info, graph_data_file)
+        graph_data_ = gen_graph_data(feature_info, global_info, graph_data_file)
         clients_data.append((graph_data_, feature_info, client_data_))
 
     return clients_data
@@ -168,14 +223,14 @@ def gen_features(feature_file='feature.pkl', data=None, label_percent=0.1):
     subset_size = int(total_size * label_percent)  # 10%
     # Generate random indices
     indices = torch.randperm(total_size).tolist()[:subset_size]
+
+    # ** Using the available labeled data to fine-tuning CNN first.
     # Create a Subset of the dataset using the selected indices
     labeled_data = torch.utils.data.Subset(data, indices)
     # unlabeled_data = torch.utils.data.Subset(train_data, range(num_labeled, len(train_data)))
-
     # DataLoader for labeled data (used for fine-tuning)
     print(f'data: {len(labeled_data)}')
     labeled_loader = torch.utils.data.DataLoader(labeled_data, batch_size=64, shuffle=True)
-
     pretrained_cnn = pretrained_CNN(labeled_loader, device=device)
 
     # Extract features for both labeled and unlabeled data
@@ -190,6 +245,130 @@ def gen_features(feature_file='feature.pkl', data=None, label_percent=0.1):
 
     return feature_info
 
+
+from torch.utils.data import Dataset
+
+
+# Custom Dataset class with transform support
+class CustomDataset(Dataset):
+    def __init__(self, data, targets, transform=None):
+        self.data = data
+        self.targets = targets
+        self.transform = transform  # Add transform
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        # sample = self.data[idx]
+        # target = self.targets[idx]
+        #
+        # # Apply transform if available
+        # if self.transform:
+        #     sample = self.transform(sample)
+        #
+        # return sample, target
+
+        img, target = self.data[idx], int(self.targets[idx])
+
+        # doing this so that it is consistent with all other datasets
+        # to return a PIL Image
+        from PIL import Image
+        img = Image.fromarray(img.numpy(), mode="L")
+
+        if self.transform is not None:
+            img = self.transform(img)
+
+        # if self.target_transform is not None:
+        #     target = self.target_transform(target)
+
+        return img, target
+
+
+@timer
+def gen_features_mask_label(feature_file='feature.pkl', data=None, label_percent=0.1, mask_type = 'non-random', client_info={}):
+    if os.path.exists(feature_file):
+        with open(feature_file, 'rb') as f:
+            feature_info = pickle.load(f)
+        return feature_info
+
+    # data, targets = data.dataset.data[data.indices], data.targets
+    # Load MNIST dataset
+    # Use 10% labeled data
+    # Calculate the index for selecting 10% of the data
+    total_size = len(data)
+    subset_size = int(total_size * label_percent)  # 10%
+    if mask_type == 'random':
+        # Generate random indices
+        # indices = torch.randperm(total_size).tolist()[:subset_size]
+        sample_indices = torch.randperm(total_size).tolist()[:subset_size]
+        indices = [data.indices[i] for i in sample_indices]
+    else:
+        targets = data.targets
+        indices = data.indices
+        if client_info['id'] == 1:
+            # client 0 has all 10 classes: 0-9, however,  only use 10% 0-4 labeled data for fine-tuning
+            # find 0-4 indices first and only 10% are chosen
+            ind_labels = [(i, l) for i, l in zip(indices, targets) if l < 5]
+            indices, labels = zip(*ind_labels)
+            # Convert to numpy arrays for stratified sampling
+            indices = np.array(indices)
+            labels = np.array(labels)
+            # Stratified sampling
+            sss = StratifiedShuffleSplit(n_splits=1, test_size=subset_size, random_state=42)
+            # next(sss.split(...)) gives the indices for the test split directly.
+            sample_indices = next(sss.split(indices, labels))[1]
+            indices = indices[sample_indices]
+        elif client_info['id'] == 2:
+            # client 1 has all 10 classes: 0-9, however, only use 10% 5-9 labeled data for fine-tuning
+            # # find 5-9 indices first
+            # indices = [i for i, l in enumerate(data.targets) if l >= 5][:subset_size]
+            ind_labels = [(i, l) for i, l in zip(indices, targets) if l >= 5]
+            indices, labels = zip(*ind_labels)
+            # Convert to numpy arrays for stratified sampling
+            indices = np.array(indices)
+            labels = np.array(labels)
+            # Stratified sampling
+            sss = StratifiedShuffleSplit(n_splits=1, test_size=subset_size, random_state=42)
+            # next(sss.split(...)) gives the indices for the test split directly.
+            sample_indices = next(sss.split(indices, labels))[1]
+            indices = indices[sample_indices]
+        else:
+            raise NotImplementedError
+
+    # ** Using the available labeled data to fine-tuning CNN first.
+    # Create a Subset of the dataset using the selected indices
+    labeled_data = data.dataset.data[indices]
+    labeled_target = data.dataset.targets[indices]
+    labeled_data = CustomDataset(labeled_data, labeled_target, transform=data.dataset.transform)
+    # labeled_data = torch.utils.data.Subset(data, indices)
+    # unlabeled_data = torch.utils.data.Subset(train_data, range(num_labeled, len(train_data)))
+    # DataLoader for labeled data (used for fine-tuning)
+    print(f'labeled data: {len(labeled_data)}, label_percent:{label_percent}, '
+          f'{collections.Counter(labeled_data.targets.tolist())}')
+    labeled_loader = torch.utils.data.DataLoader(labeled_data, batch_size=64, shuffle=True)
+    pretrained_cnn = pretrained_CNN(labeled_loader, device=device)
+
+    # Extract features for both labeled and unlabeled data
+    features = extract_features(data, pretrained_cnn)
+    print(features.shape)
+
+    meta_info = {}  # only on labeled data
+    features_tmp = extract_features(labeled_data, pretrained_cnn)
+    for l in set(labeled_target.tolist()):
+        x = features_tmp[labeled_target == l]
+        meta_info[l] = {'mean': np.mean(x, axis=0),
+                        'std': np.mean(x, axis=0),
+                        'size': len(x)}
+
+    # get each class data information (e.g., mean) for the current data
+    labels = data.targets
+    feature_info = {'features': features, 'labels': labels, "indices": sample_indices, "meta_info": meta_info}
+
+    with open(feature_file, 'wb') as f:
+        pickle.dump(feature_info, f)
+
+    return feature_info
 
 @timer
 def gen_edges(train_features, edge_method='cosine'):
@@ -262,16 +441,35 @@ def gen_edges(train_features, edge_method='cosine'):
 
 
 @timer
-def gen_graph_data(feature_info, graph_data_file='graph_data.pkl'):
-    if os.path.exists(graph_data_file):
-        with open(graph_data_file, 'rb') as f:
-            data = torch.load(f, weights_only=None)
-        return data
+def gen_graph_data(feature_info, global_info, graph_data_file='graph_data.pkl'):
 
     features = feature_info['features']
     indices = feature_info['indices']
     true_labels = feature_info['labels']
+    total_size = len(true_labels)
+    cnts = [1] * total_size
+    if global_info is not None:
+        # extend classes
+        means_ = [list(vs['mean']) for vs in global_info.values()]
+        cnts_ = [vs['cnt'] for vs in global_info.values()]
+        cnts_ = [0 if i in set(true_labels.tolist()) else v for i, v in enumerate(cnts_)]
+        features = np.vstack((features, np.array(means_)))
+        indices = np.hstack((feature_info['indices'],
+                   np.array([len(true_labels) + i for i in range(len(global_info) )])))
+        true_labels = torch.cat((true_labels, torch.tensor(list(global_info.keys()))), dim=0)
+        cnts = cnts + cnts_
+        total_size += sum(cnts_)
+        print('total size', total_size, 'cnts_', cnts_)
+        weights = torch.tensor(cnts)/total_size
+        # update feature info
+        feature_info['features'] = features
+        feature_info['indices'] = indices
+        feature_info['labels'] = true_labels
 
+    if os.path.exists(graph_data_file):
+        with open(graph_data_file, 'rb') as f:
+            data = torch.load(f, weights_only=None)
+        return data
     edges, edge_attr = gen_edges(features, edge_method='cosine')
     print(f"edges.shape {edges.shape}")
     # Create node features (features from CNN)
@@ -287,7 +485,8 @@ def gen_graph_data(feature_info, graph_data_file='graph_data.pkl'):
 
     # Prepare Graph data for PyG (PyTorch Geometric)
     print('Form graph data.')
-    data = Data(x=node_features, edge_index=edges, edge_attr=edge_attr, y=labels, train_mask=train_mask)
+    data = Data(x=node_features, edge_index=edges, edge_attr=edge_attr, edge_weights = weights,
+                y=labels, train_mask=train_mask)
 
     print('Save data to pickle file.')
     torch.save(data, graph_data_file)
@@ -650,12 +849,14 @@ class FL:
         gnn.to(device)
 
         graph_data = client_data_[0].to(device)  # graph data
+        n = len(client_data_[1]['labels'])
         gnn.eval()
         with torch.no_grad():
             output = gnn(graph_data)
             _, predicted_labels = torch.max(output, dim=1)
 
             # Calculate accuracy for the labeled data
+            # num_classes = 10
             labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
             print(f'labeled_indices {len(labeled_indices)}')
             true_labels = graph_data.y[labeled_indices]

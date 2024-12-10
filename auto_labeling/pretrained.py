@@ -31,6 +31,6 @@ def pretrained_CNN(labeled_loader, device='cpu'):
     cnn_optimizer = optim.Adam(cnn.parameters(), lr=0.001)
     cnn_criterion = nn.CrossEntropyLoss()
 
-    fine_tune_cnn(labeled_loader, cnn, cnn_optimizer, cnn_criterion, epochs=10, device=device)
+    fine_tune_cnn(labeled_loader, cnn, cnn_optimizer, cnn_criterion, epochs=2, device=device)
 
     return cnn
