@@ -55,6 +55,7 @@ print(os.path.abspath(os.getcwd()))
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {device}")
 
+
 # Define the function to parse the parameters
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Test Demo Script")
@@ -84,9 +85,77 @@ print(f"sampling_rate: {sampling_rate}")
 print(f"server_epochs: {server_epochs}")
 
 LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+LABELs = {0, 1, 2}
+
+@timer
+def gen_local_data(client_data_file, client_id=0, label_rate=0.1):
+    """ We assume num_client = num_classes, i.e., each client only has one class data
+
+    Args:
+        client_id:
+        label_rate=0.1： only 10% local data has labels
+    Returns:
+
+    """
+    if os.path.exists(client_data_file):
+        with open(client_data_file, 'rb') as f:
+            client_data = pickle.load(f)
+        return client_data
+
+    dir_name = os.path.dirname(client_data_file)
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+
+    # transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
+    transform = transforms.Compose([transforms.Grayscale(num_output_channels=3), transforms.ToTensor(),
+                                    transforms.Normalize((0.5,), (0.5,))])
+    train_dataset = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
+    # Extract data and targets
+    data = train_dataset.data  # Tensor of shape (60000, 28, 28)
+    targets = train_dataset.targets  # Tensor of shape (60000,)
+
+    # Generate local data, and only lable_rate=10% of them has labels
+    X = data[targets == client_id]
+    y = targets[targets == client_id]
+    labels_mask = torch.tensor([False] * len(y), dtype=torch.bool)
+    cnt = X.size(0)
+    print(f"Class {client_id}: {cnt} images")
+    sampling_size = int(cnt * label_rate)
+    labeled_indices = torch.randperm(len(y))[:sampling_size]
+    labeled_X = X[labeled_indices]
+    labeled_y = y[labeled_indices]
+    labels_mask[labeled_indices] = True
+
+    labeled_data = CustomDataset(labeled_X, torch.tensor(labeled_y), transform=transform)
+    labeled_loader = torch.utils.data.DataLoader(labeled_data, batch_size=64, shuffle=True)
+    # Use the local labeled data to fine-tune CNN
+    pretrained_cnn = pretrained_CNN(labeled_loader, device=device)
+
+    # Extract features for both labeled and unlabeled data
+    data_ = CustomDataset(X, torch.tensor(y), transform=transform)
+    features = extract_features(data_, pretrained_cnn)
+    print(features.shape)
+
+    # *** Each client has its own pretrained_cnn, which leads to different extracted features on the shared test data ***
+    # The following test_data (shared by all clients) is used to test each client model's performance, which includes
+    # all 10 classes; however, in practice it may not exist.
+    test_dataset = datasets.MNIST(root="./data", train=False, transform=transform, download=True)
+    shared_data = test_dataset.data  # Tensor of shape (60000, 28, 28)
+    shared_targets = test_dataset.targets  # Tensor of shape (60000,)
+    shared_data_ = CustomDataset(shared_data, torch.tensor(shared_targets), transform=transform)
+    shared_test_features = extract_features(shared_data_, pretrained_cnn)
+    client_data = {'features': torch.tensor(features, dtype=torch.float), 'labels': torch.tensor(y),
+                   'labels_mask': labels_mask,  # only 10% data has labels.
+                   'shared_test_data': {'features': torch.tensor(shared_test_features, dtype=torch.float),
+                                        'labels': shared_targets}
+                   }
+
+    with open(client_data_file, 'wb') as f:
+        pickle.dump(client_data, f)
+
+    return client_data
 
 
-# LABELs = {0, 1, 2}
 @timer
 # Extract features using the fine-tuned CNN for all the images (labeled + unlabeled)
 def extract_features(dataset, pretrained_cnn):
@@ -146,60 +215,6 @@ class CustomDataset(Dataset):
         return img, target
 
 
-@timer
-def gen_features(feature_file='features.pkl', label_percent=0.1):
-    if os.path.exists(feature_file):
-        with open(feature_file, 'rb') as f:
-            feature_info = pickle.load(f)
-        return feature_info
-
-    # transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-    transform = transforms.Compose([transforms.Grayscale(num_output_channels=3), transforms.ToTensor(),
-                                    transforms.Normalize((0.5,), (0.5,))])
-    # train_dataset = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
-    test_dataset = datasets.MNIST(root="./data", train=False, transform=transform, download=True)
-    # Extract data and targets
-    data = test_dataset.data  # Tensor of shape (60000, 28, 28)
-    targets = test_dataset.targets  # Tensor of shape (60000,)
-
-    # Group data by class using a dictionary
-    class_data = {i: data[targets == i] for i in range(len(LABELs))}
-    features_info = {}
-    # Print the number of images in each class
-    for label, images in class_data.items():
-        cnt = images.size(0)
-        print(f"Class {label}: {cnt} images")
-
-        # # Load MNIST dataset
-        # # Use 10% labeled data
-        # # Calculate the index for selecting 10% of the data
-        # total_size = len(data)
-        # subset_size = int(total_size * label_percent)  # 10%
-        # # Generate random indices
-        # indices = torch.randperm(total_size).tolist()[:subset_size]
-        #
-        # # ** Using the available labeled data to fine-tuning CNN first.
-        # # Create a Subset of the dataset using the selected indices
-        # labeled_data = torch.utils.data.Subset(data, indices)
-        # # unlabeled_data = torch.utils.data.Subset(train_data, range(num_labeled, len(train_data)))
-        # # DataLoader for labeled data (used for fine-tuning)
-        data_ = CustomDataset(images, torch.tensor([label] * cnt), transform=test_dataset.transform)
-        labeled_loader = torch.utils.data.DataLoader(data_, batch_size=64, shuffle=True)
-        pretrained_cnn = pretrained_CNN(labeled_loader, device=device)
-
-        # Extract features for both labeled and unlabeled data
-        features = extract_features(data_, pretrained_cnn)
-        print(features.shape)
-
-        labels = data_.targets
-        features_info[label] = {'features': torch.tensor(features, dtype=torch.float), 'labels': labels}
-
-    with open(feature_file, 'wb') as f:
-        pickle.dump(features_info, f)
-
-    return features_info
-
-
 # def vae_loss_function(recon_x, x, mu, logvar):
 #     # reconstruction error
 #     # BCE = nn.BCELoss(reduction='sum')(recon_x, x)
@@ -226,9 +241,12 @@ def train_cvae(local_cvae, global_cvae, local_data, train_info={}):
     train_info['cvae'] = {"losses": None}
 
     X, y = local_data['features'], local_data['labels']
+    mask = local_data['labels_mask']
+    X = X[mask]
+    y = y[mask]
     # Only update available local labels, i.e., not all the local_cvaes will be updated.
-    local_labels = set(local_data['labels'].tolist())
-    print(f'local labels: {local_labels}')
+    local_labels = set(y.tolist())
+    print(f'local labels: {local_labels}, with {len(y)} samples.')
 
     local_cvae.to(device)
     optimizer = optim.Adam(local_cvae.parameters(), lr=0.001)
@@ -396,14 +414,12 @@ def train_gnn(local_gnn, cvae, global_gnn, local_data, train_info={}):
     criterion = nn.CrossEntropyLoss()  # mean
     local_gnn.train()  #
 
-    y = local_data['labels'].tolist()  # we assume on a tiny labeled data in the local data
-    local_size = len(y)
+    labels_mask = local_data['labels_mask']
+    y = local_data['labels'][labels_mask].tolist()  # we assume on a tiny labeled data in the local dat
+    print(f'local data size: {len(labels_mask)}, y: {len(y)}, sampling_rate: {len(y)/len(labels_mask)}')
     ct = collections.Counter(y)
     max_size = max(ct.values())
-    # sampling_rate = 0.1
-    print('sampling_rate:', sampling_rate)
-    max_size = int(max_size * sampling_rate)  # 10% percent data with labels
-    sub_size = int(local_size * sampling_rate)  # 10% data will be used during the training
+
     sizes = {}
     for l in LABELs:
         if l in ct.keys():
@@ -431,13 +447,8 @@ def train_gnn(local_gnn, cvae, global_gnn, local_data, train_info={}):
     # Prepare Graph data for PyG (PyTorch Geometric)
     print('Form graph data...')
     # Define train, val, and test masks
-    # m = len(local_data['labels'])
-    # indices = torch.arange(m)
-    local_data_indices = list(range(len(y)))
-    generated_data_indices = list(range(len(y), len(labels)))
-    # we only sample 10% from local_data, and all the generated data will be used during the training.
-    sampled_indices = torch.randperm(len(local_data_indices))[:sub_size]
-    indices = torch.tensor(sampled_indices.tolist() + generated_data_indices).to(device)
+    generated_data_indices = list(range(len(labels_mask), len(labels)))
+    indices = torch.tensor(y + generated_data_indices).to(device)
     # Define train_mask and test_mask
     train_mask = torch.tensor([False] * len(labels), dtype=torch.bool)
     test_mask = torch.tensor([False] * len(labels), dtype=torch.bool)
@@ -474,7 +485,7 @@ def train_gnn(local_gnn, cvae, global_gnn, local_data, train_info={}):
         #         print(f"{name}: No gradient (likely frozen or unused)")
 
         optimizer.step()
-        print(f"train_gnn epoch: {epoch}, local_gnn loss: {model_loss.item() / data_size:.4f}")
+        print(f"train_gnn epoch: {epoch}, local_gnn loss: {model_loss.item():.4f}")
         losses.append(model_loss.item())
 
     train_info['gnn'] = {'graph_data': graph_data, "losses": losses}
@@ -671,8 +682,10 @@ def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train
         # print(f'labeled_indices {len(labeled_indices)}')
         true_labels = graph_data.y
 
-        predicted_labels = predicted_labels[graph_data.train_mask]
-        true_labels = true_labels[graph_data.train_mask]
+        # predicted_labels = predicted_labels[graph_data.train_mask]
+        # true_labels = true_labels[graph_data.train_mask]
+        # predicted_labels = predicted_labels[graph_data.test_mask]
+        # true_labels = true_labels[graph_data.test_mask]
 
         y = true_labels.cpu().numpy()
         y_pred = predicted_labels.cpu().numpy()
@@ -718,6 +731,72 @@ def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train
     return
 
 
+@timer
+def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_test_data', client_id=0, train_info={}):
+    """
+        Evaluate how well each client's model performs on the test set.
+    """
+    # After training, the model can make predictions for both labeled and unlabeled nodes
+    print(f'***Testing gnn model on test_type:{test_type}...')
+
+    features = shared_test_data['features']
+    labels = shared_test_data['labels']
+    # here should be the save as the training set.
+    edges, edge_attr = gen_edges(features, edge_method='cosine')
+    print(f"edges.shape {edges.shape}")
+    # Create node features (features from CNN)
+    # node_features = torch.tensor(features, dtype=torch.float)
+    # labels = torch.tensor(labels, dtype=torch.long)
+    node_features = features.clone().detach().float()
+    labels = labels.clone().detach().long()
+    # Prepare Graph data for PyG (PyTorch Geometric)
+    print('Form graph data...')
+
+    graph_data = Data(x=node_features, edge_index=edges, edge_attr=edge_attr,
+                      y=labels)
+
+    # evaluate the data
+    gnn = local_gnn
+    gnn.to(device)
+    gnn.eval()
+    with torch.no_grad():
+        output = gnn(graph_data)
+        _, predicted_labels = torch.max(output, dim=1)
+
+        # Calculate accuracy for the labeled data
+        # num_classes = 10
+        # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        # print(f'labeled_indices {len(labeled_indices)}')
+        true_labels = graph_data.y
+
+        # predicted_labels = predicted_labels[graph_data.train_mask]
+        # true_labels = true_labels[graph_data.train_mask]
+        # predicted_labels = predicted_labels[graph_data.test_mask]
+        # true_labels = true_labels[graph_data.test_mask]
+
+        y = true_labels.cpu().numpy()
+        y_pred = predicted_labels.cpu().numpy()
+        accuracy = accuracy_score(y, y_pred)
+        print(f"Accuracy on labeled data: {accuracy * 100:.2f}%")
+        # if 'all' in test_type:
+        #     client_result['labeled_accuracy_all'] = accuracy
+        # else:
+        #     client_result['labeled_accuracy'] = accuracy
+
+        # Compute the confusion matrix
+        conf_matrix = confusion_matrix(y, y_pred)
+        print("Confusion Matrix:")
+        print(conf_matrix)
+        # if 'all' in test_type:
+        #     client_result['labeled_cm_all'] = conf_matrix
+        # else:
+        #     client_result['labeled_cm'] = conf_matrix
+
+    print(f"Client {client_id + 1} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
+
+    return
+
+
 def print_histories(histories):
     num_server_epoches = len(histories)
     num_clients = len(histories[0])
@@ -735,12 +814,15 @@ def print_histories(histories):
             # print('\t*local gnn:', [f"{v:.2f}" for v in local_gnn['losses']])
 
 
-def main():
+def main(in_dir):
     num_clients = len(LABELs)
     num_classes = num_clients
     input_dim = 64
 
-    features_info = gen_features(feature_file=f'features_{len(LABELs)}.pkl')
+    # Generate local data for each client first
+    for c in range(num_clients):
+        print(f'Generate local data for client_{c}...')
+        gen_local_data(client_data_file=f'{in_dir}/client_{c}_data.pkl', client_id=c)
 
     global_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
     global_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
@@ -755,7 +837,8 @@ def main():
             print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
             l = c  # we should have 'num_clients = num_labels'
             train_info = {"cvae": {}, "gnn": {}, }
-            local_data = features_info[l]
+            # local_data = features_info[l]
+            local_data = gen_local_data(client_data_file=f'{in_dir}/client_{c}_data.pkl', client_id=c)
             print(f'client_{c} data:', collections.Counter(local_data['labels'].tolist()))
             local_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
             print('train_cvae...')
@@ -772,8 +855,8 @@ def main():
             evaluate(local_gnn, None, device,
                      test_type='Testing on client data', client_id=c, train_info=train_info)
             # # Note that client_result will be overridden or appended more.
-            # evaluate(local_gnn, graph_data, device,
-            #               test_type='Testing on all clients\' data (aggregated)', client_id=c)
+            evaluate_shared_test(local_gnn, local_data['shared_test_data'], device,
+                                 test_type='Testing on shared test data', client_id=c)
             history[c] = train_info
         # server aggregation
         aggregate_cvaes(cvaes, global_cvae)
@@ -781,7 +864,7 @@ def main():
 
         histories.append(history)
 
-    history_file = 'histories_cvae.pkl'
+    history_file = f'{in_dir}/histories_cvae.pkl'
     with open(history_file, 'wb') as f:
         pickle.dump(histories, f)
 
@@ -789,9 +872,10 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    in_dir = 'fl'
+    main(in_dir)
 
-    history_file = 'histories_cvae.pkl'
+    history_file = f'{in_dir}/histories_cvae.pkl'
     with open(history_file, 'rb') as f:
         histories = pickle.load(f)
     print_histories(histories)
