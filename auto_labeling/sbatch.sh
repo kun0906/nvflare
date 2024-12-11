@@ -7,11 +7,11 @@
 #SBATCH --mem=16G                            # Memory per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU (adjust if needed)
 #SBATCH --time=05:00:00                      # Time limit in hrs:min:sec
-#SBATCH --array=0-10                         # Array range for combinations
+#SBATCH --array=0-100                         # Array range for combinations
 
 # Define the parameter combinations (distill_weight, epochs)
-params1=(0.1 0.2 0.3 0.5 0.7 0.9 0.95 1)
-param2=(10 50 100)
+params1=(0.01 0.1 0.5 1)
+param2=(100 200 500)
 
 # Calculate the total number of combinations
 num_combinations=${#params1[@]} * ${#param2[@]}

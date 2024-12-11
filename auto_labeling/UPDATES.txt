@@ -1,3 +1,5 @@
+v0.0.4-1: Avoid using F.log_softmax before CrossEntropyLoss to prevent redundancy or errors.
+
 v0.0.4: Add gnn_fl_cvae.py: conditional VAE
 
 v0.0.3: Add gnn_fl_vae.py

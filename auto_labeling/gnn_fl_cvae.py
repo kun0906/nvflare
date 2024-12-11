@@ -452,7 +452,7 @@ def train_gnn(local_gnn, cvae, global_gnn, local_data, train_info={}):
     losses = []
     for epoch in range(epochs_client):
         epoch_model_loss = 0
-        _model_loss, _model_distill_loss = 0, 0
+        # _model_loss, _model_distill_loss = 0, 0
         # epoch_vae_loss = 0
         # _vae_recon_loss, _vae_kl_loss = 0, 0
         graph_data.to(device)
@@ -560,7 +560,7 @@ class Encoder(nn.Module):
 
     def forward(self, x, class_labels):
         # Concatenate input features with class labels
-        x = torch.cat([x, class_labels], dim=-1)
+        x = torch.cat([x, class_labels], dim=-1)  # x should be normalized first?
         x = F.relu(self.fc1(x))
         mean = self.fc2(x)
         log_var = self.fc3(x)
@@ -640,7 +640,8 @@ class GNN(nn.Module):
             x = F.relu(self.conv3(x, edge_index, edge_attr))  # Additional layer
             x = self.conv4(x, edge_index, edge_attr)  # Final output
 
-        return F.log_softmax(x, dim=1)
+        # return F.log_softmax(x, dim=1)
+        return x
 
 
 @timer
