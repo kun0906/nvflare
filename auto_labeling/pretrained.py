@@ -5,6 +5,7 @@ import torch.optim as optim
 
 @timer
 def fine_tune_cnn(dataloader, cnn, optimizer, criterion, epochs=5, device='cpu'):
+    print(f'fine_tune on dataloader with size: {len(dataloader.sampler)}')
     for epoch in range(epochs):
         for images, labels in dataloader:
             images, labels = images.to(device), labels.to(device)
@@ -23,7 +24,7 @@ def pretrained_CNN(labeled_loader, device='cpu'):
     # Using 'weights' parameter instead of 'pretrained'
     cnn = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
     # or models.ResNet18_Weights.DEFAULT for the most up-to-date weights
-    cnn.fc = nn.Linear(cnn.fc.in_features, 64)  # Change the output layer to extract 64-dimensional features
+    cnn.fc = nn.Linear(cnn.fc.in_features, 32)  # Change the output layer to extract 64-dimensional features
     cnn.to(device)
 
     # Fine-tune the CNN with the labeled data
@@ -31,6 +32,6 @@ def pretrained_CNN(labeled_loader, device='cpu'):
     cnn_optimizer = optim.Adam(cnn.parameters(), lr=0.001)
     cnn_criterion = nn.CrossEntropyLoss()
 
-    fine_tune_cnn(labeled_loader, cnn, cnn_optimizer, cnn_criterion, epochs=2, device=device)
+    fine_tune_cnn(labeled_loader, cnn, cnn_optimizer, cnn_criterion, epochs=10, device=device)
 
     return cnn
