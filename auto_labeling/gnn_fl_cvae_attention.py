@@ -43,7 +43,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Test Demo Script")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.1,
+    parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.01,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=100,
                         help="The number of epochs (integer).")
@@ -476,7 +476,7 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
                                labeled_classes_weights.items()}  # normalize weights
     data['labeled_classes_weights'] = labeled_classes_weights
     print('new_y', collections.Counter(new_y.tolist()), ct.items(),
-          '\nlabeled_classes_weights', labeled_classes_weights)
+          '\nlabeled_classes_weights', {k:float(f"{v:.2f}") for k, v in labeled_classes_weights.items()})
 
     train_info['threshold'] = None
     edges, edge_weight = gen_edges(features, edge_method='knn', train_info=train_info)  # will update threshold
@@ -776,7 +776,7 @@ def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train
         # else:
         #     client_result['cm'] = conf_matrix
 
-    print(f"Client {client_id + 1} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
+    print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
     return
 
@@ -913,7 +913,7 @@ def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_
         # else:
         #     client_result['labeled_cm'] = conf_matrix
 
-    print(f"Client {client_id + 1} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
+    print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
     return
 
@@ -994,7 +994,7 @@ def main(in_dir):
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
-                l = c  # we should have 'num_clients = num_labels'
+                # l = c  # we should have 'num_clients = num_labels'
                 train_info = {"cvae": {}, "gnn": {}, }
                 # local_data = features_info[l]
                 local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,

@@ -1,3 +1,5 @@
+v0.0.7-1: Update output format
+
 v0.0.7: Use the same attention
 
 v0.0.6: Add attention aggregation

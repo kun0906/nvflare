@@ -42,7 +42,7 @@ def train_attention_weights(client_parameters_list, global_state_dict, beta, dev
 
     num_clients = len(client_parameters_list)
     # input_dim = client_params[0]
-    num_epochs = 100
+    num_epochs = 101
     lr = 1e-3
     attention_aggregator = AttentionAggregation(num_clients, device)
     attention_aggregator.to(device)
@@ -76,9 +76,10 @@ def train_attention_weights(client_parameters_list, global_state_dict, beta, dev
         loss.backward()
         optimizer.step()
 
-        if epoch % 50 == 0:
+        if epoch % 100 == 0:
             print(f"\tattention epoch {epoch}/{num_epochs}, Loss: {loss.item()}, "
-                  f"attention_scores: {[f'{v:.2f}' for v in attention_aggregator.attention_scores.flatten().tolist()]}")
+                  f"attention_scores: "
+                  f"{[float(f'{v:.2f}') for v in attention_aggregator.attention_scores.flatten().tolist()]}")
 
     return attention_aggregator
 
@@ -122,7 +123,7 @@ def aggregate_with_attention(client_parameters_list, global_model, device=None):
     global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
 
     # Aggregate parameters, we have one attention.
-    beta = 0.1
+    beta = 0.5
     attention_aggregator = train_attention_weights(client_parameters_list, global_state_dict, beta, device)
 
     # After training, aggregate the client parameters

@@ -295,7 +295,7 @@ def gen_graph_data(train_info, graph_data_file='graph_data.pkl'):
 def main():
     feature_file = 'feature.pkl'
     if not os.path.exists(feature_file):
-        gen_features(feature_file, label_percent=0.1)
+        gen_features(feature_file, label_percent=0.1)   # only 10% data have labels during the training
     with open(feature_file, 'rb') as f:
         train_info = pickle.load(f)
     # Evaluate with Decision Tree to check if the features extracted by CNN are good.
