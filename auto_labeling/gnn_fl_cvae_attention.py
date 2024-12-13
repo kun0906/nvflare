@@ -27,6 +27,7 @@ from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 from torchvision import datasets, transforms
 
+from auto_labeling.attention import aggregate_with_attention
 from auto_labeling.pretrained import pretrained_CNN
 from utils import timer
 
@@ -66,7 +67,6 @@ print(f"label_rate: {label_rate}")
 print(f"server_epochs: {server_epochs}")
 
 LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-
 
 # LABELs = {0, 1}
 
@@ -476,7 +476,7 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
                                labeled_classes_weights.items()}  # normalize weights
     data['labeled_classes_weights'] = labeled_classes_weights
     print('new_y', collections.Counter(new_y.tolist()), ct.items(),
-            '\nlabeled_classes_weights', labeled_classes_weights)
+          '\nlabeled_classes_weights', labeled_classes_weights)
 
     train_info['threshold'] = None
     edges, edge_weight = gen_edges(features, edge_method='knn', train_info=train_info)  # will update threshold
@@ -506,7 +506,7 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     epochs_client = 5
     losses = []
     # here, you need make sure weight aligned with class order.
-    class_weight =torch.tensor(list(data['labeled_classes_weights'].values()),dtype=torch.float).to(device)
+    class_weight = torch.tensor(list(data['labeled_classes_weights'].values()), dtype=torch.float).to(device)
     criterion = nn.CrossEntropyLoss(weight=class_weight).to(device)
     for epoch in range(epochs_client):
         epoch_model_loss = 0
@@ -538,35 +538,36 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     train_info['gnn'] = {'graph_data': graph_data, "losses": losses}
 
 
-@timer
-def aggregate(client_parameters_list, global_model):
-    # Initialize the aggregated state_dict for the global model
-    global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
-
-    # Perform simple averaging of the parameters
-    for client_state_dict in client_parameters_list:
-
-        # Aggregate parameters for each layer
-        for key in global_state_dict:
-            global_state_dict[key] += client_state_dict[key].to(device)
-
-    # Average the parameters across all clients
-    num_clients = len(client_parameters_list)
-    for key in global_state_dict:
-        global_state_dict[key] /= num_clients
-
-    # Update the global model with the aggregated parameters
-    global_model.load_state_dict(global_state_dict)
+# @timer
+# def aggregate(client_parameters_list, global_model):
+#     # Initialize the aggregated state_dict for the global model
+#     global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
+#
+#     # Perform simple averaging of the parameters
+#     for client_state_dict in client_parameters_list:
+#
+#         # Aggregate parameters for each layer
+#         for key in global_state_dict:
+#             global_state_dict[key] += client_state_dict[key].to(device)
+#
+#     # Average the parameters across all clients
+#     num_clients = len(client_parameters_list)
+#     for key in global_state_dict:
+#         global_state_dict[key] /= num_clients
+#
+#     # Update the global model with the aggregated parameters
+#     global_model.load_state_dict(global_state_dict)
 
 
 def aggregate_cvaes(vaes, global_cvae):
     client_parameters_list = [local_cvae.state_dict() for client_i, local_cvae in vaes.items()]
-    aggregate(client_parameters_list, global_cvae)
+    # aggregate(client_parameters_list, global_cvae)
+    aggregate_with_attention(client_parameters_list, global_cvae)  # update global_cvae inplace
 
 
 def aggregate_gnns(gnns, global_gnn):
     client_parameters_list = [local_gnn.state_dict() for client_i, local_gnn in gnns.items()]
-    aggregate(client_parameters_list, global_gnn)
+    aggregate_with_attention(client_parameters_list, global_gnn)  # update global_gnn inplace
 
 
 #
@@ -849,8 +850,8 @@ def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_
         # new_node_feature =  torch.tensor([features], dtype=torch.float32)  # New node's feature vector
         new_edges, new_weight = find_neighbors(new_features, node_features,
                                                k=5)  # (source, target) format for the new edges
-        new_edges=new_edges.to(device)
-        new_weight=new_weight.to(device)
+        new_edges = new_edges.to(device)
+        new_weight = new_weight.to(device)
         # print(f"device: {graph_data.edge_index.device}, {graph_data.edge_weight.device}, {new_edges.device}, {new_weight.device}")
         edges = torch.cat([graph_data.edge_index, new_edges], dim=1)  # Add new edges
         edge_weight = torch.cat([graph_data.edge_weight, new_weight])  # Add new edges

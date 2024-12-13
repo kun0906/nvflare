@@ -24,7 +24,7 @@ def pretrained_CNN(labeled_loader, device='cpu'):
     # Using 'weights' parameter instead of 'pretrained'
     cnn = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
     # or models.ResNet18_Weights.DEFAULT for the most up-to-date weights
-    cnn.fc = nn.Linear(cnn.fc.in_features, 32)  # Change the output layer to extract 64-dimensional features
+    cnn.fc = nn.Linear(cnn.fc.in_features, 16)  # Change the output layer to extract 64-dimensional features
     cnn.to(device)
 
     # Fine-tune the CNN with the labeled data
