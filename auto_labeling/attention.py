@@ -9,8 +9,9 @@ from torch.optim import Adam
 
 
 class AttentionAggregation(nn.Module):
-    def __init__(self, num_clients):
+    def __init__(self, num_clients, device):
         super(AttentionAggregation, self).__init__()
+        self.device = device
         self.attention_weights = nn.Parameter(torch.randn(num_clients))  # Attention weights for each client
 
     def forward(self, client_params):
@@ -18,29 +19,33 @@ class AttentionAggregation(nn.Module):
         client_params: List of client model parameters (each client has a GNN's parameters)
         """
         # Calculate attention scores (softmax over client parameters)
-        attention_scores = F.softmax(self.attention_weights, dim=0)
+        attention_scores = F.softmax(self.attention_weights, dim=0).to(self.device)
 
         # Get the shape of client_params and dynamically generate a shape for weights
         shape = list(client_params.shape)  # Get shape of client_params (e.g., [num_clients, 32, 18])
         shape = [1] * len(shape)  # Create a shape with all 1s (e.g., [1, 1, 1])
         shape[0] = -1  # Set the first dimension to -1 (it will be inferred based on the length of weights)
         # Reshape weights based on the calculated shape
-        attention_scores = attention_scores.view(shape)  # This will reshape weights to (-1, 1, 1)
+        self.attention_scores = attention_scores.view(shape)  # This will reshape weights to (-1, 1, 1)
         # Weight the client parameters based on attention scores
-        weighted_params = client_params * attention_scores  # Element-wise multiplication
+        # print(client_params.device, self.attention_scores.device, flush=True)
+        weighted_params = client_params * self.attention_scores  # Element-wise multiplication
+
         aggregated_params = weighted_params.sum(dim=0)
         return aggregated_params
 
 
-def train_attention_weights(client_params, pseudo_ground_truth):
+def train_attention_weights(client_parameters_list, global_state_dict, beta, device):
     """
     Train the attention weights to learn how to aggregate client parameters.
     """
-    num_clients = len(client_params)
+
+    num_clients = len(client_parameters_list)
     # input_dim = client_params[0]
-    num_epochs = 20
+    num_epochs = 100
     lr = 1e-3
-    attention_aggregator = AttentionAggregation(num_clients)
+    attention_aggregator = AttentionAggregation(num_clients, device)
+    attention_aggregator.to(device)
 
     # Define the optimizer for training attention weights
     optimizer = Adam(attention_aggregator.parameters(), lr=lr)
@@ -49,21 +54,65 @@ def train_attention_weights(client_params, pseudo_ground_truth):
 
     attention_aggregator.train()
     for epoch in range(num_epochs):
-        # Get aggregated parameters using attention mechanism
-        aggregated_params = attention_aggregator(client_params)
+        loss = 0
+        # for each layer
+        for key in global_state_dict:
+            # Train the attention weights
+            # give old global_params impact
+            client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
+            global_key_params = global_state_dict[key].to(device)
+            # Weighted average of median and old_global_params
+            coordinate_median, _ = torch.median(client_key_params, dim=0)
+            coordinate_median = coordinate_median.to(device)
+            pseudo_ground_truth = (coordinate_median + beta * global_key_params) / (1 + beta)
+            # Get aggregated parameters using attention mechanism
+            aggregated_params = attention_aggregator(client_key_params)
 
-        # Combine self-consistency loss with the attention weights optimization
-        loss = criterion(pseudo_ground_truth, aggregated_params)
+            # Combine self-consistency loss with the attention weights optimization
+            loss += criterion(pseudo_ground_truth, aggregated_params)
 
         # Backpropagation and optimization
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        if epoch % 10 == 0:
-            print(f"\tattention epoch {epoch}/{num_epochs}, Loss: {loss.item()}")
+        if epoch % 50 == 0:
+            print(f"\tattention epoch {epoch}/{num_epochs}, Loss: {loss.item()}, "
+                  f"attention_scores: {[f'{v:.2f}' for v in attention_aggregator.attention_scores.flatten().tolist()]}")
 
     return attention_aggregator
+
+
+#
+# def aggregate_with_attention_each_layer(client_parameters_list, global_model, device=None):
+#     """
+#     Train the attention weights and then initialize the global model with aggregated parameters.
+#     """
+#     global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
+#     # Aggregate parameters for each layer, for each layer, we have seperated attention scores.
+#     for key in global_state_dict:
+#         print(f'update {key}')
+#         # global_state_dict[key] += client_state_dict[key].to(device)
+#         # Train the attention weights
+#         # give old global_params impact
+#         beta = 0.1
+#         client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
+#         global_key_params = global_state_dict[key].to(device)
+#         # Weighted average of median and old_global_params
+#         coordinate_median, _ = torch.median(client_key_params, dim=0)
+#         coordinate_median = coordinate_median.to(device)
+#         pseudo_ground_true = (coordinate_median + beta * global_key_params) / (1 + beta)
+#         attention_aggregator = train_attention_weights(client_key_params, pseudo_ground_true, device)
+#
+#         # After training, aggregate the client parameters
+#         attention_aggregator.eval()
+#
+#         # Weighted average of median and old_global_params
+#         aggregated_params = attention_aggregator(client_key_params)
+#         global_state_dict[key] = (aggregated_params + beta * global_key_params) / (1 + beta)
+#
+#     # Update the global model with the aggregated parameters
+#     global_model.load_state_dict(global_state_dict)
 
 
 def aggregate_with_attention(client_parameters_list, global_model, device=None):
@@ -71,31 +120,24 @@ def aggregate_with_attention(client_parameters_list, global_model, device=None):
     Train the attention weights and then initialize the global model with aggregated parameters.
     """
     global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
-    # Aggregate parameters for each layer
+
+    # Aggregate parameters, we have one attention.
+    beta = 0.1
+    attention_aggregator = train_attention_weights(client_parameters_list, global_state_dict, beta, device)
+
+    # After training, aggregate the client parameters
+    attention_aggregator.eval()
     for key in global_state_dict:
-        print(f'update {key}')
-        # global_state_dict[key] += client_state_dict[key].to(device)
-        # Train the attention weights
-        # give old global_params impact
-        beta = 0.1
         client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
-        global_key_params = global_state_dict[key]
-        # Weighted average of median and old_global_params
-        coordinate_median, _ = torch.median(client_key_params, dim=0)
-        pseudo_ground_true = (coordinate_median + beta * global_key_params) / (1 + beta)
-        attention_aggregator = train_attention_weights(client_key_params, pseudo_ground_true)
+        global_key_params = global_state_dict[key].to(device)
 
-        # After training, aggregate the client parameters
-        attention_aggregator.eval()
-
-        # Weighted average of median and old_global_params
         aggregated_params = attention_aggregator(client_key_params)
+        # Weighted average of median and old_global_params
         global_state_dict[key] = (aggregated_params + beta * global_key_params) / (1 + beta)
 
     # Update the global model with the aggregated parameters
     global_model.load_state_dict(global_state_dict)
 
-#
 # """ LSTM + Attention for aggregation
 #
 #

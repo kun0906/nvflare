@@ -3,11 +3,11 @@
 
     $ssh kunyang@slogin-01.superpod.smu.edu
     $srun -A kunyang_nvflare_py31012_0001 -t 60 -G 1 -w bcm-dgxa100-0008 --pty $SHELL
-    $srun -A kunyang_nvflare_py31012_0001 -t 60 -G 1 --pty $SHELL
+    $srun -A kunyang_nvflare_py31012_0001 -t 260 -G 1 --pty $SHELL
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare
-    $PYTHONPATH=. python3 auto_labeling/gnn_fl_cvae.py
+    $PYTHONPATH=. python3 auto_labeling/gnn_fl_cvae_attention.py
 
 
 """
@@ -560,14 +560,16 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
 
 
 def aggregate_cvaes(vaes, global_cvae):
+    print('*aggregate cvaes...')
     client_parameters_list = [local_cvae.state_dict() for client_i, local_cvae in vaes.items()]
     # aggregate(client_parameters_list, global_cvae)
-    aggregate_with_attention(client_parameters_list, global_cvae)  # update global_cvae inplace
+    aggregate_with_attention(client_parameters_list, global_cvae, device)  # update global_cvae inplace
 
 
 def aggregate_gnns(gnns, global_gnn):
+    print('*aggregate gnn...')
     client_parameters_list = [local_gnn.state_dict() for client_i, local_gnn in gnns.items()]
-    aggregate_with_attention(client_parameters_list, global_gnn)  # update global_gnn inplace
+    aggregate_with_attention(client_parameters_list, global_gnn, device)  # update global_gnn inplace
 
 
 #
