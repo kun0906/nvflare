@@ -67,13 +67,8 @@ server_epochs = args.server_epochs
 print(f"label_rate: {label_rate}")
 print(f"server_epochs: {server_epochs}")
 
-LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-
-# LABELs = {0, 1}
-
 
 def gen_local_data(client_data_file, client_id=0, label_rate=0.1):
-
     if 'sent140' in client_data_file:
         return gen_local_data_sent140(client_data_file, client_id, label_rate)
     elif 'mnist' in client_data_file:
@@ -105,11 +100,11 @@ def gen_local_data_sent140(client_data_file, client_id=0, label_rate=0.1):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name, exist_ok=True)
 
-
     in_file = f'data/Sentiment140/data/{client_id}.pkl'
     with open(in_file, 'rb') as f:
         X, y, y_names = pickle.load(f)
 
+    y = [1 if v == 4 else v for v in y]
     X = torch.tensor(X)
     y = torch.tensor(y)
     # y_names = torch.tensor(np.array(y_names, dtype=object))
@@ -137,7 +132,6 @@ def gen_local_data_sent140(client_data_file, client_id=0, label_rate=0.1):
     torch.save(client_data, client_data_file)
 
     return client_data
-
 
 
 @timer
@@ -513,6 +507,7 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     ct = collections.Counter(y.tolist())
     max_size = max(ct.values())
     max_size = int(max_size * 0.1)  # for each class, only generate 10% percent data to save computational resources.
+    if max_size == 0: max_size = 1
     print(f'For each class, we only generate {max_size} samples, '
           f'and use labeled_classes_weights to address class imbalance issue.')
     sizes = {}
@@ -540,12 +535,13 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     y_indices = labels_mask.nonzero(as_tuple=True)[0].tolist()
     indices = torch.tensor(y_indices + generated_data_indices).to(device)
     new_y = labels[indices]
+    print(labeled_cnt.items(), flush=True)
     labeled_classes_weights = {k: sum(labeled_cnt.values()) / v for k, v in labeled_cnt.items()}
     labeled_classes_weights = {k: w / sum(labeled_classes_weights.values()) for k, w in
                                labeled_classes_weights.items()}  # normalize weights
     data['labeled_classes_weights'] = labeled_classes_weights
     print('new_y', collections.Counter(new_y.tolist()), ct.items(),
-          '\nlabeled_classes_weights', {k:float(f"{v:.2f}") for k, v in labeled_classes_weights.items()})
+          '\nlabeled_classes_weights', {k: float(f"{v:.2f}") for k, v in labeled_classes_weights.items()})
 
     train_info['threshold'] = None
     edges, edge_weight = gen_edges(features, edge_method='knn', train_info=train_info)  # will update threshold
@@ -1016,9 +1012,8 @@ def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, la
 
 
 @timer
-def main(in_dir, input_dim = 16):
+def main(in_dir, input_dim=16, num_classes=10):
     num_clients = len(LABELs)
-    num_classes = num_clients
     print(f'input_dim: {input_dim}')
 
     prefix = f'r_{label_rate}'
@@ -1113,10 +1108,14 @@ def main(in_dir, input_dim = 16):
 if __name__ == '__main__':
     in_dir = 'fl/mnist'
     input_dim = 16
+    num_classes = 10
+    LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 
     in_dir = 'fl/sent140'
     input_dim = 768
-    main(in_dir, input_dim)
+    num_classes = 2
+    LABELs = {0, 1}
+    main(in_dir, input_dim, num_classes)
 
     # history_file = f'{in_dir}/histories_cvae.pkl'
     # with open(history_file, 'rb') as f:

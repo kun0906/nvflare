@@ -157,9 +157,9 @@ def aggregate_with_mean_median(client_parameters_list, global_model, device=None
         client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
         global_key_params = global_state_dict[key].to(device)
         # Weighted average of median and old_global_params
-        coordinate_median, _ = torch.median(client_key_params, dim=0)
+        coordinate_median, _ = torch.median(client_key_params, dim=0)   # return median and index
         coordinate_median = coordinate_median.to(device)
-        coordinate_mean, _ = torch.mean(client_key_params, dim=0)
+        coordinate_mean = torch.mean(client_key_params, dim=0)  # only return mean
         coordinate_mean = coordinate_mean.to(device)
 
         # 0.5 mean + 0.5 median when beta=1.

@@ -101,6 +101,7 @@ def preprocessing():
             pickle.dump(client_data, f)
 
     for c in range(num_clients):
+        print(f'\nclient {c}...')
         client_data_file = f'{in_dir}/{c}_raw.pkl'
         with open(client_data_file, 'rb') as f:
             client_data = pickle.load(f)
