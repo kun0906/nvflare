@@ -16,6 +16,7 @@ import argparse
 import collections
 import multiprocessing as mp
 import os
+import pickle
 
 import numpy as np
 import torch
@@ -71,8 +72,76 @@ LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 # LABELs = {0, 1}
 
 
-@timer
 def gen_local_data(client_data_file, client_id=0, label_rate=0.1):
+
+    if 'sent140' in client_data_file:
+        return gen_local_data_sent140(client_data_file, client_id, label_rate)
+    elif 'mnist' in client_data_file:
+        return gen_local_data_mnist(client_data_file, client_id, label_rate)
+    else:
+        raise NotImplementedError
+
+
+@timer
+def gen_local_data_sent140(client_data_file, client_id=0, label_rate=0.1):
+    """ We assume num_client = num_classes, i.e., each client only has one class data
+
+    Args:
+        client_id:
+        label_rate=0.1： only 10% local data has labels
+    Returns:
+
+    """
+    # if os.path.exists(client_data_file):
+    #     with open(client_data_file, 'rb') as f:
+    #         client_data = pickle.load(f)
+    # Change torch.load call to include weights_only=True
+    # if os.path.exists(client_data_file):
+    #     with open(client_data_file, 'rb') as f:
+    #         client_data = torch.load(f, weights_only=False)
+    #     return client_data
+
+    dir_name = os.path.dirname(client_data_file)
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name, exist_ok=True)
+
+
+    in_file = f'data/Sentiment140/data/{client_id}.pkl'
+    with open(in_file, 'rb') as f:
+        X, y, y_names = pickle.load(f)
+
+    X = torch.tensor(X)
+    y = torch.tensor(y)
+    # y_names = torch.tensor(np.array(y_names, dtype=object))
+    # Generate local data, and only lable_rate=10% of them has labels
+    labels_mask = torch.tensor([False] * len(y), dtype=torch.bool)
+    cnt = X.size(0)
+    print(f"Class {client_id}: {cnt} images, y: {collections.Counter(y.tolist())}")
+    sampling_size = int(cnt * label_rate)
+    labeled_indices = torch.randperm(len(y))[:sampling_size]
+    # labeled_X = X[labeled_indices]
+    # labeled_y = y[labeled_indices]
+    labels_mask[labeled_indices] = True
+
+    features = X
+    shared_test_features = X
+    shared_targets = y
+    client_data = {'features': torch.tensor(features, dtype=torch.float), 'labels': y,
+                   'labels_mask': labels_mask,  # only 10% data has labels.
+                   'shared_test_data': {'features': torch.tensor(shared_test_features, dtype=torch.float),
+                                        'labels': shared_targets}
+                   }
+
+    # with open(client_data_file, 'wb') as f:
+    #     # pickle.dump(client_data, f)
+    torch.save(client_data, client_data_file)
+
+    return client_data
+
+
+
+@timer
+def gen_local_data_mnist(client_data_file, client_id=0, label_rate=0.1):
     """ We assume num_client = num_classes, i.e., each client only has one class data
 
     Args:
@@ -538,27 +607,6 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     train_info['gnn'] = {'graph_data': graph_data, "losses": losses}
 
 
-# @timer
-# def aggregate(client_parameters_list, global_model):
-#     # Initialize the aggregated state_dict for the global model
-#     global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
-#
-#     # Perform simple averaging of the parameters
-#     for client_state_dict in client_parameters_list:
-#
-#         # Aggregate parameters for each layer
-#         for key in global_state_dict:
-#             global_state_dict[key] += client_state_dict[key].to(device)
-#
-#     # Average the parameters across all clients
-#     num_clients = len(client_parameters_list)
-#     for key in global_state_dict:
-#         global_state_dict[key] /= num_clients
-#
-#     # Update the global model with the aggregated parameters
-#     global_model.load_state_dict(global_state_dict)
-
-
 def aggregate_cvaes(vaes, global_cvae):
     print('*aggregate cvaes...')
     client_parameters_list = [local_cvae.state_dict() for client_i, local_cvae in vaes.items()]
@@ -930,7 +978,7 @@ def print_histories(histories):
             local_cvae = client['cvae']
             local_gnn = client['gnn']
             print(f'\t*local cvae:', local_cvae.keys(), f' server_epoch: {s}')
-            losses_ = [f"{v:.2f}" for v in local_cvae['losses']]
+            losses_ = [float(f"{v:.2f}") for v in local_cvae['losses']]
             print(f'\t\tlocal cvae:', losses_)
             # print('\t*local gnn:', [f"{v:.2f}" for v in local_gnn['losses']])
 
@@ -968,10 +1016,9 @@ def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, la
 
 
 @timer
-def main(in_dir):
+def main(in_dir, input_dim = 16):
     num_clients = len(LABELs)
     num_classes = num_clients
-    input_dim = 16
     print(f'input_dim: {input_dim}')
 
     prefix = f'r_{label_rate}'
@@ -1064,8 +1111,12 @@ def main(in_dir):
 
 
 if __name__ == '__main__':
-    in_dir = 'fl'
-    main(in_dir)
+    in_dir = 'fl/mnist'
+    input_dim = 16
+
+    in_dir = 'fl/sent140'
+    input_dim = 768
+    main(in_dir, input_dim)
 
     # history_file = f'{in_dir}/histories_cvae.pkl'
     # with open(history_file, 'rb') as f:

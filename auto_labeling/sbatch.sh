@@ -7,11 +7,11 @@
 #SBATCH --mem=16G                            # Memory per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU (adjust if needed)
 #SBATCH --time=05:00:00                      # Time limit in hrs:min:sec
-#SBATCH --array=0-3                         # Array range for combinations
+#SBATCH --array=0-1                         # Array range for combinations
 
 # Define the parameter combinations (distill_weight, epochs)
-params1=(0.01 0.1 0.5 1)
-param2=(50)
+params1=(0.1)
+param2=(1000)
 
 # Calculate the total number of combinations
 num_combinations=${#params1[@]} * ${#param2[@]}
@@ -34,5 +34,5 @@ conda activate nvflare-3.10
 # Run your script with the selected parameters
 cd ~/nvflare
 pwd
-PYTHONPATH=. python3 auto_labeling/gnn_fl_cvae.py $PARAM
+PYTHONPATH=. python3 auto_labeling/gnn_fl_cvae_attention.py $PARAM
 

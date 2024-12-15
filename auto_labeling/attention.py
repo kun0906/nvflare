@@ -42,7 +42,7 @@ def train_attention_weights(client_parameters_list, global_state_dict, beta, dev
 
     num_clients = len(client_parameters_list)
     # input_dim = client_params[0]
-    num_epochs = 101
+    num_epochs = 1001
     lr = 1e-3
     attention_aggregator = AttentionAggregation(num_clients, device)
     attention_aggregator.to(device)
@@ -120,21 +120,93 @@ def aggregate_with_attention(client_parameters_list, global_model, device=None):
     """
     Train the attention weights and then initialize the global model with aggregated parameters.
     """
+    # global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
+    #
+    # # Aggregate parameters, we have one attention.
+    # beta = 1
+    # attention_aggregator = train_attention_weights(client_parameters_list, global_state_dict, beta, device)
+    #
+    # # After training, aggregate the client parameters
+    # attention_aggregator.eval()
+    # for key in global_state_dict:
+    #     client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
+    #     global_key_params = global_state_dict[key].to(device)
+    #
+    #     aggregated_params = attention_aggregator(client_key_params)
+    #     # Weighted average of median and old_global_params
+    #
+    #     global_state_dict[key] = (aggregated_params + beta * global_key_params) / (1 + beta)
+    #
+    # # Update the global model with the aggregated parameters
+    # global_model.load_state_dict(global_state_dict)
+
+    # aggregate_with_median(client_parameters_list, global_model, device)
+    # aggregate_with_mean(client_parameters_list, global_model, device) # worked
+    aggregate_with_mean_median(client_parameters_list, global_model, device)
+
+
+def aggregate_with_mean_median(client_parameters_list, global_model, device=None):
+    """
+    Train the attention weights and then initialize the global model with aggregated parameters.
+    """
     global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
-
-    # Aggregate parameters, we have one attention.
-    beta = 0.5
-    attention_aggregator = train_attention_weights(client_parameters_list, global_state_dict, beta, device)
-
-    # After training, aggregate the client parameters
-    attention_aggregator.eval()
+    beta = 1
     for key in global_state_dict:
+        # Train the attention weights
+        # give old global_params impact
         client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
         global_key_params = global_state_dict[key].to(device)
-
-        aggregated_params = attention_aggregator(client_key_params)
         # Weighted average of median and old_global_params
-        global_state_dict[key] = (aggregated_params + beta * global_key_params) / (1 + beta)
+        coordinate_median, _ = torch.median(client_key_params, dim=0)
+        coordinate_median = coordinate_median.to(device)
+        coordinate_mean, _ = torch.mean(client_key_params, dim=0)
+        coordinate_mean = coordinate_mean.to(device)
+
+        # 0.5 mean + 0.5 median when beta=1.
+        aggregated_params = (coordinate_median + beta * coordinate_mean) / (1 + beta)
+
+        global_state_dict[key] = aggregated_params
+
+        # Update the global model with the aggregated parameters
+    global_model.load_state_dict(global_state_dict)
+
+
+def aggregate_with_median(client_parameters_list, global_model, device=None):
+    """
+    Train the attention weights and then initialize the global model with aggregated parameters.
+    """
+    global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
+    beta = 0
+    for key in global_state_dict:
+        # Train the attention weights
+        # give old global_params impact
+        client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
+        global_key_params = global_state_dict[key].to(device)
+        # Weighted average of median and old_global_params
+        coordinate_median, _ = torch.median(client_key_params, dim=0)
+        coordinate_median = coordinate_median.to(device)
+        aggregated_params = (coordinate_median + beta * global_key_params) / (1 + beta)
+        global_state_dict[key] = aggregated_params
+
+        # Update the global model with the aggregated parameters
+    global_model.load_state_dict(global_state_dict)
+
+
+def aggregate_with_mean(client_parameters_list, global_model, device):
+    # Initialize the aggregated state_dict for the global model
+    global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
+
+    # Perform simple averaging of the parameters
+    for client_state_dict in client_parameters_list:
+
+        # Aggregate parameters for each layer
+        for key in global_state_dict:
+            global_state_dict[key] += client_state_dict[key].to(device)
+
+    # Average the parameters across all clients
+    num_clients = len(client_parameters_list)
+    for key in global_state_dict:
+        global_state_dict[key] /= num_clients
 
     # Update the global model with the aggregated parameters
     global_model.load_state_dict(global_state_dict)
