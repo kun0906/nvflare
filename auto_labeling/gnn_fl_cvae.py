@@ -444,6 +444,7 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     ct = collections.Counter(y.tolist())
     max_size = max(ct.values())
     max_size = int(max_size * 0.1)  # for each class, only generate 10% percent data to save computational resources.
+    if max_size == 0: max_size = 1
     print(f'For each class, we only generate {max_size} samples, '
           f'and use labeled_classes_weights to address class imbalance issue.')
     sizes = {}
@@ -1061,7 +1062,7 @@ def main(in_dir):
 
 
 if __name__ == '__main__':
-    in_dir = 'fl'
+    in_dir = 'fl/mnist'
     main(in_dir)
 
     # history_file = f'{in_dir}/histories_cvae.pkl'

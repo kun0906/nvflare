@@ -19,6 +19,7 @@ from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 from torchvision import datasets, transforms
 
+from auto_labeling.baseline import DecisionTree
 from auto_labeling.pretrained import pretrained_CNN
 from utils import timer
 
@@ -138,7 +139,8 @@ def train_gnn(model, criterion, optimizer, data, epochs=10):
         loss.backward()
         optimizer.step()
 
-        print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}, train_mask: {sum(data.train_mask)}")
+        if epoch % 50 == 0:
+            print(f"Epoch {epoch }/{epochs}, Loss: {loss.item()}, train_mask: {sum(data.train_mask)}")
 
 
 @timer
@@ -172,7 +174,7 @@ def gen_features(feature_file='feature.pkl', label_percent=0.1):
     total_size = len(train_data)
     subset_size = int(total_size * label_percent)  # 10%
     # Generate random indices
-    indices = torch.randperm(total_size).tolist()[:subset_size]
+    indices = torch.randperm(total_size).tolist()[:subset_size]     # only labeled data indices.
     # Create a Subset of the dataset using the selected indices
     labeled_data = torch.utils.data.Subset(train_data, indices)
     # unlabeled_data = torch.utils.data.Subset(train_data, range(num_labeled, len(train_data)))
@@ -186,7 +188,7 @@ def gen_features(feature_file='feature.pkl', label_percent=0.1):
     train_features = extract_features(train_data, pretrained_cnn)
     print(train_features.shape)
 
-    labels = train_data.targets
+    labels = train_data.targets.numpy()
     train_info = {'train_features': train_features, 'train_labels': labels, "indices": indices}
 
     with open(feature_file, 'wb') as f:
@@ -265,8 +267,10 @@ def gen_edges(train_features, edge_method='cosine'):
 @timer
 def gen_graph_data(train_info, graph_data_file='graph_data.pkl'):
     train_features = train_info['train_features']
-    indices = train_info['indices']
-    train_labels = train_info['train_labels']
+    indices = train_info['indices']     # only labeled data indices
+    # all data's indices as ground truth (not used in the training data,
+    # only for test evaluation)
+    train_labels = torch.tensor(train_info['train_labels'])
 
     edges, edge_attr = gen_edges(train_features, edge_method='cosine')
     print(f"edges.shape {edges.shape}")
@@ -275,7 +279,7 @@ def gen_graph_data(train_info, graph_data_file='graph_data.pkl'):
 
     # Create train mask (10% labeled, 90% unlabeled)
     train_mask = torch.zeros(len(train_features), dtype=torch.bool)
-    train_mask[indices] = 1
+    train_mask[indices] = 1     # only mask the labeled data as 1, others as 0
 
     # Create labels (10% labeled, others are -1 or placeholder)
     labels = torch.full((len(train_features),), -1, dtype=torch.long)  # Initialize labels
@@ -292,29 +296,29 @@ def gen_graph_data(train_info, graph_data_file='graph_data.pkl'):
 
 
 @timer
-def main():
-    feature_file = 'feature.pkl'
+def main(in_dir='data'):
+    feature_file = f'{in_dir}/feature.pkl'
     if not os.path.exists(feature_file):
-        gen_features(feature_file, label_percent=0.1)   # only 10% data have labels during the training
+        gen_features(feature_file, label_percent=0.1)   # only 10% data has labels during the training
     with open(feature_file, 'rb') as f:
         train_info = pickle.load(f)
     # Evaluate with Decision Tree to check if the features extracted by CNN are good.
-    # baseline.py
+    # DecisionTree(train_info)    # from baseline.py
 
-    graph_data_file = 'graph_data.pkl'
+    graph_data_file = f'{in_dir}/graph_data.pkl'
     # if not os.path.exists(graph_data_file):
     gen_graph_data(train_info, graph_data_file)
 
     # Get the size of the file in bytes
     file_size = os.path.getsize(graph_data_file) / 1024 ** 3
     print(f'Loading graph data from {graph_data_file}: {file_size:.2f}GB.')
-    with open(graph_data_file, 'rb') as f:
-        data = torch.load(f, weights_only=None)
+    data = torch.load(graph_data_file, weights_only=None)
     print(f"Graph_data {data}")
     data.to(device)
 
+    _, input_dim = data.x.shape
     # Initialize model and move to GPU
-    gnn = GNNModel(input_dim=64, hidden_dim=32, output_dim=10)
+    gnn = GNNModel(input_dim=input_dim, hidden_dim=32, output_dim=10)
     # gnn = GraphSAGEModel(input_dim=64, hidden_dim=32, output_dim=10)
     # gnn = GATModel(input_dim=64, hidden_dim=32, output_dim=10, heads=2)
     gnn.to(device)
@@ -323,7 +327,7 @@ def main():
     optimizer = optim.Adam(gnn.parameters(), lr=0.01)
 
     print('Training gnn model...')
-    train_gnn(gnn, criterion, optimizer, data, epochs=20)
+    train_gnn(gnn, criterion, optimizer, data, epochs=10000)
 
     # After training, the model can make predictions for both labeled and unlabeled nodes
     print('Testing gnn model...')
@@ -349,8 +353,8 @@ def main():
 
         # Calculate accuracy for all data
         print(f'Evaluate on all data')
-        true_labels = train_info['train_labels']
-        y = true_labels.cpu().numpy()
+        true_labels = torch.tensor(train_info['train_labels'])
+        y = true_labels.numpy()
         y_pred = predicted_labels.cpu().numpy()
         accuracy = accuracy_score(y, y_pred)
         print(f"Accuracy on all data: {accuracy * 100:.2f}%")

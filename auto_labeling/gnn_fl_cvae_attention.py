@@ -44,7 +44,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Test Demo Script")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.01,
+    parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.1,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=100,
                         help="The number of epochs (integer).")
@@ -69,16 +69,14 @@ print(f"server_epochs: {server_epochs}")
 
 
 def gen_local_data(client_data_file, client_id=0, label_rate=0.1):
-    if 'sent140' in client_data_file:
-        return gen_local_data_sent140(client_data_file, client_id, label_rate)
-    elif 'mnist' in client_data_file:
+    if 'mnist' in client_data_file:
         return gen_local_data_mnist(client_data_file, client_id, label_rate)
     else:
-        raise NotImplementedError
+        return _gen_local_data(client_data_file, client_id, label_rate)
 
 
 @timer
-def gen_local_data_sent140(client_data_file, client_id=0, label_rate=0.1):
+def _gen_local_data(client_data_file, client_id, label_rate, data_name='sent140'):
     """ We assume num_client = num_classes, i.e., each client only has one class data
 
     Args:
@@ -100,11 +98,19 @@ def gen_local_data_sent140(client_data_file, client_id=0, label_rate=0.1):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name, exist_ok=True)
 
-    in_file = f'data/Sentiment140/data/{client_id}.pkl'
+    print(client_data_file)
+    if 'shakespeare' in client_data_file:
+        in_file = f'data/SHAKESPEARE/data/{client_id}.pkl'
+    elif 'reddit' in client_data_file:
+        in_file = f'data/REDDIT/data/{client_id}.pkl'
+    elif 'sent140' in client_data_file:
+        in_file = f'data/Sentiment140/data/{client_id}.pkl'
+    else:
+        raise NotImplementedError
+
     with open(in_file, 'rb') as f:
         X, y, y_names = pickle.load(f)
 
-    y = [1 if v == 4 else v for v in y]
     X = torch.tensor(X)
     y = torch.tensor(y)
     # y_names = torch.tensor(np.array(y_names, dtype=object))
@@ -327,17 +333,62 @@ def train_cvae(local_cvae, global_cvae, local_data, train_info={}):
     train_info['cvae'] = {"losses": losses}
 
 
-def gen_data(cvae, sizes):
-    data = {}
-    for l, size in sizes.items():
+# pip install sentencepiece
+from transformers import T5Tokenizer, T5ForConditionalGeneration, BertTokenizer, BertModel
+
+# Initialize the BERT model and tokenizer for embedding extraction
+bert_model = BertModel.from_pretrained("bert-base-uncased")
+bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+# Initialize the T5 model and tokenizer
+t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
+t5_tokenizer = T5Tokenizer.from_pretrained("t5-small")
+
+
+def _gen_models(model, l, size, method='T5'):
+    if method == 'T5':
+        # Select a class label and concatenate with random latent vector
+        class_label = l
+        input_text = f"{class_label}: This is a sample text to generate embedding."
+
+        # Tokenize the input
+        inputs = tokenizer(input_text, return_tensors="pt", truncation=True, padding=True, max_length=512)
+
+        # Generate text
+        outputs = model.generate(**inputs)
+
+        # Decode the output and get embeddings (e.g., use BERT or the model's own hidden states)
+        generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        # Now, use BERT to get the 768-dimensional embedding for the generated text
+        encoded_input = bert_tokenizer(generated_text, return_tensors="pt", truncation=True, padding=True,
+                                       max_length=512)
+        with torch.no_grad():
+            outputs = bert_model(**encoded_input)
+
+        # Get the embedding from the [CLS] token (first token)
+        cls_embedding = outputs.last_hidden_state[:, 0, :].squeeze().numpy()
+        # Print the shape of the CLS embedding
+        print(f"CLS Embedding Shape: {cls_embedding.shape}")
+        embedding = cls_embedding
+
+    else:  # default one is autoencoder
+        cvae = model
         latent_dim = cvae.decoder.latent_dim
         # generate latent vector from N(0, 1)
         z = torch.randn(size, latent_dim).to(device)  # Sample latent vectors
-        cvae.to(device)
         ohe_labels = torch.zeros((size, len(LABELs))).to(device)  # One-hot encoding for class labels
         ohe_labels[:, l] = 1
-
         pseudo_logits = cvae.decoder(z, ohe_labels)  # Reconstruct probabilities from latent space
+        embedding = pseudo_logits
+
+    return embedding
+
+
+def gen_data(cvae, sizes):
+    data = {}
+    for l, size in sizes.items():
+        cvae.to(device)
+        pseudo_logits = _gen_models(cvae, l, size, method='cvae')
         pseudo_logits = pseudo_logits.detach().to(device)
 
         features = pseudo_logits
@@ -718,6 +769,47 @@ def vae_loss_function(recon_x, x, mean, log_var):
     # KLD = 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
     return BCE + KLD, {'BCE': BCE, 'KLD': KLD}
+
+
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+import torch
+
+# Initialize the model and tokenizer
+model_name = "t5-small"  # You can replace this with "t5-base" or "t5-large"
+tokenizer = T5Tokenizer.from_pretrained(model_name)
+model = T5ForConditionalGeneration.from_pretrained(model_name)
+
+# Example class labels for "comedy", "tragedy", "history"
+class_labels = ['comedy', 'tragedy', 'history']
+
+# Random latent vectors (sample 500 random latent points)
+random_latents = torch.randn(500, 768)  # Example random latent vectors
+
+# Generate embeddings
+generated_embeddings = []
+
+for i in range(500):
+    # Select a class label and concatenate with random latent vector
+    class_label = class_labels[i % len(class_labels)]  # Alternate through classes
+    input_text = f"{class_label}: This is a sample text to generate embedding."
+
+    # Tokenize the input
+    inputs = tokenizer(input_text, return_tensors="pt", truncation=True, padding=True, max_length=512)
+
+    # Generate text
+    outputs = model.generate(**inputs)
+
+    # Decode the output and get embeddings (e.g., use BERT or the model's own hidden states)
+    generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    # Optionally, extract embeddings from a model like BERT (e.g., using [CLS] token)
+    embedding = model.encoder(inputs['input_ids']).last_hidden_state[:, 0, :].detach().numpy()
+
+    # Store the generated embeddings
+    generated_embeddings.append(embedding)
+
+# Convert list to numpy array for further use
+generated_embeddings = np.array(generated_embeddings)
 
 
 class GNN(nn.Module):
@@ -1106,15 +1198,25 @@ def main(in_dir, input_dim=16, num_classes=10):
 
 
 if __name__ == '__main__':
-    in_dir = 'fl/mnist'
-    input_dim = 16
+    # in_dir = 'fl/mnist'
+    # input_dim = 16
+    # num_classes = 10
+    # LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+    #
+    # in_dir = 'fl/sent140'
+    # input_dim = 768
+    # num_classes = 2
+    # LABELs = {0, 1}
+
+    # in_dir = 'fl/shakespeare'
+    # input_dim = 768
+    # num_classes = 3
+    # LABELs = {0, 1, 2}
+
+    in_dir = 'fl/reddit'
+    input_dim = 768
     num_classes = 10
     LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-
-    in_dir = 'fl/sent140'
-    input_dim = 768
-    num_classes = 2
-    LABELs = {0, 1}
     main(in_dir, input_dim, num_classes)
 
     # history_file = f'{in_dir}/histories_cvae.pkl'

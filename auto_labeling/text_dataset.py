@@ -131,4 +131,46 @@ datasets with images and multiple annotations:
    - Available from: [COVID-19 Radiography Database]
    (https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database)
 
+
+Here are some healthcare datasets where each image may have **multiple labels**:
+
+### 1. **ChestX-ray14**
+   - **Description**: This dataset contains 112,120 frontal chest X-ray images with 14 different labels for disease classification. Each image can have multiple labels, as one image might show multiple conditions (e.g., pneumonia, tuberculosis, and other abnormalities).
+   - **Labels**: Diseases such as pneumonia, pleural effusion, tuberculosis, etc.
+   - **Link**: [ChestX-ray14](https://nihcc.app.box.com/v/ChestXray-NIHCC)
+
+### 2. **RSNA Pneumonia Detection Challenge**
+   - **Description**: This dataset consists of chest X-ray images where each image can have multiple labels, such as "no finding", "pneumonia", "consolidation", or "atelectasis". Multiple conditions may be identified in a single X-ray image.
+   - **Labels**: Various pathologies like pneumonia, consolidation, etc.
+   - **Link**: [RSNA Pneumonia Detection Challenge](https://www.kaggle.com/c/rsna-pneumonia-detection-challenge)
+
+### 3. **ADE20K**
+   - **Description**: While not strictly a healthcare dataset, ADE20K is used in medical image segmentation,
+   where each image can have multiple objects or labels, such as different organs, structures, or lesions.
+   For example, an abdominal CT scan may have labels for the liver, kidneys, and intestines.
+   - **Labels**: Over 150 categories including anatomy, structures, and organs.
+   - **Link**: [ADE20K](https://groups.csail.mit.edu/vision/datasets/ADE20K/)
+
+### 4. **MedNIST**
+   - **Description**: MedNIST is a medical imaging dataset for multi-class classification,
+   including different medical imaging types such as X-rays, CT scans, and MRIs.
+   Some images in the dataset may have multiple labels, such as multiple findings on a chest X-ray.
+   - **Labels**: 10 categories like lung nodules, brain tumors, etc.
+   - **Link**: [MedNIST](https://github.com/MedNIST/MedNIST)
+
+### 5. **MIMIC-CXR**
+   - **Description**: MIMIC-CXR is a large dataset of chest X-ray images.
+   Each image is annotated with multiple labels for diseases such as pneumonia, lung cancer, heart failure, and more.
+   - **Labels**: Various conditions including pneumonia, lung masses, cardiomegaly, etc.
+   - **Link**: [MIMIC-CXR](https://physionet.org/content/mimic-cxr-jpg/2.0.0/)
+
+### 6. **LUNA16**
+   - **Description**: The LUNA16 dataset is used for lung nodule detection. Images might contain multiple nodules, and each nodule is labeled accordingly. Thus, images can have multiple labels.
+   - **Labels**: Lung nodules.
+   - **Link**: [LUNA16](https://luna16.grand-challenge.org/)
+
+These datasets feature medical images with multi-label annotations, which means that one image can have more than one label indicating different conditions or anatomical structures. These datasets are used for various machine learning tasks, including multi-label classification and segmentation.
+
 """
+
+

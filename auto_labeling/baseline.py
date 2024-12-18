@@ -8,18 +8,22 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def main():
-    feature_file = 'feature.pkl'
-    # semi_ml_pretrain.gen_features(feature_file)
-    with open(feature_file, 'rb') as f:
-        train_info = pickle.load(f)
+def DecisionTree(train_info):
+    # feature_file = 'feature.pkl'
+    # # semi_ml_pretrain.gen_features(feature_file)
+    # with open(feature_file, 'rb') as f:
+    #     train_info = pickle.load(f)
     train_features = train_info['train_features']
-    indices = train_info['indices']
+    indices = np.array(train_info['indices'])
     train_labels = train_info['train_labels']
     # Assuming `train_features` and `train_labels` are your features and labels respectively
 
-    # Split the dataset into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(train_features, train_labels, test_size=0.2, random_state=42)
+    # # Split the dataset into training and testing sets
+    # X_train, X_test, y_train, y_test = train_test_split(train_features, train_labels, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_features[indices], train_features, train_labels[indices], train_labels
+    # mask = np.array([False] * len(train_features))  # Example boolean mask
+    # mask[indices] = True
+    # X_train, X_test, y_train, y_test = train_features[mask], train_features[~mask], train_labels[mask], train_labels[~mask]
 
     # Initialize the Decision Tree Classifier
     clf = DecisionTreeClassifier(random_state=42)
@@ -27,13 +31,20 @@ def main():
     # Train the classifier on the training data
     clf.fit(X_train, y_train)
 
+    # Make predictions on the training data
+    y_pred = clf.predict(X_train)
+    # Calculate accuracy
+    accuracy = accuracy_score(y_train, y_pred)
+    print(f"Accuracy of the Decision Tree: {accuracy * 100:.2f}%")
+    # Compute confusion matrix
+    cm = confusion_matrix(y_train, y_pred)
+    print(cm)
+
     # Make predictions on the test data
     y_pred = clf.predict(X_test)
-
     # Calculate accuracy
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Accuracy of the Decision Tree: {accuracy * 100:.2f}%")
-
     # Compute confusion matrix
     cm = confusion_matrix(y_test, y_pred)
     print(cm)
@@ -48,4 +59,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    DecisionTree()

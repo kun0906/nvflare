@@ -141,8 +141,8 @@ def aggregate_with_attention(client_parameters_list, global_model, device=None):
     # global_model.load_state_dict(global_state_dict)
 
     # aggregate_with_median(client_parameters_list, global_model, device)
-    # aggregate_with_mean(client_parameters_list, global_model, device) # worked
-    aggregate_with_mean_median(client_parameters_list, global_model, device)
+    aggregate_with_mean(client_parameters_list, global_model, device) # worked
+    # aggregate_with_mean_median(client_parameters_list, global_model, device)
 
 
 def aggregate_with_mean_median(client_parameters_list, global_model, device=None):
@@ -155,7 +155,7 @@ def aggregate_with_mean_median(client_parameters_list, global_model, device=None
         # Train the attention weights
         # give old global_params impact
         client_key_params = torch.stack([vs[key] for vs in client_parameters_list])
-        global_key_params = global_state_dict[key].to(device)
+        # global_key_params = global_state_dict[key].to(device)
         # Weighted average of median and old_global_params
         coordinate_median, _ = torch.median(client_key_params, dim=0)   # return median and index
         coordinate_median = coordinate_median.to(device)
