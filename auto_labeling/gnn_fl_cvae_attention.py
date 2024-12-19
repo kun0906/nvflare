@@ -18,18 +18,14 @@ import multiprocessing as mp
 import os
 import pickle
 
-import numpy as np
 import torch
 import torch.optim as optim
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.metrics.pairwise import cosine_similarity
-from torch.utils.data import DataLoader
 from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
-from torchvision import datasets, transforms
 
 from auto_labeling.attention import aggregate_with_attention
-from auto_labeling.pretrained import pretrained_CNN
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -68,15 +64,8 @@ print(f"label_rate: {label_rate}")
 print(f"server_epochs: {server_epochs}")
 
 
-def gen_local_data(client_data_file, client_id=0, label_rate=0.1):
-    if 'mnist' in client_data_file:
-        return gen_local_data_mnist(client_data_file, client_id, label_rate)
-    else:
-        return _gen_local_data(client_data_file, client_id, label_rate)
-
-
 @timer
-def _gen_local_data(client_data_file, client_id, label_rate, data_name='sent140'):
+def gen_local_data(client_data_file, client_id, label_rate):
     """ We assume num_client = num_classes, i.e., each client only has one class data
 
     Args:
@@ -99,20 +88,24 @@ def _gen_local_data(client_data_file, client_id, label_rate, data_name='sent140'
         os.makedirs(dir_name, exist_ok=True)
 
     print(client_data_file)
-    if 'shakespeare' in client_data_file:
+    if 'mnist' in client_data_file:
+        in_file = f'data/MNIST/data/{client_id}.pkl'
+    elif 'shakespeare' in client_data_file:
         in_file = f'data/SHAKESPEARE/data/{client_id}.pkl'
     elif 'reddit' in client_data_file:
         in_file = f'data/REDDIT/data/{client_id}.pkl'
     elif 'sent140' in client_data_file:
         in_file = f'data/Sentiment140/data/{client_id}.pkl'
+    elif 'pubmed' in client_data_file:
+        in_file = f'data/PubMed/data/{client_id}.pkl'
     else:
         raise NotImplementedError
 
     with open(in_file, 'rb') as f:
-        X, y, y_names = pickle.load(f)
+        client_data = pickle.load(f)
 
-    X = torch.tensor(X)
-    y = torch.tensor(y)
+    X = torch.tensor(client_data['X'])
+    y = torch.tensor(client_data['y'])
     # y_names = torch.tensor(np.array(y_names, dtype=object))
     # Generate local data, and only lable_rate=10% of them has labels
     labels_mask = torch.tensor([False] * len(y), dtype=torch.bool)
@@ -125,11 +118,11 @@ def _gen_local_data(client_data_file, client_id, label_rate, data_name='sent140'
     labels_mask[labeled_indices] = True
 
     features = X
-    shared_test_features = X
-    shared_targets = y
-    client_data = {'features': torch.tensor(features, dtype=torch.float), 'labels': y,
+    shared_test_features = torch.tensor(client_data['shared_data']['X'])
+    shared_targets = torch.tensor(client_data['shared_data']['y'])
+    client_data = {'features': features.clone().detach(), 'labels': y,
                    'labels_mask': labels_mask,  # only 10% data has labels.
-                   'shared_test_data': {'features': torch.tensor(shared_test_features, dtype=torch.float),
+                   'shared_test_data': {'features': shared_test_features.clone().detach(),
                                         'labels': shared_targets}
                    }
 
@@ -138,139 +131,6 @@ def _gen_local_data(client_data_file, client_id, label_rate, data_name='sent140'
     torch.save(client_data, client_data_file)
 
     return client_data
-
-
-@timer
-def gen_local_data_mnist(client_data_file, client_id=0, label_rate=0.1):
-    """ We assume num_client = num_classes, i.e., each client only has one class data
-
-    Args:
-        client_id:
-        label_rate=0.1： only 10% local data has labels
-    Returns:
-
-    """
-    # if os.path.exists(client_data_file):
-    #     with open(client_data_file, 'rb') as f:
-    #         client_data = pickle.load(f)
-    # Change torch.load call to include weights_only=True
-    if os.path.exists(client_data_file):
-        with open(client_data_file, 'rb') as f:
-            client_data = torch.load(f, weights_only=False)
-        return client_data
-
-    dir_name = os.path.dirname(client_data_file)
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name, exist_ok=True)
-
-    # transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-    transform = transforms.Compose([transforms.Grayscale(num_output_channels=3), transforms.ToTensor(),
-                                    transforms.Normalize((0.5,), (0.5,))])
-    train_dataset = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
-    # Extract data and targets
-    data = train_dataset.data  # Tensor of shape (60000, 28, 28)
-    targets = train_dataset.targets  # Tensor of shape (60000,)
-
-    # Generate local data, and only lable_rate=10% of them has labels
-    X = data[targets == client_id]
-    y = targets[targets == client_id]
-    labels_mask = torch.tensor([False] * len(y), dtype=torch.bool)
-    cnt = X.size(0)
-    print(f"Class {client_id}: {cnt} images, y: {collections.Counter(y.tolist())}")
-    sampling_size = int(cnt * label_rate)
-    labeled_indices = torch.randperm(len(y))[:sampling_size]
-    labeled_X = X[labeled_indices]
-    labeled_y = y[labeled_indices]
-    labels_mask[labeled_indices] = True
-
-    labeled_data = CustomDataset(labeled_X, labeled_y, transform=transform)
-    labeled_loader = torch.utils.data.DataLoader(labeled_data, batch_size=64, shuffle=True)
-    # Use the local labeled data to fine-tune CNN
-    pretrained_cnn = pretrained_CNN(labeled_loader, device=device)
-
-    # Extract features for both labeled and unlabeled data
-    data_ = CustomDataset(X, y, transform=transform)
-    features = extract_features(data_, pretrained_cnn)
-    print(features.shape)
-
-    # *** Each client has its own pretrained_cnn, which leads to different extracted features on the shared test data ***
-    # The following test_data (shared by all clients) is used to test each client model's performance, which includes
-    # all 10 classes; however, in practice it may not exist.
-    test_dataset = datasets.MNIST(root="./data", train=False, transform=transform, download=True)
-    shared_data = test_dataset.data  # Tensor of shape (60000, 28, 28)
-    shared_targets = test_dataset.targets  # Tensor of shape (60000,)
-    shared_data_ = CustomDataset(shared_data, shared_targets, transform=transform)
-    shared_test_features = extract_features(shared_data_, pretrained_cnn)
-    client_data = {'features': torch.tensor(features, dtype=torch.float), 'labels': y,
-                   'labels_mask': labels_mask,  # only 10% data has labels.
-                   'shared_test_data': {'features': torch.tensor(shared_test_features, dtype=torch.float),
-                                        'labels': shared_targets}
-                   }
-
-    # with open(client_data_file, 'wb') as f:
-    #     # pickle.dump(client_data, f)
-    torch.save(client_data, client_data_file)
-
-    return client_data
-
-
-@timer
-# Extract features using the fine-tuned CNN for all the images (labeled + unlabeled)
-def extract_features(dataset, pretrained_cnn):
-    pretrained_cnn.eval()  # Set the model to evaluation mode
-    # pretrained_cnn.eval() ensures that layers like batch normalization and dropout behave appropriately
-    # for inference (i.e., no training-specific behavior).
-    features = []
-    # Create a DataLoader to load data in batches
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=False)
-
-    for imgs, _ in dataloader:
-        imgs = imgs.to(device)  # Move the batch of images to GPU
-        with torch.no_grad():
-            feature = pretrained_cnn(imgs)  # Forward pass through the pretrained CNN
-        features.append(feature.cpu().numpy())  # Convert feature to numpy
-
-    # Flatten the list of features
-    return np.concatenate(features, axis=0)
-
-
-from torch.utils.data import Dataset
-
-
-# Custom Dataset class with transform support
-class CustomDataset(Dataset):
-    def __init__(self, data, targets, transform=None):
-        self.data = data
-        self.targets = targets
-        self.transform = transform  # Add transform
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        # sample = self.data[idx]
-        # target = self.targets[idx]
-        #
-        # # Apply transform if available
-        # if self.transform:
-        #     sample = self.transform(sample)
-        #
-        # return sample, target
-
-        img, target = self.data[idx], int(self.targets[idx])
-
-        # doing this so that it is consistent with all other datasets
-        # to return a PIL Image
-        from PIL import Image
-        img = Image.fromarray(img.numpy(), mode="L")
-
-        if self.transform is not None:
-            img = self.transform(img)
-
-        # if self.target_transform is not None:
-        #     target = self.target_transform(target)
-
-        return img, target
 
 
 # def vae_loss_function(recon_x, x, mu, logvar):
@@ -333,19 +193,20 @@ def train_cvae(local_cvae, global_cvae, local_data, train_info={}):
     train_info['cvae'] = {"losses": losses}
 
 
-# pip install sentencepiece
-from transformers import T5Tokenizer, T5ForConditionalGeneration, BertTokenizer, BertModel
-
-# Initialize the BERT model and tokenizer for embedding extraction
-bert_model = BertModel.from_pretrained("bert-base-uncased")
-bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-# Initialize the T5 model and tokenizer
-t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
-t5_tokenizer = T5Tokenizer.from_pretrained("t5-small")
-
-
 def _gen_models(model, l, size, method='T5'):
     if method == 'T5':
+
+        # pip install sentencepiece
+        from transformers import T5Tokenizer, T5ForConditionalGeneration, BertTokenizer, BertModel
+
+        # Initialize the BERT model and tokenizer for embedding extraction
+        bert_model = BertModel.from_pretrained("bert-base-uncased")
+        bert_tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+        # Initialize the T5 model and tokenizer
+        t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")
+        t5_tokenizer = T5Tokenizer.from_pretrained("t5-small")
+        tokenizer = t5_tokenizer
+
         # Select a class label and concatenate with random latent vector
         class_label = l
         input_text = f"{class_label}: This is a sample text to generate embedding."
@@ -654,11 +515,64 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     train_info['gnn'] = {'graph_data': graph_data, "losses": losses}
 
 
-def aggregate_cvaes(vaes, global_cvae):
+def aggregate_cvaes(vaes, locals_info, global_cvae):
     print('*aggregate cvaes...')
     client_parameters_list = [local_cvae.state_dict() for client_i, local_cvae in vaes.items()]
     # aggregate(client_parameters_list, global_cvae)
-    aggregate_with_attention(client_parameters_list, global_cvae, device)  # update global_cvae inplace
+    aggregate_method = 'global train'
+    if aggregate_method == 'parameter':  # aggregate clients' parameters
+        aggregate_with_attention(client_parameters_list, global_cvae, device)  # update global_cvae inplace
+    else:
+        # train a new model on generated data by clients' vaes
+        # global_cvae.load_state_dict(global_cvae.state_dict())
+        optimizer = optim.Adam(global_cvae.parameters(), lr=0.001)
+
+        losses = []
+        for epoch in range(101):
+            loss_epoch = 0
+            for client_i, local_cvae_state_dict in enumerate(client_parameters_list):
+                label_cnts = locals_info[client_i]['label_cnts']
+                # Initialize local_cvae with global_cvae
+                local_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=len(LABELs))
+                local_cvae.load_state_dict(local_cvae_state_dict)
+                local_cvae.to(device)
+
+                z = []
+                ohe_labels = []
+                latent_dim = local_cvae.decoder.latent_dim
+                for l, size in label_cnts.items():
+                    # generate latent vector from N(0, 1)
+                    z_ = torch.randn(size, latent_dim).to(device)  # Sample latent vectors
+                    ohe_labels_ = torch.zeros((size, len(LABELs))).to(device)  # One-hot encoding for class labels
+                    ohe_labels_[:, l] = 1
+
+                    if len(z) == 0:
+                        z = z_.clone().detach()
+                        ohe_labels = ohe_labels_.clone().detach()
+                    else:
+                        z = torch.cat((z, z_), dim=0)
+                        ohe_labels = torch.cat((ohe_labels, ohe_labels_), dim=0)
+
+                z = z.to(device)
+                ohe_labels = ohe_labels.to(device)
+                pseudo_logits = local_cvae.decoder(z, ohe_labels)  # Reconstruct probabilities from latent space
+                X_ = pseudo_logits
+
+                # use the generated data X to train global_cvae
+                recon_logits, mu, logvar = global_cvae(X_, ohe_labels)
+                loss, info = vae_loss_function(recon_logits, X_, mu, logvar)
+
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                loss_epoch += loss.item()
+
+            if epoch % 50 == 0:
+                print(f'train global cvae epoch: {epoch}, global  cvae loss: {loss_epoch:.4f}')
+            losses.append(loss_epoch)
+
+            # train_info['cvae'] = {"losses": losses}
 
 
 def aggregate_gnns(gnns, global_gnn):
@@ -701,7 +615,6 @@ def aggregate_gnns(gnns, global_gnn):
 #         z = self.reparameterize(mu, logvar)
 #         return self.decoder(z), mu, logvar
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -771,45 +684,46 @@ def vae_loss_function(recon_x, x, mean, log_var):
     return BCE + KLD, {'BCE': BCE, 'KLD': KLD}
 
 
-from transformers import T5Tokenizer, T5ForConditionalGeneration
-import torch
-
-# Initialize the model and tokenizer
-model_name = "t5-small"  # You can replace this with "t5-base" or "t5-large"
-tokenizer = T5Tokenizer.from_pretrained(model_name)
-model = T5ForConditionalGeneration.from_pretrained(model_name)
-
-# Example class labels for "comedy", "tragedy", "history"
-class_labels = ['comedy', 'tragedy', 'history']
-
-# Random latent vectors (sample 500 random latent points)
-random_latents = torch.randn(500, 768)  # Example random latent vectors
-
-# Generate embeddings
-generated_embeddings = []
-
-for i in range(500):
-    # Select a class label and concatenate with random latent vector
-    class_label = class_labels[i % len(class_labels)]  # Alternate through classes
-    input_text = f"{class_label}: This is a sample text to generate embedding."
-
-    # Tokenize the input
-    inputs = tokenizer(input_text, return_tensors="pt", truncation=True, padding=True, max_length=512)
-
-    # Generate text
-    outputs = model.generate(**inputs)
-
-    # Decode the output and get embeddings (e.g., use BERT or the model's own hidden states)
-    generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    # Optionally, extract embeddings from a model like BERT (e.g., using [CLS] token)
-    embedding = model.encoder(inputs['input_ids']).last_hidden_state[:, 0, :].detach().numpy()
-
-    # Store the generated embeddings
-    generated_embeddings.append(embedding)
-
-# Convert list to numpy array for further use
-generated_embeddings = np.array(generated_embeddings)
+#
+# from transformers import T5Tokenizer, T5ForConditionalGeneration
+# import torch
+#
+# # Initialize the model and tokenizer
+# model_name = "t5-small"  # You can replace this with "t5-base" or "t5-large"
+# tokenizer = T5Tokenizer.from_pretrained(model_name)
+# model = T5ForConditionalGeneration.from_pretrained(model_name)
+#
+# # Example class labels for "comedy", "tragedy", "history"
+# class_labels = ['comedy', 'tragedy', 'history']
+#
+# # Random latent vectors (sample 500 random latent points)
+# random_latents = torch.randn(500, 768)  # Example random latent vectors
+#
+# # Generate embeddings
+# generated_embeddings = []
+#
+# for i in range(500):
+#     # Select a class label and concatenate with random latent vector
+#     class_label = class_labels[i % len(class_labels)]  # Alternate through classes
+#     input_text = f"{class_label}: This is a sample text to generate embedding."
+#
+#     # Tokenize the input
+#     inputs = tokenizer(input_text, return_tensors="pt", truncation=True, padding=True, max_length=512)
+#
+#     # Generate text
+#     outputs = model.generate(**inputs)
+#
+#     # Decode the output and get embeddings (e.g., use BERT or the model's own hidden states)
+#     generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+#
+#     # Optionally, extract embeddings from a model like BERT (e.g., using [CLS] token)
+#     embedding = model.encoder(inputs['input_ids']).last_hidden_state[:, 0, :].detach().numpy()
+#
+#     # Store the generated embeddings
+#     generated_embeddings.append(embedding)
+#
+# # Convert list to numpy array for further use
+# generated_embeddings = np.array(generated_embeddings)
 
 
 class GNN(nn.Module):
@@ -863,35 +777,47 @@ def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train
         _, predicted_labels = torch.max(output, dim=1)
 
         # Calculate accuracy for the labeled data
-        # num_classes = 10
-        # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-        # print(f'labeled_indices {len(labeled_indices)}')
+        labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        print(f'labeled_indices {len(labeled_indices)}')
         true_labels = graph_data.y
 
-        # predicted_labels = predicted_labels[graph_data.train_mask]
-        # true_labels = true_labels[graph_data.train_mask]
-        # predicted_labels = predicted_labels[graph_data.test_mask]
-        # true_labels = true_labels[graph_data.test_mask]
+        predicted_labels_tmp = predicted_labels[labeled_indices]
+        true_labels_tmp = true_labels[labeled_indices]
+        y = true_labels_tmp.cpu().numpy()
+        y_pred = predicted_labels_tmp.cpu().numpy()
 
-        y = true_labels.cpu().numpy()
-        y_pred = predicted_labels.cpu().numpy()
         accuracy = accuracy_score(y, y_pred)
-        print(f"Accuracy on labeled data: {accuracy * 100:.2f}%")
+        print(f"Accuracy on labeled data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
         # if 'all' in test_type:
         #     client_result['labeled_accuracy_all'] = accuracy
         # else:
         #     client_result['labeled_accuracy'] = accuracy
 
-        # Compute the confusion matrix
         conf_matrix = confusion_matrix(y, y_pred)
-        print("Confusion Matrix:")
-        print(conf_matrix)
-        # if 'all' in test_type:
-        #     client_result['labeled_cm_all'] = conf_matrix
-        # else:
-        #     client_result['labeled_cm'] = conf_matrix
+        print("Confusion Matrix:\n", conf_matrix)
 
-        # # Calculate accuracy for all data
+        # Calculate accuracy for the unlabeled data
+        labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        all_indices = torch.arange(graph_data.num_nodes)
+        unlabeled_indices = all_indices[~torch.isin(all_indices, labeled_indices)]
+        print(f'unlabeled_indices {len(unlabeled_indices)}')
+        true_labels = graph_data.y
+
+        predicted_labels_tmp = predicted_labels[unlabeled_indices]
+        true_labels_tmp = true_labels[unlabeled_indices]
+        y = true_labels_tmp.cpu().numpy()
+        y_pred = predicted_labels_tmp.cpu().numpy()
+
+        accuracy = accuracy_score(y, y_pred)
+        print(f"Accuracy on unlabeled data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+        # if 'all' in test_type:
+        #     client_result['labeled_accuracy_all'] = accuracy
+        # else:
+        #     client_result['labeled_accuracy'] = accuracy
+        conf_matrix = confusion_matrix(y, y_pred)
+        print("Confusion Matrix:\n", conf_matrix)
+
+        # # Calculate accuracy for unlabeled data
         # print(f'Evaluate on all data (labeled + unlabeled)')
         # true_labels = client_data_[1]['labels']
         # y = true_labels.cpu().numpy()
@@ -975,7 +901,7 @@ def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_
 
     new_features = shared_test_data['features'].to(device)
     new_labels = shared_test_data['labels'].to(device)
-    print(f'new_features: {new_features.size()}')
+    print(f'new_features: {new_features.size()}, {collections.Counter(new_labels.tolist())}')
     if True:  # evaluate on new data
         # Add new_data to the node feature matrix (if you're adding a new node)
         # This could involve concatenating the new feature to the existing node features
@@ -1034,7 +960,7 @@ def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_
         y = true_labels.cpu().numpy()
         y_pred = predicted_labels.cpu().numpy()
         accuracy = accuracy_score(y, y_pred)
-        print(f"Accuracy on shared test data: {accuracy * 100:.2f}%")
+        print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
         # if 'all' in test_type:
         #     client_result['labeled_accuracy_all'] = accuracy
         # else:
@@ -1082,8 +1008,9 @@ def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, la
     # Load local data
     local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                                 label_rate=label_rate)
-    print(f'client_{c} data:', collections.Counter(local_data['labels'].tolist()))
-
+    label_cnts = collections.Counter(local_data['labels'].tolist())
+    print(f'client_{c} data:', label_cnts)
+    local_info = {'label_cnts': label_cnts}
     # Train CVAE
     local_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
     print('train_cvae...')
@@ -1100,11 +1027,11 @@ def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, la
     evaluate_shared_test(local_gnn, local_data['shared_test_data'], device, \
                          test_type='Testing on shared test data', client_id=c, train_info=train_info)
 
-    return c, local_cvae, local_gnn, train_info
+    return c, local_cvae, local_info, local_gnn, train_info
 
 
 @timer
-def main(in_dir, input_dim=16, num_classes=10):
+def main(in_dir, input_dim=16):
     num_clients = len(LABELs)
     print(f'input_dim: {input_dim}')
 
@@ -1115,6 +1042,7 @@ def main(in_dir, input_dim=16, num_classes=10):
         gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                        label_rate=label_rate)
 
+    num_classes = len(LABELs)
     global_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
     global_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
 
@@ -1124,6 +1052,7 @@ def main(in_dir, input_dim=16, num_classes=10):
         for epoch in range(server_epochs):
             # update clients
             cvaes = {}
+            locals_info = {}
             gnns = {}
             history = {}
             for c in range(num_clients):
@@ -1133,11 +1062,13 @@ def main(in_dir, input_dim=16, num_classes=10):
                 # local_data = features_info[l]
                 local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                                             label_rate=label_rate)
-                print(f'client_{c} data:', collections.Counter(local_data['labels'].tolist()))
+                label_cnts = collections.Counter(local_data['labels'].tolist())
+                print(f'client_{c} data:', label_cnts)
                 local_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
                 print('train_cvae...')
                 train_cvae(local_cvae, global_cvae, local_data, train_info)
                 cvaes[c] = local_cvae
+                locals_info[c] = {'label_cnts': label_cnts}
 
                 print('train_gnn...')
                 local_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
@@ -1153,7 +1084,7 @@ def main(in_dir, input_dim=16, num_classes=10):
                                      test_type='Testing on shared test data', client_id=c, train_info=train_info)
                 history[c] = train_info
             # server aggregation
-            aggregate_cvaes(cvaes, global_cvae)
+            aggregate_cvaes(cvaes, locals_info, global_cvae)
             aggregate_gnns(gnns, global_gnn)
 
             histories.append(history)
@@ -1166,6 +1097,7 @@ def main(in_dir, input_dim=16, num_classes=10):
         for epoch in range(server_epochs):
 
             cvaes = {}
+            locals_info = {}
             gnns = {}
             history = {}
             with mp.Pool(processes=num_clients) as pool:
@@ -1176,13 +1108,14 @@ def main(in_dir, input_dim=16, num_classes=10):
                 # Wait for all results to finish and collect them
                 results = [r.get() for r in results]  # return c, local_cvae, local_gnn, train_info
                 for r in results:
-                    c, cvae, gnn, train_info = r  # it will run when you call r.get().
+                    c, cvae, local_info, gnn, train_info = r  # it will run when you call r.get().
                     cvaes[c] = cvae
+                    locals_info[c] = local_info
                     gnns[c] = gnn
                     history[c] = train_info
 
             # Server aggregation
-            aggregate_cvaes(cvaes, global_cvae)
+            aggregate_cvaes(cvaes, locals_info, global_cvae)
             aggregate_gnns(gnns, global_gnn)
             # Collect histories
             histories.append(history)
@@ -1194,31 +1127,31 @@ def main(in_dir, input_dim=16, num_classes=10):
     #     pickle.dump(histories, f)
     torch.save(histories, history_file)
 
-    print_histories(histories)
+    # print_histories(histories)
 
 
 if __name__ == '__main__':
-    # in_dir = 'fl/mnist'
-    # input_dim = 16
-    # num_classes = 10
-    # LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+    in_dir = 'fl/mnist'
+    input_dim = 16
+    LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
     #
     # in_dir = 'fl/sent140'
     # input_dim = 768
-    # num_classes = 2
     # LABELs = {0, 1}
 
     # in_dir = 'fl/shakespeare'
     # input_dim = 768
-    # num_classes = 3
     # LABELs = {0, 1, 2}
 
-    in_dir = 'fl/reddit'
-    input_dim = 768
-    num_classes = 10
-    LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-    main(in_dir, input_dim, num_classes)
+    # in_dir = 'fl/reddit'
+    # input_dim = 768
+    # LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 
+    # in_dir = 'fl/pubmed'
+    # input_dim = 500
+    # LABELs = {0, 1, 2}
+
+    main(in_dir, input_dim)
     # history_file = f'{in_dir}/histories_cvae.pkl'
     # with open(history_file, 'rb') as f:
     #     histories = pickle.load(f)

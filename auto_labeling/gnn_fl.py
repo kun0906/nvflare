@@ -24,7 +24,7 @@ from torch_geometric.nn import GCNConv
 from torchvision import datasets, transforms
 
 from auto_labeling.data import generate_non_iid_data
-from auto_labeling.pretrained import pretrained_CNN
+from auto_labeling.data.MNIST.pretrained import pretrained_CNN
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))

@@ -10,17 +10,13 @@ import pickle
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
-from networkx.algorithms import similarity
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.metrics.pairwise import cosine_similarity
-from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 from torchvision import datasets, transforms
 
-from auto_labeling.baseline import DecisionTree
-from auto_labeling.pretrained import pretrained_CNN
+from auto_labeling.data.MNIST.pretrained import pretrained_CNN
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))

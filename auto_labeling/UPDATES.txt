@@ -1,3 +1,5 @@
+v0.1.1: Update shared_test_set on all clients using the fixed pretrained_CNN
+
 v0.1.0: Add 'shakespeare' and reddit dataset
 
 v0.0.9-1: Fixed bugs after adding Sentiment140 dataset

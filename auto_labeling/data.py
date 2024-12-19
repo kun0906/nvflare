@@ -1,27 +1,9 @@
 import random
-import torch
-from torch.utils.data import Dataset, Subset
 
-import argparse
 import collections
-import os
-import pickle
 
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.metrics.pairwise import cosine_similarity
-from torch.utils.data import DataLoader
 from torch.utils.data import Subset
-from torch_geometric.data import Data
-from torch_geometric.nn import GCNConv
 from torchvision import datasets, transforms
-
-from auto_labeling.pretrained import pretrained_CNN
-from utils import timer
 
 
 def gen_iid(dataset, class_indices={}, num_clients=10):

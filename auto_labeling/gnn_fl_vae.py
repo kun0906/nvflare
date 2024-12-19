@@ -10,21 +10,8 @@
 
 """
 
-import collections
+from torch.utils.data import DataLoader
 
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
-from torchvision import datasets, transforms
-from torch.utils.data import Subset
-
-from torch.utils.data import DataLoader, Subset
-from torchvision import datasets, transforms
-
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import argparse
 import collections
 import os
 import pickle
@@ -36,15 +23,11 @@ import torch.nn.functional as F
 import torch.optim as optim
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.model_selection import StratifiedShuffleSplit
-from torch.utils.data import DataLoader
-from torch.utils.data import Subset
 from torch_geometric.data import Data
 from torch_geometric.nn import GCNConv
 from torchvision import datasets, transforms
 
-from auto_labeling.data import generate_non_iid_data
-from auto_labeling.pretrained import pretrained_CNN
+from auto_labeling.data.MNIST.pretrained import pretrained_CNN
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
