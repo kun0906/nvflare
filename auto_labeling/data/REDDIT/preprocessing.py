@@ -6,7 +6,7 @@
 
     Data Fields
     text (string): The main content of the Reddit post or comment.
-    label (string): Sentiment or topic category of the content.
+    label (string): Sentiment or topic category of the content, i.e., negative vs. positive.
     dataType (string): Indicates whether the entry is a post or a comment.
     communityName (string): The name of the subreddit where the content was posted.
     datetime (string): The date when the content was posted or commented.

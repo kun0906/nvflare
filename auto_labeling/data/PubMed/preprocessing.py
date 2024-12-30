@@ -9,6 +9,14 @@
         Class 2 (Other Diabetes Topics): Publications related to general topics in diabetes or research on both types
         of diabetes.
 
+    It is a citation network where nodes represent scientific papers and edges represent citation relationships.
+    Data Characteristics:
+        Nodes: 19,717 papers.
+        Edges: 44,338 citation links.
+        Features: Each node (paper) is represented by a sparse bag-of-words feature vector derived from the paper's text.
+        Classes: The three classes are mutually exclusive, meaning each paper belongs to only one class.
+
+
     cd data/PubMed
     PYTHONPATH=. python3 preprocessing.py
 """

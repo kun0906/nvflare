@@ -519,7 +519,7 @@ def aggregate_cvaes(vaes, locals_info, global_cvae):
     print('*aggregate cvaes...')
     client_parameters_list = [local_cvae.state_dict() for client_i, local_cvae in vaes.items()]
     # aggregate(client_parameters_list, global_cvae)
-    aggregate_method = 'global train'
+    aggregate_method = 'parameter'
     if aggregate_method == 'parameter':  # aggregate clients' parameters
         aggregate_with_attention(client_parameters_list, global_cvae, device)  # update global_cvae inplace
     else:
