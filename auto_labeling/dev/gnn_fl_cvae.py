@@ -1061,7 +1061,7 @@ def main(in_dir):
 
 
 if __name__ == '__main__':
-    in_dir = 'fl/mnist'
+    in_dir = '../fl/mnist'
     main(in_dir)
 
     # history_file = f'{in_dir}/histories_cvae.pkl'

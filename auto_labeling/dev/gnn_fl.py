@@ -651,7 +651,7 @@ class FL:
         The main FL loop coordinates training, aggregation, and distillation across clients.
         """
         # Load data
-        fl_dir = './fl'
+        fl_dir = '../fl'
         graph_data = load_data(fl_dir)
         clients_data = load_data_for_clients(fl_dir)
 

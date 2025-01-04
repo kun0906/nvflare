@@ -7,7 +7,7 @@
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare
-    $PYTHONPATH=. python3 auto_labeling/gnn_fl_cvae_attention.py
+    $PYTHONPATH=. python3 auto_labeling/cnn_fl_cvae_attention.py
 
 
 """
@@ -18,14 +18,17 @@ import multiprocessing as mp
 import os
 import pickle
 
+import numpy as np
 import torch
 import torch.optim as optim
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.metrics.pairwise import cosine_similarity
+from torch.utils.data import DataLoader
 from torch_geometric.data import Data
-from torch_geometric.nn import GCNConv
+from torchvision import datasets, transforms
 
 from auto_labeling.attention import aggregate_with_attention
+from auto_labeling.data.MNIST.pretrained import pretrained_CNN
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -64,6 +67,7 @@ print(f"label_rate: {label_rate}")
 print(f"server_epochs: {server_epochs}")
 
 
+
 @timer
 def gen_local_data(client_data_file, client_id, label_rate):
     """ We assume num_client = num_classes, i.e., each client only has one class data
@@ -98,57 +102,39 @@ def gen_local_data(client_data_file, client_id, label_rate):
         in_file = f'data/Sentiment140/data/{client_id}.pkl'
     elif 'pubmed' in client_data_file:
         in_file = f'data/PubMed/data/{client_id}.pkl'
-    elif 'cora' in client_data_file:
-        in_file = f'data/Cora/data/{client_id}.pkl'
     else:
         raise NotImplementedError
 
     with open(in_file, 'rb') as f:
         client_data = pickle.load(f)
 
-    if 'cora' in client_data_file:
-        train_mask = client_data['train_mask']
-        X = torch.tensor(client_data['X'])
-        y = torch.tensor(client_data['y'])
+    X = torch.tensor(client_data['X'])
+    y = torch.tensor(client_data['y'])
+    # y_names = torch.tensor(np.array(y_names, dtype=object))
+    # Generate local data, and only lable_rate=10% of them has labels
+    labels_mask = torch.tensor([False] * len(y), dtype=torch.bool)
+    cnt = X.size(0)
+    print(f"Class {client_id}: {cnt} images, y: {collections.Counter(y.tolist())}")
+    sampling_size = int(cnt * label_rate)
+    labeled_indices = torch.randperm(len(y))[:sampling_size]
+    # labeled_X = X[labeled_indices]
+    # labeled_y = y[labeled_indices]
+    labels_mask[labeled_indices] = True
 
-        shared_test_features = torch.tensor(client_data['shared_data']['X'])
-        shared_targets = torch.tensor(client_data['shared_data']['y'])
-        client_data = {'features': X, 'labels': y,
-                       'labels_mask': torch.tensor(train_mask),  # only 10% data has labels.
-                       'shared_test_data': {'features': shared_test_features.clone().detach(),
-                                            'labels': shared_targets}
-                       }
-
-    else:
-
-        X = torch.tensor(client_data['X'])
-        y = torch.tensor(client_data['y'])
-        # y_names = torch.tensor(np.array(y_names, dtype=object))
-        # Generate local data, and only label_rate=10% of them has labels
-        labels_mask = torch.tensor([False] * len(y), dtype=torch.bool)
-        cnt = X.size(0)
-        print(f"Class {client_id}: {cnt} images, y: {collections.Counter(y.tolist())}")
-        sampling_size = int(cnt * label_rate)
-        labeled_indices = torch.randperm(len(y))[:sampling_size]
-        # labeled_X = X[labeled_indices]
-        # labeled_y = y[labeled_indices]
-        labels_mask[labeled_indices] = True
-
-        features = X
-        shared_test_features = torch.tensor(client_data['shared_data']['X'])
-        shared_targets = torch.tensor(client_data['shared_data']['y'])
-        client_data = {'features': features.clone().detach(), 'labels': y,
-                       'labels_mask': labels_mask,  # only 10% data has labels.
-                       'shared_test_data': {'features': shared_test_features.clone().detach(),
-                                            'labels': shared_targets}
-                       }
+    features = X
+    shared_test_features = torch.tensor(client_data['shared_data']['X'])  # Todo: need to use new test set, not X.
+    shared_targets = torch.tensor(client_data['shared_data']['y'])
+    client_data = {'features': features.clone().detach(), 'labels': y,
+                   'labels_mask': labels_mask,  # only 10% data has labels.
+                   'shared_test_data': {'features': shared_test_features.clone().detach(),
+                                        'labels': shared_targets}
+                   }
 
     # with open(client_data_file, 'wb') as f:
     #     # pickle.dump(client_data, f)
     torch.save(client_data, client_data_file)
 
     return client_data
-
 
 # def vae_loss_function(recon_x, x, mu, logvar):
 #     # reconstruction error
@@ -408,26 +394,26 @@ def gen_edges(train_features, edge_method='cosine', train_info={}):
     return edges, edge_weight
 
 
-def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
+def train_cnn(local_cnn, global_cvae, global_cnn, local_data, train_info={}):
     """
         1. Use vaes to generated data for each class
-        2. Use the generated data + local data to train local gnn with initial parameters of global_gnn
-        3. Send local gnn'parameters to server.
+        2. Use the generated data + local data to train local cnn with initial parameters of global_cnn
+        3. Send local cnn'parameters to server.
     Args:
-        local_gnn:
+        local_cnn:
         cvae:
-        global_gnn:
+        global_cnn:
         local_data:
 
     Returns:
 
     """
-    local_gnn.to(device)
-    local_gnn.load_state_dict(
-        global_gnn.state_dict())  # Initialize client_gm with the parameters of global_model
-    optimizer = optim.Adam(local_gnn.parameters(), lr=0.001)
+    local_cnn.to(device)
+    local_cnn.load_state_dict(
+        global_cnn.state_dict())  # Initialize client_gm with the parameters of global_model
+    optimizer = optim.Adam(local_cnn.parameters(), lr=0.001)
     # criterion = nn.CrossEntropyLoss()  # mean
-    local_gnn.train()  #
+    local_cnn.train()  #
 
     labels_mask = local_data['labels_mask']
     y = local_data['labels'][labels_mask]  # we assume on a tiny labeled data in the local dat
@@ -502,17 +488,19 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     # here, you need make sure weight aligned with class order.
     class_weight = torch.tensor(list(data['labeled_classes_weights'].values()), dtype=torch.float).to(device)
     criterion = nn.CrossEntropyLoss(weight=class_weight).to(device)
+    x = graph_data.x[graph_data.train_mask].to(device)  # only use train_mask data for training in CNN
+    y = graph_data.y[graph_data.train_mask].to(device)
     for epoch in range(epochs_client):
         epoch_model_loss = 0
         # _model_loss, _model_distill_loss = 0, 0
         # epoch_vae_loss = 0
         # _vae_recon_loss, _vae_kl_loss = 0, 0
-        graph_data.to(device)
         # data_size, data_dim = graph_data.x.shape
         # your local personal model
-        outputs = local_gnn(graph_data)
+        outputs = local_cnn(x)  # only need x
         # Loss calculation: Only for labeled nodes
-        model_loss = criterion(outputs[graph_data.train_mask], graph_data.y[graph_data.train_mask])
+        # model_loss = criterion(outputs[graph_data.train_mask], graph_data.y[graph_data.train_mask])
+        model_loss = criterion(outputs, y)
 
         optimizer.zero_grad()
         model_loss.backward()
@@ -526,17 +514,17 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
         #         print(f"{name}: No gradient (likely frozen or unused)")
 
         optimizer.step()
-        print(f"train_gnn epoch: {epoch}, local_gnn loss: {model_loss.item():.4f}")
+        print(f"train_cnn epoch: {epoch}, local_cnn loss: {model_loss.item():.4f}")
         losses.append(model_loss.item())
 
-    train_info['gnn'] = {'graph_data': graph_data, "losses": losses}
+    train_info['cnn'] = {'graph_data': graph_data, "losses": losses}
 
 
 def aggregate_cvaes(vaes, locals_info, global_cvae):
     print('*aggregate cvaes...')
     client_parameters_list = [local_cvae.state_dict() for client_i, local_cvae in vaes.items()]
     # aggregate(client_parameters_list, global_cvae)
-    aggregate_method = 'parameter'
+    aggregate_method = 'global train'
     if aggregate_method == 'parameter':  # aggregate clients' parameters
         aggregate_with_attention(client_parameters_list, global_cvae, device)  # update global_cvae inplace
     else:
@@ -592,10 +580,10 @@ def aggregate_cvaes(vaes, locals_info, global_cvae):
             # train_info['cvae'] = {"losses": losses}
 
 
-def aggregate_gnns(gnns, global_gnn):
-    print('*aggregate gnn...')
-    client_parameters_list = [local_gnn.state_dict() for client_i, local_gnn in gnns.items()]
-    aggregate_with_attention(client_parameters_list, global_gnn, device)  # update global_gnn inplace
+def aggregate_cnns(cnns, global_cnn):
+    print('*aggregate cnn...')
+    client_parameters_list = [local_cnn.state_dict() for client_i, local_cnn in cnns.items()]
+    aggregate_with_attention(client_parameters_list, global_cnn, device)  # update global_cnn inplace
 
 
 #
@@ -743,37 +731,30 @@ def vae_loss_function(recon_x, x, mean, log_var):
 # generated_embeddings = np.array(generated_embeddings)
 
 
-class GNN(nn.Module):
+class CNN(nn.Module):
     def __init__(self, input_dim, hidden_dim, output_dim):
-        super(GNN, self).__init__()
-        self.conv1 = GCNConv(input_dim, hidden_dim)
-        self.conv2 = GCNConv(hidden_dim, hidden_dim)
-        self.conv3 = GCNConv(hidden_dim, hidden_dim)  # Adding a third layer
-        self.conv4 = GCNConv(hidden_dim, output_dim)  # Output layer
+        super(CNN, self).__init__()
+        out_channels = 10
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=out_channels, kernel_size=3)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        # self.fc1 = nn.Linear(64 * 7 * 7, hidden_dim)  # Assuming input size 28x28 (e.g., MNIST)
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim)
+        self.fc3 = nn.Linear(hidden_dim, output_dim)  # 10 classes for classification
 
-    def forward(self, data):
-        x, edge_index, edge_weight = data.x, data.edge_index, data.edge_weight
-
-        no_edge_weight = False
-        if no_edge_weight:
-            # no edge_weight is passed to the GCNConv layers
-            x = F.relu(self.conv1(x, edge_index))
-            x = F.relu(self.conv2(x, edge_index))
-            x = F.relu(self.conv3(x, edge_index))  # Additional layer
-            x = self.conv4(x, edge_index)  # Final output
-        else:
-            # Passing edge_weight to the GCNConv layers
-            x = F.relu(self.conv1(x, edge_index, edge_weight))
-            x = F.relu(self.conv2(x, edge_index, edge_weight))
-            x = F.relu(self.conv3(x, edge_index, edge_weight))  # Additional layer
-            x = self.conv4(x, edge_index, edge_weight)  # Final output
-
-        # return F.log_softmax(x, dim=1)
+    def forward(self, x):
+        # x = F.relu(self.conv1(x))
+        # x = self.pool(F.relu(self.conv2(x)))
+        # x = x.view(-1, 64 * 7 * 7)  # Flatten
+        x = F.relu(self.fc1(x))  # X is node features, is (1000, 16)
+        x = self.fc2(x)
+        x = self.fc3(x)
         return x
 
 
 @timer
-def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train_info={}):
+def evaluate(local_cnn, local_data, device, test_type='test', client_id=0, train_info={}):
     """
         Evaluate how well each client's model performs on the test set.
 
@@ -781,16 +762,17 @@ def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train
         client_data_ =  (graph_data_, feature_info, client_data_)
     """
     # After training, the model can make predictions for both labeled and unlabeled nodes
-    print(f'***Testing gnn model on test_type:{test_type}...')
-    # gnn = local_gnn(input_dim=64, hidden_dim=32, output_dim=10)
-    # gnn.load_state_dict(client_result['client_gm'])
-    gnn = local_gnn
-    gnn.to(device)
+    print(f'***Testing cnn model on test_type:{test_type}...')
+    # cnn = local_cnn(input_dim=64, hidden_dim=32, output_dim=10)
+    # cnn.load_state_dict(client_result['client_gm'])
+    cnn = local_cnn
+    cnn.to(device)
 
-    graph_data = train_info['gnn']['graph_data'].to(device)  # graph data
-    gnn.eval()
+    graph_data = train_info['cnn']['graph_data'].to(device)  # graph data
+    x = graph_data.x.to(device)
+    cnn.eval()
     with torch.no_grad():
-        output = gnn(graph_data)
+        output = cnn(x)
         _, predicted_labels = torch.max(output, dim=1)
 
         # Calculate accuracy for the labeled data
@@ -909,12 +891,12 @@ def find_neighbors(new_node_features, existed_node_features, k=5):
 
 
 @timer
-def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_test_data', client_id=0, train_info={}):
+def evaluate_shared_test(local_cnn, shared_test_data, device, test_type='shared_test_data', client_id=0, train_info={}):
     """
         Evaluate how well each client's model performs on the test set.
     """
     # After training, the model can make predictions for both labeled and unlabeled nodes
-    print(f'***Testing gnn model on test_type:{test_type}...')
+    print(f'***Testing cnn model on test_type:{test_type}...')
 
     new_features = shared_test_data['features'].to(device)
     new_labels = shared_test_data['labels'].to(device)
@@ -922,7 +904,7 @@ def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_
     if True:  # evaluate on new data
         # Add new_data to the node feature matrix (if you're adding a new node)
         # This could involve concatenating the new feature to the existing node features
-        graph_data = train_info['gnn']['graph_data'].to(device)
+        graph_data = train_info['cnn']['graph_data'].to(device)
         node_features = graph_data.x
         y = graph_data.y
         start_idx = len(y)
@@ -954,13 +936,13 @@ def evaluate_shared_test(local_gnn, shared_test_data, device, test_type='shared_
     graph_data = Data(x=node_features, edge_index=edges, edge_weight=edge_weight,
                       y=labels)
     graph_data.to(device)
-
+    x = graph_data.x.to(device)
     # evaluate the data
-    gnn = local_gnn
-    gnn.to(device)
-    gnn.eval()
+    cnn = local_cnn
+    cnn.to(device)
+    cnn.eval()
     with torch.no_grad():
-        output = gnn(graph_data)
+        output = cnn(x)
         _, predicted_labels = torch.max(output, dim=1)
         predicted_labels = predicted_labels[start_idx:]
         # Calculate accuracy for the labeled data
@@ -1007,20 +989,20 @@ def print_histories(histories):
         for s in range(num_server_epoches):
             client = histories[s][c]
             local_cvae = client['cvae']
-            local_gnn = client['gnn']
+            local_cnn = client['cnn']
             print(f'\t*local cvae:', local_cvae.keys(), f' server_epoch: {s}')
             losses_ = [float(f"{v:.2f}") for v in local_cvae['losses']]
             print(f'\t\tlocal cvae:', losses_)
-            # print('\t*local gnn:', [f"{v:.2f}" for v in local_gnn['losses']])
+            # print('\t*local cnn:', [f"{v:.2f}" for v in local_cnn['losses']])
 
 
-def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device):
+def client_process(c, epoch, global_cvae, global_cnn, input_dim, num_classes, label_rate, in_dir, prefix, device):
     """
     Function to be executed in a separate process for each client.
     """
     print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
     l = c  # we should have 'num_clients = num_labels'
-    train_info = {"cvae": {}, "gnn": {}}
+    train_info = {"cvae": {}, "cnn": {}}
 
     # Load local data
     local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
@@ -1033,23 +1015,23 @@ def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, la
     print('train_cvae...')
     train_cvae(local_cvae, global_cvae, local_data, train_info)
 
-    # Train GNN
-    print('train_gnn...')
-    local_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
-    train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info)
+    # Train CNN
+    print('train_cnn...')
+    local_cnn = CNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
+    train_cnn(local_cnn, global_cvae, global_cnn, local_data, train_info)
 
-    # Evaluate GNN
-    print('evaluate_gnn...')
-    evaluate(local_gnn, None, device, test_type='Testing on client data', client_id=c, train_info=train_info)
-    evaluate_shared_test(local_gnn, local_data['shared_test_data'], device, \
+    # Evaluate CNN
+    print('evaluate_cnn...')
+    evaluate(local_cnn, None, device, test_type='Testing on client data', client_id=c, train_info=train_info)
+    evaluate_shared_test(local_cnn, local_data['shared_test_data'], device, \
                          test_type='Testing on shared test data', client_id=c, train_info=train_info)
 
-    return c, local_cvae, local_info, local_gnn, train_info
+    return c, local_cvae, local_info, local_cnn, train_info
 
 
 @timer
 def main(in_dir, input_dim=16):
-    # num_clients = len(LABELs)
+    num_clients = len(LABELs)
     print(f'input_dim: {input_dim}')
 
     prefix = f'r_{label_rate}'
@@ -1061,7 +1043,7 @@ def main(in_dir, input_dim=16):
 
     num_classes = len(LABELs)
     global_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
-    global_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
+    global_cnn = CNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
 
     debug = True
     if debug:
@@ -1070,12 +1052,12 @@ def main(in_dir, input_dim=16):
             # update clients
             cvaes = {}
             locals_info = {}
-            gnns = {}
+            cnns = {}
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
                 # l = c  # we should have 'num_clients = num_labels'
-                train_info = {"cvae": {}, "gnn": {}, }
+                train_info = {"cvae": {}, "cnn": {}, }
                 # local_data = features_info[l]
                 local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                                             label_rate=label_rate)
@@ -1087,22 +1069,22 @@ def main(in_dir, input_dim=16):
                 cvaes[c] = local_cvae
                 locals_info[c] = {'label_cnts': label_cnts}
 
-                print('train_gnn...')
-                local_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
-                train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info)  # will generate new data
-                gnns[c] = local_gnn
+                print('train_cnn...')
+                local_cnn = CNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
+                train_cnn(local_cnn, global_cvae, global_cnn, local_data, train_info)  # will generate new data
+                cnns[c] = local_cnn
 
-                print('evaluate_gnn...')
+                print('evaluate_cnn...')
                 # self.evaluate(client_result, graph_data_, device, test_type='train', client_id=client_id)
-                evaluate(local_gnn, None, device,
+                evaluate(local_cnn, None, device,
                          test_type='Testing on client data', client_id=c, train_info=train_info)
                 # # Note that client_result will be overridden or appended more.
-                evaluate_shared_test(local_gnn, local_data['shared_test_data'], device,
+                evaluate_shared_test(local_cnn, local_data['shared_test_data'], device,
                                      test_type='Testing on shared test data', client_id=c, train_info=train_info)
                 history[c] = train_info
             # server aggregation
             aggregate_cvaes(cvaes, locals_info, global_cvae)
-            aggregate_gnns(gnns, global_gnn)
+            aggregate_cnns(cnns, global_cnn)
 
             histories.append(history)
     else:
@@ -1115,25 +1097,25 @@ def main(in_dir, input_dim=16):
 
             cvaes = {}
             locals_info = {}
-            gnns = {}
+            cnns = {}
             history = {}
             with mp.Pool(processes=num_clients) as pool:
                 # Use apply_async or map to execute client_process concurrently and get results
                 results = [pool.apply_async(client_process, args=(
-                    c, epoch, global_cvae, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device))
+                    c, epoch, global_cvae, global_cnn, input_dim, num_classes, label_rate, in_dir, prefix, device))
                            for c in range(num_clients)]
                 # Wait for all results to finish and collect them
-                results = [r.get() for r in results]  # return c, local_cvae, local_gnn, train_info
+                results = [r.get() for r in results]  # return c, local_cvae, local_cnn, train_info
                 for r in results:
-                    c, cvae, local_info, gnn, train_info = r  # it will run when you call r.get().
+                    c, cvae, local_info, cnn, train_info = r  # it will run when you call r.get().
                     cvaes[c] = cvae
                     locals_info[c] = local_info
-                    gnns[c] = gnn
+                    cnns[c] = cnn
                     history[c] = train_info
 
             # Server aggregation
             aggregate_cvaes(cvaes, locals_info, global_cvae)
-            aggregate_gnns(gnns, global_gnn)
+            aggregate_cnns(cnns, global_cnn)
             # Collect histories
             histories.append(history)
 
@@ -1148,9 +1130,9 @@ def main(in_dir, input_dim=16):
 
 
 if __name__ == '__main__':
-    # in_dir = 'fl/mnist'
-    # input_dim = 16
-    # LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+    in_dir = '../fl/mnist'
+    input_dim = 16
+    LABELs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
     #
     # in_dir = 'fl/sent140'
     # input_dim = 768
@@ -1168,10 +1150,6 @@ if __name__ == '__main__':
     # input_dim = 500
     # LABELs = {0, 1, 2}
 
-    in_dir = 'fl/cora'
-    input_dim = 1433
-    LABELs = {0, 1, 2, 3, 4, 5, 6}
-    num_clients = 4
     main(in_dir, input_dim)
     # history_file = f'{in_dir}/histories_cvae.pkl'
     # with open(history_file, 'rb') as f:

@@ -1,3 +1,5 @@
+v0.1.4: Add graph_lp (graph link predictor) to predict edges between nodes
+
 v0.1.3: Add graph_edge (a binary classifier) to predict edges between nodes
 
 v0.1.2: Add more baseline models

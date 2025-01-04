@@ -1,6 +1,4 @@
 """
-    Replace 10 individual VAEs with 1 conditional VAE (CVAE)
-
     $ssh kunyang@slogin-01.superpod.smu.edu
     $srun -A kunyang_nvflare_py31012_0001 -t 60 -G 1 -w bcm-dgxa100-0008 --pty $SHELL
     $srun -A kunyang_nvflare_py31012_0001 -t 260 -G 1 --pty $SHELL
@@ -132,7 +130,11 @@ def gen_local_data(client_data_file, client_id, label_rate=0.1):
                      'train_mask': shared_train_mask,
                      'val_mask': shared_val_mask,
                      'test_mask': shared_test_mask,
-                     'edge_indices': shared_edge_indices},
+                     'edge_indices': shared_edge_indices,
+                     'edge_indices_train': torch.tensor(client_data['all_data']['edge_indices_train']),
+                     'edge_indices_val': torch.tensor(client_data['all_data']['edge_indices_val']),
+                     'edge_indices_test': torch.tensor(client_data['all_data']['edge_indices_test']),
+                     },
     }
 
     print(f'Client data range: min: {min(X.flatten().tolist())}, '
@@ -201,6 +203,74 @@ def train_cvae(local_cvae, global_cvae, local_data, train_info={}):
         losses.append(loss.item())
 
     train_info['cvae'] = {"losses": losses}
+
+
+def binary_loss_function(y_prob, y):
+    # Convert y to one-hot encoding
+    y_one_hot = torch.zeros_like(y_prob)
+    y_one_hot.scatter_(1, y.unsqueeze(1), 1)  # One-hot encode
+    BCE = F.binary_cross_entropy(y_prob, y_one_hot, reduction='mean')
+    # BCE = F.mse_loss(recon_x, x, reduction='mean')
+    # # KLD loss for the latent space
+    # # This assumes a unit Gaussian prior for the latent space
+    # # (Normal distribution prior, mean 0, std 1)
+    # # KLD = 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+    # KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())
+    # return BCE + KLD, {'BCE': BCE, 'KLD': KLD}
+    return BCE
+
+
+from torch_geometric.loader import DataLoader
+import torch.nn.functional as F
+import torch.optim as optim
+from torch_geometric.utils import negative_sampling
+
+
+def train_link_predictor(local_lp, global_lp, local_data, train_info={}):
+    local_lp.load_state_dict(global_lp.state_dict())
+
+    optimizer = optim.Adam(local_lp.parameters(), lr=0.001)
+
+    X, y = local_data['X'], local_data['y']  # use all local edges
+    # mask = local_data['train_mask']
+    # # only use labeled data for training edge
+    # X = X[mask]
+    # y = y[mask]
+
+    edge_indices = local_data['edge_indices']
+    # set_edges = set([(a, b) for a, b in edges.tolist()])
+    # set_edges = set(map(tuple, edges.tolist()))
+
+    # Generate negative edges
+    neg_edge_indices = negative_sampling(
+        edge_index=edge_indices,
+        num_nodes=len(X),
+        num_neg_samples=edge_indices.size(1)  # excluding the generated data
+    )
+
+    losses = []
+    for epoch in range(300):
+        local_lp.train()
+        optimizer.zero_grad()
+
+        # Forward pass
+        z = local_lp(X, edge_indices)
+        pos_out = local_lp.decode(z, edge_indices)
+        neg_out = local_lp.decode(z, neg_edge_indices)
+
+        # Compute loss
+        pos_loss = F.binary_cross_entropy_with_logits(pos_out, torch.ones_like(pos_out))
+        neg_loss = F.binary_cross_entropy_with_logits(neg_out, torch.zeros_like(neg_out))
+        loss = pos_loss + neg_loss
+
+        loss.backward()
+        optimizer.step()
+
+        if epoch % 100 == 0:
+            print(f'train_lp epoch: {epoch}, local_lp loss: {loss.item():.4f}')
+        losses.append(loss.item())
+
+    train_info['edge'] = {"losses": losses}
 
 
 def _gen_models(model, l, size, method='T5'):
@@ -295,151 +365,229 @@ def cosine_similarity_torch(features):
 
 
 @timer
-def gen_edges(train_features, train_size, existed_edge_indices=None, edge_method='cosine', train_info={}):
+def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, edge_method='cosine', train_info={}):
     if train_features.is_cuda:
         train_features = train_features.cpu().numpy()
 
-    threshold = train_info['threshold']
-    if edge_method == 'cosine':
-        # Calculate cosine similarity to build graph edges (based on CNN features)
-        similarity_matrix = cosine_similarity(train_features)  # [-1, 1]
-        # Set diagonal items to 0
-        np.fill_diagonal(similarity_matrix, 0)
-        # similarity_matrix = cosine_similarity_torch(train_features)
-        # Convert NumPy array to PyTorch tensor
-        similarity_matrix = torch.abs(torch.tensor(similarity_matrix, dtype=torch.float32))
-        # #  # only keep the upper triangle of the matrix and exclude the diagonal entries
-        # similarity_matrix = torch.triu(similarity_matrix, diagonal=1)
-        print(f'similarity matrix: {similarity_matrix.shape}')
-        # Create graph: Each image is a node, edges based on similarity
-        # threshold = torch.quantile(similarity_matrix, 0.9)  # input tensor is too large()
-        # Convert the tensor to NumPy array
-        if threshold is None:
-            import scipy.stats as stats
-            similarity_matrix_np = similarity_matrix.cpu().numpy()
-            # Calculate approximate quantile using scipy
-            thresholds = [(v, float(stats.scoreatpercentile(similarity_matrix_np.flatten(), v))) for v in
-                          range(0, 100 + 1, 10)]
-            print(thresholds)
-            per = 90.0
-            threshold = stats.scoreatpercentile(similarity_matrix_np.flatten(), per)  # per in [0, 100]
-            train_info['threshold'] = threshold
-        else:
-            per = 99.0
-        print('threshold', threshold)
-        # Find indices where similarity exceeds the threshold
-        edge_indices = (torch.abs(similarity_matrix) > threshold).nonzero(
-            as_tuple=False)  # two dimensional data [source, targets]
-        print(f"total number of edges: {similarity_matrix.shape}, we only keep {100 - per:.2f}% edges "
-              f"with edge_indices.shape: {edge_indices.shape}")
-        edge_weight = similarity_matrix[edge_indices[:, 0], edge_indices[:, 1]]  # one dimensional data
+    existed_weights = [1] * existed_edge_indices.size(1)  # existed_edge_indices.shape is 2xN
+    if train_features.shape[0] == local_size:
+        print('No generated data.')
+        return existed_edge_indices, torch.tensor(existed_weights, dtype=torch.float)
 
-    elif edge_method == 'euclidean':
-        # from sklearn.metrics.pairwise import euclidean_distances
-        # distance_matrix = euclidean_distances(train_features)
-        # # Convert NumPy array to PyTorch tensor
-        # distance_matrix = torch.tensor(distance_matrix, dtype=torch.float32)
-        # # Convert the tensor to NumPy array
-        # if threshold is None:
-        #     import scipy.stats as stats
-        #     distance_matrix_np = distance_matrix.cpu().numpy()
-        #     thresholds = [stats.scoreatpercentile(distance_matrix_np.flatten(), v) for v in range(0, 100 + 1, 10)]
-        #     print(thresholds)
-        #     # Calculate approximate quantile using scipy
-        #     threshold = stats.scoreatpercentile(distance_matrix_np.flatten(), 0.009)  # per in [0, 100]
-        #     # threshold = torch.quantile(distance_matrix, 0.5)  # input tensor is too large()
-        #     train_info['threshold'] = threshold
-        # print('threshold', threshold)
-        # edge_indices = (distance_matrix < threshold).nonzero(as_tuple=False)
-        # # edge_weight = torch.where(distance_matrix != 0, 1.0 / distance_matrix, torch.tensor(0.0))
-        # max_dist = max(distance_matrix_np)
-        # edge_weight = (max_dist - distance_matrix[edge_indices[:, 0], edge_indices[:, 1]]) / max_dist
-        pass
+    # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
+    threshold = 0.5
+    new_nodes = train_features[local_size:, :]
+    new_node_pairs = torch.combinations(torch.arange(len(new_nodes)), r=2).t()
+    z = global_lp(new_nodes, new_node_pairs)
+    new_probs = F.sigmoid(global_lp.decode(z, new_node_pairs))
+    new_edges = new_node_pairs.t()[new_probs.flatten() > threshold].t()
+    # adjust new_edges indices
+    new_edges = local_size + new_edges  # src + local_size, dst + local_size
+    # new_weights = [1] * len(new_edges) # not correct
+    new_weights = [1] * new_edges.shape[1]
 
-    elif edge_method == 'knn':
-        from sklearn.neighbors import NearestNeighbors
-        knn = NearestNeighbors(n_neighbors=5, metric='cosine')
-        # When using metric='cosine' in NearestNeighbors, it internally calculates
-        # 1 - cosine similarity
-        # so the distances returned are always non-negative [0, 2] (similarity:[-1, 1]).
-        # Also, by default, the knn from sklearn includes each node as its own neighbor,
-        # usually it will be the value in the results.
-        knn.fit(train_features)
-        distances, indices = knn.kneighbors(train_features)
-        # Flatten source and target indices
-        source_nodes = []
-        target_nodes = []
-        num_nodes = len(train_features)
-        dists = []
-        for node_i_idx in range(num_nodes):
-            for j, node_j_idx in enumerate(indices[node_i_idx]):  # Neighbors of node `i`
-                if node_i_idx == node_j_idx: continue
-                source_nodes.append(node_i_idx)
-                target_nodes.append(node_j_idx)
-                dists.append(distances[node_i_idx][j])
+    # Predict edges between new and existing nodes
+    existed_nodes = train_features[:local_size, :]
+    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size), torch.arange(len(new_nodes))).t()
+    # z = global_lp(existed_nodes, existed_new_pairs)
+    features = torch.cat((existed_nodes, new_nodes), dim=0)
+    z = global_lp(features, cross_pairs)  # here, we use all train_features.
+    cross_probs = F.sigmoid(global_lp.decode(z, cross_pairs))
+    cross_edges = cross_pairs.t()[cross_probs.flatten() > threshold].t()
+    # adjust cross_edges indices for new nodes
+    cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN, (src, dst+local_size)
+    cross_weights = [1] * cross_edges.shape[1]
 
-        # Stack source and target to create edge_index
-        edge_indices = torch.tensor([source_nodes, target_nodes], dtype=torch.long).t()
+    # Combine all edges
+    edge_indices = torch.cat([existed_edge_indices, new_edges, cross_edges], dim=1)
+    edge_weights = existed_weights + new_weights + cross_weights
+    edge_weights = torch.tensor(edge_weights, dtype=torch.float)
 
-        # one dimensional data: large dists, smaller weights
-        edge_weight = (2 - torch.tensor(dists, dtype=torch.float32)) / 2  # dists is [0, 2], after this, values is [0,1]
-        # edge_weight = torch.sparse_coo_tensor(edge_indices, values, size=(num_nodes, num_nodes)).to_dense()
-        # edge_weight = torch.where(distance_matrix != 0, 1.0 / distance_matrix, torch.tensor(0.0))
+    return edge_indices, edge_weights
 
-    elif edge_method == 'affinity':
-        # # from sklearn.feature_selection import mutual_info_classif
-        # # mi_matrix = mutual_info_classif(train_features, train_labels)
-        # # # Threshold mutual information to create edges
-        # # threshold = 0.1
-        # # edge_indices = (mi_matrix > threshold).nonzero(as_tuple=False)
-        # # edges = edge_indices.t().contiguous()
-        #
-        # from sklearn.cluster import AffinityPropagation
-        # affinity_propagation = AffinityPropagation(affinity='euclidean')
-        # affinity_propagation.fit(train_features)
-        # exemplars = affinity_propagation.cluster_centers_indices_
-        pass
-    else:
-        raise NotImplementedError
+    # # n = len(train_features)
+    # # X1 = []
+    # # X2 = []
+    # # new_edges = []
+    # # for i in range(n):
+    # #     for j in range(n):
+    # #         if i == j: continue
+    # #         X1.append(train_features[i])
+    # #         X2.append(train_features[j])
+    # #         new_edges.append([i, j])
+    # # Assume train_features is a 2D NumPy array of shape (n, feature_dim)
+    # n = len(train_features)
+    #
+    # # Create index pairs
+    # row_indices, col_indices = np.meshgrid(np.arange(n), np.arange(n), indexing='ij')
+    # mask = row_indices != col_indices  # Exclude self-loops
+    #
+    # # Get valid index pairs
+    # valid_rows = row_indices[mask]
+    # valid_cols = col_indices[mask]
+    #
+    # # Create feature pairs
+    # X1 = train_features[valid_rows]
+    # X2 = train_features[valid_cols]
+    #
+    # # Edge indices
+    # new_edges = np.stack([valid_rows, valid_cols], axis=1)
+    #
+    # outputs = global_lp(torch.tensor(np.asarray(X1)), torch.tensor(np.asarray(X2)))
+    # y_pred = torch.argmax(outputs, dim=1)
+    #
+    # tmp = []
+    # for i, y_pred_ in enumerate(y_pred.tolist()):
+    #     if y_pred_ == 1:
+    #         tmp.append(new_edges[i])
+    # edge_indices = torch.tensor(np.asarray(tmp)).t()
+    # edge_weight = torch.tensor([1] * len(tmp))
+    # print(f'predicted edges: {len(edge_indices)}')
+    # # threshold = train_info['threshold']
+    # # if edge_method == 'cosine':
+    # #     # Calculate cosine similarity to build graph edges (based on CNN features)
+    # #     similarity_matrix = cosine_similarity(train_features)  # [-1, 1]
+    # #     # Set diagonal items to 0
+    # #     np.fill_diagonal(similarity_matrix, 0)
+    # #     # similarity_matrix = cosine_similarity_torch(train_features)
+    # #     # Convert NumPy array to PyTorch tensor
+    # #     similarity_matrix = torch.abs(torch.tensor(similarity_matrix, dtype=torch.float32))
+    # #     # #  # only keep the upper triangle of the matrix and exclude the diagonal entries
+    # #     # similarity_matrix = torch.triu(similarity_matrix, diagonal=1)
+    # #     print(f'similarity matrix: {similarity_matrix.shape}')
+    # #     # Create graph: Each image is a node, edges based on similarity
+    # #     # threshold = torch.quantile(similarity_matrix, 0.9)  # input tensor is too large()
+    # #     # Convert the tensor to NumPy array
+    # #     if threshold is None:
+    # #         import scipy.stats as stats
+    # #         similarity_matrix_np = similarity_matrix.cpu().numpy()
+    # #         # Calculate approximate quantile using scipy
+    # #         thresholds = [(v, float(stats.scoreatpercentile(similarity_matrix_np.flatten(), v))) for v in
+    # #                       range(0, 100 + 1, 10)]
+    # #         print(thresholds)
+    # #         per = 90.0
+    # #         threshold = stats.scoreatpercentile(similarity_matrix_np.flatten(), per)  # per in [0, 100]
+    # #         train_info['threshold'] = threshold
+    # #     else:
+    # #         per = 99.0
+    # #     print('threshold', threshold)
+    # #     # Find indices where similarity exceeds the threshold
+    # #     edge_indices = (torch.abs(similarity_matrix) > threshold).nonzero(
+    # #         as_tuple=False)  # two dimensional data [source, targets]
+    # #     print(f"total number of edges: {similarity_matrix.shape}, we only keep {100 - per:.2f}% edges "
+    # #           f"with edge_indices.shape: {edge_indices.shape}")
+    # #     edge_weight = similarity_matrix[edge_indices[:, 0], edge_indices[:, 1]]  # one dimensional data
+    # #
+    # # elif edge_method == 'euclidean':
+    # #     # from sklearn.metrics.pairwise import euclidean_distances
+    # #     # distance_matrix = euclidean_distances(train_features)
+    # #     # # Convert NumPy array to PyTorch tensor
+    # #     # distance_matrix = torch.tensor(distance_matrix, dtype=torch.float32)
+    # #     # # Convert the tensor to NumPy array
+    # #     # if threshold is None:
+    # #     #     import scipy.stats as stats
+    # #     #     distance_matrix_np = distance_matrix.cpu().numpy()
+    # #     #     thresholds = [stats.scoreatpercentile(distance_matrix_np.flatten(), v) for v in range(0, 100 + 1, 10)]
+    # #     #     print(thresholds)
+    # #     #     # Calculate approximate quantile using scipy
+    # #     #     threshold = stats.scoreatpercentile(distance_matrix_np.flatten(), 0.009)  # per in [0, 100]
+    # #     #     # threshold = torch.quantile(distance_matrix, 0.5)  # input tensor is too large()
+    # #     #     train_info['threshold'] = threshold
+    # #     # print('threshold', threshold)
+    # #     # edge_indices = (distance_matrix < threshold).nonzero(as_tuple=False)
+    # #     # # edge_weight = torch.where(distance_matrix != 0, 1.0 / distance_matrix, torch.tensor(0.0))
+    # #     # max_dist = max(distance_matrix_np)
+    # #     # edge_weight = (max_dist - distance_matrix[edge_indices[:, 0], edge_indices[:, 1]]) / max_dist
+    # #     pass
+    # #
+    # # elif edge_method == 'knn':
+    # #     from sklearn.neighbors import NearestNeighbors
+    # #     knn = NearestNeighbors(n_neighbors=5, metric='cosine')
+    # #     # When using metric='cosine' in NearestNeighbors, it internally calculates
+    # #     # 1 - cosine similarity
+    # #     # so the distances returned are always non-negative [0, 2] (similarity:[-1, 1]).
+    # #     # Also, by default, the knn from sklearn includes each node as its own neighbor,
+    # #     # usually it will be the value in the results.
+    # #     knn.fit(train_features)
+    # #     distances, indices = knn.kneighbors(train_features)
+    # #     # Flatten source and target indices
+    # #     source_nodes = []
+    # #     target_nodes = []
+    # #     num_nodes = len(train_features)
+    # #     dists = []
+    # #     for node_i_idx in range(num_nodes):
+    # #         for j, node_j_idx in enumerate(indices[node_i_idx]):  # Neighbors of node `i`
+    # #             if node_i_idx == node_j_idx: continue
+    # #             source_nodes.append(node_i_idx)
+    # #             target_nodes.append(node_j_idx)
+    # #             dists.append(distances[node_i_idx][j])
+    # #
+    # #     # Stack source and target to create edge_index
+    # #     edge_indices = torch.tensor([source_nodes, target_nodes], dtype=torch.long).t()
+    # #
+    # #     # one dimensional data: large dists, smaller weights
+    # #     edge_weight = (2 - torch.tensor(dists, dtype=torch.float32)) / 2  # dists is [0, 2], after this, values is [0,1]
+    # #     # edge_weight = torch.sparse_coo_tensor(edge_indices, values, size=(num_nodes, num_nodes)).to_dense()
+    # #     # edge_weight = torch.where(distance_matrix != 0, 1.0 / distance_matrix, torch.tensor(0.0))
+    # #
+    # # elif edge_method == 'affinity':
+    # #     # # from sklearn.feature_selection import mutual_info_classif
+    # #     # # mi_matrix = mutual_info_classif(train_features, train_labels)
+    # #     # # # Threshold mutual information to create edges
+    # #     # # threshold = 0.1
+    # #     # # edge_indices = (mi_matrix > threshold).nonzero(as_tuple=False)
+    # #     # # edges = edge_indices.t().contiguous()
+    # #     #
+    # #     # from sklearn.cluster import AffinityPropagation
+    # #     # affinity_propagation = AffinityPropagation(affinity='euclidean')
+    # #     # affinity_propagation.fit(train_features)
+    # #     # exemplars = affinity_propagation.cluster_centers_indices_
+    # #     pass
+    # # else:
+    # #     raise NotImplementedError
+    # #
+    # # # Convert to edge list format (two rows: [source_nodes, target_nodes])
+    # # edge_indices = edge_indices.t().contiguous()
+    #
+    # if existed_edge_indices is None:
+    #     # edge_indices = edge_indices
+    #     pass
+    # else:
+    #     # merge edge indices
+    #     dt = set([(i, j) for i, j in existed_edge_indices.tolist()])
+    #     existed_weights = [1] * len(existed_edge_indices)  # is it too large?
+    #
+    #     if len(edge_weight) == 0:
+    #         return torch.tensor(existed_edge_indices, dtype=torch.long).t(), torch.tensor(existed_weights,
+    #                                                                                       dtype=torch.float32)
+    #
+    #     edge_weight = edge_weight.tolist()
+    #     print(f'edge_weight: min: {min(edge_weight)}, max: {max(edge_weight)}')
+    #     edge_indices = edge_indices.t().tolist()
+    #     missed_edge_cnt = 0
+    #     existed_cnt = 0
+    #     new_weights2 = []
+    #     new_edges2 = []
+    #     for idx, (i, j) in enumerate(edge_indices):  # check if only new_edge is in edge_indices?
+    #         if (i, j) in dt:  # the computed edge already existed in the existed_edge_indices.
+    #             existed_cnt += 1
+    #             continue
+    #         # print(f'old edge ({i}, {j}) is not in new_edge_indices')
+    #         missed_edge_cnt += 1
+    #         new_edges2.append((i, j))
+    #         new_weights2.append(edge_weight[idx])  # is it too large
+    #         dt.add((i, j))
+    #
+    #     # merge edge indices and weights
+    #     edge_indices = existed_edge_indices.tolist() + new_edges2
+    #     edge_weight = existed_weights + new_weights2
+    #     print(f'missed edges cnt {missed_edge_cnt}, existed_cnt: {existed_cnt}, edge_indices {len(edge_indices)}')
+    #     edge_indices = torch.tensor(edge_indices, dtype=torch.long).t()
+    #     edge_weight = torch.tensor(edge_weight, dtype=torch.float32)
+    # return edge_indices, edge_weight
 
-    # Convert to edge list format (two rows: [source_nodes, target_nodes])
-    edge_indices = edge_indices.t().contiguous()
 
-    if existed_edge_indices is None:
-        # edge_indices = edge_indices
-        pass
-    else:
-        # merge edge indices
-        dt = set([(i, j) for i,j in existed_edge_indices.tolist()])
-        existed_weights = [1] * len(existed_edge_indices)       # is it too large?
-
-        edge_weight = edge_weight.tolist()
-        print(f'edge_weight: min: {min(edge_weight)}, max: {max(edge_weight)}')
-        edge_indices = edge_indices.t().tolist()
-        missed_edge_cnt = 0
-        existed_cnt = 0
-        new_weights2 = []
-        new_edges2 = []
-        for idx, (i, j) in enumerate(edge_indices):  # check if only new_edge is in edge_indices?
-            if (i, j) in dt:    # the computed edge already existed in the existed_edge_indices.
-                existed_cnt += 1
-                continue
-            # print(f'old edge ({i}, {j}) is not in new_edge_indices')
-            missed_edge_cnt += 1
-            new_edges2.append((i, j))
-            new_weights2.append(edge_weight[idx])  # is it too large
-            dt.add((i, j))
-
-        # merge edge indices and weights
-        edge_indices = existed_edge_indices.tolist() + new_edges2
-        edge_weight = existed_weights + new_weights2
-        print(f'missed edges cnt {missed_edge_cnt}, existed_cnt: {existed_cnt}, edge_indices {len(edge_indices)}')
-        edge_indices = torch.tensor(edge_indices, dtype=torch.long).t()
-        edge_weight = torch.tensor(edge_weight, dtype=torch.float32)
-    return edge_indices, edge_weight
-
-
-def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
+def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_info={}):
     """
         1. Use vaes to generated data for each class
         2. Use the generated data + local data to train local gnn with initial parameters of global_gnn
@@ -463,7 +611,6 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     train_mask = local_data['train_mask']
     y = local_data['y'][train_mask]  # we assume on a tiny labeled data in the local dat
     size = len(y.tolist())
-    train_size = size
     print(f'local data size: {len(train_mask)}, y: {size}, label_rate: {size / len(train_mask)}')
     ct = collections.Counter(y.tolist())
     max_size = max(ct.values())
@@ -487,15 +634,20 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
 
     # generated new data
     data = gen_data(global_cvae, sizes)
-    data = merge_data(data, local_data)  # append the generated data to the end of local X and Y
+    train_info['generated_size'] = sum(sizes.values())
+    data = merge_data(data,
+                      local_data)  # append the generated data to the end of local X and Y, not the end of train set
     # generate new edges
     features = data['X']
     labels = data['y']
     train_info['threshold'] = None
     existed_edge_indices = local_data['edge_indices']
-    edge_indices, edge_weight = gen_edges(features, train_size, existed_edge_indices, edge_method='cosine',
+    local_size = len(local_data['y'])
+    edge_indices, edge_weight = gen_edges(features, local_size, global_lp, existed_edge_indices,
+                                          edge_method='cosine',
                                           train_info=train_info)  # will update threshold
-    print(f"edges.shape {edge_indices.shape}, edge_weight min:{edge_weight.min()}, max:{edge_weight.max()}")
+    print(f"edges.shape {edge_indices.shape}, edge_weight min:{min(edge_weight.tolist())}, "
+          f"max:{max(edge_weight.tolist())}")
 
     # Define train, val, and test masks
     # generated_data_indices = list(range(len(train_mask), len(labels), 1))  # append the generated data
@@ -537,7 +689,7 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
     graph_data = Data(x=node_features, edge_index=edge_indices, edge_weight=edge_weight,
                       y=labels, train_mask=train_mask, val_mask=val_mask, test_mask=test_mask)
     # only train smaller model
-    epochs_client = 100
+    epochs_client = 300
     losses = []
     # here, you need make sure weight aligned with class order.
     class_weight = torch.tensor(list(data['labeled_classes_weights'].values()), dtype=torch.float).to(device)
@@ -566,7 +718,7 @@ def train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info={}):
         #         print(f"{name}: No gradient (likely frozen or unused)")
 
         optimizer.step()
-        if epoch % 50 == 0:
+        if epoch % 100 == 0:
             print(f"train_gnn epoch: {epoch}, local_gnn loss: {model_loss.item():.4f}")
         losses.append(model_loss.item())
 
@@ -633,45 +785,17 @@ def aggregate_cvaes(vaes, locals_info, global_cvae):
             # train_info['cvae'] = {"losses": losses}
 
 
+def aggregate_lps(lps, global_lp):
+    print('*aggregate lp...')
+    client_parameters_list = [local_gnn.state_dict() for client_i, local_gnn in lps.items()]
+    aggregate_with_attention(client_parameters_list, global_lp, device)  # update global_gnn inplace
+
+
 def aggregate_gnns(gnns, global_gnn):
     print('*aggregate gnn...')
     client_parameters_list = [local_gnn.state_dict() for client_i, local_gnn in gnns.items()]
     aggregate_with_attention(client_parameters_list, global_gnn, device)  # update global_gnn inplace
 
-
-#
-# class VAE(nn.Module):
-#     def __init__(self, input_dim=10, hidden_dim=32, latent_dim=5):
-#         super(VAE, self).__init__()
-#         self.input_dim = input_dim
-#         self.hidden_dim = hidden_dim
-#         self.latent_dim = latent_dim
-#         self.fc1 = nn.Linear(input_dim, hidden_dim)
-#         self.fc21 = nn.Linear(hidden_dim, latent_dim)  # Mean of latent distribution
-#         self.fc22 = nn.Linear(hidden_dim, latent_dim)  # Log variance of latent distribution
-#         self.fc3 = nn.Linear(latent_dim, hidden_dim)
-#         self.fc4 = nn.Linear(hidden_dim, input_dim)
-#
-#     def encoder(self, x):
-#         # print(x.device, self.fc1.weight.device, self.fc1.bias.device)
-#         h1 = torch.relu(self.fc1(x))
-#         return self.fc21(h1), self.fc22(h1)
-#
-#     def reparameterize(self, mu, logvar):
-#         std = torch.exp(0.5 * logvar)
-#         eps = torch.randn_like(std)
-#         return mu + eps * std
-#
-#     def decoder(self, z):
-#         h3 = torch.relu(self.fc3(z))
-#         # return torch.sigmoid(self.fc4(h3))  # Sigmoid for normalized output
-#         # return torch.softmax(self.fc4(h3), dim=1)  # softmax for normalized output
-#         return self.fc4(h3)  # output
-#
-#     def forward(self, x):
-#         mu, logvar = self.encoder(x)  # Flatten input logits
-#         z = self.reparameterize(mu, logvar)
-#         return self.decoder(z), mu, logvar
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -728,6 +852,36 @@ class CVAE(nn.Module):
         z = self.reparameterize(mean, log_var)
         recon_x = self.decoder(z, class_labels)
         return recon_x, mean, log_var
+
+
+import torch
+from torch.nn import Linear
+from torch_geometric.nn import GCNConv
+
+
+class GNNLinkPredictor(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels):
+        super(GNNLinkPredictor, self).__init__()
+        self.conv1 = GCNConv(in_channels, hidden_channels)
+        self.conv2 = GCNConv(hidden_channels, hidden_channels)
+        self.lin = Linear(2 * hidden_channels, hidden_channels)  # edge/link prediction
+        self.lin2 = Linear(hidden_channels, 1)  # edge/link prediction
+
+    def forward(self, x, edge_index):
+        # GNN layers
+        x = self.conv1(x, edge_index).relu()
+        x = self.conv2(x, edge_index).relu()
+
+        return x
+
+    def decode(self, z, edge_index):
+        # Compute pairwise embeddings
+        src, dst = edge_index
+        z_src = z[src]
+        z_dst = z[dst]
+        edge_scores = self.lin(torch.cat([z_src, z_dst], dim=1)).relu()
+        edge_scores = self.lin2(edge_scores)
+        return edge_scores
 
 
 # VAE loss function
@@ -906,7 +1060,7 @@ import torch
 
 
 def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indices,
-                  edge_method='cosine', k=5, train_info={}):
+                   global_lp, edge_method='cosine', k=5, train_info={}):
     """
     Find the k-nearest neighbors of a new node based on cosine similarity.
 
@@ -918,6 +1072,43 @@ def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indice
     Returns:
         torch.Tensor: A tensor containing edge indices (source, target) for the new node's neighbors.
     """
+    local_size = len(X_local)  # append X_test to the end of X_local
+    existed_edge_indices = X_local_indices
+    existed_weights = [1] * existed_edge_indices.size(1)  # existed_edge_indices.shape is 2xN
+
+    # # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
+    threshold = 0.05
+    new_nodes = X_test
+    # new_node_pairs = torch.combinations(torch.arange(len(new_nodes)), r=2).t()
+    # z = global_lp(new_nodes, new_node_pairs)
+    # new_probs = global_lp.decode(z, new_node_pairs)
+    # new_edges = new_node_pairs.t()[new_probs.flatten() > threshold].t()
+    # # adjust new_edges indices
+    # new_edges = local_size + new_edges
+    # # new_weights = [1] * len(new_edges) # not correct
+    # new_weights = [1] * new_edges.shape[1]
+    new_edges = X_test_indices
+    new_weights = [1] * new_edges.shape[1]
+
+    # Predict edges between new and existing nodes
+    existed_nodes = X_local
+    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size), torch.arange(len(new_nodes))).t()
+    # z = global_lp(existed_nodes, existed_new_pairs)
+    features = torch.cat((existed_nodes, new_nodes), dim=0)
+    z = global_lp(features, cross_pairs)  # here, we use all train_features.
+    cross_probs = global_lp.decode(z, cross_pairs)
+    cross_edges = cross_pairs.t()[cross_probs.flatten() > threshold].t()
+    # adjust cross_edges indices for new nodes
+    new_edges[1, :] = local_size + new_edges[1, :]  # new_edges.shape is 2xN
+    cross_weights = [1] * cross_edges.shape[1]
+
+    # Combine all edges
+    edge_indices = torch.cat([existed_edge_indices, new_edges, cross_edges], dim=1)
+    edge_weights = existed_weights + new_weights + cross_weights
+    edge_weights = torch.tensor(edge_weights, dtype=torch.float)
+
+    return edge_indices, edge_weights
+
     # Combine the new node feature with the existing node features
     all_node_features = torch.cat([X_local, X_test], dim=0)  # includes the generated data in X_local
     # Convert the node features to NumPy arrays (since scikit-learn's NearestNeighbors works with NumPy arrays)
@@ -937,63 +1128,82 @@ def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indice
     existed_edge_indices = list(existed_edge_indices)
     existed_weights = [1] * len(existed_edge_indices)
 
-    threshold = train_info['threshold']
-    if edge_method == 'cosine':
-        similarity_matrix = cosine_similarity(all_node_features_np)  # [-1, 1]
-        # Set diagonal items to 0
-        np.fill_diagonal(similarity_matrix, 0)
-        similarity_matrix = torch.abs(torch.tensor(similarity_matrix, dtype=torch.float32))
-        # #  # only keep the upper triangle of the matrix and exclude the diagonal entries
-        # similarity_matrix = torch.triu(similarity_matrix, diagonal=1)
-        print(f'similarity matrix: {similarity_matrix.shape}')
-        # Create graph: Each image is a node, edges based on similarity
-        # threshold = torch.quantile(similarity_matrix, 0.9)  # input tensor is too large()
-        # Convert the tensor to NumPy array
-        if threshold is None:
-            # import scipy.stats as stats
-            # similarity_matrix_np = similarity_matrix.cpu().numpy()
-            # # Calculate approximate quantile using scipy
-            # thresholds = [(v, float(stats.scoreatpercentile(similarity_matrix_np.flatten(), v))) for v in
-            #               range(0, 100 + 1, 10)]
-            # print(thresholds)
-            # per = 99.0
-            # threshold = stats.scoreatpercentile(similarity_matrix_np.flatten(), per)  # per in [0, 100]
-            # # train_info['threshold'] = threshold
-            raise NotImplementedError
-        else:
-            per = 99.0
-        print('threshold', threshold)
-        # Find indices where similarity exceeds the threshold
-        new_edges = (torch.abs(similarity_matrix) > threshold).nonzero(
-            as_tuple=False)  # two dimensional data [source, targets]
-        print(f"total number of edges: {similarity_matrix.shape}, we only keep {100 - per:.2f}% edges "
-              f"with edge_indices.shape: {new_edges.shape}")
-        edge_weight = similarity_matrix[new_edges[:, 0], new_edges[:, 1]]  # one dimensional data
-        new_edges = new_edges.tolist()
-    else:
-        # Initialize NearestNeighbors with cosine similarity
-        knn = NearestNeighbors(n_neighbors=k + 1, metric='cosine')
-        knn.fit(all_node_features_np)  # Fit the k-NN model with all node features
+    new_X = []
+    for x1 in all_node_features_np:
+        for x2 in all_node_features_np:
+            new_X.append([x1, x2])
+    new_X = torch.tensor(np.asarray(new_X), dtype=torch.float)
+    outputs = global_lp.forward(new_X[:, 0, :], new_X[:, 1, :])
+    y_pred = torch.argmax(outputs, dim=1).cpu().numpy()
 
-        # Find the k nearest neighbors (including the new node itself, hence k+1)
-        distances, indices = knn.kneighbors(X_test.cpu().numpy())
+    new_edges = []
+    edge_weight = []
+    for i, x1 in enumerate(all_node_features_np):
+        for j, x2 in enumerate(all_node_features_np):
+            t = i * len(all_node_features_np) + j
+            if y_pred[t] == 1:
+                new_edges.append([i, j])
+                edge_weight.append(1)
+    edge_weight = torch.tensor(edge_weight, dtype=torch.float)
 
-        # Prepare edge index pairs (source_node, target_node)
-        # The new node is the source node, and the neighbors are the target nodes
-        new_edges = []
-        new_distances = []
-        start_idx = len(X_local)  # includes the generated data
-        for i in range(len(X_test)):
-            for j, neig_idx in enumerate(indices[i]):
-                if start_idx + i == neig_idx: continue
-                new_edges.append([start_idx + i, neig_idx])  # New node (source) -> Neighbor (target)
-                new_distances.append(distances[i, j])
+    # threshold = train_info['threshold']
+    # if edge_method == 'cosine':
+    #     similarity_matrix = cosine_similarity(all_node_features_np)  # [-1, 1]
+    #     # Set diagonal items to 0
+    #     np.fill_diagonal(similarity_matrix, 0)
+    #     similarity_matrix = torch.abs(torch.tensor(similarity_matrix, dtype=torch.float32))
+    #     # #  # only keep the upper triangle of the matrix and exclude the diagonal entries
+    #     # similarity_matrix = torch.triu(similarity_matrix, diagonal=1)
+    #     print(f'similarity matrix: {similarity_matrix.shape}')
+    #     # Create graph: Each image is a node, edges based on similarity
+    #     # threshold = torch.quantile(similarity_matrix, 0.9)  # input tensor is too large()
+    #     # Convert the tensor to NumPy array
+    #     if threshold is None:
+    #         # import scipy.stats as stats
+    #         # similarity_matrix_np = similarity_matrix.cpu().numpy()
+    #         # # Calculate approximate quantile using scipy
+    #         # thresholds = [(v, float(stats.scoreatpercentile(similarity_matrix_np.flatten(), v))) for v in
+    #         #               range(0, 100 + 1, 10)]
+    #         # print(thresholds)
+    #         # per = 99.0
+    #         # threshold = stats.scoreatpercentile(similarity_matrix_np.flatten(), per)  # per in [0, 100]
+    #         # # train_info['threshold'] = threshold
+    #         raise NotImplementedError
+    #     else:
+    #         per = 99.0
+    #     print('threshold', threshold)
+    #     # Find indices where similarity exceeds the threshold
+    #     new_edges = (torch.abs(similarity_matrix) > threshold).nonzero(
+    #         as_tuple=False)  # two dimensional data [source, targets]
+    #     print(f"total number of edges: {similarity_matrix.shape}, we only keep {100 - per:.2f}% edges "
+    #           f"with edge_indices.shape: {new_edges.shape}")
+    #     edge_weight = similarity_matrix[new_edges[:, 0], new_edges[:, 1]]  # one dimensional data
+    #     new_edges = new_edges.tolist()
+    # else:
+    #     # Initialize NearestNeighbors with cosine similarity
+    #     knn = NearestNeighbors(n_neighbors=k + 1, metric='cosine')
+    #     knn.fit(all_node_features_np)  # Fit the k-NN model with all node features
+    #
+    #     # Find the k nearest neighbors (including the new node itself, hence k+1)
+    #     distances, indices = knn.kneighbors(X_test.cpu().numpy())
+    #
+    #     # Prepare edge index pairs (source_node, target_node)
+    #     # The new node is the source node, and the neighbors are the target nodes
+    #     new_edges = []
+    #     new_distances = []
+    #     start_idx = len(X_local)  # includes the generated data
+    #     for i in range(len(X_test)):
+    #         for j, neig_idx in enumerate(indices[i]):
+    #             if start_idx + i == neig_idx: continue
+    #             new_edges.append([start_idx + i, neig_idx])  # New node (source) -> Neighbor (target)
+    #             new_distances.append(distances[i, j])
+    #
+    #     # one dimensional data
+    #     edge_weight = (2 - torch.tensor(new_distances,
+    #                                     dtype=torch.float32)) / 2  # dists is [0, 2], after this, values is [0,1]
+    # # edge_weight = torch.sparse_coo_tensor(edge_indices, values, size=(num_nodes, num_nodes)).to_dense()
+    # # edge_weight = torch.where(distance_matrix != 0, 1.0 / distance_matrix, torch.tensor(0.0))
 
-        # one dimensional data
-        edge_weight = (2 - torch.tensor(new_distances,
-                                        dtype=torch.float32)) / 2  # dists is [0, 2], after this, values is [0,1]
-    # edge_weight = torch.sparse_coo_tensor(edge_indices, values, size=(num_nodes, num_nodes)).to_dense()
-    # edge_weight = torch.where(distance_matrix != 0, 1.0 / distance_matrix, torch.tensor(0.0))
     if existed_edge_indices is None:
         pass
     else:
@@ -1022,6 +1232,7 @@ def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indice
 
     return torch.tensor(new_edges, dtype=torch.long).t(), torch.tensor(edge_weight, dtype=torch.float)
 
+
 #
 # @timer
 # def find_edges(X_local_indices, X_test_indices, edge_indices):
@@ -1038,8 +1249,51 @@ def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indice
 #     return torch.tensor(list(new_edges))
 
 
+def gen_test_edges(graph_data, X_test, test_edges, global_lp, generated_size):
+    X_local = graph_data.x
+    local_size = len(X_local)
+    existed_edge_indices = graph_data.edge_index
+    existed_weights = graph_data.edge_weight.tolist()
+
+    # # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
+    threshold = 0.5
+    new_nodes = X_test
+    # new_node_pairs = torch.combinations(torch.arange(len(new_nodes)), r=2).t()
+    # z = global_lp(new_nodes, new_node_pairs)
+    # new_probs = global_lp.decode(z, new_node_pairs)
+    # new_edges = new_node_pairs.t()[new_probs.flatten() > threshold].t()
+    # # adjust new_edges indices
+    # new_edges = local_size + new_edges
+    # # new_weights = [1] * len(new_edges) # not correct
+    # new_weights = [1] * new_edges.shape[1]
+    new_edges = test_edges.t()
+    # adjust cross_edges indices for new nodes
+    new_edges = local_size + new_edges  # new_edges.shape is 2xN
+    new_weights = [1] * new_edges.shape[1]
+
+    # Predict edges between new and existing nodes
+    existed_nodes = X_local
+    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size), torch.arange(len(new_nodes))).t()
+    # z = global_lp(existed_nodes, existed_new_pairs)
+    features = torch.cat((existed_nodes, new_nodes), dim=0)
+    z = global_lp(features, cross_pairs)  # here, we use all train_features.
+    cross_probs = F.sigmoid(global_lp.decode(z, cross_pairs))
+    cross_edges = cross_pairs.t()[cross_probs.flatten() > threshold].t()
+    # adjust cross_edges indices for new nodes
+    cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN
+    cross_weights = [1] * cross_edges.shape[1]
+
+    # Combine all edges
+    edge_indices = torch.cat([existed_edge_indices, new_edges, cross_edges], dim=1)
+    edge_weights = existed_weights + new_weights + cross_weights
+    edge_weights = torch.tensor(edge_weights, dtype=torch.float)
+
+    return edge_indices, edge_weights
+
+
 @timer
-def evaluate_shared_test(local_gnn, local_data, device, test_type='shared_test_data', client_id=0, train_info={}):
+def evaluate_shared_test(local_gnn, local_data, device, global_lp,
+                         test_type='shared_test_data', client_id=0, train_info={}):
     """
         Evaluate how well each client's model performs on the test set.
     """
@@ -1056,28 +1310,30 @@ def evaluate_shared_test(local_gnn, local_data, device, test_type='shared_test_d
     y_test = Y[shared_test_mask].to(device)
     X_test_indices = all_indices[shared_test_mask].to(device)
     print(f'X_test: {X_test.size()}, {collections.Counter(y_test.tolist())}')
-
+    edge_indices_test = all_data['edge_indices_test'].to(device)
     if True:  # evaluate on new data
         # Add new_data to the node feature matrix (if you're adding a new node)
         # This could involve concatenating the new feature to the existing node features
         graph_data = train_info['gnn']['graph_data'].to(device)
+        generated_size = train_info['generated_size']
         X_local = graph_data.x  # includes all local train (+ generated data by cvae), val and test
         y = graph_data.y
-        X_local_indices = local_data['indices'].to(device)  # local indices not include the generated data.
-        # local_data_size_without_generated = len(X_local_indices)
-        # generated_data_size = len(y) - local_data_size_without_generated
+        edges, edge_weight = gen_test_edges(graph_data, X_test, edge_indices_test, global_lp, generated_size)
+        # X_local_indices = local_data['indices'].to(device)  # local indices not include the generated data.
+        # # local_data_size_without_generated = len(X_local_indices)
+        # # generated_data_size = len(y) - local_data_size_without_generated
         start_idx = len(y)
-        # Add edges to the graph (example: add an edge from the new node to its neighbors)
-        # Assuming you have a function `find_neighbors` to determine which nodes to connect
-        # new_node_feature =  torch.tensor([features], dtype=torch.float32)  # New node's feature vector
-        new_edges, new_weight = find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indices,
-                                               edge_method='cosine', k=5, train_info=train_info)
+        # # Add edges to the graph (example: add an edge from the new node to its neighbors)
+        # # Assuming you have a function `find_neighbors` to determine which nodes to connect
+        # # new_node_feature =  torch.tensor([features], dtype=torch.float32)  # New node's feature vector
+        # new_edges, new_weight = find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indices,
+        #                                        global_lp, edge_method='cosine', k=5, train_info=train_info)
         # (source, target) format for the new edges
-        new_edges = new_edges.to(device)
-        new_weight = new_weight.to(device)
-        # print(f"device: {graph_data.edge_index.device}, {graph_data.edge_weight.device}, {new_edges.device}, {new_weight.device}")
-        edges = torch.cat([graph_data.edge_index, new_edges], dim=1)  # Add new edges into train set
-        edge_weight = torch.cat([graph_data.edge_weight, new_weight])  # Add new edges into train set
+        # new_edges = new_edges.to(device)
+        # new_weight = new_weight.to(device)
+        # # print(f"device: {graph_data.edge_index.device}, {graph_data.edge_weight.device}, {new_edges.device}, {new_weight.device}")
+        # edges = torch.cat([graph_data.edge_index, new_edges], dim=1)  # Add new edges into train set
+        # edge_weight = torch.cat([graph_data.edge_weight, new_weight])  # Add new edges into train set
         features = torch.cat((X_local, X_test), dim=0)  # Adding to the existing node features
         labels = torch.cat((y, y_test)).to(device)
     else:
@@ -1191,7 +1447,12 @@ def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, la
 
 @timer
 def main(in_dir, input_dim=16):
-    print(f'input_dim: {input_dim}')
+    num_classes = len(LABELs)
+
+    print(f'in_dir: {in_dir}, '
+          f'input_dim: {input_dim}, '
+          f'num_clients: {num_clients}, '
+          f'num_classes: {num_classes}, where classes: {LABELs}')
 
     prefix = f'r_{label_rate}'
     # Generate local data for each client first
@@ -1200,8 +1461,8 @@ def main(in_dir, input_dim=16):
         gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                        label_rate=label_rate)
 
-    num_classes = len(LABELs)
     global_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
+    global_lp = GNNLinkPredictor(input_dim, 32)
     global_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
 
     debug = True
@@ -1210,39 +1471,47 @@ def main(in_dir, input_dim=16):
         for epoch in range(server_epochs):
             # update clients
             cvaes = {}
-            locals_info = {}
+            lps = {}
             gnns = {}
+            locals_info = {}  # used in CVAE
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
-                # l = c  # we should have 'num_clients = num_labels'
-                train_info = {"cvae": {}, "gnn": {}, }
+                train_info = {"cvae": {}, "gnn": {}, }  # might be used in server
                 # local_data = features_info[l]
                 local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                                             label_rate=label_rate)
                 label_cnts = collections.Counter(local_data['y'].tolist())
+                locals_info[c] = {'label_cnts': label_cnts}
                 print(f'client_{c} data:', label_cnts)
+
+                # Use to generate nodes
                 local_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
-                print('train_cvae...')
+                print('Train CVAE...')
                 train_cvae(local_cvae, global_cvae, local_data, train_info)
                 cvaes[c] = local_cvae
-                locals_info[c] = {'label_cnts': label_cnts}
 
-                print('train_gnn...')
+                # Use to generate/predict edges between nodes
+                local_lp = GNNLinkPredictor(input_dim, 32)
+                print('Train Link_predictor...')
+                train_link_predictor(local_lp, global_lp, local_data, train_info)
+                lps[c] = local_lp
+
+                print('Train GNN...')
                 local_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
-                train_gnn(local_gnn, global_cvae, global_gnn, local_data, train_info)  # will generate new data
+                train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_info)
                 gnns[c] = local_gnn
 
-                print('evaluate_gnn...')
-                # self.evaluate(client_result, graph_data_, device, test_type='train', client_id=client_id)
+                print('Evaluate GNN...')
                 evaluate(local_gnn, None, device,
                          test_type='Testing on client data', client_id=c, train_info=train_info)
-                # # Note that client_result will be overridden or appended more.
-                evaluate_shared_test(local_gnn, local_data, device,
+                evaluate_shared_test(local_gnn, local_data, device, global_lp,
                                      test_type='Testing on shared test data', client_id=c, train_info=train_info)
                 history[c] = train_info
-            # server aggregation
+
+            print('Server aggregation...')
             aggregate_cvaes(cvaes, locals_info, global_cvae)
+            aggregate_lps(lps, global_lp)
             aggregate_gnns(gnns, global_gnn)
 
             histories.append(history)
