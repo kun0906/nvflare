@@ -1,3 +1,5 @@
+v0.1.3: Add graph_edge (a binary classifier) to predict edges between nodes
+
 v0.1.2: Add more baseline models
 
 v0.1.1: Update shared_test_set on all clients using the fixed pretrained_CNN

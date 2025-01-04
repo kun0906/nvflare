@@ -23,7 +23,7 @@ from torch_geometric.datasets import Planetoid
 
 def gen_data():
     # Load the PubMed dataset
-    dataset = Planetoid(root='./data', name='PubMed', split='full')
+    dataset = Planetoid(root='./data', name='Cora', split='full')
     # 10%  labeled data + 90% labeled data
     # Access the data (the first graph in the dataset)
     data = dataset[0]
