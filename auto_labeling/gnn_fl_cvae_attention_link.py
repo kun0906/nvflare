@@ -18,11 +18,8 @@ import pickle
 
 import numpy as np
 import torch
-import torch.optim as optim
 from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.metrics.pairwise import cosine_similarity
 from torch_geometric.data import Data
-from torch_geometric.nn import GCNConv
 
 from auto_labeling.attention import aggregate_with_attention
 from utils import timer
@@ -108,6 +105,8 @@ def gen_local_data(client_data_file, client_id, label_rate=0.1):
     val_mask = torch.tensor(client_data['val_mask'])
     test_mask = torch.tensor(client_data['test_mask'])
     edge_indices = torch.tensor(client_data['edge_indices'])  # local indices (obtained from local data indices)
+    unqiue_edges = set([(b, a) if a > b else (a, b) for a, b in edge_indices.t().tolist()])
+    print(f'unique edges: {len(unqiue_edges)} =? edges/2: {edge_indices.shape[1] / 2}')
 
     shared_X = torch.tensor(client_data['all_data']['X'])  # global data x
     shared_y = torch.tensor(client_data['all_data']['y'])  # global data y
@@ -199,7 +198,7 @@ def train_cvae(local_cvae, global_cvae, local_data, train_info={}):
         optimizer.step()
 
         if epoch % 100 == 0:
-            print(f'train_cvae epoch: {epoch}, local_cvae loss: {loss.item() / X.shape[0]:.4f}')
+            print(f'train_cvae epoch: {epoch}, local_cvae loss: {loss.item():.4f}')
         losses.append(loss.item())
 
     train_info['cvae'] = {"losses": losses}
@@ -220,8 +219,6 @@ def binary_loss_function(y_prob, y):
     return BCE
 
 
-from torch_geometric.loader import DataLoader
-import torch.nn.functional as F
 import torch.optim as optim
 from torch_geometric.utils import negative_sampling
 
@@ -237,39 +234,71 @@ def train_link_predictor(local_lp, global_lp, local_data, train_info={}):
     # X = X[mask]
     # y = y[mask]
 
-    edge_indices = local_data['edge_indices']
+    pos_edge_indices = local_data['edge_indices']
     # set_edges = set([(a, b) for a, b in edges.tolist()])
     # set_edges = set(map(tuple, edges.tolist()))
 
-    # Generate negative edges
-    neg_edge_indices = negative_sampling(
-        edge_index=edge_indices,
-        num_nodes=len(X),
-        num_neg_samples=edge_indices.size(1)  # excluding the generated data
-    )
-
     losses = []
-    for epoch in range(300):
+    for epoch in range(500):
         local_lp.train()
         optimizer.zero_grad()
 
-        # Forward pass
-        z = local_lp(X, edge_indices)
-        pos_out = local_lp.decode(z, edge_indices)
-        neg_out = local_lp.decode(z, neg_edge_indices)
+        # Generate negative edges
+        neg_edge_indices = negative_sampling(
+            edge_index=pos_edge_indices,
+            num_nodes=len(X),
+            num_neg_samples=pos_edge_indices.size(1)  # excluding the generated data
+        )
 
-        # Compute loss
-        pos_loss = F.binary_cross_entropy_with_logits(pos_out, torch.ones_like(pos_out))
-        neg_loss = F.binary_cross_entropy_with_logits(neg_out, torch.zeros_like(neg_out))
-        loss = pos_loss + neg_loss
+        # edge_indices = torch.cat((pos_edge_indices, neg_edge_indices), dim=1)
+
+        # Forward pass only use pos_edge_indices
+        z = local_lp(X, pos_edge_indices)
+
+        pos_out = local_lp.decode(z, pos_edge_indices)
+        neg_out = local_lp.decode(z, neg_edge_indices)
+        out = torch.cat((pos_out, neg_out), dim=0)
+
+        y_true = torch.cat([torch.ones(pos_out.shape[0]), torch.zeros(neg_out.shape[0])], dim=0)
+        loss = F.binary_cross_entropy_with_logits(out.flatten(), y_true)
 
         loss.backward()
         optimizer.step()
 
         if epoch % 100 == 0:
             print(f'train_lp epoch: {epoch}, local_lp loss: {loss.item():.4f}')
+
+            # Evaluate local_lp performance
+            local_lp.eval()
+            with torch.no_grad():
+                # Predictions and ground truth
+                y_prob = torch.sigmoid(out).detach().numpy()
+                y_pred = [1 if p >= 0.5 else 0 for p in y_prob]
+                y_true = y_true.detach().numpy()
+                # from sklearn.metrics import roc_auc_score, average_precision_score
+                # auc = roc_auc_score(y_true, y_pred)
+                # ap = average_precision_score(y_true, y_pred)
+                # only on test set
+                print('Evaluate on the training data...')
+                accuracy = accuracy_score(y_true, y_pred)
+                print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+                # if 'all' in test_type:
+                #     client_result['labeled_accuracy_all'] = accuracy
+                # else:
+                #     client_result['labeled_accuracy'] = accuracy
+
+                # # Compute the confusion matrix
+                # conf_matrix = confusion_matrix(y_true, y_pred)
+                # print("Confusion Matrix:")
+                # print(conf_matrix)
+                # # if 'all' in test_type:
+                # #     client_result['labeled_cm_all'] = conf_matrix
+                # # else:
+                # #     client_result['labeled_cm'] = conf_matrix
+
         losses.append(loss.item())
 
+    print_histgram(F.sigmoid(out).detach().numpy())
     train_info['edge'] = {"losses": losses}
 
 
@@ -364,44 +393,78 @@ def cosine_similarity_torch(features):
     return similarity_matrix
 
 
+def print_histgram(new_probs):
+    print(f'***Print histgram of new_probs, min:{min(new_probs)}, max: {max(new_probs)}***')
+    # # Convert the probabilities to numpy for histogram calculation
+    # new_probs = new_probs.detach().cpu().numpy()
+    # Compute histogram
+    hist, bin_edges = torch.histogram(torch.tensor(new_probs), bins=5)
+    # Print histogram
+    for i in range(len(hist)):
+        print(f"\tBin {i}: Probability Range ({bin_edges[i]}, {bin_edges[i + 1]}), Frequency: {hist[i]}")
+
+
 @timer
 def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, edge_method='cosine', train_info={}):
     if train_features.is_cuda:
         train_features = train_features.cpu().numpy()
 
+    # debug = False
+    # if debug:
+    #     edge_indices = torch.combinations(torch.arange(len(train_features)), r=2).t()
+    #     edge_weights = torch.ones((edge_indices.shape[1], ))
+    #     return edge_indices, edge_weights
+    edge_threshold = 0.9
+    train_info['edge_threshold'] = edge_threshold
+    print(f'edges between existed nodes ({len(train_features[:local_size, :])}): {existed_edge_indices.shape}')
     existed_weights = [1] * existed_edge_indices.size(1)  # existed_edge_indices.shape is 2xN
     if train_features.shape[0] == local_size:
         print('No generated data.')
         return existed_edge_indices, torch.tensor(existed_weights, dtype=torch.float)
 
     # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
-    threshold = 0.5
     new_nodes = train_features[local_size:, :]
     new_node_pairs = torch.combinations(torch.arange(len(new_nodes)), r=2).t()
-    z = global_lp(new_nodes, new_node_pairs)
+    global_lp.eval()  # Set model to evaluation mode
+    # If no graph structure is provided, you can assume a fully connected graph for new_nodes.
+    # Create a complete edge_index for all nodes in new_nodes:
+    z = global_lp(new_nodes, edge_index=new_node_pairs)   # Embeddings for test nodes (no edges)
     new_probs = F.sigmoid(global_lp.decode(z, new_node_pairs))
-    new_edges = new_node_pairs.t()[new_probs.flatten() > threshold].t()
+    print_histgram(new_probs.detach().cpu().numpy())
+    new_edges = new_node_pairs.t()[new_probs.flatten() > edge_threshold].t()
     # adjust new_edges indices
     new_edges = local_size + new_edges  # src + local_size, dst + local_size
     # new_weights = [1] * len(new_edges) # not correct
     new_weights = [1] * new_edges.shape[1]
+    print(f'new edges between new nodes ({len(new_nodes)}): {new_edges.shape}')
 
     # Predict edges between new and existing nodes
     existed_nodes = train_features[:local_size, :]
-    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size), torch.arange(len(new_nodes))).t()
-    # z = global_lp(existed_nodes, existed_new_pairs)
-    features = torch.cat((existed_nodes, new_nodes), dim=0)
-    z = global_lp(features, cross_pairs)  # here, we use all train_features.
+    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size),
+                                       torch.arange(local_size, local_size + len(new_nodes))).t()
+    # # z = global_lp(existed_nodes, existed_new_pairs)
+    # features = torch.cat((existed_nodes, new_nodes), dim=0)
+    # Assuming `model` is your trained GNN model
+    global_lp.eval()  # Set model to evaluation mode
+    # Compute embeddings for existing and test nodes
+    z_existed = global_lp(existed_nodes, existed_edge_indices)  # Embeddings for existing nodes
+    z_test = global_lp(new_nodes, edge_index=new_node_pairs)  # Embeddings for test nodes (no edges)
+    z = torch.cat([z_existed, z_test], dim=0)
     cross_probs = F.sigmoid(global_lp.decode(z, cross_pairs))
-    cross_edges = cross_pairs.t()[cross_probs.flatten() > threshold].t()
+    print_histgram(cross_probs.detach().cpu().numpy())
+    cross_edges = cross_pairs.t()[cross_probs.flatten() > edge_threshold].t()
     # adjust cross_edges indices for new nodes
-    cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN, (src, dst+local_size)
+    # cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN, (src, dst+local_size)
+    # cross_edges = torch.zeros((2, 0), dtype=torch.long)
     cross_weights = [1] * cross_edges.shape[1]
+    print(f'new edges between existed nodes ({len(existed_nodes)}) and new nodes ({len(new_nodes)}): '
+          f'{cross_edges.shape}')
 
     # Combine all edges
     edge_indices = torch.cat([existed_edge_indices, new_edges, cross_edges], dim=1)
     edge_weights = existed_weights + new_weights + cross_weights
     edge_weights = torch.tensor(edge_weights, dtype=torch.float)
+    print(f'total edges between all nodes: {edge_indices.shape}')
 
     return edge_indices, edge_weights
 
@@ -587,6 +650,102 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
     # return edge_indices, edge_weight
 
 
+def plot_data(X, y, train_mask, gen_size, X_test=None, y_test=None, train_info={}):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.decomposition import PCA
+
+    # Reduce dimensions to 2D using PCA
+    pca = PCA(n_components=2)
+    X_ = X[train_mask]
+    y_ = y[train_mask]
+    X_2d = pca.fit_transform(X_)
+
+    X_train_2d = X_2d[:-gen_size]
+    X_gen_2d = X_2d[-gen_size:]
+    y_train = y_[:-gen_size]
+    y_gen = y_[-gen_size:]
+
+    # Plot training data
+    for label in np.unique(y_train):
+        plt.scatter(
+            X_train_2d[y_train == label, 0],
+            X_train_2d[y_train == label, 1],
+            label=f'Train Class {label}',
+            marker='o',
+            alpha=0.7
+        )
+
+    # Plot generated data
+    for label in np.unique(y_gen):
+        plt.scatter(
+            X_gen_2d[y_gen == label, 0],
+            X_gen_2d[y_gen == label, 1],
+            label=f'Generated Class {label}',
+            marker='x',
+            alpha=0.7
+        )
+
+    if X_test is not None:
+        # Project test data using the fitted PCA
+        X_test_2d = pca.transform(X_test)
+
+        # Plot test data
+        for label in np.unique(y_test):
+            plt.scatter(
+                X_test_2d[y_test == label, 0],
+                X_test_2d[y_test == label, 1],
+                label=f'Test Class {label}',
+                marker='s',
+                alpha=0.7
+            )
+
+    client_id = train_info['client_id']
+    server_epoch = train_info['server_epoch']
+
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.title(f'epoch:{server_epoch}, client_{client_id}')
+    plt.legend(fontsize='small')
+    # plt.grid(True)
+    fig_file = f'{in_dir}/plots/client_{client_id}/epoch_{server_epoch}.png'
+    os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+    plt.savefig(fig_file, dpi=100)
+    # plt.show()
+    plt.clf()
+
+
+
+def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion, patience=10):
+    # Validation phase
+    model.eval()
+    val_loss = 0.0
+    stop_training = False
+    with torch.no_grad():
+        if y_val is not None:  # is not graph data
+            outputs_ = model(X_val)
+            loss_ = criterion(outputs_, y_val)
+        else:
+            data = X_val  # here must be graph data
+            outputs_ = model(data)
+            # Loss calculation: Only for labeled nodes
+            loss_ = criterion(outputs_[data.val_mask], data.y[data.val_mask])
+        val_loss += loss_
+
+    if epoch == 0:
+        pre_val_loss = val_loss
+        return val_loss, pre_val_loss, val_cnt, stop_training
+
+    if val_loss <= pre_val_loss:
+        pre_val_loss = val_loss
+        val_cnt = 0
+    else:  # if val_loss > pre_val_loss, it means we should consider early stopping.
+        val_cnt += 1
+        if val_cnt >= patience:
+            # training stops.
+            stop_training = True
+    return val_loss, pre_val_loss, val_cnt, stop_training
+
 def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_info={}):
     """
         1. Use vaes to generated data for each class
@@ -613,41 +772,56 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     size = len(y.tolist())
     print(f'local data size: {len(train_mask)}, y: {size}, label_rate: {size / len(train_mask)}')
     ct = collections.Counter(y.tolist())
-    max_size = max(ct.values())
-    max_size = int(max_size * 0.5)  # for each class, only generate 10% percent data to save computational resources.
-    if max_size == 0: max_size = 1
-    print(f'For each class, we only generate {max_size} samples, '
-          f'and use labeled_classes_weights to address class imbalance issue.')
-    sizes = {}
-    labeled_cnt = {}
-    for l in LABELs:
-        if l in ct.keys():
-            if max_size > ct[l]:
-                sizes[l] = max_size - ct[l]
-                labeled_cnt[l] = max_size
+    print(f'y: {ct.items()}')
+    print(f"len(ct.keys()):{len(ct.keys())} =? len(LABELs): {len(LABELs)}")
+    # for debug
+    if len(ct.keys()) < len(LABELs):
+        max_size = max(ct.values())
+        max_size = int(max_size * 0.5)  # for each class, only generate 10% percent data to save computational resources.
+        if max_size == 0: max_size = 1
+        print(f'For each class, we only generate {max_size} samples, '
+              f'and use labeled_classes_weights to address class imbalance issue.')
+        sizes = {}
+        labeled_cnt = {}
+        for l in LABELs:
+            if l in ct.keys():
+                if max_size > ct[l]:
+                    sizes[l] = max_size - ct[l]
+                    labeled_cnt[l] = max_size
+                else:
+                    labeled_cnt[l] = ct[l]
             else:
-                labeled_cnt[l] = ct[l]
-        else:
-            sizes[l] = max_size
-            labeled_cnt[l] = max_size
-    print(f'sizes:{sizes}')
+                sizes[l] = max_size
+                labeled_cnt[l] = max_size
+        print(f'we need to generate class sizes:{sizes}')
 
-    # generated new data
-    data = gen_data(global_cvae, sizes)
-    train_info['generated_size'] = sum(sizes.values())
-    data = merge_data(data,
-                      local_data)  # append the generated data to the end of local X and Y, not the end of train set
-    # generate new edges
-    features = data['X']
-    labels = data['y']
+        # generated new data
+        data = gen_data(global_cvae, sizes)
+        train_info['generated_size'] = sum(sizes.values())
+        # append the generated data to the end of local X and Y, not the end of train set
+        data = merge_data(data, local_data)
+
+        # plot_data(data['X'], data['y'], train_size=None)
+
+        # generate new edges
+        features = data['X']
+        labels = data['y']
+    else:
+        sizes = {}
+        labeled_cnt = ct
+        features = local_data['X']
+        labels = local_data['y']
+        data = {}
+        train_info['generated_size'] = sum(sizes.values())
     train_info['threshold'] = None
     existed_edge_indices = local_data['edge_indices']
     local_size = len(local_data['y'])
     edge_indices, edge_weight = gen_edges(features, local_size, global_lp, existed_edge_indices,
-                                          edge_method='cosine',
+                                          edge_method=None,
                                           train_info=train_info)  # will update threshold
-    print(f"edges.shape {edge_indices.shape}, edge_weight min:{min(edge_weight.tolist())}, "
-          f"max:{max(edge_weight.tolist())}")
+    if edge_weight.shape[0] > 0:
+        print(f"edges.shape {edge_indices.shape}, edge_weight min:{min(edge_weight.tolist())}, "
+              f"max:{max(edge_weight.tolist())}")
 
     # Define train, val, and test masks
     # generated_data_indices = list(range(len(train_mask), len(labels), 1))  # append the generated data
@@ -689,13 +863,17 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     graph_data = Data(x=node_features, edge_index=edge_indices, edge_weight=edge_weight,
                       y=labels, train_mask=train_mask, val_mask=val_mask, test_mask=test_mask)
     # only train smaller model
-    epochs_client = 300
+    epochs_client = 500
     losses = []
+    val_losses = []
+    val_cnt = 0
+    pre_val_loss = 0
     # here, you need make sure weight aligned with class order.
     class_weight = torch.tensor(list(data['labeled_classes_weights'].values()), dtype=torch.float).to(device)
     criterion = nn.CrossEntropyLoss(weight=class_weight).to(device)
+    # criterion = nn.CrossEntropyLoss().to(device)
     for epoch in range(epochs_client):
-        epoch_model_loss = 0
+        # epoch_model_loss = 0
         # _model_loss, _model_distill_loss = 0, 0
         # epoch_vae_loss = 0
         # _vae_recon_loss, _vae_kl_loss = 0, 0
@@ -721,6 +899,15 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
         if epoch % 100 == 0:
             print(f"train_gnn epoch: {epoch}, local_gnn loss: {model_loss.item():.4f}")
         losses.append(model_loss.item())
+
+        # X_val, y_val = data.x[data.val_mask], data.y[data.val_mask]
+        val_loss, pre_val_loss, val_cnt, stop_training = early_stopping(local_gnn, graph_data, None, epoch,
+                                                                        pre_val_loss, val_cnt, criterion, patience=10)
+        val_losses.append(val_loss.item())
+        if stop_training:
+            local_gnn.stop_training = True
+            print(f'Early Stopping. Epoch: {epoch}, Loss: {model_loss:.4f}')
+            break
 
     train_info['gnn'] = {'graph_data': graph_data, "losses": losses}
 
@@ -876,7 +1063,8 @@ class GNNLinkPredictor(torch.nn.Module):
 
     def decode(self, z, edge_index):
         # Compute pairwise embeddings
-        src, dst = edge_index
+        # edge_index.shape = (2, m)
+        src, dst = edge_index[0, :], edge_index[1, :]
         z_src = z[src]
         z_dst = z[dst]
         edge_scores = self.lin(torch.cat([z_src, z_dst], dim=1)).relu()
@@ -1004,7 +1192,7 @@ def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train
         #     client_result['labeled_accuracy_all'] = accuracy
         # else:
         #     client_result['labeled_accuracy'] = accuracy
-
+        # print(y, y_pred)
         conf_matrix = confusion_matrix(y, y_pred)
         print("Confusion Matrix:\n", conf_matrix)
 
@@ -1055,7 +1243,6 @@ def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train
     return
 
 
-from sklearn.neighbors import NearestNeighbors
 import torch
 
 
@@ -1249,14 +1436,35 @@ def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indice
 #     return torch.tensor(list(new_edges))
 
 
-def gen_test_edges(graph_data, X_test, test_edges, global_lp, generated_size):
+def gen_test_edges(graph_data, X_test, y_test, test_edges, global_lp, generated_size, train_info):
     X_local = graph_data.x
+    y_local = graph_data.y
     local_size = len(X_local)
+    train_mask = graph_data.train_mask
+
+    # plot_data(X_local.numpy(), y_local.numpy(), train_mask.numpy(), generated_size, X_test.numpy(), y_test.numpy(), train_info)
+
+    debug = False
+    if debug:
+        features = torch.cat((X_local, X_test), dim=0)
+        labels = torch.cat((y_local, y_test), dim=0)
+        start_idx = len(X_local)
+        # features = X_test
+        # labels = y_test
+        # start_idx = 0
+        # Combine all edges
+        # edge_indices = test_edges.t()
+        edge_indices = torch.combinations(torch.arange(len(features)), r=2).t()
+        edge_weights = torch.ones((edge_indices.shape[1],))
+        print(f'total edges between all nodes: {edge_indices.shape}')
+        return features, labels, edge_indices, edge_weights, start_idx
+
     existed_edge_indices = graph_data.edge_index
     existed_weights = graph_data.edge_weight.tolist()
+    print(f'edges between existed nodes ({len(X_local)}): {existed_edge_indices.shape}')
 
     # # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
-    threshold = 0.5
+    edge_threshold = train_info['edge_threshold']
     new_nodes = X_test
     # new_node_pairs = torch.combinations(torch.arange(len(new_nodes)), r=2).t()
     # z = global_lp(new_nodes, new_node_pairs)
@@ -1270,25 +1478,40 @@ def gen_test_edges(graph_data, X_test, test_edges, global_lp, generated_size):
     # adjust cross_edges indices for new nodes
     new_edges = local_size + new_edges  # new_edges.shape is 2xN
     new_weights = [1] * new_edges.shape[1]
+    print(f'new edges between new nodes ({len(new_nodes)}): {new_edges.shape}')
 
     # Predict edges between new and existing nodes
     existed_nodes = X_local
-    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size), torch.arange(len(new_nodes))).t()
+    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size),
+                                       torch.arange(local_size, local_size + len(new_nodes))).t()
     # z = global_lp(existed_nodes, existed_new_pairs)
     features = torch.cat((existed_nodes, new_nodes), dim=0)
-    z = global_lp(features, cross_pairs)  # here, we use all train_features.
+    labels = torch.cat((y_local, y_test), dim=0)
+    # z = global_lp(features, cross_pairs)  # here, we use all train_features.
+    # Assuming `model` is your trained GNN model
+    global_lp.eval()  # Set model to evaluation mode
+    # Compute embeddings for existing and test nodes
+    z_existed = global_lp(existed_nodes, existed_edge_indices)  # Embeddings for existing nodes
+    z_test = global_lp(new_nodes, edge_index=new_edges-local_size)  # Embeddings for test nodes (no edges)
+    z = torch.cat([z_existed, z_test], dim=0)
     cross_probs = F.sigmoid(global_lp.decode(z, cross_pairs))
-    cross_edges = cross_pairs.t()[cross_probs.flatten() > threshold].t()
+    print_histgram(cross_probs.detach().cpu().numpy())
+    cross_edges = cross_pairs.t()[cross_probs.flatten() > edge_threshold].t()
     # adjust cross_edges indices for new nodes
-    cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN
+    # cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN
+    # cross_edges = torch.zeros((2, 0), dtype=torch.long)
     cross_weights = [1] * cross_edges.shape[1]
+    print(f'new edges between existed nodes ({len(existed_nodes)}) and new nodes ({len(new_nodes)}): '
+          f'{cross_edges.shape}')
 
     # Combine all edges
     edge_indices = torch.cat([existed_edge_indices, new_edges, cross_edges], dim=1)
     edge_weights = existed_weights + new_weights + cross_weights
     edge_weights = torch.tensor(edge_weights, dtype=torch.float)
+    print(f'total edges between all nodes: {edge_indices.shape}')
 
-    return edge_indices, edge_weights
+    start_idx = len(y_local)
+    return features, labels, edge_indices, edge_weights, start_idx
 
 
 @timer
@@ -1301,14 +1524,14 @@ def evaluate_shared_test(local_gnn, local_data, device, global_lp,
     print(f'***Testing gnn model on test_type:{test_type}...')
     all_data = local_data['all_data']
     all_indices = all_data['indices']
-    edge_indices = all_data['edge_indices'].to(device)  # all edge_indices
+    # edge_indices = all_data['edge_indices'].to(device)  # all edge_indices
     X, Y = all_data['X'].to(device), all_data['y'].to(device)
 
     # Shared test data
     shared_test_mask = all_data['test_mask'].to(device)
     X_test = X[shared_test_mask].to(device)
     y_test = Y[shared_test_mask].to(device)
-    X_test_indices = all_indices[shared_test_mask].to(device)
+    # X_test_indices = all_indices[shared_test_mask].to(device)
     print(f'X_test: {X_test.size()}, {collections.Counter(y_test.tolist())}')
     edge_indices_test = all_data['edge_indices_test'].to(device)
     if True:  # evaluate on new data
@@ -1318,11 +1541,12 @@ def evaluate_shared_test(local_gnn, local_data, device, global_lp,
         generated_size = train_info['generated_size']
         X_local = graph_data.x  # includes all local train (+ generated data by cvae), val and test
         y = graph_data.y
-        edges, edge_weight = gen_test_edges(graph_data, X_test, edge_indices_test, global_lp, generated_size)
+        features, labels, edges, edge_weight, local_size = gen_test_edges(graph_data, X_test, y_test, edge_indices_test,
+                                                                          global_lp, generated_size, train_info)
         # X_local_indices = local_data['indices'].to(device)  # local indices not include the generated data.
         # # local_data_size_without_generated = len(X_local_indices)
         # # generated_data_size = len(y) - local_data_size_without_generated
-        start_idx = len(y)
+        # local_size = len(y)
         # # Add edges to the graph (example: add an edge from the new node to its neighbors)
         # # Assuming you have a function `find_neighbors` to determine which nodes to connect
         # # new_node_feature =  torch.tensor([features], dtype=torch.float32)  # New node's feature vector
@@ -1334,8 +1558,8 @@ def evaluate_shared_test(local_gnn, local_data, device, global_lp,
         # # print(f"device: {graph_data.edge_index.device}, {graph_data.edge_weight.device}, {new_edges.device}, {new_weight.device}")
         # edges = torch.cat([graph_data.edge_index, new_edges], dim=1)  # Add new edges into train set
         # edge_weight = torch.cat([graph_data.edge_weight, new_weight])  # Add new edges into train set
-        features = torch.cat((X_local, X_test), dim=0)  # Adding to the existing node features
-        labels = torch.cat((y, y_test)).to(device)
+        # features = torch.cat((X_local, X_test), dim=0)  # Adding to the existing node features
+        # labels = torch.cat((y, y_test)).to(device)
     else:
         # will use the threshold obtained from training set.
         edges, edge_weight = gen_edges(features, edge_method='knn', train_info=train_info)
@@ -1360,12 +1584,49 @@ def evaluate_shared_test(local_gnn, local_data, device, global_lp,
     with torch.no_grad():
         output = gnn(graph_data)
         _, predicted_labels = torch.max(output, dim=1)
-        predicted_labels = predicted_labels[start_idx:]
+
+        # # here we use new edges (based on local data and test set), so the performance is different from only use
+        # # local data
+        # # only on local data
+        # print('Evaluate on local data...')
+        # predicted_labels_ = predicted_labels[:local_size]
+        # # Calculate accuracy for the labeled data
+        # # num_classes = 10
+        # # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        # # print(f'labeled_indices {len(labeled_indices)}')
+        # true_labels = graph_data.y[:local_size]
+        #
+        # # predicted_labels = predicted_labels[graph_data.train_mask]
+        # # true_labels = true_labels[graph_data.train_mask]
+        # # predicted_labels = predicted_labels[graph_data.test_mask]
+        # # true_labels = true_labels[graph_data.test_mask]
+        #
+        # y = true_labels.cpu().numpy()
+        # y_pred = predicted_labels_.cpu().numpy()
+        # accuracy = accuracy_score(y, y_pred)
+        # print(f"Accuracy on local data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+        # # if 'all' in test_type:
+        # #     client_result['labeled_accuracy_all'] = accuracy
+        # # else:
+        # #     client_result['labeled_accuracy'] = accuracy
+        #
+        # # Compute the confusion matrix
+        # conf_matrix = confusion_matrix(y, y_pred)
+        # print("Confusion Matrix:")
+        # print(conf_matrix)
+        # # if 'all' in test_type:
+        # #     client_result['labeled_cm_all'] = conf_matrix
+        # # else:
+        # #     client_result['labeled_cm'] = conf_matrix
+
+        # only on test set
+        print('Evaluate on shared test data...')
+        predicted_labels_ = predicted_labels[local_size:]
         # Calculate accuracy for the labeled data
         # num_classes = 10
         # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
         # print(f'labeled_indices {len(labeled_indices)}')
-        true_labels = graph_data.y[start_idx:]
+        true_labels = graph_data.y[local_size:]
 
         # predicted_labels = predicted_labels[graph_data.train_mask]
         # true_labels = true_labels[graph_data.train_mask]
@@ -1373,7 +1634,7 @@ def evaluate_shared_test(local_gnn, local_data, device, global_lp,
         # true_labels = true_labels[graph_data.test_mask]
 
         y = true_labels.cpu().numpy()
-        y_pred = predicted_labels.cpu().numpy()
+        y_pred = predicted_labels_.cpu().numpy()
         accuracy = accuracy_score(y, y_pred)
         print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
         # if 'all' in test_type:
@@ -1477,7 +1738,7 @@ def main(in_dir, input_dim=16):
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
-                train_info = {"cvae": {}, "gnn": {}, }  # might be used in server
+                train_info = {"cvae": {}, "gnn": {}, 'client_id': c, 'server_epoch': epoch}  # might be used in server
                 # local_data = features_info[l]
                 local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                                             label_rate=label_rate)
