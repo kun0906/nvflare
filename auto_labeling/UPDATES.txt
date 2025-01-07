@@ -1,3 +1,5 @@
+v0.1.6: Add cosine
+
 v0.1.5: Add early_stopping to federated GNN
 
 v0.1.4: Add graph_lp (graph link predictor) to predict edges between nodes

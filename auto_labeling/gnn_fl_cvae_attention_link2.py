@@ -21,7 +21,7 @@ import torch
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, confusion_matrix
 from torch_geometric.data import Data
-from sklearn.metrics.pairwise import cosine_similarity
+
 from auto_labeling.attention import aggregate_with_attention
 from utils import timer
 
@@ -39,7 +39,7 @@ def parse_arguments():
     # Add arguments to be parsed
     parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.1,
                         help="label rate, how much labeled data in local data.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=100,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=10,
                         help="The number of epochs (integer).")
 
     # Parse the arguments
@@ -241,7 +241,7 @@ def train_link_predictor(local_lp, global_lp, local_data, train_info={}):
     # set_edges = set(map(tuple, edges.tolist()))
 
     losses = []
-    for epoch in range(2):
+    for epoch in range(500):
         local_lp.train()
         optimizer.zero_grad()
 
@@ -405,106 +405,10 @@ def print_histgram(new_probs):
     for i in range(len(hist)):
         print(f"\tBin {i}: Probability Range ({bin_edges[i]}, {bin_edges[i + 1]}), Frequency: {hist[i]}")
 
-def compute_similarity(X, threshold = 0.5, edge_method='cosine', train_info={}):
-    if edge_method == 'cosine':
-        # Calculate cosine similarity to build graph edges (based on CNN features)
-        similarity_matrix = cosine_similarity(X)  # [-1, 1]
-        # Set diagonal items to 0
-        np.fill_diagonal(similarity_matrix, 0)
-        # similarity_matrix = cosine_similarity_torch(train_features)
-        # Convert NumPy array to PyTorch tensor
-        similarity_matrix = torch.abs(torch.tensor(similarity_matrix, dtype=torch.float32))
-        # #  # only keep the upper triangle of the matrix and exclude the diagonal entries
-        # similarity_matrix = torch.triu(similarity_matrix, diagonal=1)
-        print(f'similarity matrix: {similarity_matrix.shape}')
-        # Create graph: Each image is a node, edges based on similarity
-        # threshold = torch.quantile(similarity_matrix, 0.9)  # input tensor is too large()
-        # Convert the tensor to NumPy array
-        print_histgram(similarity_matrix.detach().cpu().numpy().flatten())
-        if threshold is None:
-            import scipy.stats as stats
-            similarity_matrix_np = similarity_matrix.cpu().numpy()
-            # Calculate approximate quantile using scipy
-            thresholds = [(v, float(stats.scoreatpercentile(similarity_matrix_np.flatten(), v))) for v in
-                          range(0, 100 + 1, 10)]
-            print(thresholds)
-            per = 99.0
-            threshold = stats.scoreatpercentile(similarity_matrix_np.flatten(), per)  # per in [0, 100]
-            train_info['threshold'] = threshold
-        else:
-            per = 99.0
-        print('threshold', threshold)
-        # Find indices where similarity exceeds the threshold
-        edge_indices = (torch.abs(similarity_matrix) > threshold).nonzero(
-            as_tuple=False)  # two dimensional data [source, targets]
-        print(f"total number of edges: {similarity_matrix.shape}, we only keep {100 - per:.2f}% edges "
-              f"with edge_indices.shape: {edge_indices.shape}")
-        edge_weight = similarity_matrix[edge_indices[:, 0], edge_indices[:, 1]]  # one dimensional data
-
-    return edge_indices.t(), edge_weight
-
-
-def compute_similarity2(X1, X2, threshold=0.8, edge_method='cosine',
-                                                       train_info={}):
-
-    if edge_method == 'cosine':
-        # Calculate cosine similarity to build graph edges (based on CNN features)
-        similarity_matrix = cosine_similarity(X1, X2)  # [-1, 1]
-        # Set diagonal items to 0
-        # np.fill_diagonal(similarity_matrix, 0)
-        # similarity_matrix = cosine_similarity_torch(train_features)
-        # Convert NumPy array to PyTorch tensor
-        similarity_matrix = torch.abs(torch.tensor(similarity_matrix, dtype=torch.float32))
-        # #  # only keep the upper triangle of the matrix and exclude the diagonal entries
-        # similarity_matrix = torch.triu(similarity_matrix, diagonal=1)
-        print(f'similarity matrix: {similarity_matrix.shape}')
-        # Create graph: Each image is a node, edges based on similarity
-        # threshold = torch.quantile(similarity_matrix, 0.9)  # input tensor is too large()
-        # Convert the tensor to NumPy array
-        print_histgram(similarity_matrix.detach().cpu().numpy().flatten())
-        if threshold is None:
-            import scipy.stats as stats
-
-            similarity_matrix_np = similarity_matrix.cpu().numpy()
-            # Calculate approximate quantile using scipy
-            thresholds = [(v, float(stats.scoreatpercentile(similarity_matrix_np.flatten(), v))) for v in
-                          range(0, 100 + 1, 10)]
-            print(thresholds)
-            per = 90.0
-            threshold = stats.scoreatpercentile(similarity_matrix_np.flatten(), per)  # per in [0, 100]
-            train_info['threshold'] = threshold
-        else:
-            per = 99.0
-        print('threshold', threshold)
-        # Find indices where similarity exceeds the threshold
-        edge_indices = (torch.abs(similarity_matrix) > threshold).nonzero(
-            as_tuple=False)  # two dimensional data [source, targets]
-        print(f"total number of edges: {similarity_matrix.shape}, we only keep {100 - per:.2f}% edges "
-              f"with edge_indices.shape: {edge_indices.shape}")
-        edge_weight = similarity_matrix[edge_indices[:, 0], edge_indices[:, 1]]  # one dimensional data
-
-    return edge_indices.t(), edge_weight
-
-
-def merge_edges(new_edges, new_weights, new_edges2, new_weights2):
-    edges_set = set(new_edges)
-
-    indices = []
-    for i, (a, b) in enumerate(new_edges2.t().numpy()):
-        e = (a, b)
-        if e not in edges_set:
-            indices.append(i)
-
-    if len(indices) > 0:
-        indices = np.asarray(indices)
-        new_edges = torch.cat((new_edges, new_edges2.t()[indices].t()), dim=1)
-        new_weights = torch.cat((new_weights, new_weights2[indices]), dim=0)
-    return new_edges, new_weights
-
 
 @timer
 def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, edge_method='cosine',
-              generated_size=0, local_data = None, train_info={}):
+              generated_size=0, local_data=None, train_info={}):
     if train_features.is_cuda:
         train_features = train_features.cpu().numpy()
 
@@ -521,71 +425,41 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
         print('No generated data.')
         return existed_edge_indices, torch.tensor(existed_weights, dtype=torch.float)
 
-    using_lp = False
     # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
     new_nodes = train_features[local_size:, :]
-    if using_lp:
-        new_node_pairs = torch.combinations(torch.arange(len(new_nodes)), r=2).t()
-        global_lp.eval()  # Set model to evaluation mode
-        # If no graph structure is provided, you can assume a fully connected graph for new_nodes.
-        # Create a complete edge_index for all nodes in new_nodes:
-        z = global_lp(new_nodes, edge_index=new_node_pairs)  # Embeddings for test nodes (no edges)
-        new_probs = F.sigmoid(global_lp.decode(z, new_node_pairs))
-        print_histgram(new_probs.detach().cpu().numpy())
-        new_edges = new_node_pairs.t()[new_probs.flatten() > edge_threshold].t()
-        # adjust new_edges indices
-        new_edges = local_size + new_edges  # src + local_size, dst + local_size
-        # new_weights = [1] * len(new_edges) # not correct
-        new_weights = [1] * new_edges.shape[1]
-        add_similarity = True
-        if add_similarity:
-            new_edges2, new_weights2 = compute_similarity(new_nodes.numpy(), threshold=None, edge_method='cosine',
-                                                           train_info=train_info)
-            new_edges2 = local_size + new_edges2  # src + local_size, dst + local_size
-            new_edges, new_weights = merge_edges(new_edges, torch.tensor(new_weights), new_edges2, new_weights2)
-            new_weights = new_weights.tolist()
-    else:
-        new_edges, new_weights = compute_similarity(new_nodes.numpy(), threshold=0.99, edge_method='cosine',
-                                                      train_info=train_info)
-        new_edges = local_size + new_edges  # src + local_size, dst + local_size
-        # new_weights = new_weights.tolist()
-        new_weights = [1] * new_edges.shape[1]
+    new_node_pairs = torch.combinations(torch.arange(len(new_nodes)), r=2).t()
+    global_lp.eval()  # Set model to evaluation mode
+    # If no graph structure is provided, you can assume a fully connected graph for new_nodes.
+    # Create a complete edge_index for all nodes in new_nodes:
+    z = global_lp.encoder(new_nodes, edge_index=new_node_pairs)  # Embeddings for test nodes (no edges)
+    new_probs = F.sigmoid(global_lp.decoder(z, new_node_pairs))
+    print_histgram(new_probs.detach().cpu().numpy())
+    new_edges = new_node_pairs.t()[new_probs.flatten() > edge_threshold].t()
+    # adjust new_edges indices
+    new_edges = local_size + new_edges  # src + local_size, dst + local_size
+    # new_weights = [1] * len(new_edges) # not correct
+    new_weights = [1] * new_edges.shape[1]
     print(f'new edges between new nodes ({len(new_nodes)}): {new_edges.shape}')
 
     # Predict edges between new and existed nodes
     existed_nodes = train_features[:local_size, :]
-    if using_lp:
-        cross_pairs = torch.cartesian_prod(torch.arange(0, local_size),
-                                           torch.arange(local_size, local_size + len(new_nodes))).t()
-        # # z = global_lp(existed_nodes, existed_new_pairs)
-        # features = torch.cat((existed_nodes, new_nodes), dim=0)
-        # Assuming `model` is your trained GNN model
-        global_lp.eval()  # Set model to evaluation mode
-        # Compute embeddings for existing and test nodes
-        z_existed = global_lp(existed_nodes, existed_edge_indices)  # Embeddings for existing nodes
-        z_test = global_lp(new_nodes, edge_index=new_node_pairs)  # Embeddings for test nodes (no edges)
-        z = torch.cat([z_existed, z_test], dim=0)
-        cross_probs = F.sigmoid(global_lp.decode(z, cross_pairs))
-        print_histgram(cross_probs.detach().cpu().numpy())
-        cross_edges = cross_pairs.t()[cross_probs.flatten() > edge_threshold].t()
-        # adjust cross_edges indices for new nodes
-        # cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN, (src, dst+local_size)
-        # cross_edges = torch.zeros((2, 0), dtype=torch.long)
-        cross_weights = [1] * cross_edges.shape[1]
-        if add_similarity:
-            new_edges2, new_weights2 = compute_similarity2(existed_nodes.numpy(), new_nodes.numpy(),
-                                                           threshold=None, edge_method='cosine',
-                                                           train_info=train_info)
-            new_edges2[1, :] = local_size + new_edges2[1, :]  # src, dst + local_size
-            cross_edges, cross_weights = merge_edges(cross_edges, torch.tensor(cross_weights), new_edges2, new_weights2)
-            cross_weights = cross_weights.tolist()
-    else:
-        cross_edges, cross_weights = compute_similarity2(existed_nodes.numpy(), new_nodes.numpy(),
-                                                       threshold=0.99, edge_method='cosine',
-                                                       train_info=train_info)
-        cross_edges[1, :] = local_size + cross_edges[1, :]  # src, dst + local_size
-        # cross_weights = cross_weights.tolist()
-        cross_weights = [1] * cross_edges.shape[1]
+    cross_pairs = torch.cartesian_prod(torch.arange(0, local_size),
+                                       torch.arange(local_size, local_size + len(new_nodes))).t()
+    # # z = global_lp(existed_nodes, existed_new_pairs)
+    # features = torch.cat((existed_nodes, new_nodes), dim=0)
+    # Assuming `model` is your trained GNN model
+    global_lp.eval()  # Set model to evaluation mode
+    # Compute embeddings for existing and test nodes
+    z_existed = global_lp.encoder(existed_nodes, existed_edge_indices)  # Embeddings for existing nodes
+    z_test = global_lp.encoder(new_nodes, edge_index=new_node_pairs)  # Embeddings for test nodes (no edges)
+    z = torch.cat([z_existed, z_test], dim=0)
+    cross_probs = F.sigmoid(global_lp.decoder(z, cross_pairs))
+    print_histgram(cross_probs.detach().cpu().numpy())
+    cross_edges = cross_pairs.t()[cross_probs.flatten() > edge_threshold].t()
+    # adjust cross_edges indices for new nodes
+    # cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN, (src, dst+local_size)
+    # cross_edges = torch.zeros((2, 0), dtype=torch.long)
+    cross_weights = [1] * cross_edges.shape[1]
     print(f'cross edges between existed nodes ({len(existed_nodes)}) and new nodes ({len(new_nodes)}): '
           f'{cross_edges.shape}')
 
@@ -606,7 +480,6 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
     edge_weights = existed_weights + new_weights + cross_weights
     edge_weights = torch.tensor(edge_weights, dtype=torch.float)
     print(f'total edges between all nodes: {edge_indices.shape}')
-
 
     return edge_indices, edge_weights
 
@@ -869,7 +742,9 @@ def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion,
             accuracy = accuracy_score(y_val, np.argmax(outputs_, axis=1))
         else:
             data = X_val  # here must be graph data
-            outputs_ = model(data)
+            # outputs_ = model(data)
+            z = model.encoder(data.x, data.edge_index, data.edge_weight)
+            outputs_ = model.predictor(z, data.edge_index, data.edge_weight)
             _, predicted_labels = torch.max(outputs_, dim=1)
             # Loss calculation: Only for labeled nodes
             loss_ = criterion(outputs_[data.val_mask], data.y[data.val_mask])
@@ -975,9 +850,8 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     train_info['threshold'] = None
     existed_edge_indices = local_data['edge_indices']
     local_size = len(local_data['y'])
-
-    edge_indices, edge_weight = gen_edges(features, local_size, global_lp, existed_edge_indices,
-                                          edge_method=None, generated_size=generated_size, local_data = local_data,
+    edge_indices, edge_weight = gen_edges(features, local_size, global_gnn, existed_edge_indices,
+                                          edge_method=None, generated_size=generated_size, local_data=local_data,
                                           train_info=train_info)  # will update threshold
     if edge_weight.shape[0] > 0:
         print(f"edges.shape {edge_indices.shape}, edge_weight min:{min(edge_weight.tolist())}, "
@@ -1022,15 +896,8 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     # test_mask = torch.tensor([False, False, False, True], dtype=torch.bool)
     graph_data = Data(x=node_features, edge_index=edge_indices, edge_weight=edge_weight,
                       y=labels, train_mask=train_mask, val_mask=val_mask, test_mask=test_mask)
-
-    # Use to generate/predict edges between nodes
-    local_lp = GNNLinkPredictor(input_dim, 32)
-    print('Train Link_predictor...')
-    tmp_data = {'X': node_features, 'y': labels,  'edge_indices': edge_indices, 'edge_weight': edge_weight,}
-    train_link_predictor(local_lp, global_lp, tmp_data, train_info)
-
     # only train smaller model
-    epochs_client = 20
+    epochs_client = 500
     losses = []
     val_losses = []
     best = {'accuracy': -1.0, 'accs': []}
@@ -1048,7 +915,8 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
         graph_data.to(device)
         # data_size, data_dim = graph_data.x.shape
         # your local personal model
-        outputs = local_gnn(graph_data)
+        z = local_gnn.encoder(graph_data.x, graph_data.edge_index, graph_data.edge_weight)
+        outputs = local_gnn.predictor(z, graph_data.edge_index, graph_data.edge_weight)
         # Loss calculation: Only for labeled nodes
         model_loss = criterion(outputs[graph_data.train_mask], graph_data.y[graph_data.train_mask])
 
@@ -1109,7 +977,6 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
         # plt.grid()
         plt.show()
 
-    return local_lp
 
 def aggregate_cvaes(vaes, locals_info, global_cvae):
     print('*aggregate cvaes...')
@@ -1245,30 +1112,31 @@ from torch.nn import Linear
 from torch_geometric.nn import GCNConv
 
 
-class GNNLinkPredictor(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels):
-        super(GNNLinkPredictor, self).__init__()
-        self.conv1 = GCNConv(in_channels, hidden_channels)
-        self.conv2 = GCNConv(hidden_channels, hidden_channels)
-        self.lin = Linear(2 * hidden_channels, hidden_channels)  # edge/link prediction
-        self.lin2 = Linear(hidden_channels, 1)  # edge/link prediction
-
-    def forward(self, x, edge_index):
-        # GNN layers
-        x = self.conv1(x, edge_index).relu()
-        x = self.conv2(x, edge_index).relu()
-
-        return x
-
-    def decode(self, z, edge_index):
-        # Compute pairwise embeddings
-        # edge_index.shape = (2, m)
-        src, dst = edge_index[0, :], edge_index[1, :]
-        z_src = z[src]
-        z_dst = z[dst]
-        edge_scores = self.lin(torch.cat([z_src, z_dst], dim=1)).relu()
-        edge_scores = self.lin2(edge_scores)
-        return edge_scores
+#
+# class GNNLinkPredictor(torch.nn.Module):
+#     def __init__(self, in_channels, hidden_channels):
+#         super(GNNLinkPredictor, self).__init__()
+#         self.conv1 = GCNConv(in_channels, hidden_channels)
+#         self.conv2 = GCNConv(hidden_channels, hidden_channels)
+#         self.lin = Linear(2 * hidden_channels, hidden_channels)  # edge/link prediction
+#         self.lin2 = Linear(hidden_channels, 1)  # edge/link prediction
+#
+#     def forward(self, x, edge_index):
+#         # GNN layers
+#         x = self.conv1(x, edge_index).relu()
+#         x = self.conv2(x, edge_index).relu()
+#
+#         return x
+#
+#     def decode(self, z, edge_index):
+#         # Compute pairwise embeddings
+#         # edge_index.shape = (2, m)
+#         src, dst = edge_index[0, :], edge_index[1, :]
+#         z_src = z[src]
+#         z_dst = z[dst]
+#         edge_scores = self.lin(torch.cat([z_src, z_dst], dim=1)).relu()
+#         edge_scores = self.lin2(edge_scores)
+#         return edge_scores
 
 
 # VAE loss function
@@ -1331,118 +1199,147 @@ class GNN(nn.Module):
         self.conv1 = GCNConv(input_dim, hidden_dim)
         self.conv2 = GCNConv(hidden_dim, hidden_dim)
         self.conv3 = GCNConv(hidden_dim, hidden_dim)  # Adding a third layer
-        self.conv4 = GCNConv(hidden_dim, output_dim)  # Output layer
 
-    def forward(self, data):
-        x, edge_index, edge_weight = data.x, data.edge_index, data.edge_weight
+        self.conv41 = GCNConv(hidden_dim, hidden_dim)  #
+        self.conv42 = GCNConv(hidden_dim, output_dim)  # Output layer
 
-        no_edge_weight = False
-        if no_edge_weight:
-            # no edge_weight is passed to the GCNConv layers
-            x = F.relu(self.conv1(x, edge_index))
-            x = F.relu(self.conv2(x, edge_index))
-            x = F.relu(self.conv3(x, edge_index))  # Additional layer
-            x = self.conv4(x, edge_index)  # Final output
-        else:
-            # Passing edge_weight to the GCNConv layers
-            x = F.relu(self.conv1(x, edge_index, edge_weight))
-            x = F.relu(self.conv2(x, edge_index, edge_weight))
-            x = F.relu(self.conv3(x, edge_index, edge_weight))  # Additional layer
-            x = self.conv4(x, edge_index, edge_weight)  # Final output
+        self.lin = Linear(2 * hidden_dim, hidden_dim)  # edge/link prediction
+        self.lin2 = Linear(hidden_dim, 1)  # edge/link prediction
 
-        # return F.log_softmax(x, dim=1)
+    # def forward(self, data):
+    #     x, edge_index, edge_weight = data.x, data.edge_index, data.edge_weight
+    #
+    #     no_edge_weight = False
+    #     if no_edge_weight:
+    #         # no edge_weight is passed to the GCNConv layers
+    #         x = F.relu(self.conv1(x, edge_index))
+    #         x = F.relu(self.conv2(x, edge_index))
+    #         x = F.relu(self.conv3(x, edge_index))  # Additional layer
+    #         x = self.conv4(x, edge_index)  # Final output
+    #     else:
+    #         # Passing edge_weight to the GCNConv layers
+    #         x = F.relu(self.conv1(x, edge_index, edge_weight))
+    #         x = F.relu(self.conv2(x, edge_index, edge_weight))
+    #         x = F.relu(self.conv3(x, edge_index, edge_weight))  # Additional layer
+    #         x = self.conv4(x, edge_index, edge_weight)  # Final output
+    #
+    #     # return F.log_softmax(x, dim=1)
+    #     return x
+
+    def encoder(self, x, edge_index, edge_weight=None):
+        # Passing edge_weight to the GCNConv layers
+        x = F.relu(self.conv1(x, edge_index, edge_weight))
+        x = F.relu(self.conv2(x, edge_index, edge_weight))
+        x = F.relu(self.conv3(x, edge_index, edge_weight))  # Additional layer
+
         return x
+
+    def predictor(self, z, edge_index, edge_weight=None):
+        z = self.conv41(z, edge_index, edge_weight)
+        x = self.conv42(z, edge_index, edge_weight)  # Final output
+        return x
+
+    def decoder(self, z, edge_index, edge_weight=None):
+        # Compute pairwise embeddings
+        # edge_index.shape = (2, m)
+        src, dst = edge_index[0, :], edge_index[1, :]
+        z_src = z[src]
+        z_dst = z[dst]
+        edge_scores = self.lin(torch.cat([z_src, z_dst], dim=1)).relu()
+        edge_scores = self.lin2(edge_scores)
+        return edge_scores
 
 
 @timer
-def evaluate(local_gnn, local_data, device, global_gnn, test_type='test', client_id=0, train_info={}):
+def evaluate(local_gnn, local_data, device, test_type='test', client_id=0, train_info={}):
     """
         Evaluate how well each client's model performs on the test set.
 
         client_result = {'client_gm': client_model.state_dict(), 'logits': None, 'losses': losses, 'info': client_info}
         client_data_ =  (graph_data_, feature_info, client_data_)
     """
-    for model_type, model in [('local', local_gnn), ('global', global_gnn)]:
-        # After training, the model can make predictions for both labeled and unlabeled nodes
-        print(f'***Testing {model_type} model on test_type:{test_type}...')
-        # gnn = local_gnn(input_dim=64, hidden_dim=32, output_dim=10)
-        # gnn.load_state_dict(client_result['client_gm'])
-        gnn = model
-        gnn = gnn.to(device)
+    # After training, the model can make predictions for both labeled and unlabeled nodes
+    print(f'***Testing gnn model on test_type:{test_type}...')
+    # gnn = local_gnn(input_dim=64, hidden_dim=32, output_dim=10)
+    # gnn.load_state_dict(client_result['client_gm'])
+    gnn = local_gnn
+    gnn = gnn.to(device)
 
-        graph_data = train_info['gnn']['graph_data'].to(device)  # graph data
-        gnn.eval()
-        with torch.no_grad():
-            output = gnn(graph_data)
-            _, predicted_labels = torch.max(output, dim=1)
+    graph_data = train_info['gnn']['graph_data'].to(device)  # graph data
+    gnn.eval()
+    with torch.no_grad():
+        # output = gnn(graph_data)
+        z = gnn.encoder(graph_data.x, graph_data.edge_index, graph_data.edge_weight)
+        output = gnn.predictor(z, graph_data.edge_index, graph_data.edge_weight)
+        _, predicted_labels = torch.max(output, dim=1)
 
-            # Calculate accuracy for the labeled data
-            labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-            print(f'labeled_indices {len(labeled_indices)}')
-            true_labels = graph_data.y
+        # Calculate accuracy for the labeled data
+        labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        print(f'labeled_indices {len(labeled_indices)}')
+        true_labels = graph_data.y
 
-            predicted_labels_tmp = predicted_labels[labeled_indices]
-            true_labels_tmp = true_labels[labeled_indices]
-            y = true_labels_tmp.cpu().numpy()
-            y_pred = predicted_labels_tmp.cpu().numpy()
+        predicted_labels_tmp = predicted_labels[labeled_indices]
+        true_labels_tmp = true_labels[labeled_indices]
+        y = true_labels_tmp.cpu().numpy()
+        y_pred = predicted_labels_tmp.cpu().numpy()
 
-            accuracy = accuracy_score(y, y_pred)
-            train_info[f'{model_type}_labeled_accuracy'] = accuracy
-            print(f"Accuracy on labeled data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
-            # if 'all' in test_type:
-            #     client_result['labeled_accuracy_all'] = accuracy
-            # else:
-            #     client_result['labeled_accuracy'] = accuracy
-            # print(y, y_pred)
-            conf_matrix = confusion_matrix(y, y_pred)
-            train_info[f'{model_type}_labeled_cm'] = conf_matrix
-            print("Confusion Matrix:\n", conf_matrix)
+        accuracy = accuracy_score(y, y_pred)
+        train_info['labeled_accuracy'] = accuracy
+        print(f"Accuracy on labeled data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+        # if 'all' in test_type:
+        #     client_result['labeled_accuracy_all'] = accuracy
+        # else:
+        #     client_result['labeled_accuracy'] = accuracy
+        # print(y, y_pred)
+        conf_matrix = confusion_matrix(y, y_pred)
+        train_info['labeled_cm'] = conf_matrix
+        print("Confusion Matrix:\n", conf_matrix)
 
-            # Calculate accuracy for the unlabeled data
-            labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-            all_indices = torch.arange(graph_data.num_nodes)
-            unlabeled_indices = all_indices[~torch.isin(all_indices, labeled_indices)]
-            print(f'unlabeled_indices {len(unlabeled_indices)}')
-            true_labels = graph_data.y
+        # Calculate accuracy for the unlabeled data
+        labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        all_indices = torch.arange(graph_data.num_nodes)
+        unlabeled_indices = all_indices[~torch.isin(all_indices, labeled_indices)]
+        print(f'unlabeled_indices {len(unlabeled_indices)}')
+        true_labels = graph_data.y
 
-            predicted_labels_tmp = predicted_labels[unlabeled_indices]
-            true_labels_tmp = true_labels[unlabeled_indices]
-            y = true_labels_tmp.cpu().numpy()
-            y_pred = predicted_labels_tmp.cpu().numpy()
+        predicted_labels_tmp = predicted_labels[unlabeled_indices]
+        true_labels_tmp = true_labels[unlabeled_indices]
+        y = true_labels_tmp.cpu().numpy()
+        y_pred = predicted_labels_tmp.cpu().numpy()
 
-            accuracy = accuracy_score(y, y_pred)
-            train_info[f'{model_type}_unlabeled_accuracy'] = accuracy
-            print(f"Accuracy on unlabeled data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
-            # if 'all' in test_type:
-            #     client_result['labeled_accuracy_all'] = accuracy
-            # else:
-            #     client_result['labeled_accuracy'] = accuracy
-            conf_matrix = confusion_matrix(y, y_pred)
-            train_info[f'{model_type}_unlabeled_cm'] = conf_matrix
-            print("Confusion Matrix:\n", conf_matrix)
+        accuracy = accuracy_score(y, y_pred)
+        train_info['unlabeled_accuracy'] = accuracy
+        print(f"Accuracy on unlabeled data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+        # if 'all' in test_type:
+        #     client_result['labeled_accuracy_all'] = accuracy
+        # else:
+        #     client_result['labeled_accuracy'] = accuracy
+        conf_matrix = confusion_matrix(y, y_pred)
+        train_info['unlabeled_cm'] = conf_matrix
+        print("Confusion Matrix:\n", conf_matrix)
 
-            # # Calculate accuracy for unlabeled data
-            # print(f'Evaluate on all data (labeled + unlabeled)')
-            # true_labels = client_data_[1]['labels']
-            # y = true_labels.cpu().numpy()
-            # y_pred = predicted_labels.cpu().numpy()
-            # accuracy = accuracy_score(y, y_pred)
-            # print(f"Accuracy on all data: {accuracy * 100:.2f}%")
-            # if 'all' in test_type:
-            #     client_result['accuracy_all'] = accuracy
-            # else:
-            #     client_result['accuracy'] = accuracy
-            #
-            # # Compute the confusion matrix
-            # conf_matrix = confusion_matrix(y, y_pred)
-            # print("Confusion Matrix:")
-            # print(conf_matrix)
-            # if 'all' in test_type:
-            #     client_result['cm_all'] = conf_matrix
-            # else:
-            #     client_result['cm'] = conf_matrix
+        # # Calculate accuracy for unlabeled data
+        # print(f'Evaluate on all data (labeled + unlabeled)')
+        # true_labels = client_data_[1]['labels']
+        # y = true_labels.cpu().numpy()
+        # y_pred = predicted_labels.cpu().numpy()
+        # accuracy = accuracy_score(y, y_pred)
+        # print(f"Accuracy on all data: {accuracy * 100:.2f}%")
+        # if 'all' in test_type:
+        #     client_result['accuracy_all'] = accuracy
+        # else:
+        #     client_result['accuracy'] = accuracy
+        #
+        # # Compute the confusion matrix
+        # conf_matrix = confusion_matrix(y, y_pred)
+        # print("Confusion Matrix:")
+        # print(conf_matrix)
+        # if 'all' in test_type:
+        #     client_result['cm_all'] = conf_matrix
+        # else:
+        #     client_result['cm'] = conf_matrix
 
-        print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
+    print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
     return
 
@@ -1733,42 +1630,24 @@ def gen_test_edges(graph_data, X_test, y_test, test_edges, global_lp, generated_
     # z = global_lp(existed_nodes, existed_new_pairs)
     features = torch.cat((existed_nodes, new_nodes), dim=0)
     labels = torch.cat((y_local, y_test), dim=0)
-    using_lp = False
-    if using_lp:
-        # z = global_lp(features, cross_pairs)  # here, we use all train_features.
-        # Assuming `model` is your trained GNN model
-        global_lp.eval()  # Set model to evaluation mode
-        # Compute embeddings for existing and test nodes
-        z_existed = global_lp(existed_nodes, existed_edge_indices)  # Embeddings for existing nodes
-        z_test = global_lp(new_nodes, edge_index=new_edges - local_size)  # Embeddings for test nodes (no edges)
-        z = torch.cat([z_existed, z_test], dim=0)
-        cross_probs = F.sigmoid(global_lp.decode(z, cross_pairs))
-        print_histgram(cross_probs.detach().cpu().numpy())
-        cross_edges = cross_pairs.t()[cross_probs.flatten() > edge_threshold].t()
-        # adjust cross_edges indices for new nodes
-        # cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN
-        # cross_edges = torch.zeros((2, 0), dtype=torch.long)
-        cross_weights = [1] * cross_edges.shape[1]
-
-        add_similarity = True
-        if add_similarity:
-            new_edges2, new_weights2 = compute_similarity2(existed_nodes.numpy(), X_test.numpy(),
-                                                          threshold=0.95, edge_method='cosine',
-                                                          train_info=train_info)
-            new_edges2[1, :] = local_size + new_edges2[1, :]  # src, dst + local_size
-            cross_edges, cross_weights = merge_edges(cross_edges, torch.tensor(cross_weights), new_edges2, new_weights2)
-            cross_weights = cross_weights.tolist()
-    else:
-        cross_edges, cross_weights = compute_similarity2(existed_nodes.numpy(), X_test.numpy(),
-                                                       threshold=0.99, edge_method='cosine',
-                                                       train_info=train_info)
-        cross_edges[1, :] = local_size + cross_edges[1, :]  # src, dst + local_size
-        # cross_weights = cross_weights.tolist()
-        cross_weights = [1] * cross_edges.shape[1]
+    # z = global_lp(features, cross_pairs)  # here, we use all train_features.
+    # Assuming `model` is your trained GNN model
+    global_lp.eval()  # Set model to evaluation mode
+    # Compute embeddings for existing and test nodes
+    z_existed = global_lp.encoder(existed_nodes, existed_edge_indices)  # Embeddings for existing nodes
+    z_test = global_lp.encoder(new_nodes, edge_index=new_edges - local_size)  # Embeddings for test nodes (no edges)
+    z = torch.cat([z_existed, z_test], dim=0)
+    cross_probs = F.sigmoid(global_lp.decoder(z, cross_pairs))
+    print_histgram(cross_probs.detach().cpu().numpy())
+    cross_edges = cross_pairs.t()[cross_probs.flatten() > edge_threshold].t()
+    # adjust cross_edges indices for new nodes
+    # cross_edges[1, :] = local_size + cross_edges[1, :]  # new_edges.shape is 2xN
+    cross_edges = torch.zeros((2, 0), dtype=torch.long)
+    cross_weights = [1] * cross_edges.shape[1]
     print(f'cross edges between existed nodes ({len(existed_nodes)}) and new nodes ({len(new_nodes)}): '
           f'{cross_edges.shape}')
 
-    debug = False
+    debug = True
     if debug:
         get_cross_edge_info(cross_edges.t().numpy(), local_size, generated_size)
         # get ground truth cross edges between local data and test data from original edges
@@ -1791,12 +1670,13 @@ def gen_test_edges(graph_data, X_test, y_test, test_edges, global_lp, generated_
 
 
 @timer
-def evaluate_shared_test(local_gnn, local_data, device, global_gnn, global_lp,
+def evaluate_shared_test(local_gnn, local_data, device, global_lp,
                          test_type='shared_test_data', client_id=0, train_info={}):
     """
         Evaluate how well each client's model performs on the test set.
     """
-
+    # After training, the model can make predictions for both labeled and unlabeled nodes
+    print(f'***Testing gnn model on test_type:{test_type}...')
     all_data = local_data['all_data']
     all_indices = all_data['indices']
     # edge_indices = all_data['edge_indices'].to(device)  # all edge_indices
@@ -1853,87 +1733,85 @@ def evaluate_shared_test(local_gnn, local_data, device, global_gnn, global_lp,
                       y=labels)
     graph_data.to(device)
 
-    for model_type, model in [('local', local_gnn), ('global', global_gnn)]:
-        # After training, the model can make predictions for both labeled and unlabeled nodes
-        print(f'***Testing gnn model on test_type:{test_type}...')
-        # evaluate the data
-        # gnn = local_gnn
-        gnn = model
-        gnn.to(device)
-        gnn.eval()
-        with torch.no_grad():
-            output = gnn(graph_data)
-            _, predicted_labels = torch.max(output, dim=1)
+    # evaluate the data
+    gnn = local_gnn
+    gnn.to(device)
+    gnn.eval()
+    with torch.no_grad():
+        # output = gnn(graph_data)
+        z = gnn.encoder(graph_data.x, graph_data.edge_index, graph_data.edge_weight)
+        output = gnn.predictor(z, graph_data.edge_index, graph_data.edge_weight)
+        _, predicted_labels = torch.max(output, dim=1)
 
-            # # here we use new edges (based on local data and test set), so the performance is different from only use
-            # # local data
-            # # only on local data
-            # print('Evaluate on local data...')
-            # predicted_labels_ = predicted_labels[:local_size]
-            # # Calculate accuracy for the labeled data
-            # # num_classes = 10
-            # # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-            # # print(f'labeled_indices {len(labeled_indices)}')
-            # true_labels = graph_data.y[:local_size]
-            #
-            # # predicted_labels = predicted_labels[graph_data.train_mask]
-            # # true_labels = true_labels[graph_data.train_mask]
-            # # predicted_labels = predicted_labels[graph_data.test_mask]
-            # # true_labels = true_labels[graph_data.test_mask]
-            #
-            # y = true_labels.cpu().numpy()
-            # y_pred = predicted_labels_.cpu().numpy()
-            # accuracy = accuracy_score(y, y_pred)
-            # print(f"Accuracy on local data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
-            # # if 'all' in test_type:
-            # #     client_result['labeled_accuracy_all'] = accuracy
-            # # else:
-            # #     client_result['labeled_accuracy'] = accuracy
-            #
-            # # Compute the confusion matrix
-            # conf_matrix = confusion_matrix(y, y_pred)
-            # print("Confusion Matrix:")
-            # print(conf_matrix)
-            # # if 'all' in test_type:
-            # #     client_result['labeled_cm_all'] = conf_matrix
-            # # else:
-            # #     client_result['labeled_cm'] = conf_matrix
+        # # here we use new edges (based on local data and test set), so the performance is different from only use
+        # # local data
+        # # only on local data
+        # print('Evaluate on local data...')
+        # predicted_labels_ = predicted_labels[:local_size]
+        # # Calculate accuracy for the labeled data
+        # # num_classes = 10
+        # # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        # # print(f'labeled_indices {len(labeled_indices)}')
+        # true_labels = graph_data.y[:local_size]
+        #
+        # # predicted_labels = predicted_labels[graph_data.train_mask]
+        # # true_labels = true_labels[graph_data.train_mask]
+        # # predicted_labels = predicted_labels[graph_data.test_mask]
+        # # true_labels = true_labels[graph_data.test_mask]
+        #
+        # y = true_labels.cpu().numpy()
+        # y_pred = predicted_labels_.cpu().numpy()
+        # accuracy = accuracy_score(y, y_pred)
+        # print(f"Accuracy on local data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+        # # if 'all' in test_type:
+        # #     client_result['labeled_accuracy_all'] = accuracy
+        # # else:
+        # #     client_result['labeled_accuracy'] = accuracy
+        #
+        # # Compute the confusion matrix
+        # conf_matrix = confusion_matrix(y, y_pred)
+        # print("Confusion Matrix:")
+        # print(conf_matrix)
+        # # if 'all' in test_type:
+        # #     client_result['labeled_cm_all'] = conf_matrix
+        # # else:
+        # #     client_result['labeled_cm'] = conf_matrix
 
-            # only on test set
-            print('Evaluate on shared test data...')
-            predicted_labels_ = predicted_labels[local_size:]
-            # Calculate accuracy for the labeled data
-            # num_classes = 10
-            # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-            # print(f'labeled_indices {len(labeled_indices)}')
-            true_labels = graph_data.y[local_size:]
+        # only on test set
+        print('Evaluate on shared test data...')
+        predicted_labels_ = predicted_labels[local_size:]
+        # Calculate accuracy for the labeled data
+        # num_classes = 10
+        # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+        # print(f'labeled_indices {len(labeled_indices)}')
+        true_labels = graph_data.y[local_size:]
 
-            # predicted_labels = predicted_labels[graph_data.train_mask]
-            # true_labels = true_labels[graph_data.train_mask]
-            # predicted_labels = predicted_labels[graph_data.test_mask]
-            # true_labels = true_labels[graph_data.test_mask]
+        # predicted_labels = predicted_labels[graph_data.train_mask]
+        # true_labels = true_labels[graph_data.train_mask]
+        # predicted_labels = predicted_labels[graph_data.test_mask]
+        # true_labels = true_labels[graph_data.test_mask]
 
-            y = true_labels.cpu().numpy()
-            y_pred = predicted_labels_.cpu().numpy()
-            accuracy = accuracy_score(y, y_pred)
-            train_info[f'{model_type}_shared_accuracy'] = accuracy
-            print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
-            # if 'all' in test_type:
-            #     client_result['labeled_accuracy_all'] = accuracy
-            # else:
-            #     client_result['labeled_accuracy'] = accuracy
+        y = true_labels.cpu().numpy()
+        y_pred = predicted_labels_.cpu().numpy()
+        accuracy = accuracy_score(y, y_pred)
+        train_info['shared_accuracy'] = accuracy
+        print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+        # if 'all' in test_type:
+        #     client_result['labeled_accuracy_all'] = accuracy
+        # else:
+        #     client_result['labeled_accuracy'] = accuracy
 
-            # Compute the confusion matrix
-            conf_matrix = confusion_matrix(y, y_pred)
-            train_info[f'{model_type}_shared_cm'] = conf_matrix
-            print("Confusion Matrix:")
-            print(conf_matrix)
-            # if 'all' in test_type:
-            #     client_result['labeled_cm_all'] = conf_matrix
-            # else:
-            #     client_result['labeled_cm'] = conf_matrix
+        # Compute the confusion matrix
+        conf_matrix = confusion_matrix(y, y_pred)
+        train_info['shared_cm'] = conf_matrix
+        print("Confusion Matrix:")
+        print(conf_matrix)
+        # if 'all' in test_type:
+        #     client_result['labeled_cm_all'] = conf_matrix
+        # else:
+        #     client_result['labeled_cm'] = conf_matrix
 
-        print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
+    print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
     return
 
@@ -1958,47 +1836,46 @@ def print_histories(histories):
             # shared_acc = client['shared_accuracy']
             # print(f'\t\tlabeled_acc:{labeled_acc:.2f}, unlabeled_acc:{unlabeled_acc:.2f}, shared_acc:{shared_acc:.2f}')
 
-    for model_type in ['local', 'global']:
-        ncols = 2
-        nrows, r = divmod(c, ncols)
-        nrows = nrows if r == 0 else nrows + 1
-        fig, axes = plt.subplots(nrows, ncols)
-        for c in range(num_clients):
-            i, j = divmod(c, ncols)
-            print(f"\nclient {c}")
-            labeled_accs = []
-            unlabeled_accs = []
-            shared_accs = []
-            for s in range(num_server_epoches):
-                client = histories[s][c]
-                # local_cvae = client['cvae']
-                # local_gnn = client['gnn']
-                # print(f'\t*local cvae:', local_cvae.keys(), f' server_epoch: {s}')
-                # losses_ = [float(f"{v:.2f}") for v in local_cvae['losses']]
-                # print(f'\t\tlocal cvae:', losses_)
-                # # print('\t*local gnn:', [f"{v:.2f}" for v in local_gnn['losses']])
-                labeled_acc = client[f'{model_type}_labeled_accuracy']
-                unlabeled_acc = client[f'{model_type}_unlabeled_accuracy']
-                shared_acc = client[f'{model_type}_shared_accuracy']
-                labeled_accs.append(labeled_acc)
-                unlabeled_accs.append(unlabeled_acc)
-                shared_accs.append(shared_acc)
-                print(f'\t\tEpoch: {s}, labeled_acc:{labeled_acc:.2f}, unlabeled_acc:{unlabeled_acc:.2f}, '
-                      f'shared_acc:{shared_acc:.2f}')
+    ncols = 2
+    nrows, r = divmod(c, ncols)
+    nrows = nrows if r == 0 else nrows + 1
+    fig, axes = plt.subplots(nrows, ncols)
+    for c in range(num_clients):
+        i, j = divmod(c, ncols)
+        print(f"\nclient {c}")
+        labeled_accs = []
+        unlabeled_accs = []
+        shared_accs = []
+        for s in range(num_server_epoches):
+            client = histories[s][c]
+            # local_cvae = client['cvae']
+            # local_gnn = client['gnn']
+            # print(f'\t*local cvae:', local_cvae.keys(), f' server_epoch: {s}')
+            # losses_ = [float(f"{v:.2f}") for v in local_cvae['losses']]
+            # print(f'\t\tlocal cvae:', losses_)
+            # # print('\t*local gnn:', [f"{v:.2f}" for v in local_gnn['losses']])
+            labeled_acc = client['labeled_accuracy']
+            unlabeled_acc = client['unlabeled_accuracy']
+            shared_acc = client['shared_accuracy']
+            labeled_accs.append(labeled_acc)
+            unlabeled_accs.append(unlabeled_acc)
+            shared_accs.append(shared_acc)
+            print(
+                f'\t\tEpoch: {s}, labeled_acc:{labeled_acc:.2f}, unlabeled_acc:{unlabeled_acc:.2f}, shared_acc:{shared_acc:.2f}')
 
-            # Training and validation loss on the first subplot
-            axes[i, j].plot(range(len(labeled_accs)), labeled_accs, label='labeled_acc', marker='o')
-            axes[i, j].plot(range(len(unlabeled_accs)), unlabeled_accs, label='unlabeled_acc', marker='+')
-            axes[i, j].plot(range(len(shared_accs)), shared_accs, label='shared_acc', marker='s')
-            axes[i, j].set_xlabel('Server Epochs')
-            axes[i, j].set_ylabel('Accuracy')
-            axes[i, j].set_title(f'Client_{c}')
-            axes[i, j].legend(fontsize='small')
+        # Training and validation loss on the first subplot
+        axes[i, j].plot(range(len(labeled_accs)), labeled_accs, label='labeled_acc', marker='o')
+        axes[i, j].plot(range(len(unlabeled_accs)), unlabeled_accs, label='unlabeled_acc', marker='+')
+        axes[i, j].plot(range(len(shared_accs)), shared_accs, label='shared_acc', marker='s')
+        axes[i, j].set_xlabel('Server Epochs')
+        axes[i, j].set_ylabel('Accuracy')
+        axes[i, j].set_title(f'Client_{c}')
+        axes[i, j].legend(fontsize='small')
 
-        # Adjust layout to prevent overlap
-        plt.tight_layout()
-        plt.savefig(f'{in_dir}/{model_type}_accuracy.png', dpi=300)
-        plt.show()
+    # Adjust layout to prevent overlap
+    plt.tight_layout()
+    plt.savefig(f'{in_dir}/accuracy.png', dpi=300)
+    plt.show()
 
 
 def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device):
@@ -2051,7 +1928,6 @@ def main(in_dir, input_dim=16):
                        label_rate=label_rate)
 
     global_cvae = CVAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
-    global_lp = GNNLinkPredictor(input_dim, 32)
     global_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
 
     debug = True
@@ -2060,7 +1936,6 @@ def main(in_dir, input_dim=16):
         for epoch in range(server_epochs):
             # update clients
             cvaes = {}
-            lps = {}
             gnns = {}
             locals_info = {}  # used in CVAE
             history = {}
@@ -2080,30 +1955,20 @@ def main(in_dir, input_dim=16):
                 train_cvae(local_cvae, global_cvae, local_data, train_info)
                 cvaes[c] = local_cvae
 
-                # # Use to generate/predict edges between nodes
-                # local_lp = GNNLinkPredictor(input_dim, 32)
-                # print('Train Link_predictor...')
-                # train_link_predictor(local_lp, global_lp, local_data, train_info)
-                # lps[c] = local_lp
-
                 print('Train GNN...')
                 local_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
-                local_lp = train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_info)
+                train_gnn(local_gnn, global_cvae, global_gnn, global_gnn, local_data, train_info)
                 gnns[c] = local_gnn
-                lps[c] = local_lp
 
-                print('Evaluate Local GNN...')
-                evaluate(local_gnn, None, device, global_gnn,
+                print('Evaluate GNN...')
+                evaluate(local_gnn, None, device,
                          test_type='Testing on client data', client_id=c, train_info=train_info)
-                evaluate_shared_test(local_gnn, local_data, device, global_gnn, global_lp,
+                evaluate_shared_test(local_gnn, local_data, device, global_gnn,
                                      test_type='Testing on shared test data', client_id=c, train_info=train_info)
                 history[c] = train_info
 
-
-
             print('Server aggregation...')
             aggregate_cvaes(cvaes, locals_info, global_cvae)
-            aggregate_lps(lps, global_lp)
             aggregate_gnns(gnns, global_gnn)
 
             histories.append(history)

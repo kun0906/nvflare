@@ -54,7 +54,7 @@ def timer(func):
 
 def extract_xy_edges(X, y, train_indices, edge_indices, partial_classes):
     # extract data for client i
-
+    original_train_indices = train_indices
     X_train = X[train_indices]
     y_train = y[train_indices]
 
@@ -88,10 +88,10 @@ def extract_xy_edges(X, y, train_indices, edge_indices, partial_classes):
     unqiue_edges = set([(b, a) if a > b else (a, b) for a, b in client_edge_indices])
     print(f'unique edges: {len(unqiue_edges)}, edge_indices/2: {len(client_edge_indices) / 2}')
     return (np.array(client_X), np.array(client_y), np.array(client_train_indices),
-            np.array(client_edge_indices).T, np.array(client_original_edges).T)
+            np.array(client_edge_indices).T, np.array(client_original_edges).T, original_train_indices)
 
 
-def split_train_val_test(X, y, indices, edge_indices, original_edge_indices, test_size=0.2, val_size=0.05):
+def split_train_val_test(X, y, indices, edge_indices, original_edge_indices, original_indices, test_size=0.2, val_size=0.05):
     num_samples = len(X)
     train_mask = np.full(num_samples, False)
     val_mask = np.full(num_samples, False)
@@ -109,7 +109,7 @@ def split_train_val_test(X, y, indices, edge_indices, original_edge_indices, tes
 
     # Note here, we only split X and y. For edges, we don't split them, as GNN will use all the edges during training
     # (semi-supervised learning, so we don't need to split edges)
-    client_data = {'X': X, 'y': y, 'indices': indices,
+    client_data = {'X': X, 'y': y, 'indices': indices, 'original_indices': original_indices,
                    'edge_indices': edge_indices, 'original_edge_indices': original_edge_indices,
                    'train_mask': train_mask, 'val_mask': val_mask, 'test_mask': test_mask}
 
@@ -241,9 +241,10 @@ def preprocessing():
         # small labeled data + large unlabeled data
         train_indices1, train_indices2 = train_test_split(train_indices1, test_size=test_size,
                                                          shuffle=True, random_state=42)
-        X_, y_, train_indices_, edge_indices_, original_edge_indices_ = extract_xy_edges(X, Y,
+        X_, y_, train_indices_, edge_indices_, original_edge_indices_, original_train_indices_ = extract_xy_edges(X, Y,
                                                                                          train_indices2, edge_indices,
                                                                                          classes_)
+        print(f"np.all(train_indices_ == original_train_indices_): {np.all(train_indices_ == original_train_indices_)}")
         print(f'X.shape: {X_.shape}, y: {collections.Counter(y_)}, '
               f'n_edges: {edge_indices_.shape[1]}, '
               f'train_indices_: {len(train_indices_)}, where min_index: {min(train_indices_)}, and '
@@ -251,7 +252,7 @@ def preprocessing():
         n_nodes += len(train_indices_)
         n_edges += len(edge_indices_)
         client_data = split_train_val_test(X_, y_, train_indices_, edge_indices_, original_edge_indices_,
-                                           test_size=0.5, val_size=0.05)
+                                           original_train_indices_, test_size=0.5, val_size=0.05)
 
         # All clients have shared test set (global test set) to evaluate client model's performance
         # We need all X and Y, and test_mask, which can used to find the edges between train and test set in the future.

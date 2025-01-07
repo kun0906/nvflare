@@ -109,7 +109,7 @@ def split_train_val_test(X, y, indices, edge_indices, original_edge_indices, tes
 
     # Note here, we only split X and y. For edges, we don't split them, as GNN will use all the edges during training
     # (semi-supervised learning, so we don't need to split edges)
-    client_data = {'X': X, 'y': y, 'indices': indices,
+    client_data = {'X': X, 'y': y, 'indices': indices, 'original_indices': indices,
                    'edge_indices': edge_indices, 'original_edge_indices': original_edge_indices,
                    'train_mask': train_mask, 'val_mask': val_mask, 'test_mask': test_mask}
 
@@ -246,7 +246,7 @@ def preprocessing():
         n_nodes += len(train_indices_)
         n_edges += len(edge_indices_)
         client_data = split_train_val_test(X_, y_, train_indices_, edge_indices_, original_edge_indices_,
-                                           test_size=0.9, val_size=0.05)
+                                           test_size=0.5, val_size=0.05)
 
         # All clients have shared test set (global test set) to evaluate client model's performance
         # We need all X and Y, and test_mask, which can used to find the edges between train and test set in the future.
