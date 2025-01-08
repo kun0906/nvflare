@@ -61,7 +61,7 @@ label_rate = args.label_rate
 server_epochs = args.server_epochs
 
 # For testing, print the parsed parameters
-# print(f"label_rate: {label_rate}")
+print(f"label_rate: {label_rate}")
 print(f"server_epochs: {server_epochs}")
 
 
@@ -114,7 +114,7 @@ def gen_local_data(client_data_file, client_id, label_rate=0.1):
     test_mask = torch.tensor(client_data['test_mask'])
     edge_indices = torch.tensor(client_data['edge_indices'])  # local indices (obtained from local data indices)
     unqiue_edges = set([(b, a) if a > b else (a, b) for a, b in edge_indices.t().tolist()])
-    print(f'unique edges: {len(unqiue_edges)} =? edges/2: {edge_indices.shape[1] / 2}')
+    print(f'unique_edges: {len(unqiue_edges)} =? edge_indices/2: {edge_indices.shape[1] / 2}')
 
     shared_X = torch.tensor(client_data['all_data']['X'])  # global data x
     shared_y = torch.tensor(client_data['all_data']['y'])  # global data y
@@ -540,12 +540,14 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
     #     edge_indices = torch.combinations(torch.arange(len(train_features)), r=2).t()
     #     edge_weights = torch.ones((edge_indices.shape[1], ))
     #     return edge_indices, edge_weights
+    print('+++Compute edges among exsited nodes...')
     print(f'*edges between existed nodes ({len(train_features[:local_size, :])}): {existed_edge_indices.shape}')
     existed_weights = [1] * existed_edge_indices.size(1)  # existed_edge_indices.shape is 2xN
     if train_features.shape[0] == local_size:
         print('No generated data.')
         return existed_edge_indices, torch.tensor(existed_weights, dtype=torch.float)
 
+    print('+++Compute edges among generated nodes...')
     using_lp = False
     # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
     new_nodes = train_features[local_size:, :]
@@ -582,6 +584,7 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
         # new_weights = [1] * new_edges.shape[1]
     print(f'*new edges between new nodes ({len(new_nodes)}): {new_edges.shape}')
 
+    print('+++Compute edges between exsited nodes and generated nodes...')
     # Predict edges between new and existed nodes
     existed_nodes = train_features[:local_size, :]
     if using_lp:
@@ -895,34 +898,50 @@ def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion,
     with torch.no_grad():
         if y_val is not None:  # is not graph data
             outputs_ = model(X_val)
-            loss_ = criterion(outputs_, y_val)
+            val_loss = criterion(outputs_, y_val)
             val_accuracy = accuracy_score(y_val, np.argmax(outputs_, axis=1))
         else:
             data = X_val  # here must be graph data
             outputs_ = model(data)
             _, predicted_labels = torch.max(outputs_, dim=1)
             # Loss calculation: Only for labeled nodes
-            loss_ = criterion(outputs_[data.val_mask], data.y[data.val_mask])
+            val_loss = criterion(outputs_[data.val_mask], data.y[data.val_mask])
+            val_accuracy = accuracy_score(data.y[data.val_mask].tolist(),
+                                          predicted_labels[data.val_mask].tolist())
 
-            val_accuracy = accuracy_score(data.y[data.val_mask].tolist(), predicted_labels[data.val_mask].tolist())
+            train_loss = criterion(outputs_[data.train_mask], data.y[data.train_mask])
+            train_accuracy = accuracy_score(data.y[data.train_mask].tolist(),
+                                            predicted_labels[data.train_mask].tolist())
             # print(f"epoch: {epoch} Accuracy on val data: {accuracy * 100:.2f}%")
-        val_loss += loss_
 
-    best['accs'].append(val_accuracy)
+    best['train_accs'].append(train_accuracy)
+    best['train_losses'].append(train_loss)
+
+    best['val_accs'].append(val_accuracy)
+    best['val_losses'].append(val_loss)
 
     if best['val_accuracy'] < val_accuracy:
         best['model'] = model.state_dict()
         best['epoch'] = epoch
         best['val_loss'] = val_loss
         best['val_accuracy'] = val_accuracy
+        best['train_accuracy'] = train_accuracy
 
     if epoch == 0:
         pre_val_loss = val_loss
         return val_loss, pre_val_loss, val_cnt, stop_training
 
-    if val_loss <= pre_val_loss:
+    if val_loss < pre_val_loss:
         pre_val_loss = val_loss
         val_cnt = 0
+
+        if best['val_accuracy'] <= val_accuracy:    # note here is <=  not =
+            best['model'] = model.state_dict()
+            best['epoch'] = epoch
+            best['val_loss'] = val_loss
+            best['val_accuracy'] = val_accuracy
+            best['train_accuracy'] = train_accuracy
+
     else:  # if val_loss > pre_val_loss, it means we should consider early stopping.
         val_cnt += 1
         if val_cnt >= patience:
@@ -945,24 +964,7 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     Returns:
 
     """
-    print('Local_data: ')
-    train_mask = local_data['train_mask']
-    val_mask = local_data['val_mask']
-    test_mask = local_data['test_mask']
-    X_train, y_train = local_data['X'][train_mask], local_data['y'][train_mask]
-    X_val, y_val = local_data['X'][val_mask], local_data['y'][val_mask]
-    X_test, y_test = local_data['X'][test_mask], local_data['y'][test_mask]
-    print(f'\tX_train: {X_train.shape}, y_train: '
-          f'{collections.Counter(y_train.tolist())}')
-    print(f'\tX_val: {X_val.shape}, y_val: '
-          f'{collections.Counter(y_val.tolist())}')
-    print(f'\tX_test: {X_test.shape}, y_test: '
-          f'{collections.Counter(y_test.tolist())}')
-
-    local_gnn = local_gnn.to(device)
-    local_gnn.load_state_dict(global_gnn.state_dict())  # Initialize client_gm with the parameters of global_model
-    optimizer = optim.Adam(local_gnn.parameters(), lr=0.001)
-    # criterion = nn.CrossEntropyLoss()  # mean
+    print_data(local_data)
 
     # local data
     train_mask = local_data['train_mask']
@@ -1001,6 +1003,7 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
         data = gen_data(global_cvae, sizes)
         train_info['generated_size'] = sum(sizes.values())
         # append the generated data to the end of local X and Y, not the end of train set
+        print('Merge local data and generated data...')
         data = merge_data(data, local_data)
 
         # plot_data(data['X'], data['y'], train_size=None)
@@ -1022,6 +1025,7 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     existed_edge_indices = local_data['edge_indices']
     local_size = len(local_data['y'])
 
+    print('+++Generate edges for local data and generated data...')
     edge_indices, edge_weight = gen_edges(features, local_size, global_lp, existed_edge_indices,
                                           edge_method=None, generated_size=generated_size, local_data=local_data,
                                           train_info=train_info)  # will update threshold
@@ -1029,11 +1033,12 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
         print(f"edges.shape {edge_indices.shape}, edge_weight min:{min(edge_weight.tolist())}, "
               f"max:{max(edge_weight.tolist())}")
 
-    # Define train, val, and test masks
+    print('Update train, val, and test masks based on merged data...')
     # generated_data_indices = list(range(len(train_mask), len(labels), 1))  # append the generated data
     train_mask = torch.cat([train_mask, torch.tensor([True] * (sum(sizes.values())), dtype=torch.bool)])
     val_mask = torch.cat([local_data['val_mask'], torch.tensor([False] * (sum(sizes.values())), dtype=torch.bool)])
     test_mask = torch.cat([local_data['test_mask'], torch.tensor([False] * (sum(sizes.values())), dtype=torch.bool)])
+    print('Compute classes weights...')
     # Get indices of y
     y_indices = train_mask.nonzero(as_tuple=True)[0].tolist()
     indices = torch.tensor(y_indices).to(device)  # total labeled data
@@ -1072,7 +1077,7 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
 
     print('Graph_data: ')
     print(f'\tX_train: {graph_data.x[graph_data.train_mask].shape}, y_train: '
-          f'{collections.Counter(graph_data.y[graph_data.train_mask].tolist())}')
+          f'{collections.Counter(graph_data.y[graph_data.train_mask].tolist())}, (local data + generated data)')
     print(f'\tX_val: {graph_data.x[graph_data.val_mask].shape}, y_val: '
           f'{collections.Counter(graph_data.y[graph_data.val_mask].tolist())}')
     print(f'\tX_test: {graph_data.x[graph_data.test_mask].shape}, y_test: '
@@ -1084,17 +1089,22 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     # train_link_predictor(local_lp, global_lp, tmp_data, train_info)
 
     # only train smaller model
-    epochs_client = 200
+    epochs_client = 10000
     losses = []
     val_losses = []
-    best = {'val_accuracy': -1.0, 'accs': []}
+    best = {'val_accuracy': -1.0, 'val_accs': [], 'val_losses': [], 'train_accs': [], 'train_losses': []}
     val_cnt = 0
     pre_val_loss = 0
     # here, you need make sure weight aligned with class order.
     class_weight = torch.tensor(list(data['labeled_classes_weights'].values()), dtype=torch.float).to(device)
     print(f'class_weight: {class_weight}')
-    criterion = nn.CrossEntropyLoss(weight=class_weight).to(device)
+
+    local_gnn = local_gnn.to(device)
+    local_gnn.load_state_dict(global_gnn.state_dict())  # Initialize client_gm with the parameters of global_model
+    optimizer = optim.Adam(local_gnn.parameters(), lr=0.001)
+    criterion = nn.CrossEntropyLoss(weight=class_weight, reduction='mean').to(device)
     # criterion = nn.CrossEntropyLoss().to(device)
+
     for epoch in range(epochs_client):
         local_gnn.train()  #
         # epoch_model_loss = 0
@@ -1107,7 +1117,8 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
         outputs = local_gnn(graph_data)
         # Loss calculation: Only for labeled nodes
         model_loss = criterion(outputs[graph_data.train_mask], graph_data.y[graph_data.train_mask])
-
+        if model_loss.item() < 1e-5:
+            break
         optimizer.zero_grad()
         model_loss.backward()
 
@@ -1120,50 +1131,67 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
         #         print(f"{name}: No gradient (likely frozen or unused)")
 
         optimizer.step()
-        if epoch % 100 == 0:
-            print(f"train_gnn epoch: {epoch}, local_gnn loss: {model_loss.item():.4f}")
+
         losses.append(model_loss.item())
 
         # X_val, y_val = data.x[data.val_mask], data.y[data.val_mask]
         val_loss, pre_val_loss, val_cnt, stop_training = early_stopping(local_gnn, graph_data, None, epoch,
-                                                                        pre_val_loss, val_cnt, criterion, patience=20,
+                                                                        pre_val_loss, val_cnt, criterion, patience=10,
                                                                         best=best)
         val_losses.append(val_loss.item())
+
+        if epoch % 100 == 0:
+            print(f"train_gnn epoch: {epoch}, local_gnn train loss: {model_loss.item():.4f}, "
+                  f"val_loss: {val_loss.item():.4f}")
+
         if stop_training:
             local_gnn.stop_training = True
             print(f'Early Stopping. Epoch: {epoch}, Loss: {model_loss:.4f}')
             break
 
     train_info['gnn'] = {'graph_data': graph_data, "losses": losses}
-    print('best at epoch: ', best['epoch'], ' best val_accuracy: ', best['val_accuracy'])
+    print('***best at epoch: ', best['epoch'], ' best val_accuracy: ', best['val_accuracy'])
     local_gnn.load_state_dict(best['model'])
 
-    show = False
+    show = True
     if show:
-        import matplotlib.pyplot as plt
-        # plt.figure(figsize=(10, 6))
-        plt.plot(range(len(losses)), losses, label='Training Loss', marker='o')
-        plt.plot(range(len(val_losses)), val_losses, label='Validating Loss', marker='o')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss')
-        best_acc = best['accuracy']
-        epoch = best['epoch']
-        plt.title(f'Training and Validation Loss Over Epochs. Best_Acc: {best_acc} at Epoch: {epoch}')
-        plt.legend()
-        # plt.grid()
-        plt.show()
+        client_id = train_info['client_id']
+        server_epoch = train_info['server_epoch']
+        fig_file = f'{in_dir}/{client_id}/server_epoch_{server_epoch}.png'
+        os.makedirs(os.path.dirname(fig_file), exist_ok=True)
 
-        accs_val = best['accs']
-        plt.plot(range(len(accs_val)), accs_val, label='', marker='')
-        plt.plot(range(len(accs_val)), accs_val, label='Validating Accuracy', marker='o')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        best_acc = best['accuracy']
+        fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+        axes = axes.reshape((1, 2))
+        val_losses = best['val_losses']
+        train_losses = best['train_losses']
+        axes[0, 0].plot(range(len(losses)), train_losses, label='Training Loss', marker='+')  # in early_stopping
+        axes[0, 0].plot(range(len(val_losses)), val_losses, label='Validating Loss', marker='o')  # in early_stopping
+        # axes[0, 0].plot(range(len(losses)), losses, label='Training Loss', marker='o')  # in gnn_train
+        axes[0, 0].set_xlabel('Epochs')
+        axes[0, 0].set_ylabel('Loss')
+        best_val_acc = best['val_accuracy']
+        train_acc = best['train_accuracy']
         epoch = best['epoch']
-        plt.title(f'Training and Validation Acc Over Epochs. Best_Acc: {best_acc} at Epoch: {epoch}')
-        plt.legend()
+        axes[0, 0].set_title(f'Best_Val_Acc: {best_val_acc:.2f}, train: {train_acc:.2f} at Epoch: {epoch}')
+        axes[0, 0].legend(fontsize='small')
+
+        train_accs = best['train_accs']
+        val_accs = best['val_accs']
+        axes[0, 1].plot(range(len(val_accs)), train_accs, label='Training Accuracy', marker='+')  # in early_stopping
+        axes[0, 1].plot(range(len(val_accs)), val_accs, label='Validating Accuracy', marker='o')  # in early_stopping
+        axes[0, 1].set_xlabel('Epochs')
+        axes[0, 1].set_ylabel('Accuracy')
+        best_val_acc = best['val_accuracy']
+        epoch = best['epoch']
+        axes[0, 1].set_title(f'Best_Val_Acc: {best_val_acc:.2f},  train: {train_acc:.2f}  at Epoch: {epoch}')
+        axes[0, 1].legend(fontsize='small')
+
+        # plt.suptitle(title)
         # plt.grid()
-        plt.show()
+        plt.tight_layout()
+        plt.savefig(fig_file)
+        # plt.show()
+        plt.clf()
 
     return local_lp
 
@@ -2211,6 +2239,25 @@ def client_process(c, epoch, global_cvae, global_gnn, input_dim, num_classes, la
     return c, local_cvae, local_info, local_gnn, train_info
 
 
+def print_data(local_data):
+    print('Local_data: ')
+    X, y = local_data['X'], local_data['y']
+    print(f'X: {X.shape}, y: '
+          f'{collections.Counter(y.tolist())}, in which, ')
+    train_mask = local_data['train_mask']
+    val_mask = local_data['val_mask']
+    test_mask = local_data['test_mask']
+    X_train, y_train = local_data['X'][train_mask], local_data['y'][train_mask]
+    X_val, y_val = local_data['X'][val_mask], local_data['y'][val_mask]
+    X_test, y_test = local_data['X'][test_mask], local_data['y'][test_mask]
+    print(f'\tX_train: {X_train.shape}, y_train: '
+          f'{collections.Counter(y_train.tolist())}')
+    print(f'\tX_val: {X_val.shape}, y_val: '
+          f'{collections.Counter(y_val.tolist())}')
+    print(f'\tX_test: {X_test.shape}, y_test: '
+          f'{collections.Counter(y_test.tolist())}')
+
+
 @timer
 def main(in_dir, input_dim=16):
     num_classes = len(LABELs)
@@ -2242,15 +2289,18 @@ def main(in_dir, input_dim=16):
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
+                print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+                print('Load data...')
                 train_info = {"cvae": {}, "gnn": {}, 'client_id': c, 'server_epoch': epoch}  # might be used in server
-                # local_data = features_info[l]
-                local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
-                                            label_rate=label_rate)
+                client_data_file = f'{in_dir}/c_{c}-{prefix}-data.pth'
+                local_data = torch.load(client_data_file, weights_only=True)
                 label_cnts = collections.Counter(local_data['y'].tolist())
                 locals_info[c] = {'label_cnts': label_cnts}
                 print(f'client_{c} data:', label_cnts)
+                print_data(local_data)
 
                 # Use to generate nodes
+                print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
                 local_cvae = CVAE(input_dim=input_dim, hidden_dim=hidden_dim_cvae, latent_dim=5,
                                   num_classes=num_classes)
                 print('Train CVAE...')
@@ -2263,6 +2313,7 @@ def main(in_dir, input_dim=16):
                 # train_link_predictor(local_lp, global_lp, local_data, train_info)
                 # lps[c] = local_lp
 
+                print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
                 print('Train GNN...')
                 local_gnn = GNN(input_dim=input_dim, hidden_dim=hidden_dim_gnn, output_dim=num_classes)
                 local_lp = train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_info)
@@ -2353,7 +2404,7 @@ if __name__ == '__main__':
     input_dim = 1433
     LABELs = {0, 1, 2, 3, 4, 5, 6}
     num_clients = 4
-    hidden_dim_cvae = 32
+    hidden_dim_cvae = 16
     hidden_dim_gnn = 8
     main(in_dir, input_dim)
     # history_file = f'{in_dir}/histories_cvae.pkl'

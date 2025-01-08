@@ -1,3 +1,5 @@
+v0.1.8: Update early_stopping and plot gnn training loss.
+
 v0.1.7: Tune different parameters and add classical ML
    1. Add label_rate
    2. Add best model based on validation accuracy
