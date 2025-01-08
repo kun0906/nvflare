@@ -227,61 +227,66 @@ def preprocessing():
     # classes_list = [[0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 6], [2, 3, 4, 5, 6], [3, 4, 5, 6]]  # 4 clients
     # classes_list = [[0, 1, 2, 3, 4, 5, 6], [0, 1, 2, 3, 4, 5, 6], [0, 1, 2, 3, 4, 5, 6],
     #                [0, 1, 2, 3, 4, 5, 6]]  # 4 clients for debug
-    n_nodes = 0
-    n_edges = 0
-    for i, classes_ in enumerate(classes_list):
-        # We only split the train set for clients. Given this split, we will miss edges like 0->1, 2->3, ...
-        # client 0: only has classes 0 and 3, and edges 0->3 or 3->0
-        # client 1: ...
-        print(f'\nClient_{i}: class {classes_}')
-        # for each client, we split the client data into train, val and test because we assume each client has
-        # small labeled data + large unlabeled data
-        X_, y_, train_indices_, edge_indices_, original_edge_indices_ = extract_xy_edges(X, Y,
-                                                                                         train_indices, edge_indices,
-                                                                                         classes_)
-        print(f'X.shape: {X_.shape}, y: {collections.Counter(y_)}, '
-              f'n_edges: {edge_indices_.shape[1]}, '
-              f'train_indices_: {len(train_indices_)}, where min_index: {min(train_indices_)}, and '
-              f'max_index: {max(train_indices_)} ')
-        n_nodes += len(train_indices_)
-        n_edges += len(edge_indices_)
-        client_data = split_train_val_test(X_, y_, train_indices_, edge_indices_, original_edge_indices_,
-                                           test_size=0.5, val_size=0.05)
+    for label_rate in [0.1, 0.3, 0.5, 0.7, 0.9]:
+        print(f'\n***{label_rate * 100}% data are labeled***')
+        n_nodes = 0
+        n_edges = 0
+        for i, classes_ in enumerate(classes_list):
+            # We only split the train set for clients. Given this split, we will miss edges like 0->1, 2->3, ...
+            # client 0: only has classes 0 and 3, and edges 0->3 or 3->0
+            # client 1: ...
+            print(f'\nClient_{i}: class {classes_}')
+            # for each client, we split the client data into train, val and test because we assume each client has
+            # small labeled data + large unlabeled data
+            X_, y_, train_indices_, edge_indices_, original_edge_indices_ = extract_xy_edges(X, Y,
+                                                                                             train_indices, edge_indices,
+                                                                                             classes_)
+            print(f'X.shape: {X_.shape}, y: {collections.Counter(y_)}, '
+                  f'n_edges: {edge_indices_.shape[1]}, '
+                  f'train_indices_: {len(train_indices_)}, where min_index: {min(train_indices_)}, and '
+                  f'max_index: {max(train_indices_)} ')
+            n_nodes += len(train_indices_)
+            n_edges += len(edge_indices_)
+            client_data = split_train_val_test(X_, y_, train_indices_, edge_indices_, original_edge_indices_,
+                                               test_size=1-label_rate, val_size=0.1)
 
-        # All clients have shared test set (global test set) to evaluate client model's performance
-        # We need all X and Y, and test_mask, which can used to find the edges between train and test set in the future.
-        # Otherwise, we will miss the edges between train and test set.
-        client_data['all_data'] = {'X': X, 'y': Y, 'indices': indices,
-                                   'train_mask': train_mask, 'val_mask': val_mask, 'test_mask': test_mask,
-                                   'edge_indices_train': edge_indices_train, 'edge_indices_val':edge_indices_val,
-                                   'edge_indices_test': edge_indices_test,
-                                   'edge_indices': data.edge_index.numpy()}
+            # All clients have shared test set (global test set) to evaluate client model's performance
+            # We need all X and Y, and test_mask, which can used to find the edges between train and test set in the future.
+            # Otherwise, we will miss the edges between train and test set.
+            client_data['all_data'] = {'X': X, 'y': Y, 'indices': indices,
+                                       'train_mask': train_mask, 'val_mask': val_mask, 'test_mask': test_mask,
+                                       'edge_indices_train': edge_indices_train, 'edge_indices_val':edge_indices_val,
+                                       'edge_indices_test': edge_indices_test,
+                                       'edge_indices': data.edge_index.numpy()}
 
-        client_data_file = f'{in_dir}/{i}.pkl'
-        with open(client_data_file, 'wb') as f:
-            pickle.dump(client_data, f)
+            client_data_file = f'{in_dir}/{label_rate}/{i}.pkl'
+            os.makedirs(os.path.dirname(client_data_file), exist_ok=True)
+            with open(client_data_file, 'wb') as f:
+                pickle.dump(client_data, f)
 
     print(f"*** n_nodes: {n_nodes}, n_edges (undirected): {n_edges}, total undirected edges: {len(edge_indices)}")
 
 
 def check_client_data():
-    total = 0
-    for c in range(num_clients):
-        client_data_file = f'{in_dir}/{c}.pkl'
-        with open(client_data_file, 'rb') as f:
-            client_data = pickle.load(f)
+    for label_rate in [0.1, 0.3, 0.5, 0.7, 0.9]:
+        print(f'\n***{label_rate * 100}% data are labeled***')
+        total = 0
+        for c in range(num_clients):
+            client_data_file = f'{in_dir}/{label_rate}/{c}.pkl'
+            with open(client_data_file, 'rb') as f:
+                client_data = pickle.load(f)
 
-        # print(c, client_data)
-        print(f'\nclient_{c}:')
-        X, y = client_data['X'], client_data['y']
-        for mask in ['train_mask', 'val_mask', 'test_mask']:  # local data includes train, val and test set.
-            prefix = mask.split('_')[0]
-            X_ = X[client_data[mask]]
-            y_ = y[client_data[mask]]
-            print(f'\tX_{prefix}: {X_.shape}, y_{prefix}: {collections.Counter(y_)}')
-            total += X_.shape[0]
+            # print(c, client_data)
+            print(f'\nclient_{c}:')
+            X, y = client_data['X'], client_data['y']
+            for mask in ['train_mask', 'val_mask', 'test_mask']:  # local data includes train, val and test set.
+                prefix = mask.split('_')[0]
+                X_ = X[client_data[mask]]
+                y_ = y[client_data[mask]]
+                print(f'\tX_{prefix}: {X_.shape}, y_{prefix}: {collections.Counter(y_)}')
+                total += X_.shape[0]
 
-    print(f'Total: {total}')
+        print(f'Total: {total}')
 
 
 if __name__ == '__main__':

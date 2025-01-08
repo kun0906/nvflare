@@ -1,3 +1,7 @@
+v0.1.7: Tune different parameters and add classical ML
+   1. Add label_rate
+   2. Add best model based on validation accuracy
+
 v0.1.6: Add cosine
 
 v0.1.5: Add early_stopping to federated GNN
