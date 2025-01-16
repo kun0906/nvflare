@@ -1,8 +1,95 @@
+import collections
+
+from sklearn.metrics import accuracy_score, confusion_matrix
 from torch_geometric.datasets import Planetoid
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import torch
+
+
+def evaluate_ML(X_train, y_train, X_val, y_val, X_test, y_test,
+                X_shared_test, y_shared_test, verbose=10):
+    if verbose > 5:
+        print('---------------------------------------------------------------')
+        print('Evaluate Classical ML on each client...')
+    ml_info = {}
+
+    dim = X_train.shape[1]
+    num_classes = len(set(y_train))
+    if verbose > 5:
+        print(f'Number of Features: {dim}, Number of Classes: {num_classes}')
+        print(f'\tX_train: {X_train.shape}, y_train: '
+              f'{collections.Counter(y_train.tolist())}')
+        print(f'\tX_val: {X_val.shape}, y_val: '
+              f'{collections.Counter(y_val.tolist())}')
+        print(f'\tX_test: {X_test.shape}, y_test: '
+              f'{collections.Counter(y_test.tolist())}')
+
+        print(f'\tX_shared_test: {X_shared_test.shape}, y_test: '
+              f'{collections.Counter(y_shared_test.tolist())}')
+
+        print(f'Total (without X_shared_val): X_train + X_val + X_test + X_shared_test = '
+              f'{X_train.shape[0] + X_val.shape[0] + X_test.shape[0] + X_shared_test.shape[0]}')
+
+    from sklearn.tree import DecisionTreeClassifier
+    # Initialize the Decision Tree Classifier
+    dt = DecisionTreeClassifier(random_state=42)
+
+    from sklearn.ensemble import RandomForestClassifier
+    rf = RandomForestClassifier(random_state=42)
+
+    from sklearn.ensemble import GradientBoostingClassifier
+    gd = GradientBoostingClassifier(random_state=42)
+
+    from sklearn import svm
+    svm = svm.SVC(random_state=42)
+
+    # mlp = MLP(dim, 64, num_classes)
+    # clfs = {'Decision Tree': dt, 'Random Forest': rf, 'Gradient Boosting': gd, 'SVM': svm, 'MLP': mlp}
+    clfs = {'Decision Tree': dt, 'Random Forest': rf, 'Gradient Boosting': gd, 'SVM': svm, }
+
+    # all_data = client_data['all_data']
+    # test_mask = all_data['test_mask']
+    # X_shared_test = all_data['X'][test_mask]
+    # y_shared_test = all_data['y'][test_mask]
+    for clf_name, clf in clfs.items():
+        if verbose > 5:
+            print(f"\nTraining {clf_name}")
+        # Train the classifier on the training data
+        if clf_name == 'MLP':
+            clf.fit(X_train, y_train, X_val, y_val)
+        else:
+            clf.fit(X_train, y_train)
+        if verbose > 5:
+            print(f"Testing {clf_name}")
+        for test_type, X_, y_ in [('train', X_train, y_train),
+                                  ('val', X_val, y_val),
+                                  ('test', X_test, y_test),
+                                  ('shared_test', X_shared_test, y_shared_test)
+                                  ]:
+            if verbose > 5:
+                print(f'Testing on {test_type}')
+            # Make predictions on the data
+            y_pred_ = clf.predict(X_)
+            # Calculate accuracy
+            accuracy = accuracy_score(y_, y_pred_)
+            if verbose > 5:
+                print(f"Accuracy of {clf_name}: {accuracy * 100:.2f}%")
+            # Compute confusion matrix
+            cm = confusion_matrix(y_, y_pred_)
+            if verbose > 5:
+                print(cm)
+            ml_info[clf_name] = {test_type: {'accuracy': accuracy, 'cm': cm}}
+    # # Plot confusion matrix
+    # plt.figure(figsize=(8, 6))
+    # sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', xticklabels=np.unique(y_test), yticklabels=np.unique(y_test))
+    # plt.title("Confusion Matrix")
+    # plt.xlabel("Predicted Labels")
+    # plt.ylabel("True Labels")
+    # plt.show()
+
+    return ml_info
 
 
 def print_histgram(new_probs, value_type='probs'):
@@ -125,6 +212,16 @@ def main():
     # print(f'unique edges: {len(unqiue_edges)} =? edge_indices/2: {len(edge_indices) / 2}, '
     #       f'edges: {data.edge_index.shape}')
 
+    X_train = X[data.train_mask]
+    y_train = Y[data.train_mask]
+    X_val = X[data.val_mask]
+    y_val = Y[data.val_mask]
+    X_test = X[data.test_mask]
+    y_test = Y[data.test_mask]
+
+    evaluate_ML(X_train, y_train, X_val, y_val, X_test, y_test, X_test, y_test, verbose=10)
+    return
+
     edge_index2, edge_weight2 = compute_similarity(X, threshold=0.5)
 
     print('edge_index:', edge_index.shape)
@@ -139,8 +236,8 @@ def main():
 
     # cosine
     for similarity_type, similarity in [('cosine', cosine_similarity(X, X)),
-                       ('hamming', hamming_dist(X, X)),
-                       ('jaccard', jaccard_dist(X, X))]:
+                                        ('hamming', hamming_dist(X, X)),
+                                        ('jaccard', jaccard_dist(X, X))]:
         print(similarity_type)
         np.fill_diagonal(similarity, 0)
         print(similarity.shape)
