@@ -11,9 +11,10 @@
 
 # Define parameter combinations
 param1=(0.1)                       # Example distillation weight values
-epochs_values=(30 100)                      # Number of epochs
-hidden_values=(2 4 8 16 32 64 128 256) # Hidden layer sizes
-patience_values=(1 5 10)                    # Patience values for early stopping
+epochs_values=(30 100 300 1000)                      # Number of epochs
+#hidden_values=(2 4 8 16 32 64 128 256) # Hidden layer sizes
+hidden_values=(32)
+patience_values=(0 0.1 1.0 1.5 3 10)                    # Patience values for early stopping
 
 # Calculate the total number of parameter combinations
 total_combinations=$(( ${#param1[@]} * ${#epochs_values[@]} * ${#hidden_values[@]} * ${#patience_values[@]} ))

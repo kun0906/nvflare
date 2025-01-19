@@ -5,7 +5,7 @@
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 gnn_fl_vaes_attention_link_jaccard.py
+    $PYTHONPATH=. python3 gnn_fl_gan_attention_link_jaccard.py
 
 
 """
@@ -54,14 +54,10 @@ def parse_arguments():
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=32,
                         help="The hidden dimension of GNN.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=2,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=31,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=float, required=False, default=1.,
+    parser.add_argument('-p', '--patience', type=int, required=False, default=10,
                         help="The patience.")
-    # parser.add_argument('-a', '--vae_epochs', type=int, required=False, default=10,
-    #                     help="vae epochs.")
-    # parser.add_argument('-b', '--vae_beta', type=float, required=False, default=1.0,
-    #                     help="vae loss beta.")
     # Parse the arguments
     args = parser.parse_args()
 
@@ -74,11 +70,9 @@ args = parse_arguments()
 
 # Access the arguments
 label_rate = args.label_rate
-server_epochs = 30
+server_epochs = args.server_epochs
 hidden_dim_gnn = args.hidden_dimension
-patience = 5
-VAE_EPOCHs = args.server_epochs
-BETA = args.patience
+patience = args.patience
 # For testing, print the parsed parameters
 # print(f"label_rate: {label_rate}")
 # print(f"server_epochs: {server_epochs}")
@@ -138,48 +132,83 @@ print(args)
 #         recon_x = self.decoder(z, class_labels)
 #         return recon_x, mean, log_var
 
+#
+# class VAE(nn.Module):
+#     def __init__(self, input_dim, hidden_dim, latent_dim):
+#         super(VAE, self).__init__()
+#         # Encoder layers
+#         self.encoder_fc1 = nn.Linear(input_dim, hidden_dim)
+#         self.encoder_fc2_mu = nn.Linear(hidden_dim, latent_dim)  # Mean of latent space
+#         self.encoder_fc2_logvar = nn.Linear(hidden_dim, latent_dim)  # Log variance of latent space
+#         self.latent_dim = latent_dim
+#
+#         # Decoder layers
+#         self.decoder_fc1 = nn.Linear(latent_dim, hidden_dim)
+#         self.decoder_fc2 = nn.Linear(hidden_dim, input_dim)
+#
+#     def encoder(self, x):
+#         """Encode input into latent space parameters (mu, logvar)."""
+#         h = F.relu(self.encoder_fc1(x))
+#         mu = self.encoder_fc2_mu(h)
+#         logvar = self.encoder_fc2_logvar(h)
+#         return mu, logvar
+#
+#     def reparameterize(self, mu, logvar):
+#         """Sample z from the latent space using the reparameterization trick."""
+#         std = torch.exp(0.5 * logvar)  # Standard deviation
+#         eps = torch.randn_like(std)  # Random noise
+#         z = mu + eps * std  # Reparameterization
+#         return z
+#
+#     def decoder(self, z):
+#         """Decode latent representation into reconstructed input."""
+#         h = F.relu(self.decoder_fc1(z))
+#         x_recon = torch.sigmoid(self.decoder_fc2(h))  # Sigmoid for normalized outputs (e.g., binary data)
+#         # x_recon = self.decoder_fc2(h)
+#         return x_recon
+#
+#     def forward(self, x):
+#         """Forward pass through the entire VAE."""
+#         mu, logvar = self.encoder(x)
+#         z = self.reparameterize(mu, logvar)
+#         x_recon = self.decoder(z)
+#         return x_recon, mu, logvar
 
-class VAE(nn.Module):
-    def __init__(self, input_dim, hidden_dim, latent_dim):
-        super(VAE, self).__init__()
-        # Encoder layers
-        self.encoder_fc1 = nn.Linear(input_dim, hidden_dim)
-        self.encoder_fc2_mu = nn.Linear(hidden_dim, latent_dim)  # Mean of latent space
-        self.encoder_fc2_logvar = nn.Linear(hidden_dim, latent_dim)  # Log variance of latent space
+
+
+# Generator
+class Generator(nn.Module):
+    def __init__(self, latent_dim=10, hidden_dim=128, output_dim=-1):
+        super(Generator, self).__init__()
+        self.model = nn.Sequential(
+            nn.Linear(latent_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, output_dim),
+            nn.Tanh()  # Outputs between -1 and 1
+        )
         self.latent_dim = latent_dim
 
-        # Decoder layers
-        self.decoder_fc1 = nn.Linear(latent_dim, hidden_dim)
-        self.decoder_fc2 = nn.Linear(hidden_dim, input_dim)
+    def forward(self, z):
+        return self.model(z)
 
-    def encoder(self, x):
-        """Encode input into latent space parameters (mu, logvar)."""
-        h = F.relu(self.encoder_fc1(x))
-        mu = self.encoder_fc2_mu(h)
-        logvar = self.encoder_fc2_logvar(h)
-        return mu, logvar
 
-    def reparameterize(self, mu, logvar):
-        """Sample z from the latent space using the reparameterization trick."""
-        std = torch.exp(0.5 * logvar)  # Standard deviation
-        eps = torch.randn_like(std)  # Random noise
-        z = mu + eps * std  # Reparameterization
-        return z
-
-    def decoder(self, z):
-        """Decode latent representation into reconstructed input."""
-        h = F.relu(self.decoder_fc1(z))
-        x_recon = torch.sigmoid(self.decoder_fc2(h))  # Sigmoid for normalized outputs (e.g., binary data)
-        # x_recon = self.decoder_fc2(h)
-        return x_recon
+# Discriminator
+class Discriminator(nn.Module):
+    def __init__(self, input_dim, hidden_dim=128):
+        super(Discriminator, self).__init__()
+        self.model = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.LeakyReLU(0.2),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.2),
+            nn.Linear(hidden_dim, 1),
+            nn.Sigmoid()  # Outputs probability
+        )
 
     def forward(self, x):
-        """Forward pass through the entire VAE."""
-        mu, logvar = self.encoder(x)
-        z = self.reparameterize(mu, logvar)
-        x_recon = self.decoder(z)
-        return x_recon, mu, logvar
-
+        return self.model(x)
 
 class GNNLinkPredictor(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels):
@@ -426,24 +455,14 @@ def gen_local_data(client_data_file, client_id, label_rate=0.1):
 #     return recon_loss + beta * kl_loss, info
 #
 
-def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
-    # # output =global_gnn(X)
-    # graph_data = Data(x=local_data['X'],  y=local_data['y'], edge_index=None, edge_weight=None)
-    # graph_data.to(device)
-    #
-    # global_gnn.eval()
-    # with torch.no_grad():
-    #     output = global_gnn(graph_data)
-    #     _, predicted_labels = torch.max(output, dim=1)
-    # print(f'Predicted labels: {collections.Counter(predicted_labels.tolist())}')
-
-    for l, local_vae in local_vaes.items():
-        # Initialize local_vae with global_vae
-        local_vae.load_state_dict(global_vaes[l].state_dict())
+def train_gan(local_gans, global_gans, local_data, global_gnn, train_info={}):
+    for l, local_gan in local_gans.items():
+        # Initialize local_gan with global_gan
+        local_gan.load_state_dict(global_gans[l].state_dict())
 
         X, y = local_data['X'], local_data['y']
         mask = local_data['train_mask']
-        # only use labeled data for training vae
+        # only use labeled data for training gan
         X = X[mask]
         y = y[mask]
 
@@ -453,51 +472,72 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
 
         X = X[label_mask]
         y = y[label_mask]
-        # Only update available local labels, i.e., not all the local_vaes will be updated.
+        # Only update available local labels, i.e., not all the local_gans will be updated.
         # local_labels = set(y.tolist())
         print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
 
-        local_vae.to(device)
-        optimizer = optim.Adam(local_vae.parameters(), lr=0.001, weight_decay=5e-5) # L2
-        # Define a scheduler
-        scheduler = StepLR(optimizer, step_size=100, gamma=0.8)
+        # Initialize the models, optimizers, and loss function
+        # z_dim = 100  # Dimension of random noise
+        data_dim = X.shape[1]  # Number of features (e.g., Cora node features)
+        lr = 0.0002
 
-        # ohe_labels = torch.zeros((len(y), len(LABELs))).to(device)  # One-hot encoding for class labels
-        # for i, l in enumerate(y.tolist()):  # if y is different.
-        #     ohe_labels[i, l] = 1
-        # new_labeled_X = local_data['X'][predicted_labels == l]
-        # X = torch.cat((X, new_labeled_X), dim=0).to(device)
+        # generator = Generator(input_dim=z_dim, output_dim=data_dim).to(device)
+        generator = local_gan
+        # local_gan.load_state_dict(global_gans[l].state_dict())
+        z_dim = generator.latent_dim
 
-        X = X.clone().detach().float().to(device)
-        print(f'augmented_X: {X.shape}')
+        discriminator = Discriminator(input_dim=data_dim).to(device)
+
+        optimizer_G = optim.Adam(generator.parameters(), lr=lr)
+        optimizer_D = optim.Adam(discriminator.parameters(), lr=lr)
+
+        adversarial_loss = nn.BCELoss()  # Binary Cross-Entropy Loss
+
+        # Training loop
+        epochs = 1000
         losses = []
-        print(f'vae_epochs: {VAE_EPOCHs}, beta:{BETA}')
-        for epoch in range(VAE_EPOCHs):
-            # Convert X to a tensor and move it to the device
-            # X.to(device)
-            recon_logits, mu, logvar = local_vae(X)
-            loss, info = vae_loss_function(recon_logits, X, mu, logvar, beta=BETA)
-            if loss < 1e-10:
-                break
+        for epoch in range(epochs):
+            # ---- Train Discriminator ----
+            discriminator.train()
+            real_data = X.clone().detach().float().to(device)  # Replace with your local data (class-specific)
+            real_data = real_data.to(device)
 
-            optimizer.zero_grad()
-            loss.backward()
+            batch_size = real_data.size(0)
+            real_labels = torch.ones(batch_size, 1).to(device)
+            fake_labels = torch.zeros(batch_size, 1).to(device)
 
-            # # Gradient clipping to stabilize the training
-            # torch.nn.utils.clip_grad_norm_(local_vae.parameters(), max_norm=1.0)
+            # Generate synthetic data
+            z = torch.randn(batch_size, z_dim).to(device)
+            fake_data = generator(z).detach()  # Freeze Generator when training Discriminator
 
-            optimizer.step()
+            # Discriminator Loss
+            real_loss = adversarial_loss(discriminator(real_data), real_labels)
+            fake_loss = adversarial_loss(discriminator(fake_data), fake_labels)
+            d_loss = real_loss + fake_loss
 
-            # Update learning rate
-            scheduler.step()
+            optimizer_D.zero_grad()
+            d_loss.backward()
+            optimizer_D.step()
 
+            # ---- Train Generator ----
+            generator.train()
+            z = torch.randn(batch_size, z_dim).to(device)
+            generated_data = generator(z)
+
+            # Generator Loss (Discriminator should classify fake data as real)
+            g_loss = adversarial_loss(discriminator(generated_data), real_labels)
+
+            optimizer_G.zero_grad()
+            g_loss.backward()
+            optimizer_G.step()
+
+            # ---- Logging ----
             if epoch % 100 == 0:
-                print(f'train_vae epoch: {epoch}, local_vae loss: {loss.item():.4f}, {info.items()}, '
-                      f'LR: {scheduler.get_last_lr()}')
-            losses.append(loss.item())
+                print(f"Epoch {epoch}/{epochs} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f}")
+            losses.append(g_loss.item())
 
-        train_info[f'vae_{l}'] = {"losses": losses}
-        local_vaes[l] = local_vae
+        train_info[f'gan_{l}'] = {"losses": losses}
+        local_gans[l] = local_gan
 
 
 #
@@ -623,22 +663,20 @@ def check_gen_data(generated_data, local_data):
     y_gen_test = np.zeros((0,), dtype=int)
 
     for l, vs in generated_data.items():
-        X_gen_test = np.concatenate((X_gen_test, vs['X'].cpu()), axis=0)
+        X_gen_test = np.concatenate((X_gen_test, vs['X']), axis=0)
         y_gen_test = np.concatenate((y_gen_test, vs['y']))
 
-    ml_info = evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_gen_test, y_gen_test, verbose=10)
-
-    return ml_info
+    evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_gen_test, y_gen_test, verbose=10)
 
 
-def train_gnn(local_gnn, global_vaes, global_lp, global_gnn, local_data, train_info={}):
+def train_gnn(local_gnn, global_gans, global_lp, global_gnn, local_data, train_info={}):
     """
-        1. Use vaes to generated data for each class
+        1. Use gans to generated data for each class
         2. Use the generated data + local data to train local gnn with initial parameters of global_gnn
         3. Send local gnn'parameters to server.
     Args:
         local_gnn:
-        vae:
+        gan:
         global_gnn:
         local_data:
 
@@ -685,7 +723,7 @@ def train_gnn(local_gnn, global_vaes, global_lp, global_gnn, local_data, train_i
         print(f'we need to generate samples ({sum(sizes.values())}),where each class sizes:{sizes}')
 
         # generated new data
-        generated_data = gen_data(global_vaes, sizes, similiarity_method=train_info['edge_method'],
+        generated_data = gen_data(global_gans, sizes, similiarity_method=train_info['edge_method'],
                                   local_data=local_data)
         # train_info['generated_size'] = sum(sizes.values())
 
@@ -852,8 +890,8 @@ def train_gnn(local_gnn, global_vaes, global_lp, global_gnn, local_data, train_i
         local_gnn.train()  #
         # epoch_model_loss = 0
         # _model_loss, _model_distill_loss = 0, 0
-        # epoch_vae_loss = 0
-        # _vae_recon_loss, _vae_kl_loss = 0, 0
+        # epoch_gan_loss = 0
+        # _gan_recon_loss, _gan_kl_loss = 0, 0
         graph_data.to(device)
         # data_size, data_dim = graph_data.x.shape
         # your local personal model
@@ -1051,50 +1089,49 @@ def evaluate_train(gnn, graph_data, gen_start, generated_size, epoch, local_data
             evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_shared_test, y_shared_test, verbose=10)
 
 
-def aggregate_vaes(vaes, locals_info, global_vaes, local_data, histories_server):
-    for l, global_vae in global_vaes.items():
-        print(f'*aggregate vaes for class {l}...')
-        # for each client, we get one label vae
-        label_vaes = {client_idx: client_vaes[l] for client_idx, client_vaes in vaes.items()}
-        aggregate_label_vaes(label_vaes, locals_info, global_vae)
-        global_vaes[l] = global_vae  # update global vae for each label
+def aggregate_gans(gans, locals_info, global_gans, local_data):
+    for l, global_gan in global_gans.items():
+        print(f'*aggregate gans for class {l}...')
+        # for each client, we get one label gan
+        label_gans = {client_idx: client_gans[l] for client_idx, client_gans in gans.items()}
+        aggregate_label_gans(label_gans, locals_info, global_gan)
+        global_gans[l] = global_gan  # update global gan for each label
 
     test_mask = local_data['all_data']['test_mask']
     sizes = {l: s for l, s in collections.Counter(local_data['all_data']['y'][test_mask].tolist()).items()}
     print(sizes)
     # generated new data
-    generated_data = gen_data(global_vaes, sizes, similiarity_method='cosine',
+    generated_data = gen_data(global_gans, sizes, similiarity_method='cosine',
                               local_data=local_data)
-    ml_info = check_gen_data(generated_data, local_data)
-    histories_server.append(ml_info)
+    check_gen_data(generated_data, local_data)
 
 
-def aggregate_label_vaes(vaes, locals_info, global_vae):
-    client_parameters_list = [local_vae.state_dict() for client_i, local_vae in vaes.items()]
-    # aggregate(client_parameters_list, global_vae)
+def aggregate_label_gans(gans, locals_info, global_gan):
+    client_parameters_list = [local_gan.state_dict() for client_i, local_gan in gans.items()]
+    # aggregate(client_parameters_list, global_gan)
     aggregate_method = 'parameter'
     if aggregate_method == 'parameter':  # aggregate clients' parameters
-        aggregate_with_attention(client_parameters_list, global_vae, device)  # update global_vae inplace
+        aggregate_with_attention(client_parameters_list, global_gan, device)  # update global_gan inplace
     else:
-        # train a new model on generated data by clients' vaes
-        # global_vae.load_state_dict(global_vae.state_dict())
-        optimizer = optim.Adam(global_vae.parameters(), lr=0.01)
+        # train a new model on generated data by clients' gans
+        # global_gan.load_state_dict(global_gan.state_dict())
+        optimizer = optim.Adam(global_gan.parameters(), lr=0.01)
         # Define a scheduler
         scheduler = StepLR(optimizer, step_size=100, gamma=0.8)
 
         losses = []
         for epoch in range(301):
             loss_epoch = 0
-            for client_i, local_vae_state_dict in enumerate(client_parameters_list):
+            for client_i, local_gan_state_dict in enumerate(client_parameters_list):
                 label_cnts = locals_info[client_i]['label_cnts']
-                # Initialize local_vae with global_vae
-                local_vae = VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=5)
-                local_vae.load_state_dict(local_vae_state_dict)
-                local_vae.to(device)
+                # Initialize local_gan with global_gan
+                local_gan = gan(input_dim=input_dim, hidden_dim=hidden_dim_gan, latent_dim=5)
+                local_gan.load_state_dict(local_gan_state_dict)
+                local_gan.to(device)
 
                 z = []
                 ohe_labels = []
-                latent_dim = local_vae.decoder.latent_dim
+                latent_dim = local_gan.decoder.latent_dim
                 for l, size in label_cnts.items():
                     # generate latent vector from N(0, 1)
                     z_ = torch.randn(size, latent_dim).to(device)  # Sample latent vectors
@@ -1110,12 +1147,12 @@ def aggregate_label_vaes(vaes, locals_info, global_vae):
 
                 z = z.to(device)
                 ohe_labels = ohe_labels.to(device)
-                pseudo_logits = local_vae.decoder(z, ohe_labels)  # Reconstruct probabilities from latent space
+                pseudo_logits = local_gan.decoder(z, ohe_labels)  # Reconstruct probabilities from latent space
                 X_ = pseudo_logits
 
-                # use the generated data X to train global_vae
-                recon_logits, mu, logvar = global_vae(X_, ohe_labels)
-                loss, info = vae_loss_function(recon_logits, X_, mu, logvar)
+                # use the generated data X to train global_gan
+                recon_logits, mu, logvar = global_gan(X_, ohe_labels)
+                loss, info = gan_loss_function(recon_logits, X_, mu, logvar)
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -1127,11 +1164,11 @@ def aggregate_label_vaes(vaes, locals_info, global_vae):
                 loss_epoch += loss.item()
 
             if epoch % 100 == 0:
-                print(f'train global vae epoch: {epoch}, global  vae loss: {loss_epoch:.4f}, {info},'
+                print(f'train global gan epoch: {epoch}, global  gan loss: {loss_epoch:.4f}, {info},'
                       f'LR: {scheduler.get_last_lr()}')
             losses.append(loss_epoch)
 
-            # train_info['vae'] = {"losses": losses}
+            # train_info['gan'] = {"losses": losses}
 
 
 def aggregate_lps(lps, global_lp):
@@ -1280,7 +1317,7 @@ def evaluate_shared_test(local_gnn, local_data, device, global_gnn, global_lp,
         # This could involve concatenating the new feature to the existing node features
         graph_data = train_info['gnn']['graph_data'].to(device)
         generated_size = train_info['generated_size']
-        # X_local = graph_data.x  # includes all local train (+ generated data by vae), val and test
+        # X_local = graph_data.x  # includes all local train (+ generated data by gan), val and test
         # y = graph_data.y
         features, labels, edges, edge_weight, local_size = gen_test_edges(graph_data, X_test, y_test, edge_indices_test,
                                                                           global_lp, generated_size, local_data,
@@ -1631,7 +1668,6 @@ def evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test,
             clf.fit(X_train, y_train)
         if verbose > 5:
             print(f"Testing {clf_name}")
-        ml_info[clf_name] = {}
         for test_type, X_, y_ in [('train', X_train, y_train),
                                   ('val', X_val, y_val),
                                   ('test', X_test, y_test),
@@ -1658,7 +1694,7 @@ def evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test,
             cm = cm.astype(int)
             if verbose > 5:
                 print(cm)
-            ml_info[clf_name][test_type] = {'accuracy': accuracy, 'cm': cm}
+            ml_info[clf_name] = {test_type: {'accuracy': accuracy, 'cm': cm}}
     # # Plot confusion matrix
     # plt.figure(figsize=(8, 6))
     # sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', xticklabels=np.unique(y_test), yticklabels=np.unique(y_test))
@@ -1708,7 +1744,14 @@ def _gen_models(model, l, size, method='T5'):
         # Print the shape of the CLS embedding
         print(f"CLS Embedding Shape: {cls_embedding.shape}")
         embedding = cls_embedding
-
+    elif method == 'gan':
+        generator = model
+        generator.eval()
+        z_dim = generator.latent_dim
+        with torch.no_grad():
+            z = torch.randn(size, z_dim).to(device)
+            synthetic_data = generator(z)
+        embedding = synthetic_data
     else:  # default one is autoencoder
         vae = model
         latent_dim = vae.latent_dim
@@ -1767,12 +1810,12 @@ def compare_gen_true(generated_data, true_data):
     # plt.show()
 
 
-def gen_data(vaes, sizes, similiarity_method='cosine', local_data={}):
+def gen_data(gans, sizes, similiarity_method='cosine', local_data={}):
     data = {}
     for l, size in sizes.items():
-        vae = vaes[l]
-        vae.to(device)
-        pseudo_logits = _gen_models(vae, l, size, method='vae')
+        gan = gans[l]
+        gan.to(device)
+        pseudo_logits = _gen_models(gan, l, size, method='gan')
         pseudo_logits = pseudo_logits.detach().to(device)
 
         features = pseudo_logits
@@ -2371,8 +2414,8 @@ def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion,
     return val_loss, pre_val_loss, val_cnt, stop_training
 
 
-# VAE loss function
-def vae_loss_function(recon_x, x, mean, log_var, beta=1.):
+# gan loss function
+def gan_loss_function(recon_x, x, mean, log_var, alpha=0):
     # BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / (x.shape[0] * x.shape[1]) == reduction='mean'
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / x.shape[0]
     # BCE = F.mse_loss(recon_x, x, reduction='mean')
@@ -2380,22 +2423,8 @@ def vae_loss_function(recon_x, x, mean, log_var, beta=1.):
     # This assumes a unit Gaussian prior for the latent space
     # (Normal distribution prior, mean 0, std 1)
     # KLD = 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
-
-    # KL divergence between q(z|x) and p(z) (standard normal)
-    # Normalized by the batch size for stability
-    # KL = -0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
-    # This is the regularization term that encourages meaningful latent space
-    # (also known as the latent space regularization term)
-    # When beta > 1, the model is encouraged to use the latent space more effectively
-    # It's controlled by the beta value in β-VAE
-    # Latent loss (KL divergence)
-    # You can adjust this term using 'beta' to scale the importance of the latent space regularization
-    # The larger the beta, the more emphasis on KL divergence
-    # If beta is too large, the model might ignore reconstruction and over-regularize
-    # If beta is too small, the model might ignore latent space regularization
-    # Hence, a reasonable balance is required.
     KLD = (-0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())) / x.shape[0]
-    return (BCE + beta * KLD), {'BCE': BCE.item(), 'KLD': KLD.item()}
+    return (BCE + alpha * KLD), {'BCE': BCE.item(), 'KLD': KLD.item()}
 
 
 def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indices,
@@ -2785,18 +2814,18 @@ def print_histgram(new_probs, value_type='probs'):
 def print_histories(histories):
     num_server_epoches = len(histories)
     num_clients = len(histories[0])
-    num_classes = len(histories[0][0]["vae"])
+    num_classes = len(histories[0][0]["gan"])
     print('num_server_epoches:', num_server_epoches, ' num_clients:', num_clients, ' num_classes:', num_classes)
     # for c in range(num_clients):
     #     print(f"\n\nclient {c}")
     #     for s in range(num_server_epoches):
     #         client = histories[s][c]
-    #         local_vae = client['vae']
+    #         local_gan = client['gan']
     #         local_gnn = client['gnn']
-    #         print(f'\t*local vae:', local_vae.keys(), f' server_epoch: {s}')
-    #         losses_ = [float(f"{v:.2f}") for v in local_vae['losses']]
-    #         # print(f'\t\tlocal vae ({len(losses_)}): {losses_[:5]} ... {losses_[-5:]}')
-    #         print(f'\tlocal vae ({len(losses_)}): [{", ".join(map(str, losses_[:5]))}, ..., '
+    #         print(f'\t*local gan:', local_gan.keys(), f' server_epoch: {s}')
+    #         losses_ = [float(f"{v:.2f}") for v in local_gan['losses']]
+    #         # print(f'\t\tlocal gan ({len(losses_)}): {losses_[:5]} ... {losses_[-5:]}')
+    #         print(f'\tlocal gan ({len(losses_)}): [{", ".join(map(str, losses_[:5]))}, ..., '
     #               f'{", ".join(map(str, losses_[-5:]))}]')
     #         # print('\t*local gnn:', [f"{v:.2f}" for v in local_gnn['losses']])
     #         # labeled_acc = client['labeled_accuracy']
@@ -2821,11 +2850,11 @@ def print_histories(histories):
             shared_accs = []
             for s in range(num_server_epoches):
                 client = histories[s][c]
-                # local_vae = client['vae']
+                # local_gan = client['gan']
                 # local_gnn = client['gnn']
-                # print(f'\t*local vae:', local_vae.keys(), f' server_epoch: {s}')
-                # losses_ = [float(f"{v:.2f}") for v in local_vae['losses']]
-                # print(f'\t\tlocal vae:', losses_)
+                # print(f'\t*local gan:', local_gan.keys(), f' server_epoch: {s}')
+                # losses_ = [float(f"{v:.2f}") for v in local_gan['losses']]
+                # print(f'\t\tlocal gan:', losses_)
                 # # print('\t*local gnn:', [f"{v:.2f}" for v in local_gnn['losses']])
                 train_acc = client[f'{model_type}_train_accuracy']
                 val_acc = client[f'{model_type}_val_accuracy']
@@ -2863,62 +2892,6 @@ def print_histories(histories):
         plt.show()
 
 
-def print_histories_server(histories_server):
-    num_server_epoches = len(histories_server)
-
-    for model_type in ['global']:
-        print(f'\n***model_type: {model_type}***')
-        ncols = 2
-        nrows, r = divmod(4, ncols)
-        nrows = nrows if r == 0 else nrows + 1
-        fig, axes = plt.subplots(nrows, ncols)
-        for clf_idx, clf_name in enumerate(['Random Forest']):
-            i, j = divmod(clf_idx, ncols)
-            print(f"\n {clf_name}")
-            train_accs = []  # train
-            val_accs = []
-            unlabeled_accs = []  # test
-            shared_accs = []
-            for s in range(num_server_epoches):
-                ml_info = histories_server[s][clf_name]
-                #  ml_info[clf_name] = {test_type: {'accuracy': accuracy, 'cm': cm}}
-                train_acc = ml_info['train']['accuracy']
-                val_acc = ml_info['val']['accuracy']
-                test_acc = ml_info['test']['accuracy']
-                shared_acc = ml_info['shared_test']['accuracy']
-
-                train_accs.append(train_acc)
-                val_accs.append(val_acc)
-                unlabeled_accs.append(test_acc)
-                shared_accs.append(shared_acc)
-                print(f'\t\tEpoch: {s}, labeled_acc:{train_acc:.2f}, val_acc:{val_acc:.2f}, '
-                      f'unlabeled_acc:{test_acc:.2f}, '
-                      f'shared_acc:{shared_acc:.2f}')
-
-            # Training and validation loss on the first subplot
-            axes[i, j].plot(range(len(train_accs)), train_accs, label='labeled_acc', marker='o')
-            axes[i, j].plot(range(len(val_accs)), val_accs, label='val_acc', marker='o')
-            axes[i, j].plot(range(len(unlabeled_accs)), unlabeled_accs, label='unlabeled_acc', marker='+')
-            axes[i, j].plot(range(len(shared_accs)), shared_accs, label='shared_acc', marker='s')
-            axes[i, j].set_xlabel('Server Epochs')
-            axes[i, j].set_ylabel('Accuracy')
-            axes[i, j].set_title(f'{clf_name}')
-            axes[i, j].legend(fontsize='small')
-
-        if model_type == 'global':
-            title = f'{model_type}_gnn' + '$_{' + f'{num_server_epoches}' + '}$' + f':{label_rate}'
-        else:
-            title = f'{model_type}_gnn' + '$_{' + f'{num_server_epoches}+1' + '}$' + f':{label_rate}'
-        plt.suptitle(title)
-
-        # Adjust layout to prevent overlap
-        plt.tight_layout()
-        fig_file = f'{in_dir}/{label_rate}/{model_type}_accuracy.png'
-        os.makedirs(os.path.dirname(fig_file), exist_ok=True)
-        plt.savefig(fig_file, dpi=300)
-        plt.show()
-
-
 def print_data(local_data):
     print('Local_data: ')
     X, y = local_data['X'], local_data['y']
@@ -2938,13 +2911,13 @@ def print_data(local_data):
           f'{collections.Counter(y_test.tolist())}')
 
 
-def client_process(c, epoch, global_vae, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device):
+def client_process(c, epoch, global_gan, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device):
     """
     Function to be executed in a separate process for each client.
     """
     print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
     l = c  # we should have 'num_clients = num_labels'
-    train_info = {"vae": {}, "gnn": {}}
+    train_info = {"gan": {}, "gnn": {}}
 
     # Load local data
     local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
@@ -2952,15 +2925,15 @@ def client_process(c, epoch, global_vae, global_gnn, input_dim, num_classes, lab
     label_cnts = collections.Counter(local_data['labels'].tolist())
     print(f'client_{c} data:', label_cnts)
     local_info = {'label_cnts': label_cnts}
-    # Train CVAE
-    local_vae = VAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
-    print('train_vae...')
-    train_vae(local_vae, global_vae, local_data, train_info)
+    # Train Cgan
+    local_gan = gan(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
+    print('train_gan...')
+    train_gan(local_gan, global_gan, local_data, train_info)
 
     # Train GNN
     print('train_gnn...')
     local_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
-    train_gnn(local_gnn, global_vae, global_gnn, local_data, train_info)
+    train_gnn(local_gnn, global_gan, global_gnn, local_data, train_info)
 
     # Evaluate GNN
     print('evaluate_gnn...')
@@ -2968,7 +2941,7 @@ def client_process(c, epoch, global_vae, global_gnn, input_dim, num_classes, lab
     evaluate_shared_test(local_gnn, local_data['shared_test_data'], device, \
                          test_type='Testing on shared test data', client_id=c, train_info=train_info)
 
-    return c, local_vae, local_info, local_gnn, train_info
+    return c, local_gan, local_info, local_gnn, train_info
 
 
 @timer
@@ -2986,9 +2959,9 @@ def main(in_dir, input_dim=16):
         print(f'\nGenerate local data for client_{c}...')
         gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                        label_rate=label_rate)
-    # global_vae = CVAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=5, num_classes=num_classes)
-    # print(global_vae)
-    global_vaes = {l: VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=10) for l in LABELs}
+    # global_gan = Cgan(input_dim=input_dim, hidden_dim=hidden_dim_gan, latent_dim=5, num_classes=num_classes)
+    # print(global_gan)
+    global_gans = {l: Generator(latent_dim=5, hidden_dim=hidden_dim_gan, output_dim=input_dim) for l in LABELs}
 
     global_lp = GNNLinkPredictor(input_dim, 32)
     print(global_lp)
@@ -2998,19 +2971,19 @@ def main(in_dir, input_dim=16):
 
     debug = True
     if debug:
-        histories = {'clients': [], 'server': []}
+        histories = []
         for epoch in range(server_epochs):
             # update clients
-            vaes = {}
+            gans = {}
             lps = {}
             gnns = {}
-            locals_info = {}  # used in CVAE
+            locals_info = {}  # used in Cgan
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
                 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
                 print('Load data...')
-                train_info = {"vae": {}, "gnn": {}, 'client_id': c, 'server_epoch': epoch}  # might be used in server
+                train_info = {"gan": {}, "gnn": {}, 'client_id': c, 'server_epoch': epoch}  # might be used in server
                 client_data_file = f'{in_dir}/c_{c}-{prefix}-data.pth'
                 local_data = torch.load(client_data_file, weights_only=True)
                 label_cnts = collections.Counter(local_data['y'].tolist())
@@ -3020,10 +2993,10 @@ def main(in_dir, input_dim=16):
 
                 # Use to generate nodes
                 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                local_vaes = {l: VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=10) for l in LABELs}
-                print('Train CVAEs...')
-                train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info)
-                vaes[c] = local_vaes
+                local_gans = {l: Generator(latent_dim=5, hidden_dim=hidden_dim_gan, output_dim=input_dim) for l in LABELs}
+                print('Train Cgans...')
+                train_gan(local_gans, global_gans, local_data, global_gnn, train_info)
+                gans[c] = local_gans
 
                 # # Use to generate/predict edges between nodes
                 # local_lp = GNNLinkPredictor(input_dim, 32)
@@ -3035,7 +3008,7 @@ def main(in_dir, input_dim=16):
                 print('Train GNN...')
                 # local_gnn = GNN(input_dim=input_dim, hidden_dim=hidden_dim_gnn, output_dim=num_classes)
                 local_gnn = GATModel(input_dim=input_dim, hidden_dim=hidden_dim_gnn, output_dim=num_classes)
-                local_lp = train_gnn(local_gnn, global_vaes, global_lp, global_gnn, local_data, train_info)
+                local_lp = train_gnn(local_gnn, global_gans, global_lp, global_gnn, local_data, train_info)
                 gnns[c] = local_gnn
                 lps[c] = local_lp
 
@@ -3051,11 +3024,11 @@ def main(in_dir, input_dim=16):
                 history[c] = train_info
 
             print('Server aggregation...')
-            aggregate_vaes(vaes, locals_info, global_vaes, local_data, histories['server'])
+            aggregate_gans(gans, locals_info, global_gans, local_data)
             # aggregate_lps(lps, global_lp)
             aggregate_gnns(gnns, global_gnn)
 
-            histories['clients'].append(history)
+            histories.append(history)
     else:
         import multiprocessing
         # Set start method to 'spawn' for CUDA compatibility
@@ -3064,39 +3037,38 @@ def main(in_dir, input_dim=16):
         histories = []
         for epoch in range(server_epochs):
 
-            vaes = {}
+            gans = {}
             locals_info = {}
             gnns = {}
             history = {}
             with mp.Pool(processes=num_clients) as pool:
                 # Use apply_async or map to execute client_process concurrently and get results
                 results = [pool.apply_async(client_process, args=(
-                    c, epoch, global_vaes, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device))
+                    c, epoch, global_gans, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device))
                            for c in range(num_clients)]
                 # Wait for all results to finish and collect them
-                results = [r.get() for r in results]  # return c, local_vae, local_gnn, train_info
+                results = [r.get() for r in results]  # return c, local_gan, local_gnn, train_info
                 for r in results:
-                    c, vae, local_info, gnn, train_info = r  # it will run when you call r.get().
-                    vaes[c] = vae
+                    c, gan, local_info, gnn, train_info = r  # it will run when you call r.get().
+                    gans[c] = gan
                     locals_info[c] = local_info
                     gnns[c] = gnn
                     history[c] = train_info
 
             # Server aggregation
-            aggregate_vaes(vaes, locals_info, global_vaes)
+            aggregate_gans(gans, locals_info, global_gans)
             aggregate_gnns(gnns, global_gnn)
             # Collect histories
             histories.append(history)
 
     prefix += f'-n_{server_epochs}'
-    history_file = f'{in_dir}/histories_vae_{prefix}.pth'
+    history_file = f'{in_dir}/histories_gan_{prefix}.pth'
     print(f'saving histories to {history_file}')
     # with open(history_file, 'wb') as f:
     #     pickle.dump(histories, f)
     torch.save(histories, history_file)
 
-    # print_histories(histories['clients'])
-    print_histories_server(histories['server'])
+    print_histories(histories)
 
 
 if __name__ == '__main__':
@@ -3124,10 +3096,10 @@ if __name__ == '__main__':
     input_dim = 1433
     LABELs = {0, 1, 2, 3, 4, 5, 6}
     num_clients = 4
-    hidden_dim_vae = 128
+    hidden_dim_gan = 128
     # hidden_dim_gnn = 16
     main(in_dir, input_dim)
-    # history_file = f'{in_dir}/histories_vae.pkl'
+    # history_file = f'{in_dir}/histories_gan.pkl'
     # with open(history_file, 'rb') as f:
     #     histories = pickle.load(f)
     # print_histories(histories)
