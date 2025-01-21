@@ -1,23 +1,24 @@
 #!/bin/bash
-#SBATCH --job-name=param_combinations_job   # Job name
+#SBATCH --job-name=param_combinations_job    # Job name
 #SBATCH --account=kunyang_nvflare_py31012_0001
-#SBATCH --output=log/output_%A_%a.out       # Standard output (job ID and array task ID)
-#SBATCH --error=log/error_%A_%a.err         # Standard error
-#SBATCH --ntasks=1                          # Number of tasks
-#SBATCH --mem=16G                           # Memory allocation per node
-#SBATCH --gres=gpu:1                        # Request 1 GPU
-#SBATCH --time=05:00:00                     # Time limit (hrs:min:sec)
-#SBATCH --array=0-45                        # Array range for parameter combinations
+#SBATCH --output=log/output_%A_%a.out        # Standard output (job ID and array task ID)
+#SBATCH --error=log/error_%A_%a.err          # Standard error
+#SBATCH --ntasks=1                           # Number of tasks per array job
+#SBATCH --mem=16G                            # Memory allocation per node
+#SBATCH --gres=gpu:1                         # Request 1 GPU
+#SBATCH --time=05:00:00                      # Time limit (hrs:min:sec)
+#SBATCH --array=0-25
 
 # Define parameter combinations
-param1=(0.1)                       # Example distillation weight values
-epochs_values=(30 100 300 1000)                      # Number of epochs
-#hidden_values=(2 4 8 16 32 64 128 256) # Hidden layer sizes
-hidden_values=(32)
-patience_values=(0 0.1 1.0 1.5 3 10)                    # Patience values for early stopping
+param1=(0.1)                                 # Example distillation weight values
+epochs_values=(30 100 300 1000 2000)             # Number of epochs
+hidden_values=(32)                          # Hidden layer sizes
+patience_values=(0.0 0.1 0.5 1.0 1.5 3.0 10.0)        # Patience values for early stopping
 
 # Calculate the total number of parameter combinations
 total_combinations=$(( ${#param1[@]} * ${#epochs_values[@]} * ${#hidden_values[@]} * ${#patience_values[@]} ))
+
+## SBATCH --array=0-$((total_combinations - 1)) # Array range for parameter combinations
 
 # Check if the task ID exceeds the total combinations
 if [ $SLURM_ARRAY_TASK_ID -ge $total_combinations ]; then
@@ -51,4 +52,5 @@ cd ~/nvflare/auto_labeling || exit
 pwd
 
 # Run the script with the selected parameters
+#PYTHONPATH=. python3 gnn_fl_vaes_attention_link_jaccard.py $PARAMS
 PYTHONPATH=. python3 gnn_fl_cvae_attention_link_jaccard.py $PARAMS

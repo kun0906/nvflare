@@ -54,7 +54,7 @@ def parse_arguments():
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=32,
                         help="The hidden dimension of GNN.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=31,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=1,
                         help="The number of epochs (integer).")
     parser.add_argument('-p', '--patience', type=int, required=False, default=10,
                         help="The patience.")
@@ -175,7 +175,6 @@ print(args)
 #         return x_recon, mu, logvar
 
 
-
 # Generator
 class Generator(nn.Module):
     def __init__(self, latent_dim=10, hidden_dim=128, output_dim=-1):
@@ -209,6 +208,7 @@ class Discriminator(nn.Module):
 
     def forward(self, x):
         return self.model(x)
+
 
 class GNNLinkPredictor(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels):
@@ -494,7 +494,7 @@ def train_gan(local_gans, global_gans, local_data, global_gnn, train_info={}):
         adversarial_loss = nn.BCELoss()  # Binary Cross-Entropy Loss
 
         # Training loop
-        epochs = 1000
+        epochs = 10000
         losses = []
         for epoch in range(epochs):
             # ---- Train Discriminator ----
@@ -510,14 +510,15 @@ def train_gan(local_gans, global_gans, local_data, global_gnn, train_info={}):
             z = torch.randn(batch_size, z_dim).to(device)
             fake_data = generator(z).detach()  # Freeze Generator when training Discriminator
 
-            # Discriminator Loss
-            real_loss = adversarial_loss(discriminator(real_data), real_labels)
-            fake_loss = adversarial_loss(discriminator(fake_data), fake_labels)
-            d_loss = real_loss + fake_loss
+            if epoch % 10 == 0:
+                # Discriminator Loss
+                real_loss = adversarial_loss(discriminator(real_data), real_labels)
+                fake_loss = adversarial_loss(discriminator(fake_data), fake_labels)
+                d_loss = real_loss + fake_loss
 
-            optimizer_D.zero_grad()
-            d_loss.backward()
-            optimizer_D.step()
+                optimizer_D.zero_grad()
+                d_loss.backward()
+                optimizer_D.step()
 
             # ---- Train Generator ----
             generator.train()
@@ -663,10 +664,16 @@ def check_gen_data(generated_data, local_data):
     y_gen_test = np.zeros((0,), dtype=int)
 
     for l, vs in generated_data.items():
-        X_gen_test = np.concatenate((X_gen_test, vs['X']), axis=0)
+        X_gen_test = np.concatenate((X_gen_test, vs['X'].cpu()), axis=0)
         y_gen_test = np.concatenate((y_gen_test, vs['y']))
 
-    evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_gen_test, y_gen_test, verbose=10)
+    print('X_train, y_train as training set')
+    ml_info = evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_gen_test, y_gen_test, verbose=10)
+
+    print('X_gen_test, y_gen_test as training set')
+    ml_info2 = evaluate_ML2(X_gen_test, y_gen_test, X_train, y_train, X_val, y_val, X_test, y_test, verbose=10)
+
+    return ml_info
 
 
 def train_gnn(local_gnn, global_gans, global_lp, global_gnn, local_data, train_info={}):
@@ -1089,7 +1096,7 @@ def evaluate_train(gnn, graph_data, gen_start, generated_size, epoch, local_data
             evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_shared_test, y_shared_test, verbose=10)
 
 
-def aggregate_gans(gans, locals_info, global_gans, local_data):
+def aggregate_gans(gans, locals_info, global_gans, local_data, histories_server, server_epoch):
     for l, global_gan in global_gans.items():
         print(f'*aggregate gans for class {l}...')
         # for each client, we get one label gan
@@ -1097,13 +1104,15 @@ def aggregate_gans(gans, locals_info, global_gans, local_data):
         aggregate_label_gans(label_gans, locals_info, global_gan)
         global_gans[l] = global_gan  # update global gan for each label
 
-    test_mask = local_data['all_data']['test_mask']
-    sizes = {l: s for l, s in collections.Counter(local_data['all_data']['y'][test_mask].tolist()).items()}
-    print(sizes)
-    # generated new data
-    generated_data = gen_data(global_gans, sizes, similiarity_method='cosine',
-                              local_data=local_data)
-    check_gen_data(generated_data, local_data)
+    if server_epoch % 1 == 0:
+        test_mask = local_data['all_data']['test_mask']
+        sizes = {l: s for l, s in collections.Counter(local_data['all_data']['y'][test_mask].tolist()).items()}
+        print(sizes)
+        # generated new data
+        generated_data = gen_data(global_gans, sizes, similiarity_method='cosine',
+                                  local_data=local_data)
+        ml_info = check_gen_data(generated_data, local_data)
+        histories_server.append(ml_info)
 
 
 def aggregate_label_gans(gans, locals_info, global_gan):
@@ -1125,7 +1134,7 @@ def aggregate_label_gans(gans, locals_info, global_gan):
             for client_i, local_gan_state_dict in enumerate(client_parameters_list):
                 label_cnts = locals_info[client_i]['label_cnts']
                 # Initialize local_gan with global_gan
-                local_gan = gan(input_dim=input_dim, hidden_dim=hidden_dim_gan, latent_dim=5)
+                local_gan = Generator(input_dim=input_dim, hidden_dim=hidden_dim_gan, latent_dim=5)
                 local_gan.load_state_dict(local_gan_state_dict)
                 local_gan.to(device)
 
@@ -1177,7 +1186,7 @@ def aggregate_lps(lps, global_lp):
     aggregate_with_attention(client_parameters_list, global_lp, device)  # update global_gnn inplace
 
 
-def aggregate_gnns(gnns, global_gnn):
+def aggregate_gnns(gnns, global_gnn, histories_server, epoch):
     print('*aggregate gnn...')
     client_parameters_list = [local_gnn.state_dict() for client_i, local_gnn in gnns.items()]
     aggregate_with_attention(client_parameters_list, global_gnn, device)  # update global_gnn inplace
@@ -2911,6 +2920,62 @@ def print_data(local_data):
           f'{collections.Counter(y_test.tolist())}')
 
 
+def print_histories_server(histories_server):
+    num_server_epoches = len(histories_server)
+
+    for model_type in ['global']:
+        print(f'\n***model_type: {model_type}***')
+        ncols = 2
+        nrows, r = divmod(4, ncols)
+        nrows = nrows if r == 0 else nrows + 1
+        fig, axes = plt.subplots(nrows, ncols)
+        for clf_idx, clf_name in enumerate(['Random Forest']):
+            i, j = divmod(clf_idx, ncols)
+            print(f"\n {clf_name}")
+            train_accs = []  # train
+            val_accs = []
+            unlabeled_accs = []  # test
+            shared_accs = []
+            for s in range(num_server_epoches):
+                ml_info = histories_server[s][clf_name]
+                #  ml_info[clf_name] = {test_type: {'accuracy': accuracy, 'cm': cm}}
+                train_acc = ml_info['train']['accuracy']
+                val_acc = ml_info['val']['accuracy']
+                test_acc = ml_info['test']['accuracy']
+                shared_acc = ml_info['shared_test']['accuracy']
+
+                train_accs.append(train_acc)
+                val_accs.append(val_acc)
+                unlabeled_accs.append(test_acc)
+                shared_accs.append(shared_acc)
+                print(f'\t\tEpoch: {s}, labeled_acc:{train_acc:.2f}, val_acc:{val_acc:.2f}, '
+                      f'unlabeled_acc:{test_acc:.2f}, '
+                      f'shared_acc:{shared_acc:.2f}')
+
+            # Training and validation loss on the first subplot
+            axes[i, j].plot(range(len(train_accs)), train_accs, label='labeled_acc', marker='o')
+            axes[i, j].plot(range(len(val_accs)), val_accs, label='val_acc', marker='o')
+            axes[i, j].plot(range(len(unlabeled_accs)), unlabeled_accs, label='unlabeled_acc', marker='+')
+            axes[i, j].plot(range(len(shared_accs)), shared_accs, label='shared_acc', marker='s')
+            axes[i, j].set_xlabel('Server Epochs')
+            axes[i, j].set_ylabel('Accuracy')
+            axes[i, j].set_title(f'{clf_name}')
+            axes[i, j].legend(fontsize='small')
+
+        if model_type == 'global':
+            title = f'{model_type}_gnn' + '$_{' + f'{num_server_epoches}' + '}$' + f':{label_rate}'
+        else:
+            title = f'{model_type}_gnn' + '$_{' + f'{num_server_epoches}+1' + '}$' + f':{label_rate}'
+        plt.suptitle(title)
+
+        # Adjust layout to prevent overlap
+        plt.tight_layout()
+        fig_file = f'{in_dir}/{label_rate}/{model_type}_accuracy.png'
+        os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+        plt.savefig(fig_file, dpi=300)
+        plt.show()
+
+
 def client_process(c, epoch, global_gan, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device):
     """
     Function to be executed in a separate process for each client.
@@ -2971,7 +3036,7 @@ def main(in_dir, input_dim=16):
 
     debug = True
     if debug:
-        histories = []
+        histories = {'clients': [], 'server': []}
         for epoch in range(server_epochs):
             # update clients
             gans = {}
@@ -2993,7 +3058,8 @@ def main(in_dir, input_dim=16):
 
                 # Use to generate nodes
                 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                local_gans = {l: Generator(latent_dim=5, hidden_dim=hidden_dim_gan, output_dim=input_dim) for l in LABELs}
+                local_gans = {l: Generator(latent_dim=5, hidden_dim=hidden_dim_gan, output_dim=input_dim) for l in
+                              LABELs}
                 print('Train Cgans...')
                 train_gan(local_gans, global_gans, local_data, global_gnn, train_info)
                 gans[c] = local_gans
@@ -3024,11 +3090,11 @@ def main(in_dir, input_dim=16):
                 history[c] = train_info
 
             print('Server aggregation...')
-            aggregate_gans(gans, locals_info, global_gans, local_data)
+            aggregate_gans(gans, locals_info, global_gans, local_data, histories['server'], epoch)
             # aggregate_lps(lps, global_lp)
-            aggregate_gnns(gnns, global_gnn)
+            aggregate_gnns(gnns, global_gnn, histories['server'], epoch)
 
-            histories.append(history)
+            histories['clients'].append(history)
     else:
         import multiprocessing
         # Set start method to 'spawn' for CUDA compatibility
@@ -3068,7 +3134,11 @@ def main(in_dir, input_dim=16):
     #     pickle.dump(histories, f)
     torch.save(histories, history_file)
 
-    print_histories(histories)
+    try:
+        print_histories(histories['clients'])
+    except Exception as e:
+        print(e)
+    print_histories_server(histories['server'])
 
 
 if __name__ == '__main__':

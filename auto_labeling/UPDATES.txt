@@ -1,3 +1,5 @@
+v0.2.2: Add MMD and GANs
+
 v0.2.1: Add evaluate_ML
 
 v0.2.0: Add individual vae for each class
