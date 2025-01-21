@@ -356,7 +356,8 @@ def gen_local_data(client_data_file, client_id, label_rate=0.1):
     Returns:
 
     """
-    # if os.path.exists(client_data_file):
+    if os.path.exists(client_data_file):
+        return
     #     with open(client_data_file, "rb") as f:
     #         client_data = torch.load(f, weights_only=True)
     #     return client_data
@@ -470,6 +471,7 @@ def train_gan(local_gans, global_gans, local_data, global_gnn, train_info={}):
         if sum(label_mask) == 0:
             continue
 
+        print(f'training vae for class {l}...')
         X = X[label_mask]
         y = y[label_mask]
         # Only update available local labels, i.e., not all the local_gans will be updated.
@@ -491,7 +493,7 @@ def train_gan(local_gans, global_gans, local_data, global_gnn, train_info={}):
         optimizer_G = optim.Adam(generator.parameters(), lr=lr)
         optimizer_D = optim.Adam(discriminator.parameters(), lr=lr)
 
-        adversarial_loss = nn.BCELoss()  # Binary Cross-Entropy Loss
+        adversarial_loss = nn.BCELoss(reduction = 'mean')  # Binary Cross-Entropy Loss
 
         # Training loop
         epochs = 10000
@@ -750,8 +752,10 @@ def train_gnn(local_gnn, global_gans, global_lp, global_gnn, local_data, train_i
 
         debug = False
         if debug:  # plot the generated data
-            plot_data(data['X'], data['y'], None, generated_size, train_info=train_info)
-
+            train_mask = torch.cat(
+                [local_data['train_mask'], torch.tensor([True] * (sum(sizes.values())), dtype=torch.bool)])
+            plot_data(data['X'], data['y'], train_mask, generated_size, train_info, local_data, global_vaes)
+            return global_lp
     else:
         sizes = {}
         labeled_cnt = ct
@@ -1677,6 +1681,7 @@ def evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test,
             clf.fit(X_train, y_train)
         if verbose > 5:
             print(f"Testing {clf_name}")
+        ml_info[clf_name] = {}
         for test_type, X_, y_ in [('train', X_train, y_train),
                                   ('val', X_val, y_val),
                                   ('test', X_test, y_test),
@@ -1703,7 +1708,7 @@ def evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test,
             cm = cm.astype(int)
             if verbose > 5:
                 print(cm)
-            ml_info[clf_name] = {test_type: {'accuracy': accuracy, 'cm': cm}}
+            ml_info[clf_name][test_type] = {'accuracy': accuracy, 'cm': cm}
     # # Plot confusion matrix
     # plt.figure(figsize=(8, 6))
     # sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', xticklabels=np.unique(y_test), yticklabels=np.unique(y_test))
@@ -1829,7 +1834,7 @@ def gen_data(gans, sizes, similiarity_method='cosine', local_data={}):
 
         features = pseudo_logits
         # features = F.sigmoid(pseudo_logits)
-        if similiarity_method == 'jaccard':
+        if similiarity_method == 'cosine':
             mask = features > 0.5
             features[mask] = 1
             features[~mask] = 0
@@ -2288,17 +2293,17 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
     # return edge_indices, edge_weight
 
 
-def plot_data(X, y, train_mask, gen_size, X_test=None, y_test=None, train_info={}):
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from sklearn.decomposition import PCA
+def plot_data(X, y, train_mask, gen_size, train_info={}, local_data={}, global_vaes=[], X_test=None, y_test=None):
+    fig, axes = plt.subplots(2, 2)
 
+    ###############################################################################################
+    from sklearn.decomposition import PCA
     # Reduce dimensions to 2D using PCA
     pca = PCA(n_components=2)
     # X_ = X[train_mask]
     # y_ = y[train_mask]
-    X_ = X
-    y_ = y
+    X_ = X[train_mask].cpu().numpy()
+    y_ = y[train_mask].cpu().numpy()
     X_2d = pca.fit_transform(X_)
 
     X_train_2d = X_2d[:-gen_size]
@@ -2307,35 +2312,67 @@ def plot_data(X, y, train_mask, gen_size, X_test=None, y_test=None, train_info={
     y_gen = y_[-gen_size:]
 
     # Plot training data
-    for label in np.unique(y_train):
-        plt.scatter(
-            X_train_2d[y_train == label, 0],
-            X_train_2d[y_train == label, 1],
-            label=f'Train Class {label}',
-            marker='o',
-            alpha=0.7
-        )
+    classes = collections.Counter(y_)
+    for label in np.unique(y_):
+        if label in np.unique(y_train):
+            if label in np.unique(y_gen):  # only part of data is generated.
+                axes[0, 0].scatter(
+                    np.concatenate([X_train_2d[y_train == label, 0], X_gen_2d[y_gen == label, 0]], axis=0),
+                    np.concatenate([X_train_2d[y_train == label, 1], X_gen_2d[y_gen == label, 1]], axis=0),
+                    label=f'Train Class {label}:{classes[label]}',
+                    marker='o',
+                    alpha=0.7
+                )
+            else:
+                axes[0, 0].scatter(
+                    X_train_2d[y_train == label, 0],
+                    X_train_2d[y_train == label, 1],
+                    label=f'Train Class {label}:{classes[label]}',
+                    marker='o',
+                    alpha=0.7
+                )
+        else:
+            axes[0, 0].scatter(
+                X_gen_2d[y_gen == label, 0],
+                X_gen_2d[y_gen == label, 1],
+                label=f'Gen Class {label}:{classes[label]}',
+                marker='x',
+                alpha=0.7
+            )
 
-    # Plot generated data
-    for label in np.unique(y_gen):
-        plt.scatter(
-            X_gen_2d[y_gen == label, 0],
-            X_gen_2d[y_gen == label, 1],
-            label=f'Generated Class {label}',
-            marker='x',
-            alpha=0.7
-        )
+    # # Plot training data
+    # classes = collections.Counter(y_train)
+    # for label in np.unique(y_train):
+    #     axes[0, 0].scatter(
+    #         X_train_2d[y_train == label, 0],
+    #         X_train_2d[y_train == label, 1],
+    #         label=f'Train Class {label}:{classes[label]}',
+    #         marker='o',
+    #         alpha=0.7
+    #     )
+    #
+    # # Plot generated data
+    # classes = collections.Counter(y_gen)
+    # for label in np.unique(y_gen):
+    #     axes[0, 0].scatter(
+    #         X_gen_2d[y_gen == label, 0],
+    #         X_gen_2d[y_gen == label, 1],
+    #         label=f'Generated Class {label}:{classes[label]}',
+    #         marker='x',
+    #         alpha=0.7
+    #     )
 
     if X_test is not None:
         # Project test data using the fitted PCA
         X_test_2d = pca.transform(X_test)
 
         # Plot test data
+        classes = collections.Counter(y_test)
         for label in np.unique(y_test):
-            plt.scatter(
+            axes[0, 0].scatter(
                 X_test_2d[y_test == label, 0],
                 X_test_2d[y_test == label, 1],
-                label=f'Test Class {label}',
+                label=f'Test Class {label}:{classes[label]}',
                 marker='s',
                 alpha=0.7
             )
@@ -2343,10 +2380,102 @@ def plot_data(X, y, train_mask, gen_size, X_test=None, y_test=None, train_info={
     client_id = train_info['client_id']
     server_epoch = train_info['server_epoch']
 
-    plt.xlabel('Principal Component 1')
-    plt.ylabel('Principal Component 2')
-    plt.title(f'epoch:{server_epoch}, client_{client_id}')
-    plt.legend(fontsize='small')
+    # axes[0, 0].set_xlabel('Principal Component 1')
+    # axes[0, 0].set_ylabel('Principal Component 2')
+    axes[0, 0].set_title(f'local + generated')
+    axes[0, 0].legend(fontsize=5)
+
+    ###############################################################################################
+    # only generated data
+    test_mask = local_data['all_data']['test_mask']
+    sizes = {l: s for l, s in collections.Counter(local_data['all_data']['y'][test_mask].tolist()).items()}
+    print(sizes)
+    # generated new data
+    generated_data = gen_data(global_vaes, sizes, similiarity_method='cosine',
+                              local_data=local_data)
+    # test on the generated data
+    dim = X.shape[1]
+    X_gen_test = np.zeros((0, dim))
+    y_gen_test = np.zeros((0,), dtype=int)
+    for l, vs in generated_data.items():
+        X_gen_test = np.concatenate((X_gen_test, vs['X'].cpu()), axis=0)
+        y_gen_test = np.concatenate((y_gen_test, vs['y']))
+
+    pca = PCA(n_components=2)
+    X = X_gen_test
+    y = y_gen_test
+    X_2d = pca.fit_transform(X)
+
+    # Plot training data
+    classes = collections.Counter(y)
+    for label in np.unique(y):
+        axes[0, 1].scatter(
+            X_2d[y == label, 0],
+            X_2d[y == label, 1],
+            label=f'Class {label}:{classes[label]}',
+            marker='o',
+            alpha=0.7
+        )
+
+    # axes[0, 1].set_xlabel('Principal Component 1')
+    # axes[0, 1].set_ylabel('Principal Component 2')
+    axes[0, 1].set_title(f'All generated data')
+    axes[0, 1].legend(fontsize=5)
+
+    ###############################################################################################
+    all_data = local_data['all_data']
+    shared_test_mask = all_data['test_mask']
+    X = all_data['X'][shared_test_mask].numpy()
+    y = all_data['y'][shared_test_mask].numpy()
+    # Reduce dimensions to 2D using PCA
+    pca = PCA(n_components=2)
+
+    X_2d = pca.fit_transform(X)
+
+    # Plot training data
+    classes = collections.Counter(y)
+    for label in np.unique(y):
+        axes[1, 0].scatter(
+            X_2d[y == label, 0],
+            X_2d[y == label, 1],
+            label=f'Class {label}:{classes[label]}',
+            marker='o',
+            alpha=0.7
+        )
+
+    # axes[1, 0].set_xlabel('Principal Component 1')
+    # axes[1, 0].set_ylabel('Principal Component 2')
+    axes[1, 0].set_title(f'true test data')
+    axes[1, 0].legend(fontsize=5)
+
+    ###############################################################################################
+    all_data = local_data['all_data']
+    # shared_test_mask = all_data['test_mask']
+    X = all_data['X'].numpy()
+    y = all_data['y'].numpy()
+    # Reduce dimensions to 2D using PCA
+    pca = PCA(n_components=2)
+
+    X_2d = pca.fit_transform(X)
+
+    # Plot training data
+    classes = collections.Counter(y)
+    for label in np.unique(y):
+        axes[1, 1].scatter(
+            X_2d[y == label, 0],
+            X_2d[y == label, 1],
+            label=f'Class {label}:{classes[label]}',
+            marker='o',
+            alpha=0.7
+        )
+
+    # axes[1, 1].set_xlabel('Principal Component 1')
+    # axes[1, 1].set_ylabel('Principal Component 2')
+    axes[1, 1].set_title(f'All true data')
+    axes[1, 1].legend(fontsize=5)
+
+    plt.suptitle(f'epoch:{server_epoch}, client_{client_id}')
+    plt.tight_layout()
     # plt.grid(True)
     fig_file = f'{in_dir}/plots/client_{client_id}/epoch_{server_epoch}.png'
     os.makedirs(os.path.dirname(fig_file), exist_ok=True)
@@ -2361,15 +2490,15 @@ def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion,
     val_loss = 0.0
     stop_training = False
 
-    # Total samples and number of classes
-    total_samples = len(y_val)
-    # Compute class weights
-    class_weights = {c: total_samples / count for c, count in collections.Counter(y_val.tolist()).items()}
-    sample_weight = [class_weights[y_0.item()] for y_0 in y_val]
-    print(f'class_weights: {class_weights}')
-
     with torch.no_grad():
         if y_val is not None:  # is not graph data
+            # Total samples and number of classes
+            total_samples = len(y_val)
+            # Compute class weights
+            class_weights = {c: total_samples / count for c, count in collections.Counter(y_val.tolist()).items()}
+            sample_weight = [class_weights[y_0.item()] for y_0 in y_val]
+            # print(f'class_weights: {class_weights}')
+
             outputs_ = model(X_val)
             val_loss = criterion(outputs_, y_val)
             val_accuracy = accuracy_score(y_val, np.argmax(outputs_, axis=1), sample_weight=sample_weight)
@@ -2379,10 +2508,28 @@ def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion,
             _, predicted_labels = torch.max(outputs_, dim=1)
             # Loss calculation: Only for labeled nodes
             val_loss = criterion(outputs_[data.val_mask], data.y[data.val_mask])
+
+            # Total samples and number of classes
+            y_val = data.y[data.val_mask]
+            total_samples = len(y_val)
+            # Compute class weights
+            class_weights = {c: total_samples / count for c, count in collections.Counter(y_val.tolist()).items()}
+            sample_weight = [class_weights[y_0.item()] for y_0 in y_val]
+            # print(f'class_weights: {class_weights}')
+
             val_accuracy = accuracy_score(data.y[data.val_mask].tolist(),
                                           predicted_labels[data.val_mask].tolist(), sample_weight=sample_weight)
 
             train_loss = criterion(outputs_[data.train_mask], data.y[data.train_mask])
+
+            # Total samples and number of classes
+            y_train = data.y[data.train_mask]
+            total_samples = len(y_train)
+            # Compute class weights
+            class_weights = {c: total_samples / count for c, count in collections.Counter(y_train.tolist()).items()}
+            sample_weight = [class_weights[y_0.item()] for y_0 in y_train]
+            # print(f'class_weights: {class_weights}')
+
             train_accuracy = accuracy_score(data.y[data.train_mask].tolist(),
                                             predicted_labels[data.train_mask].tolist(), sample_weight=sample_weight)
             # print(f"epoch: {epoch} Accuracy on val data: {accuracy * 100:.2f}%")
@@ -2424,7 +2571,7 @@ def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion,
 
 
 # gan loss function
-def gan_loss_function(recon_x, x, mean, log_var, alpha=0):
+def gan_loss_function(recon_x, x, mean, log_var, beta=0):
     # BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / (x.shape[0] * x.shape[1]) == reduction='mean'
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / x.shape[0]
     # BCE = F.mse_loss(recon_x, x, reduction='mean')
@@ -2432,8 +2579,22 @@ def gan_loss_function(recon_x, x, mean, log_var, alpha=0):
     # This assumes a unit Gaussian prior for the latent space
     # (Normal distribution prior, mean 0, std 1)
     # KLD = 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+
+    # KL divergence between q(z|x) and p(z) (standard normal)
+    # Normalized by the batch size for stability
+    # KL = -0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
+    # This is the regularization term that encourages meaningful latent space
+    # (also known as the latent space regularization term)
+    # When beta > 1, the model is encouraged to use the latent space more effectively
+    # It's controlled by the beta value in β-VAE
+    # Latent loss (KL divergence)
+    # You can adjust this term using 'beta' to scale the importance of the latent space regularization
+    # The larger the beta, the more emphasis on KL divergence
+    # If beta is too large, the model might ignore reconstruction and over-regularize
+    # If beta is too small, the model might ignore latent space regularization
+    # Hence, a reasonable balance is required.
     KLD = (-0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())) / x.shape[0]
-    return (BCE + alpha * KLD), {'BCE': BCE.item(), 'KLD': KLD.item()}
+    return (BCE + beta * KLD), {'BCE': BCE.item(), 'KLD': KLD.item()}
 
 
 def find_neighbors(X_test, X_local, X_local_indices, X_test_indices, edge_indices,

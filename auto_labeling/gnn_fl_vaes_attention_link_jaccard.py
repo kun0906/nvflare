@@ -1868,7 +1868,14 @@ def _gen_models(model, l, size, method='T5'):
         # Print the shape of the CLS embedding
         print(f"CLS Embedding Shape: {cls_embedding.shape}")
         embedding = cls_embedding
-
+    elif method == 'gan':
+        generator = model
+        generator.eval()
+        z_dim = generator.latent_dim
+        with torch.no_grad():
+            z = torch.randn(size, z_dim).to(device)
+            synthetic_data = generator(z)
+        embedding = synthetic_data
     else:  # default one is autoencoder
         vae = model
         latent_dim = vae.latent_dim
