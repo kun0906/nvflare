@@ -56,7 +56,7 @@ def parse_arguments():
                         help="The hidden dimension of GNN.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=500,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=float, required=False, default=1.0,
+    parser.add_argument('-p', '--patience', type=float, required=False, default=0.0,
                         help="The patience.")
     # parser.add_argument('-a', '--vae_epochs', type=int, required=False, default=10,
     #                     help="vae epochs.")
@@ -565,9 +565,9 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
             #     break
 
             # MMD loss
-            mmd_loss = compute_mmd(X, recon_logits, sigma)
-            alpha = 5.0
-            loss += alpha * mmd_loss
+            # mmd_loss = compute_mmd(X, recon_logits, sigma)
+            # alpha = 5.0
+            # loss += alpha * mmd_loss
 
             optimizer.zero_grad()
             loss.backward()
@@ -582,7 +582,7 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
 
             if epoch % 100 == 0:
                 print(f'train_vae epoch: {epoch}, local_vae loss: {loss.item():.4f}, {info.items()}, '
-                      f'mmd:{mmd_loss.item()}, sigma:{sigma:.4f} '
+                      # f'mmd:{mmd_loss.item()}, sigma:{sigma:.4f} '
                       f'LR: {scheduler.get_last_lr()}')
             losses.append(loss.item())
 
