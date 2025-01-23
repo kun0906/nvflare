@@ -54,9 +54,9 @@ def parse_arguments():
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=32,
                         help="The hidden dimension of GNN.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=2000,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=20000,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=float, required=False, default=1.0,
+    parser.add_argument('-p', '--patience', type=float, required=False, default=0,
                         help="The patience.")
     # parser.add_argument('-a', '--vae_epochs', type=int, required=False, default=10,
     #                     help="vae epochs.")
@@ -77,7 +77,7 @@ label_rate = args.label_rate
 server_epochs = 31
 hidden_dim_gnn = args.hidden_dimension
 patience = 5
-VAE_EPOCHs = args.server_epochs
+AE_EPOCHs = args.server_epochs
 BETA = args.patience
 # For testing, print the parsed parameters
 # print(f"label_rate: {label_rate}")
@@ -119,10 +119,10 @@ print(args)
 #         return F.sigmoid(x)
 #
 #
-# # VAE
-# class CVAE(nn.Module):
+# # AE
+# class CAE(nn.Module):
 #     def __init__(self, input_dim, hidden_dim, latent_dim, num_classes):
-#         super(CVAE, self).__init__()
+#         super(CAE, self).__init__()
 #         self.latent_dim = latent_dim
 #         self.encoder = Encoder(input_dim, hidden_dim, latent_dim, num_classes)
 #         self.decoder = Decoder(latent_dim, hidden_dim, input_dim, num_classes)
@@ -139,46 +139,41 @@ print(args)
 #         return recon_x, mean, log_var
 
 
-class VAE(nn.Module):
+class AE(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim):
-        super(VAE, self).__init__()
+        super(AE, self).__init__()
         # Encoder layers
         self.encoder_fc1 = nn.Linear(input_dim, hidden_dim)
-        self.encoder_fc2_mu = nn.Linear(hidden_dim, latent_dim)  # Mean of latent space
-        self.encoder_fc2_logvar = nn.Linear(hidden_dim, latent_dim)  # Log variance of latent space
+        self.encoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
+        self.encoder_fc3 = nn.Linear(hidden_dim, latent_dim)
         self.latent_dim = latent_dim
 
         # Decoder layers
         self.decoder_fc1 = nn.Linear(latent_dim, hidden_dim)
-        self.decoder_fc2 = nn.Linear(hidden_dim, input_dim)
+        self.decoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
+        self.decoder_fc3 = nn.Linear(hidden_dim, input_dim)
 
     def encoder(self, x):
         """Encode input into latent space parameters (mu, logvar)."""
         h = F.relu(self.encoder_fc1(x))
-        mu = self.encoder_fc2_mu(h)
-        logvar = self.encoder_fc2_logvar(h)
-        return mu, logvar
+        # h = F.relu(self.encoder_fc2(h))
+        z = F.relu(self.encoder_fc3(h))
 
-    def reparameterize(self, mu, logvar):
-        """Sample z from the latent space using the reparameterization trick."""
-        std = torch.exp(0.5 * logvar)  # Standard deviation
-        eps = torch.randn_like(std)  # Random noise
-        z = mu + eps * std  # Reparameterization
         return z
 
     def decoder(self, z):
         """Decode latent representation into reconstructed input."""
         h = F.relu(self.decoder_fc1(z))
-        x_recon = torch.sigmoid(self.decoder_fc2(h))  # Sigmoid for normalized outputs (e.g., binary data)
-        # x_recon = self.decoder_fc2(h)
+        # h = F.relu(self.decoder_fc2(h))
+        x_recon = torch.sigmoid(self.decoder_fc3(h))
+
         return x_recon
 
     def forward(self, x):
-        """Forward pass through the entire VAE."""
-        mu, logvar = self.encoder(x)
-        z = self.reparameterize(mu, logvar)
+        """Forward pass through the entire AE."""
+        z = self.encoder(x)
         x_recon = self.decoder(z)
-        return x_recon, mu, logvar
+        return x_recon, z, z
 
 
 class GNNLinkPredictor(torch.nn.Module):
@@ -416,7 +411,7 @@ def gen_local_data(client_data_file, client_id, label_rate=0.1):
 #     # The KL term forces the latent distribution to be close to N(0, 1)
 #     # KL[Q(z|x) || P(z)] = -0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
 #     # where sigma^2 = exp(logvar)
-#     # This is the standard VAE loss function
+#     # This is the standard AE loss function
 #     # recon_x: the reconstructed logits, x: the true logits
 #     # mu: mean, logvar: log variance of the latent distribution
 #     # We assume logvar is the log of variance (log(sigma^2))
@@ -464,7 +459,7 @@ def compute_mmd(x_real, x_gen, sigma=1.0):
 #
 # def vae_loss(recon_x, x, mu, logvar, x_real, x_gen, lambda_mmd=1.0, sigma=1.0):
 #     """
-#     Compute the total VAE loss with MMD regularization.
+#     Compute the total AE loss with MMD regularization.
 #     :param recon_x: torch.Tensor, reconstructed input
 #     :param x: torch.Tensor, original input
 #     :param mu: torch.Tensor, latent mean
@@ -541,7 +536,7 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
         print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
 
         local_vae.to(device)
-        optimizer = optim.Adam(local_vae.parameters(), lr=0.001, weight_decay=5e-5)  # L2
+        optimizer = optim.Adam(local_vae.parameters(), lr=0.0001, weight_decay=5e-5)  # L2
         # Define a scheduler
         scheduler = StepLR(optimizer, step_size=500, gamma=0.8)
 
@@ -555,11 +550,15 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
         print(f'local X.shape: {X.shape}')
         losses = []
         # sigma = compute_sigma(X)
-        print(f'vae_epochs: {VAE_EPOCHs}, beta:{BETA}')
-        for epoch in range(VAE_EPOCHs):
+        print(f'vae_epochs: {AE_EPOCHs}, beta:{BETA}')
+        for epoch in range(AE_EPOCHs):
             # Convert X to a tensor and move it to the device
             # X.to(device)
             recon_logits, mu, logvar = local_vae(X)
+
+            # print(np.min(mu.detach().numpy()), np.max(mu.detach().numpy()), [(np.min(vs.detach().numpy()), np.max(vs.detach().numpy())) for vs in local_vae.parameters()], flush=True)
+
+            # recon_logits = torch.clamp(recon_logits, min=1e-7, max=1 - 1e-7)
             loss, info = vae_loss_function(recon_logits, X, mu, logvar, beta=BETA)
             # if loss < 1e-10:
             #     break
@@ -572,15 +571,15 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
             optimizer.zero_grad()
             loss.backward()
 
-            # # Gradient clipping to stabilize the training
-            # torch.nn.utils.clip_grad_norm_(local_vae.parameters(), max_norm=1.0)
+            # Gradient clipping to stabilize the training
+            torch.nn.utils.clip_grad_norm_(local_vae.parameters(), max_norm=0.8)
 
             optimizer.step()
 
             # Update learning rate
             scheduler.step()
 
-            if epoch == VAE_EPOCHs - 1:
+            if epoch == AE_EPOCHs - 1:
                 recon_errors = binary_cross_entropy(recon_logits.detach().cpu().numpy(), X.cpu().numpy())
                 local_extra['min_recon'] = min(recon_errors)
                 local_extra['max_recon'] = max(recon_errors)
@@ -1265,7 +1264,7 @@ def aggregate_label_vaes(vaes, locals_info, global_vae):
             for client_i, local_vae_state_dict in enumerate(client_parameters_list):
                 label_cnts = locals_info[client_i]['label_cnts']
                 # Initialize local_vae with global_vae
-                local_vae = VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=10)
+                local_vae = AE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=10)
                 local_vae.load_state_dict(local_vae_state_dict)
                 local_vae.to(device)
 
@@ -2815,9 +2814,10 @@ def binary_cross_entropy(recon_x, x):
     return np.sum(bce_loss, axis=1)
 
 
-# VAE loss function
+# AE loss function
 def vae_loss_function(recon_x, x, mean, log_var, beta=1.):
     # BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / (x.shape[0] * x.shape[1]) == reduction='mean'
+    # print(np.min(recon_x.detach().numpy()), np.max(recon_x.detach().numpy()), flush=True)
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / x.shape[0]
     # BCE = F.mse_loss(recon_x, x, reduction='mean')
     # KLD loss for the latent space
@@ -2831,7 +2831,7 @@ def vae_loss_function(recon_x, x, mean, log_var, beta=1.):
     # This is the regularization term that encourages meaningful latent space
     # (also known as the latent space regularization term)
     # When beta > 1, the model is encouraged to use the latent space more effectively
-    # It's controlled by the beta value in β-VAE
+    # It's controlled by the beta value in β-AE
     # Latent loss (KL divergence)
     # You can adjust this term using 'beta' to scale the importance of the latent space regularization
     # The larger the beta, the more emphasis on KL divergence
@@ -3397,9 +3397,9 @@ def main(in_dir, input_dim=16):
         print(f'\nGenerate local data for client_{c}...')
         gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                        label_rate=label_rate)
-    # global_vae = CVAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=5, num_classes=num_classes)
+    # global_vae = CAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=5, num_classes=num_classes)
     # print(global_vae)
-    global_vaes = {l: (VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
+    global_vaes = {l: (AE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
                        {'min_recon': 10000, 'max_recon': 0,
                         'mu': np.zeros((1, latent_dim)), 'std': np.zeros((1, latent_dim))}) for l in LABELs}
 
@@ -3417,7 +3417,7 @@ def main(in_dir, input_dim=16):
             vaes = {}
             lps = {}
             gnns = {}
-            locals_info = {}  # used in CVAE
+            locals_info = {}  # used in CAE
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
@@ -3433,10 +3433,10 @@ def main(in_dir, input_dim=16):
 
                 # Use to generate nodes
                 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                local_vaes = {l: (VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
+                local_vaes = {l: (AE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
                                   {'min_recon': 10000, 'max_recon': 0,
                                    'mu': np.zeros((1, latent_dim)), 'std': np.zeros((1, latent_dim))}) for l in LABELs}
-                print('Train VAEs...')
+                print('Train AEs...')
                 train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info)
                 vaes[c] = local_vaes
 
@@ -3454,7 +3454,7 @@ def main(in_dir, input_dim=16):
                 # gnns[c] = local_gnn
                 # lps[c] = local_lp
 
-                print('Evaluate VAEs...')
+                print('Evaluate AEs...')
                 evaluate(local_vaes, local_data, device, global_vaes,
                          test_type='Client data', client_id=c, train_info=train_info)
 
@@ -3541,7 +3541,7 @@ if __name__ == '__main__':
     LABELs = {0, 1, 2, 3, 4, 5, 6}
     num_clients = 4
     hidden_dim_vae = 128
-    latent_dim = 2
+    latent_dim = 5
     # hidden_dim_gnn = 16
     main(in_dir, input_dim)
     # history_file = f'{in_dir}/histories_vae.pkl'
