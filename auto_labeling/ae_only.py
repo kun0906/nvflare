@@ -268,35 +268,75 @@ def check_gen_data(X_gen_test, y_gen_test, X_train, y_train, X_val, y_val, X_tes
 
     return ml_info
 
+#
+# class AE(nn.Module):
+#     def __init__(self, input_dim, hidden_dim, latent_dim):
+#         super(AE, self).__init__()
+#         # Encoder layers
+#         self.encoder_fc1 = nn.Linear(input_dim, hidden_dim)
+#         self.encoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
+#         self.encoder_fc3 = nn.Linear(hidden_dim, latent_dim)
+#         self.latent_dim = latent_dim
+#
+#         # Decoder layers
+#         self.decoder_fc1 = nn.Linear(latent_dim, hidden_dim)
+#         self.decoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
+#         self.decoder_fc3 = nn.Linear(hidden_dim, input_dim)
+#
+#     def encoder(self, x):
+#         """Encode input into latent space parameters (mu, logvar)."""
+#         h = F.relu(self.encoder_fc1(x))
+#         # h = F.relu(self.encoder_fc2(h))
+#         z = F.relu(self.encoder_fc3(h))
+#
+#         return z
+#
+#     def decoder(self, z):
+#         """Decode latent representation into reconstructed input."""
+#         h = F.relu(self.decoder_fc1(z))
+#         # h = F.relu(self.decoder_fc2(h))
+#         x_recon = torch.sigmoid(self.decoder_fc3(h))
+#
+#         return x_recon
+#
+#     def forward(self, x):
+#         """Forward pass through the entire AE."""
+#         z = self.encoder(x)
+#         x_recon = self.decoder(z)
+#         return x_recon, z, z
 
-class AE(nn.Module):
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class TiedWeightsAE(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim):
-        super(AE, self).__init__()
+        super(TiedWeightsAE, self).__init__()
         # Encoder layers
         self.encoder_fc1 = nn.Linear(input_dim, hidden_dim)
         self.encoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
         self.encoder_fc3 = nn.Linear(hidden_dim, latent_dim)
+
+        # Latent dimension
         self.latent_dim = latent_dim
 
-        # Decoder layers
-        self.decoder_fc1 = nn.Linear(latent_dim, hidden_dim)
-        self.decoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
-        self.decoder_fc3 = nn.Linear(hidden_dim, input_dim)
+        # Decoder biases (weights are tied to encoder layers)
+        self.decoder_bias1 = nn.Parameter(torch.zeros(hidden_dim))
+        self.decoder_bias2 = nn.Parameter(torch.zeros(hidden_dim))
+        self.decoder_bias3 = nn.Parameter(torch.zeros(input_dim))
 
     def encoder(self, x):
-        """Encode input into latent space parameters (mu, logvar)."""
+        """Encode input into latent space."""
         h = F.relu(self.encoder_fc1(x))
         # h = F.relu(self.encoder_fc2(h))
         z = F.relu(self.encoder_fc3(h))
-
         return z
 
     def decoder(self, z):
-        """Decode latent representation into reconstructed input."""
-        h = F.relu(self.decoder_fc1(z))
-        # h = F.relu(self.decoder_fc2(h))
-        x_recon = torch.sigmoid(self.decoder_fc3(h))
-
+        """Decode latent representation into reconstructed input using tied weights."""
+        h = F.relu(torch.matmul(z, self.encoder_fc3.weight) + self.decoder_bias1)
+        # h = F.relu(torch.matmul(h, self.encoder_fc2.weight.T) + self.decoder_bias2)
+        x_recon = torch.sigmoid(torch.matmul(h, self.encoder_fc1.weight) + self.decoder_bias3)
         return x_recon
 
     def forward(self, x):
@@ -366,7 +406,7 @@ def binary_cross_entropy(recon_x, x):
 
 
 def train_ae(X_train, y_train, X_val, y_val, X_test, y_test):
-    AE_EPOCHs = 10001
+    AE_EPOCHs = 5001
     aes_file = f'aes_{AE_EPOCHs}.pt'
     if os.path.exists(aes_file):
         return torch.load(aes_file)
@@ -375,7 +415,7 @@ def train_ae(X_train, y_train, X_val, y_val, X_test, y_test):
     hidden_dim_vae = 128
     latent_dim = 5
 
-    vaes = {l: (AE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
+    vaes = {l: (TiedWeightsAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
                 {'min_recon': 10000, 'max_recon': 0,
                  'mu': np.zeros((1, latent_dim)), 'std': np.zeros((1, latent_dim))}) for l in LABELs}
     for l, (local_vae, local_extra) in vaes.items():
@@ -404,7 +444,7 @@ def train_ae(X_train, y_train, X_val, y_val, X_test, y_test):
         local_vae.to(device)
         optimizer = optim.Adam(local_vae.parameters(), lr=0.0001, weight_decay=5e-5)  # L2
         # Define a scheduler
-        scheduler = StepLR(optimizer, step_size=500, gamma=0.8)
+        scheduler = StepLR(optimizer, step_size=500, gamma=0.95)
 
         # ohe_labels = torch.zeros((len(y), len(LABELs))).to(device)  # One-hot encoding for class labels
         # for i, l in enumerate(y.tolist()):  # if y is different.
