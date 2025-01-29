@@ -1,3 +1,5 @@
+v0.2.6: CGAN for generate data
+
 v0.2.5: Add nn only with one step
 
 v0.2.4: Add aes only

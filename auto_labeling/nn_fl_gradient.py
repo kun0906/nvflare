@@ -14,15 +14,16 @@ import argparse
 import collections
 import os
 
+import numpy as np
 import torch
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.model_selection import train_test_split
 from torch.nn import CrossEntropyLoss
 from torch.optim.lr_scheduler import StepLR
-from torch_geometric.datasets import Planetoid
+from torch.utils.data import Dataset
 
+from auto_labeling.load_data import load_data
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -34,7 +35,7 @@ print(f"Device: {device}")
 # Set print options for 2 decimal places
 torch.set_printoptions(precision=1, sci_mode=False)
 
-DATA = 'mnist'
+DATA = 'cora'
 if DATA == 'cora':
     LABELs = {0, 1, 2, 3, 4, 5, 6}
 elif DATA == 'mnist':
@@ -48,13 +49,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedGNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--label_rate', type=float, required=False, default=1e-4,
+    parser.add_argument('-r', '--label_rate', type=float, required=False, default=1e-3,
                         help="label rate, how much labeled data in local data.")
-    parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=64,
+    parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=256,
                         help="The hidden dimension of GNN.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5000,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=float, required=False, default=4.0,
+    parser.add_argument('-p', '--patience', type=float, required=False, default=1.0,
                         help="The patience.")
     # parser.add_argument('-a', '--vae_epochs', type=int, required=False, default=10,
     #                     help="vae epochs.")
@@ -84,143 +85,6 @@ print(args)
 def L2(x1, x2):
     return np.linalg.norm(x1 - x2, axis=1)
 
-
-import os
-import pickle
-
-import numpy as np
-from torch.utils.data import Dataset
-from torchvision import datasets, transforms
-from auto_labeling.data.MNIST.pretrained import pretrained_CNN
-
-
-@timer
-# Extract features using the fine-tuned CNN for all the images (labeled + unlabeled)
-def extract_features(dataset, pretrained_cnn):
-    pretrained_cnn.eval()  # Set the model to evaluation mode
-    # pretrained_cnn.eval() ensures that layers like batch normalization and dropout behave appropriately
-    # for inference (i.e., no training-specific behavior).
-    features = []
-    # Create a DataLoader to load data in batches
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=10000, shuffle=False)
-
-    for i, (imgs, _) in enumerate(dataloader):
-        print(f'batch {i}')
-        imgs = imgs.to(device)  # Move the batch of images to GPU
-        with torch.no_grad():
-            feature = pretrained_cnn(imgs)  # Forward pass through the pretrained CNN
-        features.append(feature.detach().cpu().numpy())  # Convert feature to numpy
-
-    # Flatten the list of features
-    return np.concatenate(features, axis=0)
-
-
-# Custom Dataset class with transform support
-class CustomDataset(Dataset):
-    def __init__(self, data, targets, transform=None):
-        self.data = data
-        self.targets = targets
-        self.transform = transform  # Add transform
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        # sample = self.data[idx]
-        # target = self.targets[idx]
-        #
-        # # Apply transform if available
-        # if self.transform:
-        #     sample = self.transform(sample)
-        #
-        # return sample, target
-
-        img, target = self.data[idx], int(self.targets[idx])
-
-        # doing this so that it is consistent with all other datasets
-        # to return a PIL Image
-        from PIL import Image
-        img = Image.fromarray(img.numpy(), mode="L")
-
-        if self.transform is not None:
-            img = self.transform(img)
-
-        # if self.target_transform is not None:
-        #     target = self.target_transform(target)
-
-        return img, target
-
-
-def load_data(data='cora'):
-    data_file = 'data.pt'
-    # if os.path.exists(data_file):
-    #     return torch.load(data_file, weights_only=False)
-
-    if data == 'cora':
-        # Load the Cora dataset
-        dataset = Planetoid(root='./data', name='Cora', split='full')
-
-        # Access the first graph in the dataset
-        data = dataset[0]
-
-        # Dataset summary
-        print(f"Dataset Summary:\n"
-              f"- Number of Nodes: {data.num_nodes}\n"
-              f"- Number of Edges: {data.num_edges}\n"
-              f"- Node Feature Size: {data.x.shape[1]}\n"
-              f"- Number of Classes: {dataset.num_classes}")
-
-        # Extract data into NumPy arrays
-        X = data.x.numpy()
-        Y = data.y.numpy()
-        edge_index = data.edge_index
-        # # edge_indices = set([(row[0], row[1]) for row in edge_indices])
-        # edge_indices = set(map(tuple, data.edge_index.numpy().T))
-        # unqiue_edges = set([(b, a) if a > b else (a, b) for a, b in data.edge_index.numpy().T])
-        # print(f'unique edges: {len(unqiue_edges)} =? edge_indices/2: {len(edge_indices) / 2}, '
-        #       f'edges: {data.edge_index.shape}')
-
-        # X_train = X[data.train_mask]
-        # y_train = Y[data.train_mask]
-        # X_val = X[data.val_mask]
-        # y_val = Y[data.val_mask]
-        # X_test = X[data.test_mask]
-        # y_test = Y[data.test_mask]
-    elif data == 'mnist':
-        data_file2 = 'mnist.data'
-        if os.path.exists(data_file2):
-            with open(data_file2, 'rb') as f:
-                X, Y = torch.load(f)
-        else:
-            # transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-            transform = transforms.Compose([transforms.Grayscale(num_output_channels=3), transforms.ToTensor(),
-                                            transforms.Normalize((0.5,), (0.5,))])
-            train_dataset = datasets.MNIST(root="./data", train=True, transform=transform, download=True)
-            in_dir = '.'
-            pretrained_cnn_file = f'{in_dir}/pretrained_cnn.pth'
-            pretrained_cnn = pretrained_CNN(transform, CustomDataset, device=device)
-            # torch.save(pretrained_cnn, pretrained_cnn_file)
-            # pretrained_cnn = torch.load(pretrained_cnn_file)
-
-            pretrained_cnn.eval()
-
-            X = train_dataset.data  # Tensor of shape (60000, 28, 28)
-            Y = train_dataset.targets  # Tensor of shape (60000,)
-
-            data_ = CustomDataset(X, Y, transform=transform)
-            X = extract_features(data_, pretrained_cnn)  # numpy array
-            Y = Y.numpy()
-
-            torch.save((X, Y), data_file2)
-    else:
-        raise NotImplementedError
-
-    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
-
-    torch.save((X_train, y_train, X_val, y_val, X_test, y_test), data_file)
-
-    return X_train, y_train, X_val, y_val, X_test, y_test
 
 
 def check_gen_data(X_gen_test, y_gen_test, X_train, y_train, X_val, y_val, X_test, y_test):
@@ -263,7 +127,7 @@ class NN(nn.Module):
         # Encoder layers with Batch Normalization and Dropout
         self.fc1 = nn.Linear(input_dim, hidden_dim)
         # self.bn1 = nn.BatchNorm1d(hidden_dim)  # Batch Normalization
-        self.dropout1 = nn.Dropout(dropout_prob)  # Dropout layer
+        # self.dropout1 = nn.Dropout(dropout_prob)  # Dropout layer
 
         self.fc2 = nn.Linear(hidden_dim, hidden_dim)
         # self.bn2 = nn.BatchNorm1d(hidden_dim)  # Batch Normalization
@@ -272,23 +136,29 @@ class NN(nn.Module):
         self.fc3 = nn.Linear(hidden_dim, out_dim)
         # self.bn3 = nn.BatchNorm1d(out_dim)  # Batch Normalization
 
+        # Parametric ReLU activation function (learnable parameter)
+        # self.prelu = nn.PReLU()
+
     def forward(self, x):
         """Forward pass with Batch Normalization and Dropout."""
         x = self.fc1(x)
         # x = self.bn1(x)  # Apply Batch Normalization
-        x = F.relu(x)
+        # x = F.relu(x)
+        x = F.leaky_relu(x)  # better than relu()
+        # x = self.prelu(x)
         # x = self.dropout1(x)  # Apply Dropout
 
         for _ in range(num_layers):
             x2 = self.fc2(x)
-            # x = self.bn2(x)  # Apply Batch Normalization
-            x = F.relu(x2)
+            # x2 = self.bn2(x2)  # Apply Batch Normalization
+            x = F.leaky_relu(x2)
+            # x = self.prelu(x2)
             # x = self.dropout2(x)  # Apply Dropout
 
         x = self.fc3(x)
         # x = self.bn3(x)  # Apply Batch Normalization
-        x = F.relu(x)
-
+        x = F.leaky_relu(x)
+        # x = self.prelu(x)
         return x
 
 
@@ -343,11 +213,20 @@ def train_nn(X_train, y_train, X_val, y_val, X_test, y_test):
             X = X[label_mask]
             y = y[label_mask]
 
+            # random select 100 sample for training
+            m = len(X) // 10  # for each client, we only use a subset of data to compute gradient
+            if m < 10:
+                print(m, len(X))
+                m = 10
+            indices = torch.randperm(len(X))[:m]  # Randomly shuffle and pick the first 10 indices
+            X = X[indices]
+            y = y[indices]
+
             X = torch.tensor(X, dtype=torch.float)
             y = torch.tensor(y, dtype=torch.long)
 
             # Only update available local labels, i.e., not all the local_nns will be updated.
-            local_labels = set(y.tolist())
+            # local_labels = set(y.tolist())
             # print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
 
             optimizer = optim.Adam(local_nn.parameters(), lr=0.0001, weight_decay=5e-4)  # L2
@@ -377,12 +256,14 @@ def train_nn(X_train, y_train, X_val, y_val, X_test, y_test):
             # losses.append(loss)
             nns[l] = (local_nn, local_extra)
 
-        # server
         # Server aggregates gradients
+        # each client will send the gradients and the corresponding class to each gradients
+        # server aggregate by each class first to filter outlier gradients using Krum.
         aggregated_gradients = []
         for param_idx in range(len(global_gradients[0])):
             param_grads = [client_grads[param_idx] for client_grads in global_gradients]
-            aggregated_gradients.append(torch.mean(torch.stack(param_grads), dim=0))
+            # aggregated_gradients.append(torch.mean(torch.stack(param_grads), dim=0))
+            aggregated_gradients.append(torch.sum(torch.stack(param_grads), dim=0) / total_samples)
 
         old_params = [param.clone() for param in global_nn.parameters()]
         flg = True
