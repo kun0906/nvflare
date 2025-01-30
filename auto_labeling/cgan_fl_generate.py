@@ -22,6 +22,8 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from torch.optim.lr_scheduler import StepLR
 
+from utils import timer
+
 print(os.path.abspath(os.getcwd()))
 
 # Check if GPU is available and use it
@@ -45,13 +47,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedGNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--label_rate', type=float, required=False, default=1e-3,
+    parser.add_argument('-r', '--label_rate', type=float, required=False, default=1.0,
                         help="label rate, how much labeled data in local data.")
-    parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=2,
+    parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=1,
                         help="Class label.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=10000,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5000,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=float, required=False, default=1.0,
+    parser.add_argument('-p', '--patience', type=float, required=False, default=1e-3,
                         help="The patience.")
     # parser.add_argument('-a', '--vae_epochs', type=int, required=False, default=10,
     #                     help="vae epochs.")
@@ -76,6 +78,7 @@ LR = args.patience
 # print(f"label_rate: {label_rate}")
 # print(f"server_epochs: {server_epochs}")
 print(args)
+print(f'ALPHA: {ALPHA}, NUM_LAYERs: {NUM_LAYERs}, EPOCHs: {EPOCHs}, LR: {LR}')
 
 
 def evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test,
@@ -169,16 +172,6 @@ def evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test,
     # plt.xlabel("Predicted Labels")
     # plt.ylabel("True Labels")
     # plt.show()
-
-    return ml_info
-
-
-def check_gen_data(X_gen_test, y_gen_test, X_train, y_train, X_val, y_val, X_test, y_test):
-    print('\n\nX_train, y_train as training set')
-    ml_info = evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_gen_test, y_gen_test, verbose=10)
-
-    print('\n\nX_gen_test, y_gen_test as training set')
-    ml_info2 = evaluate_ML2(X_gen_test, y_gen_test, X_train, y_train, X_val, y_val, X_test, y_test, verbose=10)
 
     return ml_info
 
@@ -313,14 +306,9 @@ class Discriminator(nn.Module):
 
 
 def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
-    # epochs = 50000
-    # gans_file = f'gans_{EPOCHs}.pt'
-    # if os.path.exists(gans_file):
-    #     return torch.load(gans_file)
 
     # gans = {l: Generator() for l in LABELs}
-    #
-    # local_gan =
+
     # for l, local_gan in gans.items():
     local_gan = Generator()
     X, y = X_train, y_train
@@ -339,7 +327,7 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
     #     print(m, len(X))
     #     m = 10
 
-    X = torch.tensor(X, dtype=torch.float)
+    X = (torch.tensor(X, dtype=torch.float) / 255 - 0.5) * 2  # [-1, 1]
     y = torch.tensor(y, dtype=torch.int)
 
     onehot_labels = torch.zeros((len(y), len(LABELs))).to(device)
@@ -353,7 +341,7 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
 
     # Initialize the models, optimizers, and loss function
     # z_dim = 100  # Dimension of random noise
-    data_dim = X.shape[1]  # Number of features (e.g., Cora node features)
+    # data_dim = X.shape[1]  # Number of features (e.g., Cora node features)
     # lr = 0.0002
 
     # generator = Generator(input_dim=z_dim, output_dim=data_dim).to(device)
@@ -379,14 +367,13 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
     losses = []
     STEP = 2
     g_loss = 1000
-    m = 100
+    m = 100  # subset
     for epoch in range(EPOCHs):
         # ---- Train Discriminator ----
         discriminator.train()
 
         indices = torch.randperm(len(X))[:m]  # Randomly shuffle and pick the first 10 indices
-        # real_data = X[indices].float().to(device) / 255  # [0, 1]
-        real_data = (X[indices].float().to(device) / 255 - 0.5) * 2  # [-1, 1]
+        real_data = X[indices].float().to(device)
         labels = onehot_labels[indices]
 
         # real_data = X.clone().detach().float().to(device) / 255  # Replace with your local data (class-specific)
@@ -406,11 +393,7 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
         # Discriminator Loss
         real_loss = adversarial_loss(discriminator(real_data, labels), real_labels)
         fake_loss = adversarial_loss(discriminator(fake_data, labels), fake_labels)
-        d_loss = (real_loss + fake_loss)
-
-        # mse_loss = torch.nn.functional.mse_loss(fake_data, real_data)
-        # d_loss += 0.2 * mse_loss
-        # # print(epoch, (real_loss + fake_loss), mse_loss)
+        d_loss = (real_loss + fake_loss)/2
 
         optimizer_D.zero_grad()
         d_loss.backward()
@@ -418,7 +401,7 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
 
         scheduler_D.step()
 
-        STEP = 30
+        STEP = 10
 
         generator.train()
         z = torch.randn(batch_size, z_dim).to(device)
@@ -427,7 +410,6 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
         # Generator Loss (Discriminator should classify fake data as real)
         g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
         mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-
         g_loss += ALPHA * mse_loss
 
         optimizer_G.zero_grad()
@@ -435,7 +417,7 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
         optimizer_G.step()
 
         # print(epoch, d_loss, '...')
-        while 2 * g_loss > d_loss and STEP > 0:
+        while g_loss > d_loss and STEP > 0:
             # print(epoch, g_loss, d_loss.item(), STEP)
             # ---- Train Generator ----
             # we don't need to freeze the discriminator because the optimizer for the discriminator
@@ -490,39 +472,40 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
                     if i < 100:
                         ax.imshow(generated_imgs[i, 0], cmap='gray')
                     else:
-                        ax.imshow((real_data[i - 100, 0].cpu().numpy() * 255).astype(int), cmap='gray')
+                        ax.imshow(((real_data[i - 100, 0].cpu().numpy()+1) * 127.5).astype(int), cmap='gray')
 
                     ax.axis('off')
 
                     # Draw a red horizontal line across the entire figure when i == 100
                     if i == 100:
                         # Add a red horizontal line spanning the entire width of the plot
-                        line_position = (
-                                                    160 - 100 - 2) / 160  # This gives the y-position of the 100th image in the figure
+                        # This gives the y-position of the 100th image in the figure
+                        line_position = (160 - 100 - 2) / 160
                         plt.plot([0, 1], [line_position, line_position], color='red', linewidth=2,
                                  transform=fig.transFigure,
                                  clip_on=False)
 
                 plt.suptitle(f'epoch {epoch}')
                 plt.tight_layout()
-                plt.savefig(f'tmp/generated_{epoch}.png')
+                fig_file = f'tmp/generated_{epoch}.png'
+                dir_path = os.path.dirname(os.path.abspath(fig_file))
+                os.makedirs(dir_path, exist_ok=True)
+                plt.savefig(fig_file)
                 plt.show()
 
     # gans[l] = generator
-    torch.save(local_gan, f'cgan_{EPOCHs}.pt')
 
     # return gans
     return local_gan
 
 
+@timer
 def main():
     # X_train, y_train, X_val, y_val, X_test, y_test = load_data(data='mnist')
     import torchvision
-    import torchvision.transforms as transforms
-    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-
-    train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=transform, download=True)
+    train_dataset = torchvision.datasets.MNIST(root='./data', train=True, transform=None, download=True)
     X, Y = train_dataset.data.numpy(), train_dataset.targets.numpy()
+
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
@@ -530,24 +513,33 @@ def main():
     print(len(y_val), collections.Counter(y_val.tolist()))
     print(len(y_test), collections.Counter(y_test.tolist()))
 
-    cgan = train_gan(X_train, y_train, X_val, y_val, X_test, y_test)
+    gan_file = f'cgan_{EPOCHs}_{ALPHA}_{NUM_LAYERs}_{LR}.pt'
+    gan_file = 'cgan_10000_0.5_1_0.0001.pt'
+    # gan_file = 'cgan_10000.pt'
+    if os.path.exists(gan_file):
+        print(f'load {gan_file}...')
+        cgan = torch.load(gan_file, weights_only=False, map_location=torch.device(device))
+    else:
+        cgan = train_gan(X_train, y_train, X_val, y_val, X_test, y_test)
+        torch.save(cgan, gan_file)
 
+    # Generate data and evaluate model performance
     sizes = {l: s for l, s in collections.Counter(y_train.tolist()).items()}
-
     print('sizes: ', sizes)
     generated_data = {}
-
-    gan_file = f'cgan_{EPOCHs}.pt'
-    print(f'load {gan_file}...')
-
-    gan = torch.load(gan_file, weights_only=None, map_location=torch.device(device))
-
     for l, size in sizes.items():
-        print(f'generating class l with size: {size}...', )
-        generator = gan.to(device)
+        print(f'generating class {l} with size: {size}...', )
+        generator = cgan.to(device)
+
+        # Sets the model to evaluation mode, which affects certain layers like BatchNorm and Dropout,
+        # ensuring they behave correctly during inference.
         generator.eval()
+
         z_dim = generator.latent_dim
+
+        # torch.no_grad() disables gradient tracking, which reduces memory usage and speeds up inference.
         with torch.no_grad():
+
             z = torch.randn(size, z_dim).to(device)
             c = torch.zeros([size, 10]).to(device)
             c[:, l] = 1
@@ -556,38 +548,55 @@ def main():
             generated_imgs = (generated_imgs + 1) * 127.5  # Convert [-1, 1] back to [0, 255]
             generated_imgs = generated_imgs.clamp(0, 255)  # Ensure values are within [0, 255]
             generated_imgs = generated_imgs.cpu().numpy().astype(int)
+
             show = True
             if show:
+                real_data = X_train[y_train == l]
                 fig, axes = plt.subplots(16, 10, figsize=(8, 8))
                 for i, ax in enumerate(axes.flatten()):
-                    ax.imshow(generated_imgs[i, 0], cmap='gray')
-                    # if i < 64:
-                    #     ax.imshow(generated_imgs[i, 0], cmap='gray')
-                    # else:
-                    #     ax.imshow((real_data[i, 0].cpu().numpy() * 255).astype(int), cmap='gray')
+                    if i < 100:
+                        ax.imshow(generated_imgs[i, 0], cmap='gray')
+                    else:
+                        ax.imshow((real_data[i - 100]).astype(int), cmap='gray')
                     ax.axis('off')
-                plt.suptitle(f'class {l}')
+                    # Draw a red horizontal line across the entire figure when i == 100
+                    if i == 100:
+                        # Add a red horizontal line spanning the entire width of the plot
+                        # This gives the y-position of the 100th image in the figure
+                        line_position = (160 - 100 - 2) / 160
+                        plt.plot([0, 1], [line_position, line_position], color='red', linewidth=2,
+                                 transform=fig.transFigure,
+                                 clip_on=False)
+                plt.suptitle(f'Generated class {l}')
                 plt.tight_layout()
-                plt.savefig(f'tmp/generated_{l}~.png')
+                fig_file = f'tmp/generated_{l}~.png'
+                dir_path = os.path.dirname(os.path.abspath(fig_file))
+                os.makedirs(dir_path, exist_ok=True)
+                plt.savefig(fig_file)
                 plt.show()
 
             generated_imgs = generated_imgs.squeeze(1)  # Removes the second dimension (size 1)
 
         generated_data[l] = {'X': generated_imgs, 'y': [l] * size}
 
-        # test on the generated data
-    # dim = X_train.shape[1]
+    # Test on the generated data
     X_gen_test = np.zeros((0, 28, 28))
     y_gen_test = np.zeros((0,), dtype=int)
-
     for l, vs in generated_data.items():
         X_gen_test = np.concatenate((X_gen_test, vs['X']), axis=0)
         y_gen_test = np.concatenate((y_gen_test, vs['y']))
 
-    check_gen_data(X_gen_test.reshape(len(X_gen_test), -1), y_gen_test,
-                   X_train.reshape(len(X_train), -1), y_train,
-                   X_val.reshape(len(X_val), -1), y_val,
-                   X_test.reshape(len(X_test), -1), y_test)
+    print('\n\nX_train, y_train as training set')
+    ml_info = evaluate_ML2(X_train.reshape(len(X_train), -1), y_train,
+                           X_val.reshape(len(X_val), -1), y_val,
+                           X_test.reshape(len(X_test), -1), y_test,
+                           X_gen_test.reshape(len(X_gen_test), -1), y_gen_test, verbose=10)
+
+    print('\n\nX_gen_test, y_gen_test as training set')
+    ml_info2 = evaluate_ML2(X_gen_test.reshape(len(X_gen_test), -1), y_gen_test,
+                            X_train.reshape(len(X_train), -1), y_train,
+                            X_val.reshape(len(X_val), -1), y_val,
+                            X_test.reshape(len(X_test), -1), y_test, verbose=10)
 
 
 if __name__ == '__main__':
