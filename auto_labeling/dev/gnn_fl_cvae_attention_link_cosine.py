@@ -5,7 +5,7 @@
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 gnn_fl_cvae_attention_link_only_existed_edges.py
+    $PYTHONPATH=. python3 gnn_fl_cvae_attention_link_cosine.py
 
 
 """
@@ -43,7 +43,7 @@ def parse_arguments():
     # Add arguments to be parsed
     parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.1,
                         help="label rate, how much labeled data in local data.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=32,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=16,
                         help="The number of epochs (integer).")
 
     # Parse the arguments
@@ -556,24 +556,23 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
     existed_nodes = train_features[:local_size, :]
     print(f'*edges between existed nodes ({len(existed_nodes)}): {existed_edge_indices.shape}')
     existed_weights = [1] * existed_edge_indices.size(1)  # existed_edge_indices.shape is 2xN
-    combine_cosine_with_existed_nodes = False
+    combine_cosine_with_existed_nodes = True
     cosine_threshold = 0.8
-    print(f'cosine_threshold: {cosine_threshold}')
     train_info['cosine_threshold'] = cosine_threshold
     train_info['combine_cosine_with_existed_nodes'] = combine_cosine_with_existed_nodes
-    # if combine_cosine_with_existed_nodes:
-    #     new_edges_, new_weights_ = compute_similarity(existed_nodes.numpy(), threshold=train_info['cosine_threshold'],
-    #                                                   edge_method='cosine',
-    #                                                   train_info=train_info)
-    #     existed_edge_indices, existed_weights = merge_edges(existed_edge_indices, existed_weights,
-    #                                                         new_edges_, new_weights_)
-    #     print(f'*merged edges between existed nodes ({len(existed_nodes)}): {existed_edge_indices.shape}')
+    if combine_cosine_with_existed_nodes:
+        new_edges_, new_weights_ = compute_similarity(existed_nodes, threshold=train_info['cosine_threshold'],
+                                                      edge_method='cosine',
+                                                      train_info=train_info)
+        existed_edge_indices = torch.zeros((2, 0))
+        existed_weights = [1] * existed_edge_indices.size(1)
+        existed_edge_indices, existed_weights = merge_edges(existed_edge_indices, existed_weights,
+                                                            new_edges_, new_weights_)
+        print(f'*merged edges between existed nodes ({len(existed_nodes)}): {existed_edge_indices.shape}')
 
     if train_features.shape[0] == local_size:
         print('No generated data.')
         return existed_edge_indices, torch.tensor(existed_weights, dtype=torch.float)
-
-    return existed_edge_indices, torch.tensor(existed_weights, dtype=torch.float)
 
     print('+++Compute edges among generated nodes...')
     using_lp = False
@@ -602,7 +601,7 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
             new_edges, new_weights = merge_edges(new_edges, torch.tensor(new_weights), new_edges2, new_weights2)
             new_weights = new_weights.tolist()
     else:
-        new_edges, new_weights = compute_similarity(new_nodes.numpy(), threshold=train_info['cosine_threshold'],
+        new_edges, new_weights = compute_similarity(new_nodes, threshold=train_info['cosine_threshold'],
                                                     edge_method='cosine',
                                                     train_info=train_info)
         new_edges = local_size + new_edges  # src + local_size, dst + local_size
@@ -638,7 +637,7 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
             cross_edges, cross_weights = merge_edges(cross_edges, torch.tensor(cross_weights), new_edges2, new_weights2)
             cross_weights = cross_weights.tolist()
     else:
-        cross_edges, cross_weights = compute_similarity2(existed_nodes.numpy(), new_nodes.numpy(),
+        cross_edges, cross_weights = compute_similarity2(existed_nodes, new_nodes,
                                                          threshold=train_info['cosine_threshold'],
                                                          edge_method='cosine',
                                                          train_info=train_info)
@@ -654,7 +653,6 @@ def gen_edges(train_features, local_size, global_lp, existed_edge_indices=None, 
         cross_edges = torch.cat([cross_edges, cross_edges2], dim=1)
         cross_weights2 = cross_weights
         cross_weights = cross_weights + cross_weights2
-
     print(f'*cross edges between existed nodes ({len(existed_nodes)}) and new nodes ({len(new_nodes)}): '
           f'{cross_edges.shape}')
 
@@ -1061,22 +1059,21 @@ def train_gnn(local_gnn, global_cvae, global_lp, global_gnn, local_data, train_i
     local_size = len(local_data['y'])
 
     print('+++Generate edges for local data and generated data...')
-    edge_indices, edge_weight = gen_edges(features, local_size, global_lp, existed_edge_indices,
-                                          edge_method=None, generated_size=generated_size, local_data=local_data,
-                                          train_info=train_info)  # will update threshold
+    train_info['cosine_threshold'] = 0.8
+    edge_indices, edge_weight = compute_similarity(features.cpu().numpy(), threshold=train_info['cosine_threshold'],
+                                                   edge_method='cosine',
+                                                   train_info=train_info)
 
-    debug = False
-    if debug:
-        edge_indices2, edge_weight2 = gen_edges(features, local_size, global_lp, existed_edge_indices,
-                                                edge_method=None, generated_size=generated_size, local_data=local_data,
-                                                train_info=train_info)  # will update threshold
+    edge_indices2, edge_weight2 = gen_edges(features, local_size, global_lp, existed_edge_indices,
+                                            edge_method=None, generated_size=generated_size, local_data=local_data,
+                                            train_info=train_info)  # will update threshold
 
-        print(edge_indices - edge_indices2, edge_weight - edge_weight2)
-        # print([(a, b) for a, b in zip(edge_weight.numpy(), edge_weight2.numpy()) if a !=b])
-        print([(a, b) for a, b in zip(edge_weight.numpy(), edge_weight2.numpy()) if f'{a:.4f}' != f'{b:.4f}'])
-        print(np.array_equal(edge_indices.numpy(), edge_indices2.numpy()),
-              np.array_equal(edge_weight.numpy(), edge_weight2.numpy()),
-              sum(edge_weight - edge_weight2))
+    print(edge_indices - edge_indices2, edge_weight - edge_weight2)
+    # print([(a, b) for a, b in zip(edge_weight.numpy(), edge_weight2.numpy()) if a !=b])
+    print([(a, b) for a, b in zip(edge_weight.numpy(), edge_weight2.numpy()) if f'{a:.4f}' != f'{b:.4f}'])
+    print(np.array_equal(edge_indices.numpy(), edge_indices2.numpy()),
+          np.array_equal(edge_weight.numpy(), edge_weight2.numpy()),
+          sum(edge_weight - edge_weight2))
 
     if edge_weight.shape[0] > 0:
         print(f"edges.shape {edge_indices.shape}, edge_weight min:{min(edge_weight.tolist())}, "
@@ -1260,7 +1257,7 @@ def aggregate_cvaes(vaes, locals_info, global_cvae):
         scheduler = StepLR(optimizer, step_size=100, gamma=0.8)
 
         losses = []
-        for epoch in range(301):
+        for epoch in range(501):
             loss_epoch = 0
             for client_i, local_cvae_state_dict in enumerate(client_parameters_list):
                 label_cnts = locals_info[client_i]['label_cnts']
@@ -1488,8 +1485,8 @@ class GNN(nn.Module):
         else:
             # Passing edge_weight to the GCNConv layers
             x = F.relu(self.conv1(x, edge_index, edge_weight))
-            x = F.relu(self.conv2(x, edge_index, edge_weight))  # add more layers will lead to worse performance
-            x = F.relu(self.conv3(x, edge_index, edge_weight))  # Additional layer
+            # x = F.relu(self.conv2(x, edge_index, edge_weight))    # add more layers will lead to worse performance
+            # x = F.relu(self.conv3(x, edge_index, edge_weight))  # Additional layer
             x = self.conv4(x, edge_index, edge_weight)  # Final output
 
         # return F.log_softmax(x, dim=1)
@@ -1858,14 +1855,17 @@ def gen_test_edges(graph_data, X_test, y_test, test_edges, global_lp, generated_
     existed_edge_indices = graph_data.edge_index
     print(f'edges between existed nodes ({len(X_local)}): {existed_edge_indices.shape}')
     existed_weights = graph_data.edge_weight.tolist()
-    # if train_info['combine_cosine_with_existed_nodes']:
-    #     existed_nodes = X_local
-    #     new_edges_, new_weights_ = compute_similarity(existed_nodes.numpy(), threshold=train_info['cosine_threshold'],
-    #                                                   edge_method='cosine',
-    #                                                   train_info=train_info)
-    #     existed_edge_indices, existed_weights = merge_edges(existed_edge_indices, existed_weights,
-    #                                                         new_edges_, new_weights_)
-    #     print(f'*merged edges between existed nodes ({len(existed_nodes)}): {existed_edge_indices.shape}')
+    if train_info['combine_cosine_with_existed_nodes']:
+        existed_nodes = X_local
+        new_edges_, new_weights_ = compute_similarity(existed_nodes.cpu().numpy(),
+                                                      threshold=train_info['cosine_threshold'],
+                                                      edge_method='cosine',
+                                                      train_info=train_info)
+        # existed_edge_indices = torch.zeros((2, 0), dtype=torch.int64)
+        # existed_weights = [1] * existed_edge_indices.size(1)
+        existed_edge_indices, existed_weights = merge_edges(existed_edge_indices, existed_weights,
+                                                            new_edges_, new_weights_)
+        print(f'*merged edges between existed nodes ({len(existed_nodes)}): {existed_edge_indices.shape}')
 
     # # If current client has classes (0, 1, 2, 3), then predict edges for new nodes (such as, 4, 5, 6)
     new_nodes = X_test
@@ -1882,14 +1882,16 @@ def gen_test_edges(graph_data, X_test, y_test, test_edges, global_lp, generated_
     new_edges = local_size + new_edges  # new_edges.shape is 2xN
     print(f'new edges between new nodes ({len(new_nodes)}): {new_edges.shape}')
     new_weights = [1] * new_edges.shape[1]
-    existed_nodes = X_local
-    # if train_info['combine_cosine_with_existed_nodes']:
-    #     new_edges_, new_weights_ = compute_similarity(new_nodes.numpy(), threshold=train_info['cosine_threshold'],
-    #                                                   edge_method='cosine',
-    #                                                   train_info=train_info)
-    #     new_edges, new_weights = merge_edges(new_edges, new_weights,
-    #                                          new_edges_, new_weights_)
-    #     print(f'*merged edges between new nodes ({len(new_nodes)}): {new_edges.shape}')
+    if train_info['combine_cosine_with_existed_nodes']:
+        # existed_nodes = X_local
+        new_edges_, new_weights_ = compute_similarity(new_nodes.cpu().numpy(), threshold=train_info['cosine_threshold'],
+                                                      edge_method='cosine',
+                                                      train_info=train_info)
+        # new_edges = torch.zeros((2, 0), dtype=torch.int64)
+        # new_weights = [1] * new_edges.size(1)
+        new_edges, new_weights = merge_edges(new_edges, new_weights,
+                                             new_edges_, new_weights_)
+        print(f'*merged edges between new nodes ({len(new_nodes)}): {new_edges.shape}')
 
     # Predict edges between new and existing nodes
     cross_pairs = torch.cartesian_prod(torch.arange(0, local_size),
@@ -1917,32 +1919,30 @@ def gen_test_edges(graph_data, X_test, y_test, test_edges, global_lp, generated_
 
         add_similarity = True
         if add_similarity:
-            new_edges2, new_weights2 = compute_similarity2(existed_nodes.numpy(), X_test.numpy(),
+            new_edges2, new_weights2 = compute_similarity2(existed_nodes.cpu().numpy(), X_test.numpy(),
                                                            threshold=0.95, edge_method='cosine',
                                                            train_info=train_info)
             new_edges2[1, :] = local_size + new_edges2[1, :]  # src, dst + local_size
             cross_edges, cross_weights = merge_edges(cross_edges, torch.tensor(cross_weights), new_edges2, new_weights2)
             cross_weights = cross_weights.tolist()
     else:
-        # cross_edges, cross_weights = compute_similarity2(existed_nodes.numpy(), X_test.numpy(),
-        #                                                  threshold=train_info['cosine_threshold'],
-        #                                                  edge_method='cosine',
-        #                                                  train_info=train_info)
-        # cross_edges[1, :] = local_size + cross_edges[1, :]  # src, dst + local_size
-        # cross_weights = cross_weights.tolist()
-        # # cross_weights = [1] * cross_edges.shape[1]
-        #
-        # # we should also consider compute_similarity2(X_test, existed_nodes)
-        # cross_edges2 = torch.zeros(cross_edges.shape, dtype=torch.int64)
-        # # switch (src,dst) to (dst, src)
-        # cross_edges2[0, :] = cross_edges[1, :]
-        # cross_edges2[1, :] = cross_edges[0, :]
-        # cross_edges = torch.cat([cross_edges, cross_edges2], dim=1)
-        # cross_weights2 = cross_weights
-        # cross_weights = cross_weights + cross_weights2
+        cross_edges, cross_weights = compute_similarity2(existed_nodes.cpu().numpy(), X_test.cpu().numpy(),
+                                                         threshold=train_info['cosine_threshold'],
+                                                         edge_method='cosine',
+                                                         train_info=train_info)
+        cross_edges[1, :] = local_size + cross_edges[1, :]  # src, dst + local_size
+        cross_weights = cross_weights.tolist()
 
-        cross_edges = torch.zeros((2, 0), dtype=torch.int64)
-        cross_weights = [1] * cross_edges.shape[1]
+        # we should also consider compute_similarity2(X_test, existed_nodes)
+        cross_edges2 = torch.zeros(cross_edges.shape, dtype=torch.int64)
+        # switch (src,dst) to (dst, src)
+        cross_edges2[0, :] = cross_edges[1, :]
+        cross_edges2[1, :] = cross_edges[0, :]
+        cross_edges = torch.cat([cross_edges, cross_edges2], dim=1)
+        cross_weights2 = cross_weights
+        cross_weights = cross_weights + cross_weights2
+
+        # cross_weights = [1] * cross_edges.shape[1]
     print(f'cross edges between existed nodes ({len(existed_nodes)}) and new nodes ({len(new_nodes)}): '
           f'{cross_edges.shape}')
 
@@ -1959,9 +1959,9 @@ def gen_test_edges(graph_data, X_test, y_test, test_edges, global_lp, generated_
         check_edges(cross_edges.t().numpy(), cross_edges2)
 
     # Combine all edges
-    edge_indices = torch.cat([existed_edge_indices, cross_edges.to(device), new_edges.to(device)], dim=1)
+    edge_indices = torch.cat([existed_edge_indices.to(device), cross_edges.to(device), new_edges.to(device)], dim=1)
     edge_weights = existed_weights + cross_weights + new_weights
-    edge_weights = torch.tensor(edge_weights, dtype=torch.float)
+    edge_weights = torch.tensor(edge_weights, dtype=torch.float).to(device)
     print(f'total edges between all nodes: {edge_indices.shape}')
 
     start_idx = len(y_local)
@@ -2538,7 +2538,7 @@ if __name__ == '__main__':
     # input_dim = 500
     # LABELs = {0, 1, 2}
 
-    in_dir = 'fl/cora'
+    in_dir = '../fl/cora'
     input_dim = 1433
     LABELs = {0, 1, 2, 3, 4, 5, 6}
     num_clients = 4

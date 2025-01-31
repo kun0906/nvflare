@@ -2,10 +2,13 @@
 
 
 """
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import Adam
+
+from krum import refined_krum
 
 
 class AttentionAggregation(nn.Module):
@@ -115,6 +118,30 @@ def train_attention_weights(client_parameters_list, global_state_dict, beta, dev
 #     # Update the global model with the aggregated parameters
 #     global_model.load_state_dict(global_state_dict)
 
+def aggregate_with_krum(clients_parameters, clients_info, global_model, device=None):
+
+    # Initialize the aggregated state_dict for the global model
+    global_state_dict = {key: torch.zeros_like(value).to(device) for key, value in global_model.state_dict().items()}
+
+    # Aggregate parameters for each layer
+    for key in global_state_dict:
+        print(f'global_state_dict: {key}')
+        # for each class, we first use Krum, then average the results.
+        # aggregated_update = torch.zeros_like(global_state_dict[key])
+
+        # Perform simple averaging of the parameters
+        clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_parameters.values()]
+        # each client extra information (such as, number of samples)
+        # clients_weights = torch.tensor([1] * len(clients_updates)) # default as 1
+        clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
+        aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, return_average=True)
+        # print(key, clients_type_pred)
+        global_state_dict[key] = aggregated_update.to(device)
+
+    # Update the global model with the aggregated parameters
+    global_model.load_state_dict(global_state_dict)
+
+    return clients_type_pred
 
 def aggregate_with_attention(client_parameters_list, global_model, device=None):
     """

@@ -1,3 +1,9 @@
+v0.2.8: FedCNN with CGAN for generate data
+    1. Server train CGAN
+    2. Refined Krum
+    3. FedCNN
+
+
 v0.2.7: FedCNN with CGAN for generate data
 
 v0.2.6: CGAN for generate data

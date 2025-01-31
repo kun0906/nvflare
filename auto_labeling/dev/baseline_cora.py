@@ -42,7 +42,7 @@ def check_raw_planetoid(filename):
     return data
 
 
-check_raw_planetoid('data/Cora/raw/ind.cora.tx')
+check_raw_planetoid('../data/Cora/raw/ind.cora.tx')
 
 
 def gen_data():

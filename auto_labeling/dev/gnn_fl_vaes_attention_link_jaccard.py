@@ -5,7 +5,7 @@
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 gnn_fl_vaes_only.py
+    $PYTHONPATH=. python3 gnn_fl_vaes_attention_link_jaccard.py
 
 
 """
@@ -50,13 +50,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedGNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.9,
+    parser.add_argument('-r', '--label_rate', type=float, required=False, default=0.7,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=32,
                         help="The hidden dimension of GNN.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=20000,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5000,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=float, required=False, default=0,
+    parser.add_argument('-p', '--patience', type=float, required=False, default=1.0,
                         help="The patience.")
     # parser.add_argument('-a', '--vae_epochs', type=int, required=False, default=10,
     #                     help="vae epochs.")
@@ -74,10 +74,10 @@ args = parse_arguments()
 
 # Access the arguments
 label_rate = args.label_rate
-server_epochs = 31
+server_epochs = 1
 hidden_dim_gnn = args.hidden_dimension
 patience = 5
-AE_EPOCHs = args.server_epochs
+VAE_EPOCHs = args.server_epochs
 BETA = args.patience
 # For testing, print the parsed parameters
 # print(f"label_rate: {label_rate}")
@@ -119,10 +119,10 @@ print(args)
 #         return F.sigmoid(x)
 #
 #
-# # AE
-# class CAE(nn.Module):
+# # VAE
+# class CVAE(nn.Module):
 #     def __init__(self, input_dim, hidden_dim, latent_dim, num_classes):
-#         super(CAE, self).__init__()
+#         super(CVAE, self).__init__()
 #         self.latent_dim = latent_dim
 #         self.encoder = Encoder(input_dim, hidden_dim, latent_dim, num_classes)
 #         self.decoder = Decoder(latent_dim, hidden_dim, input_dim, num_classes)
@@ -139,41 +139,46 @@ print(args)
 #         return recon_x, mean, log_var
 
 
-class AE(nn.Module):
+class VAE(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim):
-        super(AE, self).__init__()
+        super(VAE, self).__init__()
         # Encoder layers
         self.encoder_fc1 = nn.Linear(input_dim, hidden_dim)
-        self.encoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
-        self.encoder_fc3 = nn.Linear(hidden_dim, latent_dim)
+        self.encoder_fc2_mu = nn.Linear(hidden_dim, latent_dim)  # Mean of latent space
+        self.encoder_fc2_logvar = nn.Linear(hidden_dim, latent_dim)  # Log variance of latent space
         self.latent_dim = latent_dim
 
         # Decoder layers
         self.decoder_fc1 = nn.Linear(latent_dim, hidden_dim)
-        self.decoder_fc2 = nn.Linear(hidden_dim, hidden_dim)
-        self.decoder_fc3 = nn.Linear(hidden_dim, input_dim)
+        self.decoder_fc2 = nn.Linear(hidden_dim, input_dim)
 
     def encoder(self, x):
         """Encode input into latent space parameters (mu, logvar)."""
         h = F.relu(self.encoder_fc1(x))
-        # h = F.relu(self.encoder_fc2(h))
-        z = F.relu(self.encoder_fc3(h))
+        mu = self.encoder_fc2_mu(h)
+        logvar = self.encoder_fc2_logvar(h)
+        return mu, logvar
 
+    def reparameterize(self, mu, logvar):
+        """Sample z from the latent space using the reparameterization trick."""
+        std = torch.exp(0.5 * logvar)  # Standard deviation
+        eps = torch.randn_like(std)  # Random noise
+        z = mu + eps * std  # Reparameterization
         return z
 
     def decoder(self, z):
         """Decode latent representation into reconstructed input."""
         h = F.relu(self.decoder_fc1(z))
-        # h = F.relu(self.decoder_fc2(h))
-        x_recon = torch.sigmoid(self.decoder_fc3(h))
-
+        x_recon = torch.sigmoid(self.decoder_fc2(h))  # Sigmoid for normalized outputs (e.g., binary data)
+        # x_recon = self.decoder_fc2(h)
         return x_recon
 
     def forward(self, x):
-        """Forward pass through the entire AE."""
-        z = self.encoder(x)
+        """Forward pass through the entire VAE."""
+        mu, logvar = self.encoder(x)
+        z = self.reparameterize(mu, logvar)
         x_recon = self.decoder(z)
-        return x_recon, z, z
+        return x_recon, mu, logvar
 
 
 class GNNLinkPredictor(torch.nn.Module):
@@ -411,7 +416,7 @@ def gen_local_data(client_data_file, client_id, label_rate=0.1):
 #     # The KL term forces the latent distribution to be close to N(0, 1)
 #     # KL[Q(z|x) || P(z)] = -0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
 #     # where sigma^2 = exp(logvar)
-#     # This is the standard AE loss function
+#     # This is the standard VAE loss function
 #     # recon_x: the reconstructed logits, x: the true logits
 #     # mu: mean, logvar: log variance of the latent distribution
 #     # We assume logvar is the log of variance (log(sigma^2))
@@ -459,7 +464,7 @@ def compute_mmd(x_real, x_gen, sigma=1.0):
 #
 # def vae_loss(recon_x, x, mu, logvar, x_real, x_gen, lambda_mmd=1.0, sigma=1.0):
 #     """
-#     Compute the total AE loss with MMD regularization.
+#     Compute the total VAE loss with MMD regularization.
 #     :param recon_x: torch.Tensor, reconstructed input
 #     :param x: torch.Tensor, original input
 #     :param mu: torch.Tensor, latent mean
@@ -514,9 +519,9 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
     #     _, predicted_labels = torch.max(output, dim=1)
     # print(f'Predicted labels: {collections.Counter(predicted_labels.tolist())}')
 
-    for l, (local_vae, local_extra) in local_vaes.items():
-        # Initialize local_vae with global_vae = {l: (vae, extra)}
-        local_vae.load_state_dict(global_vaes[l][0].state_dict())
+    for l, local_vae in local_vaes.items():
+        # Initialize local_vae with global_vae
+        local_vae.load_state_dict(global_vaes[l].state_dict())
 
         X, y = local_data['X'], local_data['y']
         mask = local_data['train_mask']
@@ -536,7 +541,7 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
         print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
 
         local_vae.to(device)
-        optimizer = optim.Adam(local_vae.parameters(), lr=0.0001, weight_decay=5e-5)  # L2
+        optimizer = optim.Adam(local_vae.parameters(), lr=0.001, weight_decay=5e-5)  # L2
         # Define a scheduler
         scheduler = StepLR(optimizer, step_size=500, gamma=0.8)
 
@@ -549,51 +554,40 @@ def train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info={}):
         X = X.clone().detach().float().to(device)
         print(f'local X.shape: {X.shape}')
         losses = []
-        # sigma = compute_sigma(X)
-        print(f'vae_epochs: {AE_EPOCHs}, beta:{BETA}')
-        for epoch in range(AE_EPOCHs):
+        sigma = compute_sigma(X)
+        print(f'vae_epochs: {VAE_EPOCHs}, beta:{BETA}')
+        for epoch in range(VAE_EPOCHs):
             # Convert X to a tensor and move it to the device
             # X.to(device)
             recon_logits, mu, logvar = local_vae(X)
-
-            # print(np.min(mu.detach().numpy()), np.max(mu.detach().numpy()), [(np.min(vs.detach().numpy()), np.max(vs.detach().numpy())) for vs in local_vae.parameters()], flush=True)
-
-            # recon_logits = torch.clamp(recon_logits, min=1e-7, max=1 - 1e-7)
             loss, info = vae_loss_function(recon_logits, X, mu, logvar, beta=BETA)
             # if loss < 1e-10:
             #     break
 
             # MMD loss
-            # mmd_loss = compute_mmd(X, recon_logits, sigma)
-            # alpha = 5.0
-            # loss += alpha * mmd_loss
+            mmd_loss = compute_mmd(X, recon_logits, sigma)
+            alpha = 5.0
+            loss += alpha * mmd_loss
 
             optimizer.zero_grad()
             loss.backward()
 
-            # Gradient clipping to stabilize the training
-            torch.nn.utils.clip_grad_norm_(local_vae.parameters(), max_norm=0.8)
+            # # Gradient clipping to stabilize the training
+            # torch.nn.utils.clip_grad_norm_(local_vae.parameters(), max_norm=1.0)
 
             optimizer.step()
 
             # Update learning rate
             scheduler.step()
 
-            if epoch == AE_EPOCHs - 1:
-                recon_errors = binary_cross_entropy(recon_logits.detach().cpu().numpy(), X.cpu().numpy())
-                local_extra['min_recon'] = min(recon_errors)
-                local_extra['max_recon'] = max(recon_errors)
-                local_extra['mu'] = np.mean(mu.detach().cpu().numpy(), axis=0)
-                local_extra['std'] = np.mean(logvar.detach().cpu().numpy(), axis=0)
-
             if epoch % 100 == 0:
                 print(f'train_vae epoch: {epoch}, local_vae loss: {loss.item():.4f}, {info.items()}, '
-                      # f'mmd:{mmd_loss.item()}, sigma:{sigma:.4f} '
+                      f'mmd:{mmd_loss.item()}, sigma:{sigma:.4f} '
                       f'LR: {scheduler.get_last_lr()}')
             losses.append(loss.item())
 
         train_info[f'vae_{l}'] = {"losses": losses}
-        local_vaes[l] = (local_vae, local_extra)
+        local_vaes[l] = local_vae
 
 
 #
@@ -1216,33 +1210,23 @@ def evaluate_train(gnn, graph_data, gen_start, generated_size, epoch, local_data
                          X_shared_test.cpu(), y_shared_test.cpu(), verbose=10)
 
 
-def aggregate_vaes(vaes, locals_info, global_vaes, local_data, histories, server_epoch):
-    for l, (global_vae, global_extra) in global_vaes.items():
+def aggregate_vaes(vaes, locals_info, global_vaes, local_data, histories_server, server_epoch):
+    for l, global_vae in global_vaes.items():
         print(f'*aggregate vaes for class {l}...')
-        # for each client, we get one label vae : (vae, extra)
-        label_vaes = {client_idx: client_info[l][0] for client_idx, client_info in vaes.items()}
+        # for each client, we get one label vae
+        label_vaes = {client_idx: client_vaes[l] for client_idx, client_vaes in vaes.items()}
         aggregate_label_vaes(label_vaes, locals_info, global_vae)
-        min_recon = min(client_info[l][1]['min_recon'] for client_idx, client_info in vaes.items())
-        max_recon = max(client_info[l][1]['max_recon'] for client_idx, client_info in vaes.items())
-        global_extra['min_recon'] = min(min_recon, global_extra['min_recon'])
-        global_extra['max_recon'] = max(max_recon, global_extra['max_recon'])
+        global_vaes[l] = global_vae  # update global vae for each label
 
-        mu = np.mean(np.vstack([client_info[l][1]['mu'] for client_idx, client_info in vaes.items()]), axis=0)
-        std = np.mean(np.vstack([client_info[l][1]['std'] for client_idx, client_info in vaes.items()]), axis=0)
-        global_extra['mu'] = np.mean(np.vstack([mu, global_extra['mu']]), axis=0, keepdims=True)
-        global_extra['std'] = np.mean(np.vstack([std, global_extra['std']]), axis=0, keepdims=True)
-
-        global_vaes[l] = (global_vae, global_extra)  # update global vae for each label
-
-    # if server_epoch % 1 == 0:
-    #     test_mask = local_data['all_data']['test_mask']
-    #     sizes = {l: s for l, s in collections.Counter(local_data['all_data']['y'][test_mask].tolist()).items()}
-    #     print(sizes)
-    #     # generated new data
-    #     generated_data = gen_data(global_vaes, sizes, similiarity_method='cosine',
-    #                               local_data=local_data)
-    #     ml_info = check_gen_data(generated_data, local_data)
-    #     histories_server.append(ml_info)
+    if server_epoch % 1 == 0:
+        test_mask = local_data['all_data']['test_mask']
+        sizes = {l: s for l, s in collections.Counter(local_data['all_data']['y'][test_mask].tolist()).items()}
+        print(sizes)
+        # generated new data
+        generated_data = gen_data(global_vaes, sizes, similiarity_method='cosine',
+                                  local_data=local_data)
+        ml_info = check_gen_data(generated_data, local_data)
+        histories_server.append(ml_info)
 
 
 def aggregate_label_vaes(vaes, locals_info, global_vae):
@@ -1254,7 +1238,7 @@ def aggregate_label_vaes(vaes, locals_info, global_vae):
     else:
         # train a new model on generated data by clients' vaes
         # global_vae.load_state_dict(global_vae.state_dict())
-        optimizer = optim.Adam(global_vae.parameters(), lr=0.001)
+        optimizer = optim.Adam(global_vae.parameters(), lr=0.01)
         # Define a scheduler
         scheduler = StepLR(optimizer, step_size=100, gamma=0.8)
 
@@ -1264,13 +1248,13 @@ def aggregate_label_vaes(vaes, locals_info, global_vae):
             for client_i, local_vae_state_dict in enumerate(client_parameters_list):
                 label_cnts = locals_info[client_i]['label_cnts']
                 # Initialize local_vae with global_vae
-                local_vae = AE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=10)
+                local_vae = VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=5)
                 local_vae.load_state_dict(local_vae_state_dict)
                 local_vae.to(device)
 
                 z = []
                 ohe_labels = []
-                latent_dim = local_vae.latent_dim
+                latent_dim = local_vae.decoder.latent_dim
                 for l, size in label_cnts.items():
                     # generate latent vector from N(0, 1)
                     z_ = torch.randn(size, latent_dim).to(device)  # Sample latent vectors
@@ -1286,12 +1270,12 @@ def aggregate_label_vaes(vaes, locals_info, global_vae):
 
                 z = z.to(device)
                 ohe_labels = ohe_labels.to(device)
-                pseudo_logits = local_vae.decoder(z)  # Reconstruct probabilities from latent space
-                X_ = pseudo_logits.detach()
+                pseudo_logits = local_vae.decoder(z, ohe_labels)  # Reconstruct probabilities from latent space
+                X_ = pseudo_logits
 
                 # use the generated data X to train global_vae
-                recon_logits, mu, logvar = global_vae(X_)
-                loss, info = vae_loss_function(recon_logits, X_, mu, logvar, beta=1.0)
+                recon_logits, mu, logvar = global_vae(X_, ohe_labels)
+                loss, info = vae_loss_function(recon_logits, X_, mu, logvar)
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -1322,152 +1306,110 @@ def aggregate_gnns(gnns, global_gnn, histories_server, server_epoch):
     aggregate_with_attention(client_parameters_list, global_gnn, device)  # update global_gnn inplace
 
 
-def L2(x1, x2):
-    return np.linalg.norm(x1 - x2, axis=1)
-
-
 @timer
-def evaluate(local_vaes, local_data, device, global_vaes, test_type='test', client_id=0, train_info={}):
+def evaluate(local_gnn, local_data, device, global_gnn, test_type='test', client_id=0, train_info={}):
     """
         Evaluate how well each client's model performs on the test set.
 
         client_result = {'client_gm': client_model.state_dict(), 'logits': None, 'losses': losses, 'info': client_info}
         client_data_ =  (graph_data_, feature_info, client_data_)
     """
-    alpha = 0
+    print('---------------------------------------------------------------')
+    for model_type, model in [('global', global_gnn), ('local', local_gnn)]:
+        # At time t, global model has not been updated yet, however, local_gnn is updated.
+        # After training, the model can make predictions for both labeled and unlabeled nodes
+        print(f'***Testing {model_type} model on {test_type}...')
+        # gnn = local_gnn(input_dim=64, hidden_dim=32, output_dim=10)
+        # gnn.load_state_dict(client_result['client_gm'])
+        gnn = model
+        gnn = gnn.to(device)
 
-    global_extra = {l: extra for l, (vae, extra) in global_vaes.items()}
-    for model_type, vaes in [('global', global_vaes), ('local', local_vaes)]:
-        print(f'------------------------ {model_type} ---------------------------------------')
-        # train_mask, val_mask, test_mask = graph_data.train_mask, graph_data.val_mask, graph_data.test_mask
-        X = local_data['X']
-        y = local_data['y']
-        train_mask = local_data['train_mask']
-        val_mask = local_data['val_mask']
-        test_mask = local_data['test_mask']
+        graph_data = train_info['gnn']['graph_data'].to(device)  # graph data
+        gnn.eval()
+        train_mask, val_mask, test_mask = graph_data.train_mask, graph_data.val_mask, graph_data.test_mask
 
-        best_preds = np.zeros((len(X), 0))
-        info = {}
-        for l, (vae, extra) in vaes.items():
-            # print(f'***Testing {model_type} model on {test_type} with vae_{l}...')
-            vae = vae.to(device)
-            X = X.to(device)
-            vae.eval()
+        with torch.no_grad():
+            output = gnn(graph_data)
+            _, predicted_labels = torch.max(output, dim=1)
 
-            with (torch.no_grad()):
-                recon_X, mu, logvar = vae(X)
-                info[l] = (mu, logvar)
-                # recon_error = np.linalg.norm(recon_X.cpu().numpy() - X.cpu().numpy(), axis=1)
-                recon_error = binary_cross_entropy(recon_X.cpu().numpy(), X.cpu().numpy())
-                # recon_error = (recon_error - global_extra[l]['min_recon']) / (global_extra[l]['max_recon']
-                #                                                               - global_extra[l]['min_recon'])
-                l2 = L2(global_extra[l]['mu'], mu.detach().cpu().numpy()) + \
-                     L2(global_extra[l]['std'], logvar.detach().cpu().numpy())
-                recon_error = l2 + alpha * recon_error
-                best_preds = np.concatenate((best_preds, recon_error.reshape((-1, 1))), axis=1)
+            # for debug purpose
+            for data_type, mask_ in [('train', train_mask),
+                                     ('val', val_mask),
+                                     ('test', test_mask)]:
+                # Calculate accuracy for the labeled data
+                # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+                # print(f'labeled_indices {len(labeled_indices)}')
+                true_labels = graph_data.y
 
-        print(f'\n\n global_extra', global_extra.items())
-        predicted_labels = np.argmin(best_preds, axis=1)
-        plot_latent(info, train_info, global_extra, title='local')
+                predicted_labels_tmp = predicted_labels[mask_]
+                true_labels_tmp = true_labels[mask_]
+                y = true_labels_tmp.cpu().numpy()
+                y_pred = predicted_labels_tmp.cpu().numpy()
 
-        # for debug purpose
-        for data_type, mask_ in [('train', train_mask),
-                                 ('val', val_mask),
-                                 ('test', test_mask)]:
-            # Calculate accuracy for the labeled data
+                # Total samples and number of classes
+                total_samples = len(y)
+                # Compute class weights
+                class_weights = {c: total_samples / count for c, count in collections.Counter(y.tolist()).items()}
+                sample_weight = [class_weights[y_0.item()] for y_0 in y]
+                print(f'class_weights: {class_weights}')
+
+                accuracy = accuracy_score(y, y_pred, sample_weight=sample_weight)
+
+                train_info[f'{model_type}_{data_type}_accuracy'] = accuracy
+                print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+                # if 'all' in test_type:
+                #     client_result['labeled_accuracy_all'] = accuracy
+                # else:
+                #     client_result['labeled_accuracy'] = accuracy
+                # print(y, y_pred)
+                conf_matrix = confusion_matrix(y, y_pred, sample_weight=sample_weight)
+                conf_matrix = conf_matrix.astype(int)
+                train_info[f'{model_type}_{data_type}_cm'] = conf_matrix
+                print("Confusion Matrix:\n", conf_matrix)
+
+            # # Calculate accuracy for the unlabeled data
             # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-            # print(f'labeled_indices {len(labeled_indices)}')
-            true_labels = y
+            # all_indices = torch.arange(graph_data.num_nodes).to(device)
+            # unlabeled_indices = all_indices[~torch.isin(all_indices, labeled_indices)]
+            # print(f'unlabeled_indices {len(unlabeled_indices)}')
+            # true_labels = graph_data.y
+            #
+            # predicted_labels_tmp = predicted_labels[unlabeled_indices]
+            # true_labels_tmp = true_labels[unlabeled_indices]
+            # y = true_labels_tmp.cpu().numpy()
+            # y_pred = predicted_labels_tmp.cpu().numpy()
+            #
+            # accuracy = accuracy_score(y, y_pred)
+            # train_info[f'{model_type}_unlabeled_accuracy'] = accuracy
+            # print(f"Accuracy on unlabeled data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+            # # if 'all' in test_type:
+            # #     client_result['labeled_accuracy_all'] = accuracy
+            # # else:
+            # #     client_result['labeled_accuracy'] = accuracy
+            # conf_matrix = confusion_matrix(y, y_pred)
+            # train_info[f'{model_type}_unlabeled_cm'] = conf_matrix
+            # print("Confusion Matrix:\n", conf_matrix)
 
-            predicted_labels_tmp = predicted_labels[mask_]
-            true_labels_tmp = true_labels[mask_]
-            y_true = true_labels_tmp.cpu().numpy()
-            y_pred = predicted_labels_tmp
-
-            # Total samples and number of classes
-            total_samples = len(y_true)
-            # Compute class weights
-            class_weights = {c: total_samples / count for c, count in collections.Counter(y_true.tolist()).items()}
-            sample_weight = [class_weights[y_0.item()] for y_0 in y_true]
-            print(f'class_weights: {class_weights}')
-
-            accuracy = accuracy_score(y_true, y_pred, sample_weight=sample_weight)
-
-            train_info[f'{model_type}_{data_type}_accuracy'] = accuracy
-            print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y_true.tolist())}")
+            # # Calculate accuracy for unlabeled data
+            # print(f'Evaluate on all data (labeled + unlabeled)')
+            # true_labels = client_data_[1]['labels']
+            # y = true_labels.cpu().numpy()
+            # y_pred = predicted_labels.cpu().numpy()
+            # accuracy = accuracy_score(y, y_pred)
+            # print(f"Accuracy on all data: {accuracy * 100:.2f}%")
             # if 'all' in test_type:
-            #     client_result['labeled_accuracy_all'] = accuracy
+            #     client_result['accuracy_all'] = accuracy
             # else:
-            #     client_result['labeled_accuracy'] = accuracy
-            # print(y, y_pred)
-            conf_matrix = confusion_matrix(y_true, y_pred, sample_weight=sample_weight)
-            conf_matrix = conf_matrix.astype(int)
-            train_info[f'{model_type}_{data_type}_cm'] = conf_matrix
-            print("Confusion Matrix:\n", conf_matrix)
-
-        print('######################################## shared test ##################################################')
-        # Shared test data
-        all_data = local_data['all_data']
-        all_indices = all_data['indices']
-        # edge_indices = all_data['edge_indices'].to(device)  # all edge_indices
-        X, Y = all_data['X'].to(device), all_data['y'].to(device)
-        shared_test_mask = all_data['test_mask'].to(device)
-        X_test = X[shared_test_mask].to(device)
-        y_test = Y[shared_test_mask].to(device)
-        # X_test_indices = all_indices[shared_test_mask].to(device)
-        print(f'X_test: {X_test.size()}, {collections.Counter(y_test.tolist())}')
-        # edge_indices_test = all_data['edge_indices_test'].to(device)
-
-        best_preds = np.zeros((len(X_test), 0))
-        info = {}
-        for l, (vae, extra) in vaes.items():
-            # print(f'***Testing {model_type} model on {test_type} with vae_{l}...')
-            vae = vae.to(device)
-            X_test = X_test.to(device)
-            vae.eval()
-            with torch.no_grad():
-                recon_X, mu, logvar = vae(X_test)
-                info[l] = (mu, logvar)
-                # recon_error = np.linalg.norm(recon_X.cpu().numpy() - X_test.cpu().numpy(), axis=1)
-                recon_error = binary_cross_entropy(recon_X.cpu().numpy(), X_test.cpu().numpy())
-                # recon_error = (recon_error - global_extra[l]['min_recon']) / (global_extra[l]['max_recon']
-                #                                                               - global_extra[l]['min_recon'])
-                l2 = L2(global_extra[l]['mu'], mu.detach().cpu().numpy()) + \
-                     L2(global_extra[l]['std'], logvar.detach().cpu().numpy())
-                recon_error = l2 + alpha * recon_error
-            best_preds = np.concatenate((best_preds, recon_error.reshape((-1, 1))), axis=1)
-
-        predicted_labels = np.argmin(best_preds, axis=1)
-        plot_latent(info, train_info, global_extra, title='shared_test')
-
-        # Calculate accuracy for the labeled data
-        # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-        # print(f'labeled_indices {len(labeled_indices)}')
-        true_labels = y_test
-
-        y_true = true_labels.cpu().numpy()
-        y_pred = predicted_labels
-
-        # Total samples and number of classes
-        total_samples = len(y_true)
-        # Compute class weights
-        class_weights = {c: total_samples / count for c, count in collections.Counter(y_true.tolist()).items()}
-        sample_weight = [class_weights[y_0.item()] for y_0 in y_true]
-        print(f'class_weights: {class_weights}')
-
-        accuracy = accuracy_score(y_true, y_pred, sample_weight=sample_weight)
-
-        train_info[f'{model_type}_{data_type}_accuracy'] = accuracy
-        print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y_true.tolist())}")
-        # if 'all' in test_type:
-        #     client_result['labeled_accuracy_all'] = accuracy
-        # else:
-        #     client_result['labeled_accuracy'] = accuracy
-        # print(y, y_pred)
-        conf_matrix = confusion_matrix(y_true, y_pred, sample_weight=sample_weight)
-        conf_matrix = conf_matrix.astype(int)
-        train_info[f'{model_type}_{data_type}_cm'] = conf_matrix
-        print("Confusion Matrix:\n", conf_matrix)
+            #     client_result['accuracy'] = accuracy
+            #
+            # # Compute the confusion matrix
+            # conf_matrix = confusion_matrix(y, y_pred)
+            # print("Confusion Matrix:")
+            # print(conf_matrix)
+            # if 'all' in test_type:
+            #     client_result['cm_all'] = conf_matrix
+            # else:
+            #     client_result['cm'] = conf_matrix
 
         print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
@@ -2652,60 +2594,6 @@ def plot_data(X, y, train_mask, gen_size, train_info={}, local_data={}, global_v
     plt.clf()
 
 
-def plot_latent(info, train_info, global_extra, title=''):
-    fig, axes = plt.subplots(7, 2, figsize=(4, 12))  # weight, height
-
-    for l, (mus, stds) in info.items():
-        axes[l, 0].scatter(
-            mus[:, 0],
-            mus[:, 1],
-            label=f'',
-            marker='x',
-            alpha=0.7
-        )
-
-        axes[l, 0].scatter(
-            global_extra[l]['mu'][0, 0],
-            global_extra[l]['mu'][0, 1],
-            label=f'',
-            c='red',
-            marker='x',
-            alpha=0.7
-        )
-
-        axes[l, 0].set_title(f'class {l} mu')
-
-        axes[l, 1].scatter(
-            stds[:, 0],
-            stds[:, 1],
-            label=f'std',
-            marker='x',
-            alpha=0.7
-        )
-
-        axes[l, 1].scatter(
-            global_extra[l]['std'][0, 0],
-            global_extra[l]['std'][0, 1],
-            label=f'',
-            c='red',
-            marker='x',
-            alpha=0.7
-        )
-        axes[l, 1].set_title(f'class {l} std')
-
-    server_epoch = train_info['server_epoch']
-    client_id = train_info['client_id']
-    plt.suptitle(f'epoch:{server_epoch}, client_{client_id}, {title}')
-    plt.tight_layout()
-    # plt.grid(True)
-    fig_file = f'{in_dir}/plots/client_{client_id}/epoch_{server_epoch}_latent_{title}.png'
-    os.makedirs(os.path.dirname(fig_file), exist_ok=True)
-    plt.savefig(fig_file, dpi=100)
-    if server_epoch % 30 == 0:
-        plt.show()
-    plt.clf()
-
-
 def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion, patience=10, best={}):
     # Validation phase
     model.eval()
@@ -2792,32 +2680,9 @@ def early_stopping(model, X_val, y_val, epoch, pre_val_loss, val_cnt, criterion,
     return val_loss, pre_val_loss, val_cnt, stop_training
 
 
-def binary_cross_entropy(recon_x, x):
-    """
-    Compute binary cross-entropy loss.
-
-    Parameters:
-        recon_x (ndarray): Predicted probabilities (values between 0 and 1).
-        x (ndarray): True binary labels (0 or 1).
-        reduction (str): 'sum', 'mean', or 'none' for the type of reduction.
-
-    Returns:
-        float or ndarray: The computed binary cross-entropy loss.
-    """
-    # Ensure recon_x values are in a safe range to avoid log(0)
-    epsilon = 1e-7
-    recon_x = np.clip(recon_x, epsilon, 1 - epsilon)
-
-    # Binary cross-entropy formula
-    bce_loss = - (x * np.log(recon_x) + (1 - x) * np.log(1 - recon_x))
-
-    return np.sum(bce_loss, axis=1)
-
-
-# AE loss function
+# VAE loss function
 def vae_loss_function(recon_x, x, mean, log_var, beta=1.):
     # BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / (x.shape[0] * x.shape[1]) == reduction='mean'
-    # print(np.min(recon_x.detach().numpy()), np.max(recon_x.detach().numpy()), flush=True)
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / x.shape[0]
     # BCE = F.mse_loss(recon_x, x, reduction='mean')
     # KLD loss for the latent space
@@ -2831,7 +2696,7 @@ def vae_loss_function(recon_x, x, mean, log_var, beta=1.):
     # This is the regularization term that encourages meaningful latent space
     # (also known as the latent space regularization term)
     # When beta > 1, the model is encouraged to use the latent space more effectively
-    # It's controlled by the beta value in β-AE
+    # It's controlled by the beta value in β-VAE
     # Latent loss (KL divergence)
     # You can adjust this term using 'beta' to scale the importance of the latent space regularization
     # The larger the beta, the more emphasis on KL divergence
@@ -3382,6 +3247,39 @@ def print_data(local_data):
           f'{collections.Counter(y_test.tolist())}')
 
 
+def client_process(c, epoch, global_vae, global_gnn, input_dim, num_classes, label_rate, in_dir, prefix, device):
+    """
+    Function to be executed in a separate process for each client.
+    """
+    print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
+    l = c  # we should have 'num_clients = num_labels'
+    train_info = {"vae": {}, "gnn": {}}
+
+    # Load local data
+    local_data = gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
+                                label_rate=label_rate)
+    label_cnts = collections.Counter(local_data['labels'].tolist())
+    print(f'client_{c} data:', label_cnts)
+    local_info = {'label_cnts': label_cnts}
+    # Train CVAE
+    local_vae = VAE(input_dim=input_dim, hidden_dim=32, latent_dim=5, num_classes=num_classes)
+    print('train_vae...')
+    train_vae(local_vae, global_vae, local_data, train_info)
+
+    # Train GNN
+    print('train_gnn...')
+    local_gnn = GNN(input_dim=input_dim, hidden_dim=32, output_dim=num_classes)
+    train_gnn(local_gnn, global_vae, global_gnn, local_data, train_info)
+
+    # Evaluate GNN
+    print('evaluate_gnn...')
+    evaluate(local_gnn, None, device, test_type='Testing on client data', client_id=c, train_info=train_info)
+    evaluate_shared_test(local_gnn, local_data['shared_test_data'], device, \
+                         test_type='Testing on shared test data', client_id=c, train_info=train_info)
+
+    return c, local_vae, local_info, local_gnn, train_info
+
+
 @timer
 def main(in_dir, input_dim=16):
     num_classes = len(LABELs)
@@ -3397,11 +3295,9 @@ def main(in_dir, input_dim=16):
         print(f'\nGenerate local data for client_{c}...')
         gen_local_data(client_data_file=f'{in_dir}/c_{c}-{prefix}-data.pth', client_id=c,
                        label_rate=label_rate)
-    # global_vae = CAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=5, num_classes=num_classes)
+    # global_vae = CVAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=5, num_classes=num_classes)
     # print(global_vae)
-    global_vaes = {l: (AE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
-                       {'min_recon': 10000, 'max_recon': 0,
-                        'mu': np.zeros((1, latent_dim)), 'std': np.zeros((1, latent_dim))}) for l in LABELs}
+    global_vaes = {l: VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=10) for l in LABELs}
 
     global_lp = GNNLinkPredictor(input_dim, 32)
     print(global_lp)
@@ -3417,7 +3313,7 @@ def main(in_dir, input_dim=16):
             vaes = {}
             lps = {}
             gnns = {}
-            locals_info = {}  # used in CAE
+            locals_info = {}  # used in CVAE
             history = {}
             for c in range(num_clients):
                 print(f"\n\n***server_epoch:{epoch}, client_{c} ...")
@@ -3433,30 +3329,30 @@ def main(in_dir, input_dim=16):
 
                 # Use to generate nodes
                 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                local_vaes = {l: (AE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=latent_dim),
-                                  {'min_recon': 10000, 'max_recon': 0,
-                                   'mu': np.zeros((1, latent_dim)), 'std': np.zeros((1, latent_dim))}) for l in LABELs}
-                print('Train AEs...')
+                local_vaes = {l: VAE(input_dim=input_dim, hidden_dim=hidden_dim_vae, latent_dim=10) for l in LABELs}
+                print('Train VAEs...')
                 train_vae(local_vaes, global_vaes, local_data, global_gnn, train_info)
                 vaes[c] = local_vaes
 
-                # # # Use to generate/predict edges between nodes
-                # # local_lp = GNNLinkPredictor(input_dim, 32)
-                # # print('Train Link_predictor...')
-                # # train_link_predictor(local_lp, global_lp, local_data, train_info)
-                # # lps[c] = local_lp
-                #
-                # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                # print('Train GNN...')
-                # # local_gnn = GNN(input_dim=input_dim, hidden_dim=hidden_dim_gnn, output_dim=num_classes)
-                # local_gnn = GATModel(input_dim=input_dim, hidden_dim=hidden_dim_gnn, output_dim=num_classes)
-                # local_lp = train_gnn(local_gnn, global_vaes, global_lp, global_gnn, local_data, train_info)
-                # gnns[c] = local_gnn
+                # # Use to generate/predict edges between nodes
+                # local_lp = GNNLinkPredictor(input_dim, 32)
+                # print('Train Link_predictor...')
+                # train_link_predictor(local_lp, global_lp, local_data, train_info)
                 # lps[c] = local_lp
 
-                print('Evaluate AEs...')
-                evaluate(local_vaes, local_data, device, global_vaes,
+                print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+                print('Train GNN...')
+                # local_gnn = GNN(input_dim=input_dim, hidden_dim=hidden_dim_gnn, output_dim=num_classes)
+                local_gnn = GATModel(input_dim=input_dim, hidden_dim=hidden_dim_gnn, output_dim=num_classes)
+                local_lp = train_gnn(local_gnn, global_vaes, global_lp, global_gnn, local_data, train_info)
+                gnns[c] = local_gnn
+                lps[c] = local_lp
+
+                print('Evaluate GNNs...')
+                evaluate(local_gnn, None, device, global_gnn,
                          test_type='Client data', client_id=c, train_info=train_info)
+                evaluate_shared_test(local_gnn, local_data, device, global_gnn, global_lp,
+                                     test_type='Shared test data', client_id=c, train_info=train_info)
 
                 # if epoch % 100 == 0 or epoch+1 == server_epochs:
                 #     evaluate_ML(local_gnn, local_data, device, global_gnn,
@@ -3464,9 +3360,9 @@ def main(in_dir, input_dim=16):
                 history[c] = train_info
 
             print('\nServer aggregation...')
-            aggregate_vaes(vaes, locals_info, global_vaes, local_data, histories, epoch)
-            # # aggregate_lps(lps, global_lp)
-            # aggregate_gnns(gnns, global_gnn, histories['server'], epoch)
+            aggregate_vaes(vaes, locals_info, global_vaes, local_data, histories['server'], epoch)
+            # aggregate_lps(lps, global_lp)
+            aggregate_gnns(gnns, global_gnn, histories['server'], epoch)
 
             histories['clients'].append(history)
     else:
@@ -3536,12 +3432,11 @@ if __name__ == '__main__':
     # input_dim = 500
     # LABELs = {0, 1, 2}
 
-    in_dir = 'fl/cora'
+    in_dir = '../fl/cora'
     input_dim = 1433
     LABELs = {0, 1, 2, 3, 4, 5, 6}
     num_clients = 4
     hidden_dim_vae = 128
-    latent_dim = 5
     # hidden_dim_gnn = 16
     main(in_dir, input_dim)
     # history_file = f'{in_dir}/histories_vae.pkl'

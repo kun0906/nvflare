@@ -2068,7 +2068,7 @@ def main():
                 print_data(local_data)
 
                 # Use to generate nodes
-                global_cgan_path = 'cgan_10000_0.5_1_0.0001.pt'
+                global_cgan_path = '../cgan_10000_0.5_1_0.0001.pt'
                 if os.path.exists(global_cgan_path):
                     print(f'load {global_cgan_path}...')
                     global_cgan = torch.load(global_cgan_path, weights_only=False, map_location=torch.device(DEVICE))
@@ -2122,7 +2122,7 @@ def main():
 
 
 if __name__ == '__main__':
-    IN_DIR = 'fl/mnist'
+    IN_DIR = '../fl/mnist'
     LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
     # LABELS = {0, 1}
     NUM_CLIENTS = len(LABELS)

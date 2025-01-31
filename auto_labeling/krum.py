@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 
 def pairwise_distances(updates):
@@ -16,7 +17,7 @@ def pairwise_distances(updates):
     return distances
 
 
-def krum(updates, f):
+def krum(updates, f, return_average=False):
     """
     Krum aggregation for Byzantine-robust federated learning.
     :param updates: List of model updates, each being a 1D numpy array.
@@ -28,7 +29,7 @@ def krum(updates, f):
         raise ValueError("Number of updates must be greater than 2 * f.")
 
     distances = pairwise_distances(updates)
-    print(distances)
+    # print(distances)
     scores = []
 
     for i in range(num_updates):
@@ -38,14 +39,36 @@ def krum(updates, f):
         score = np.sum(sorted_distances[1:num_updates - f])
         scores.append(score)
 
-    # Select the update with the smallest score
     print(scores)
-    selected_index = np.argmin(scores)
-    print(selected_index)
-    return updates[selected_index]
+    if return_average:
+        # instead return the smallest value, we return the top weighted average
+        # Sort scores
+        scores = np.array(scores)
+        sorted_indices = np.argsort(scores)
+        sorted_scores = scores[sorted_indices]
+        sorted_updates = torch.stack(updates)[sorted_indices]
+
+        diff_dists = np.diff(sorted_scores)
+        # Find the index of the maximum value (after the halfway point)
+        k = np.argmax(diff_dists)
+        print(f'k: {k}')
+        # weight average
+        update = 0.0
+        cnt = 0.0
+        for j in range(k + 1):
+            update += sorted_updates[j]
+            cnt += 1
+        update = update / cnt
+    else:
+        # Select the update with the smallest score
+        selected_index = np.argmin(scores)
+        print(selected_index)
+        update = updates[selected_index]
+
+    return update
 
 
-def refined_krum(updates, clients_info):
+def refined_krum(updates, clients_info, return_average=True):
     """
 
     Args:
@@ -53,12 +76,13 @@ def refined_krum(updates, clients_info):
         clients_info: # how many samples in a client
 
     Returns:
-
+        clients_type_pred
     """
+    clients_type_pred = np.array(['benign'] * len(updates), dtype='U10')
     num_updates = len(updates)
 
     distances = pairwise_distances(updates)
-    print(distances)
+    # print(distances)
 
     scores = []
     for i in range(num_updates):
@@ -91,11 +115,46 @@ def refined_krum(updates, clients_info):
 
         scores.append(score)
 
-    # Select the update with the smallest score
     print(scores)
-    selected_index = np.argmin(scores)
-    print(selected_index)
-    return updates[selected_index]
+
+    if return_average:
+        # instead return the smallest value, we return the top weighted average
+        # Sort scores
+        scores = np.array(scores)
+        sorted_indices = np.argsort(scores)
+        sorted_scores = scores[sorted_indices]
+        sorted_info = clients_info[sorted_indices]
+        sorted_updates = torch.stack(updates)[sorted_indices]   # not vstack() or hstack()
+        sorted_clients_type_pred = clients_type_pred[sorted_indices]
+
+        diff_dists = np.diff(sorted_scores)
+        # Find the index of the maximum value (after the halfway point)
+        k = np.argmax(diff_dists)
+        print(f'k: {k}')
+
+        sorted_clients_type_pred[k+1:] = 'attacker'
+
+        # **Map the sorted labels back to original order**
+        clients_type_pred[sorted_indices] = sorted_clients_type_pred
+
+        # weight average
+        update = 0.0
+        cnt = 0.0
+        for j in range(k + 1):
+            update += sorted_updates[j] * sorted_info[j]
+            cnt += sorted_info[j]
+        update = update / cnt
+    else:
+        # Select the update with the smallest score
+        selected_index = np.argmin(scores)
+        print(selected_index)
+        update = updates[selected_index]
+
+        clients_type_pred[selected_index] = 'attacker'
+
+    # print(update)
+    # print(clients_type_pred)
+    return update, clients_type_pred
 
 
 def main():
@@ -111,6 +170,7 @@ def main():
             np.random.randn(dim),  # Update from client 3
             np.random.randn(dim) + 10,  # Malicious update
         ]
+        clients_updates = [torch.tensor(v) for v in clients_updates]
         clients_info = np.array([1, 1, 1, 1])
 
         # Number of Byzantine clients to tolerate
@@ -118,13 +178,13 @@ def main():
 
         # Perform Krum aggregation
         print('Krum...')
-        aggregated_update = krum(clients_updates, f)
+        aggregated_update = krum(clients_updates, f, return_average=True)
         print("Aggregated Update (Krum):", aggregated_update)
         print('\nRefined Krum...')
-        aggregated_update2 = refined_krum(clients_updates, clients_info)
+        aggregated_update2 = refined_krum(clients_updates, clients_info, return_average=True)
         print("Aggregated Update (Refined Krum):", aggregated_update2)
 
-        if np.sum(aggregated_update2 - aggregated_update) != 0:
+        if np.sum(aggregated_update2.numpy() - aggregated_update.numpy()) != 0:
             print("Different updates were aggregated")
             results.append(clients_updates)
 

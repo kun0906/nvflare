@@ -7,13 +7,13 @@
 #SBATCH --mem=16G                            # Memory allocation per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU
 #SBATCH --time=05:00:00                      # Time limit (hrs:min:sec)
-#SBATCH --array=0-100
+#SBATCH --array=0-12
 
 # Define parameter combinations
-param1=(0. 0.5 1.0 5.0)                                 # Example distillation weight values
-epochs_values=(10000 50000)             # Number of epochs
-hidden_values=(0 1 2 3 5)                          # Hidden layer sizes
-patience_values=(0.001 0.0001)        # Patience values for early stopping
+param1=(0.2)                                 # Example distillation weight values
+epochs_values=(30 100)             # Number of epochs
+hidden_values=(10 100 200)                          # Hidden layer sizes
+patience_values=(101 501)        # Patience values for early stopping
 
 # Calculate the total number of parameter combinations
 total_combinations=$(( ${#param1[@]} * ${#epochs_values[@]} * ${#hidden_values[@]} * ${#patience_values[@]} ))
@@ -53,4 +53,5 @@ pwd
 
 # Run the script with the selected parameters
 #PYTHONPATH=. python3 gnn_fl_vaes_attention_link_jaccard.py $PARAMS
-PYTHONPATH=. python3 cgan_fl_generate.py $PARAMS
+#PYTHONPATH=. python3 cgan_fl_generate.py $PARAMS
+PYTHONPATH=. python3 gans_fl_cnn_attention_attacks.py $PARAMS
