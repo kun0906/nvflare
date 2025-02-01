@@ -115,7 +115,7 @@ def refined_krum(updates, clients_info, return_average=True):
 
         scores.append(score)
 
-    print(scores)
+    print(f'scores: {scores}')
 
     if return_average:
         # instead return the smallest value, we return the top weighted average

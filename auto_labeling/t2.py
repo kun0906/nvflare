@@ -6,6 +6,11 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
+file_path = 'histories_gan_r_0.1-n_1.pth'
+data = torch.load(file_path, map_location="cpu")
+print(data)
+
+
 
 # Minibatch Discrimination
 class MinibatchDiscrimination(nn.Module):

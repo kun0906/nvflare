@@ -273,7 +273,8 @@ def train_nn(X_train, y_train, X_val, y_val, X_test, y_test):
             with torch.no_grad():
                 for param, grad in zip(global_nn.parameters(), aggregated_gradients):
                     if grad is not None:
-                        param -= learning_rate * grad
+                        # param -= learning_rate * grad
+                        param.copy_(param - learning_rate * grad)  # In-place update
         else:
             # You will set the gradients of the global model parameters directly to the aggregated gradients
             with torch.no_grad():
