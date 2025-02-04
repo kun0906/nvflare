@@ -135,7 +135,7 @@ def aggregate_with_krum(clients_parameters, clients_info, global_model, device=N
         # clients_weights = torch.tensor([1] * len(clients_updates)) # default as 1
         clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
         aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, return_average=True)
-        # print(key, clients_type_pred)
+        print(key, clients_type_pred)
         global_state_dict[key] = aggregated_update.to(device)
 
     # Update the global model with the aggregated parameters

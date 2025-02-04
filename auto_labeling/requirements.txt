@@ -1,0 +1,12 @@
+
+# Python~=3.10.12
+
+nvflare~=2.5.0
+torchmetrics    # will install torch and others..
+torch==2.4.0
+torchvision
+pytest
+matplotlib
+scikit-learn
+seaborn
+

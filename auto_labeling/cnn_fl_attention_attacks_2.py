@@ -5,7 +5,7 @@
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 cgan_fl_cnn_attention_attacks.py
+    $PYTHONPATH=. python3 cnn_fl_attention_attacks.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 """
@@ -40,19 +40,22 @@ print(f"Device: {DEVICE}")
 # Set print options for 2 decimal places
 torch.set_printoptions(precision=2, sci_mode=False)
 
+import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+torch.cuda.empty_cache()
 
 # Define the function to parse the parameters
 def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.1,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.2,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=32,
                         help="The hidden dimension of CNN.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=30,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=int, required=False, default=1,
+    parser.add_argument('-p', '--patience', type=int, required=False, default=10,
                         help="The patience.")
     # Parse the arguments
     args = parser.parse_args()
@@ -67,104 +70,14 @@ args = parse_arguments()
 # Access the arguments
 LABELING_RATE = args.labeling_rate
 SERVER_EPOCHS = args.server_epochs
-GAN_EPOCHS = args.patience
-GEN_SIZE_PER_CLASS = args.hidden_dimension
+# GAN_EPOCHS = args.patience
+# GEN_SIZE_PER_CLASS = args.hidden_dimension
 # hidden_dim_cnn = args.hidden_dimension
 # patience = args.patience
 # For testing, print the parsed parameters
 # print(f"labeling_rate: {LABELING_RATE}")
 # print(f"server_epochs: {SERVER_EPOCHS}")
 print(args)
-
-
-class Generator(nn.Module):
-    def __init__(self, latent_dim=100, num_classes=10):
-        super(Generator, self).__init__()
-        # Fully connected layer to project z into a 128 * 7 * 7 tensor
-        self.fc1 = nn.Linear(latent_dim + num_classes, 128 * 7 * 7)
-
-        # Transposed convolutional layers to upsample to 28x28
-        self.conv1 = nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1)  # Upsample to 14x14
-        self.conv11 = nn.ConvTranspose2d(64, 64, kernel_size=3, stride=1, padding=1)  #
-
-        self.conv2 = nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1)  # Upsample to 28x28
-        self.conv21 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)  #
-
-        self.conv3 = nn.ConvTranspose2d(32, 16, kernel_size=3, stride=1, padding=1)  # Keep 28x28
-        self.conv31 = nn.ConvTranspose2d(16, 16, kernel_size=3, stride=1, padding=1)  # Keep 28x28
-
-        self.conv4 = nn.ConvTranspose2d(16, 1, kernel_size=3, stride=1, padding=1)  # Keep 28x28
-        self.leaky_relu = nn.LeakyReLU(0.2)
-        self.tanh = nn.Tanh()
-        self.latent_dim = latent_dim
-
-    def forward(self, z, c, num_layers=1):
-        # x: (N, 100), c: (N, 10)
-        # x, c = x.view(x.size(0), -1), c.float()  # may not need
-        v = torch.cat((z, c), 1)  # v: (N, 110)
-        x = self.fc1(v)
-        x = x.view(-1, 128, 7, 7)  # Reshape into feature map (batch_size, channels, height, width)
-
-        x = self.leaky_relu(self.conv1(x))  # Upsample to 14x14
-        for _ in range(num_layers):
-            x = self.leaky_relu(self.conv11(x))  # Upsample to 14x14
-
-        x = self.leaky_relu(self.conv2(x))  # Upsample to 28x28
-        for _ in range(num_layers):
-            x = self.leaky_relu(self.conv21(x))  # Upsample to 28x28
-
-        x = self.leaky_relu(self.conv3(x))  # Keep 28x28
-        for _ in range(num_layers):
-            x = self.leaky_relu(self.conv31(x))  # Upsample to 28x28
-
-        x = self.tanh(self.conv4(x))  # Output is in the range [-1, 1]
-
-        return x
-
-
-class Discriminator(nn.Module):
-    def __init__(self, num_classes=10):
-        super(Discriminator, self).__init__()
-        self.conv1 = nn.Conv2d(1, 16, kernel_size=4, stride=2, padding=1)  # From 1 channel to 16 channels
-        self.conv11 = nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1)
-
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=4, stride=2, padding=1)
-        self.conv21 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
-
-        self.conv3 = nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=1)
-        self.conv31 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1)
-
-        self.fc1 = nn.Linear(64 * 3 * 3, 512)  # Adjust the dimensions after the convolution layers
-        self.fc2 = nn.Linear(512, 1)
-        self.leaky_relu = nn.LeakyReLU(0.2)
-        self.sigmoid = nn.Sigmoid()
-
-        self.transform = nn.Sequential(
-            nn.Linear(28 * 28 + num_classes, 784),
-            nn.LeakyReLU(0.2),
-        )
-
-    def forward(self, x, c):
-        x, c = x.view(x.size(0), -1), c.float()  # may not need
-        v = torch.cat((x, c), 1)  # v: (N, 794)
-        y_ = self.transform(v)  # (N, 784)
-        x = y_.view(y_.shape[0], 1, 28, 28)  # (N, 1, 28, 28)
-
-        # Ensure input has the correct shape (batch_size, 1, 28, 28)
-        x = self.leaky_relu(self.conv1(x))
-        x = self.leaky_relu(self.conv11(x))
-
-        x = self.leaky_relu(self.conv2(x))
-        x = self.leaky_relu(self.conv21(x))
-
-        x = self.leaky_relu(self.conv3(x))
-        x = self.leaky_relu(self.conv31(x))
-
-        x = x.view(x.size(0), -1)  # Flatten the output for the fully connected layers
-        x = self.leaky_relu(self.fc1(x))
-        x = self.sigmoid(self.fc2(x))
-        return x
-
 
 class CNN(nn.Module):
     def __init__(self, num_classes=10):
@@ -207,182 +120,6 @@ class CNN(nn.Module):
         # x = F.softmax(self.fc2(x), dim=1)
         x = self.fc2(x)
         return x
-
-@timer
-def train_cgan(local_gan, global_cgan, local_data, train_info={}):
-    print(f'train lcoal gan on client ...')
-    # Initialize local_gan with global_gan
-    local_gan.load_state_dict(global_cgan.state_dict())
-
-    X, y = local_data['X'], local_data['y']
-    mask = local_data['train_mask']
-    # only use labeled data for training gan
-    X = X[mask]
-    y = y[mask]
-
-    onehot_labels = torch.zeros((len(y), len(LABELS))).to(DEVICE)
-    for i in LABELS:
-        mask = y.numpy() == i
-        onehot_labels[mask, i] = 1
-
-    # Only update available local labels, i.e., not all the local_gans will be updated.
-    # local_labels = set(y.tolist())
-    print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
-
-    generator = local_gan
-    generator = generator.to(DEVICE)
-    # local_gan.load_state_dict(global_gans[l].state_dict())
-    z_dim = generator.latent_dim
-
-    discriminator = Discriminator(num_classes=NUM_CLASSES).to(DEVICE)
-
-    LR = 1e-3
-    optimizer_G = optim.Adam(generator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
-    scheduler_G = StepLR(optimizer_G, step_size=1000, gamma=0.8)
-
-    optimizer_D = optim.Adam(discriminator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
-    scheduler_D = StepLR(optimizer_D, step_size=1000, gamma=0.8)
-    # optimizer_G = optim.Adam(generator.parameters(), lr=lr)
-    # optimizer_D = optim.Adam(discriminator.parameters(), lr=lr)
-
-    adversarial_loss = nn.BCELoss(reduction='mean')  # Binary Cross-Entropy Loss
-
-    # Training loop
-    losses = []
-    STEP = 2
-    ALPHA = 1.0
-    # EPOCHs = 51
-    m = -1  # subset
-    for epoch in range(GAN_EPOCHS):
-        # ---- Train Discriminator ----
-        discriminator.train()
-
-        indices = torch.randperm(len(X))[:m]  # Randomly shuffle and pick the first 10 indices
-        real_data = X[indices].float().to(DEVICE)
-        labels = onehot_labels[indices]
-
-        # real_data = X.clone().detach().float().to(DEVICE) / 255  # Replace with your local data (class-specific)
-        real_data = real_data.to(DEVICE)
-        real_data = real_data.view(-1, 1, 28, 28)  # Ensure shape is (batch_size, 1, 28, 28)
-
-        batch_size = real_data.size(0)
-        real_labels = torch.ones(batch_size, 1).to(DEVICE)
-        fake_labels = torch.zeros(batch_size, 1).to(DEVICE)
-
-        # Generate synthetic data
-        z = torch.randn(batch_size, z_dim).to(DEVICE)
-        fake_data = generator(z, labels).detach()  # Freeze Generator when training Discriminator
-        # print(fake_data.shape,flush=True)
-        # print(epoch, collections.Counter(labels.cpu().numpy().argmax(axis=1).tolist()))
-
-        # Discriminator Loss
-        real_loss = adversarial_loss(discriminator(real_data, labels), real_labels)
-        fake_loss = adversarial_loss(discriminator(fake_data, labels), fake_labels)
-        d_loss = (real_loss + fake_loss) / 2
-
-        optimizer_D.zero_grad()
-        d_loss.backward()
-        optimizer_D.step()
-
-        scheduler_D.step()
-
-        STEP = 5
-
-        generator.train()
-        z = torch.randn(batch_size, z_dim).to(DEVICE)
-        generated_data = generator(z, labels)
-
-        # Generator Loss (Discriminator should classify fake data as real)
-        g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
-        mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-        g_loss += ALPHA * mse_loss
-
-        optimizer_G.zero_grad()
-        g_loss.backward()
-        optimizer_G.step()
-
-        # print(epoch, d_loss, '...')
-        while g_loss > d_loss and STEP > 0:
-            # print(epoch, g_loss, d_loss.item(), STEP)
-            # ---- Train Generator ----
-            # we don't need to freeze the discriminator because the optimizer for the discriminator
-            # (optimizer_D) is not called.
-            # This ensures that no updates are made to the discriminator's parameters,
-            # even if gradients are computed during the backward pass.
-            generator.train()
-            z = torch.randn(batch_size, z_dim).to(DEVICE)
-            generated_data = generator(z, labels)
-
-            # Generator Loss (Discriminator should classify fake data as real)
-            g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
-            mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-            g_loss += ALPHA * mse_loss
-
-            optimizer_G.zero_grad()
-            g_loss.backward()
-            optimizer_G.step()
-
-            STEP -= 1
-
-        scheduler_G.step()
-
-        # ---- Logging ----
-        if epoch % 100 == 0:
-            print(f"Epoch {epoch}/{GAN_EPOCHS} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
-                  f"LR_D: {scheduler_D.get_last_lr()}, LR_G: {scheduler_G.get_last_lr()}, "
-                  f"mse: {mse_loss.item():.4f}, STEP:{STEP}")
-        losses.append(g_loss.item())
-
-        # Display some generated images after each epoch
-        if epoch % 100 == 0:
-
-            with torch.no_grad():
-                z = torch.randn(100, 100).to(DEVICE)
-                c = torch.zeros((100, NUM_CLASSES)).to(DEVICE)
-                s = c.shape[0] // NUM_CLASSES
-                for i in range(NUM_CLASSES):
-                    c[i * s:(i + 1) * s, i] = 1
-
-                generated_imgs = generator(z, c)
-
-                # # Binarization: Threshold the generated image at 0.5 (assuming Tanh output range is [-1, 1])
-                # generated_images = (generated_imgs + 1) / 2  # Scale from [-1, 1] to [0, 1]
-                # binarized_images = (generated_images > 0.5).float()
-
-                generated_imgs = (generated_imgs + 1) * 127.5  # Convert [-1, 1] back to [0, 255]
-                generated_imgs = generated_imgs.clamp(0, 255)  # Ensure values are within [0, 255]
-                generated_imgs = generated_imgs.cpu().numpy().astype(int)
-
-                fig, axes = plt.subplots(16, 10, figsize=(8, 8))
-                for i, ax in enumerate(axes.flatten()):
-                    if i < 100:
-                        ax.imshow(generated_imgs[i, 0], cmap='gray')
-                    else:
-                        ax.imshow(((real_data[i - 100, 0].cpu().numpy() + 1) * 127.5).astype(int), cmap='gray')
-
-                    ax.axis('off')
-
-                    # Draw a red horizontal line across the entire figure when i == 100
-                    if i == 100:
-                        # Add a red horizontal line spanning the entire width of the plot
-                        # This gives the y-position of the 100th image in the figure
-                        line_position = (160 - 100 - 2) / 160
-                        plt.plot([0, 1], [line_position, line_position], color='red', linewidth=2,
-                                 transform=fig.transFigure,
-                                 clip_on=False)
-
-                plt.suptitle(f'epoch {epoch}')
-                plt.tight_layout()
-                fig_file = f'tmp/generated_{epoch}.png'
-                dir_path = os.path.dirname(os.path.abspath(fig_file))
-                os.makedirs(dir_path, exist_ok=True)
-                plt.savefig(fig_file)
-                plt.show()
-                plt.close(fig)
-
-    train_info[f'cgan'] = {"losses": losses}
-
-    local_gan.load_state_dict(generator.state_dict())  # update local_gan again
 
 
 def gen_local_data(global_cgan, local_data, train_info):
@@ -519,8 +256,8 @@ def gen_local_data(global_cgan, local_data, train_info):
     # tmp_data = {'X': node_features, 'y': labels, 'edge_indices': edge_indices, 'edge_weight': edge_weight, }
     # train_link_predictor(local_lp, global_lp, tmp_data, train_info)
 
-@timer
-def train_cnn(local_cnn, global_cnn, train_info={}):
+
+def train_cnn(local_cnn, global_cnn, local_data, train_info={}, client_type='attacker'):
     """
         1. Use gans to generated data for each class
         2. Use the generated data + local data to train local cnn with initial parameters of global_cnn
@@ -535,7 +272,8 @@ def train_cnn(local_cnn, global_cnn, train_info={}):
 
     """
 
-    X, y, train_mask, val_mask, test_mask = train_info['cnn']['data']
+    X, y = local_data['X'].to(DEVICE), local_data['y'].to(DEVICE)
+    train_mask, val_mask, test_mask = local_data['train_mask'], local_data['val_mask'], local_data['test_mask']
     tmp = X.cpu().numpy().flatten()
     print(f'X: min: {min(tmp)}, max: {max(tmp)}')
 
@@ -557,7 +295,7 @@ def train_cnn(local_cnn, global_cnn, train_info={}):
     #       {k: float(f"{v:.2f}") for k, v in labeled_classes_weights.items()})
 
     # only train smaller model
-    epochs_client = 501
+    epochs_client = 1001
     losses = []
     val_losses = []
     best = {'epoch': -1, 'val_accuracy': -1.0, 'val_accs': [], 'val_losses': [], 'train_accs': [], 'train_losses': []}
@@ -572,10 +310,11 @@ def train_cnn(local_cnn, global_cnn, train_info={}):
     # optimizer = optim.Adam(local_cnn.parameters(), lr=0.005)
     optimizer = optim.Adam(local_cnn.parameters(), lr=0.001, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
     # optimizer = torch.optim.AdamW(local_cnn.parameters(), lr=0.001, weight_decay=5e-4)
-    criterion = nn.CrossEntropyLoss(weight=class_weight, reduction='mean').to(DEVICE)
-    # criterion = nn.CrossEntropyLoss().to(DEVICE)
+    # criterion = nn.CrossEntropyLoss(weight=class_weight, reduction='mean').to(DEVICE)
+    criterion = nn.CrossEntropyLoss(reduction='sum').to(DEVICE)
     scheduler = StepLR(optimizer, step_size=100, gamma=0.9)
 
+    train_info['training_results'] = []
     # node_features = node_features.view(node_features.shape[0], 1, 28, 28)
     for epoch in range(epochs_client):
         local_cnn.train()  #
@@ -601,6 +340,14 @@ def train_cnn(local_cnn, global_cnn, train_info={}):
         #         print(f"{name}: {param.grad}")
         #     else:
         #         print(f"{name}: No gradient (likely frozen or unused)")
+        if client_type == 'attacker':
+            model_grads = {key: param.grad.clone() + 1e6 for key, param in local_cnn.named_parameters()
+                           if param.grad is not None}
+        else:
+            model_grads = {key: param.grad.clone() for key, param in local_cnn.named_parameters()
+                           if param.grad is not None}
+        train_info['training_results'].append({'epoch': epoch, 'grads': model_grads,
+                                               'learning_rate': optimizer.param_groups[0]['lr']})
 
         optimizer.step()
 
@@ -781,294 +528,67 @@ def evaluate_train(cnn, graph_data, gen_start, generated_size, epoch, local_data
             evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_shared_test, y_shared_test, verbose=10)
 
 
-def server_cgan(global_cgan, X, y):
-    print(f'train server cgan on generated data ...')
-    # # Initialize local_gan with global_gan
-    # local_gan.load_state_dict(global_cgan.state_dict())
-    #
-    # X, y = local_data['X'], local_data['y']
-    # mask = local_data['train_mask']
-    # # only use labeled data for training gan
-    # X = X[mask]
-    # y = y[mask]
-
-    onehot_labels = torch.zeros((len(y), len(LABELS))).to(DEVICE)
-    for i in LABELS:
-        mask = y.cpu().numpy() == i
-        onehot_labels[mask, i] = 1
-
-    # Only update available local labels, i.e., not all the local_gans will be updated.
-    # local_labels = set(y.tolist())
-    print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
-
-    generator = Generator()
-    generator.load_state_dict(global_cgan.state_dict())
-    generator = generator.to(DEVICE)
-    # local_gan.load_state_dict(global_gans[l].state_dict())
-    z_dim = generator.latent_dim
-
-    discriminator = Discriminator(num_classes=NUM_CLASSES).to(DEVICE)
-
-    LR = 1e-3
-    optimizer_G = optim.Adam(generator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
-    scheduler_G = StepLR(optimizer_G, step_size=1000, gamma=0.8)
-
-    optimizer_D = optim.Adam(discriminator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
-    scheduler_D = StepLR(optimizer_D, step_size=1000, gamma=0.8)
-    # optimizer_G = optim.Adam(generator.parameters(), lr=lr)
-    # optimizer_D = optim.Adam(discriminator.parameters(), lr=lr)
-
-    adversarial_loss = nn.BCELoss(reduction='mean')  # Binary Cross-Entropy Loss
-
-    # Training loop
-    losses = []
-    STEP = 2
-    ALPHA = 0.5
-    server_gan_epochs = GAN_EPOCHS * 2
-    m = 100  # subset
-    for epoch in range(server_gan_epochs):
-        # ---- Train Discriminator ----
-        discriminator.train()
-
-        indices = torch.randperm(len(X))[:m]  # Randomly shuffle and pick the first 10 indices
-        real_data = X[indices].float().to(DEVICE)
-        labels = onehot_labels[indices]
-
-        # real_data = X.clone().detach().float().to(DEVICE) / 255  # Replace with your local data (class-specific)
-        real_data = real_data.to(DEVICE)
-        real_data = real_data.view(-1, 1, 28, 28)  # Ensure shape is (batch_size, 1, 28, 28)
-
-        batch_size = real_data.size(0)
-        real_labels = torch.ones(batch_size, 1).to(DEVICE)
-        fake_labels = torch.zeros(batch_size, 1).to(DEVICE)
-
-        # Generate synthetic data
-        z = torch.randn(batch_size, z_dim).to(DEVICE)
-        fake_data = generator(z, labels).detach()  # Freeze Generator when training Discriminator
-        # print(fake_data.shape,flush=True)
-        # print(epoch, collections.Counter(labels.cpu().numpy().argmax(axis=1).tolist()))
-
-        # Discriminator Loss
-        real_loss = adversarial_loss(discriminator(real_data, labels), real_labels)
-        fake_loss = adversarial_loss(discriminator(fake_data, labels), fake_labels)
-        d_loss = (real_loss + fake_loss) / 2
-
-        optimizer_D.zero_grad()
-        d_loss.backward()
-        optimizer_D.step()
-
-        scheduler_D.step()
-
-        STEP = 5
-
-        generator.train()
-        z = torch.randn(batch_size, z_dim).to(DEVICE)
-        generated_data = generator(z, labels)
-
-        # Generator Loss (Discriminator should classify fake data as real)
-        g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
-        mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-        g_loss += ALPHA * mse_loss
-
-        optimizer_G.zero_grad()
-        g_loss.backward()
-        optimizer_G.step()
-
-        # print(epoch, d_loss, '...')
-        while g_loss > d_loss and STEP > 0:
-            # print(epoch, g_loss, d_loss.item(), STEP)
-            # ---- Train Generator ----
-            # we don't need to freeze the discriminator because the optimizer for the discriminator
-            # (optimizer_D) is not called.
-            # This ensures that no updates are made to the discriminator's parameters,
-            # even if gradients are computed during the backward pass.
-            generator.train()
-            z = torch.randn(batch_size, z_dim).to(DEVICE)
-            generated_data = generator(z, labels)
-
-            # Generator Loss (Discriminator should classify fake data as real)
-            g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
-            mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-            g_loss += ALPHA * mse_loss
-
-            optimizer_G.zero_grad()
-            g_loss.backward()
-            optimizer_G.step()
-
-            STEP -= 1
-
-        scheduler_G.step()
-
-        # ---- Logging ----
-        if epoch % 100 == 0:
-            print(f"Epoch {epoch}/{server_gan_epochs} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
-                  f"LR_D: {scheduler_D.get_last_lr()}, LR_G: {scheduler_G.get_last_lr()}, "
-                  f"mse: {mse_loss.item():.4f}, STEP:{STEP}")
-        losses.append(g_loss.item())
-
-        # # Display some generated images after each epoch
-        # if epoch % 100 == 0:
-        #     with torch.no_grad():
-        #         z = torch.randn(100, 100).to(DEVICE)
-        #         c = torch.zeros((100, NUM_CLASSES)).to(DEVICE)
-        #         s = c.shape[0] // NUM_CLASSES
-        #         for i in range(NUM_CLASSES):
-        #             c[i * s:(i + 1) * s, i] = 1
-        #
-        #         generated_imgs = generator(z, c)
-        #
-        #         # # Binarization: Threshold the generated image at 0.5 (assuming Tanh output range is [-1, 1])
-        #         # generated_images = (generated_imgs + 1) / 2  # Scale from [-1, 1] to [0, 1]
-        #         # binarized_images = (generated_images > 0.5).float()
-        #
-        #         generated_imgs = (generated_imgs + 1) * 127.5  # Convert [-1, 1] back to [0, 255]
-        #         generated_imgs = generated_imgs.clamp(0, 255)  # Ensure values are within [0, 255]
-        #         generated_imgs = generated_imgs.cpu().numpy().astype(int)
-        #
-        #         fig, axes = plt.subplots(16, 10, figsize=(8, 8))
-        #         for i, ax in enumerate(axes.flatten()):
-        #             if i < 100:
-        #                 ax.imshow(generated_imgs[i, 0], cmap='gray')
-        #             else:
-        #                 ax.imshow(((real_data[i - 100, 0].cpu().numpy() + 1) * 127.5).astype(int), cmap='gray')
-        #
-        #             ax.axis('off')
-        #
-        #             # Draw a red horizontal line across the entire figure when i == 100
-        #             if i == 100:
-        #                 # Add a red horizontal line spanning the entire width of the plot
-        #                 # This gives the y-position of the 100th image in the figure
-        #                 line_position = (160 - 100 - 2) / 160
-        #                 plt.plot([0, 1], [line_position, line_position], color='red', linewidth=2,
-        #                          transform=fig.transFigure,
-        #                          clip_on=False)
-        #
-        #         plt.suptitle(f'epoch {epoch}')
-        #         plt.tight_layout()
-        #         fig_file = f'tmp/generated_{epoch}.png'
-        #         dir_path = os.path.dirname(os.path.abspath(fig_file))
-        #         os.makedirs(dir_path, exist_ok=True)
-        #         plt.savefig(fig_file)
-        #         plt.show()
-
-    # train_info[f'cgan'] = {"losses": losses}
-
-    global_cgan.load_state_dict(generator.state_dict())  # update local_gan again
+def L2(params1, params2):
+    return sum((torch.norm(p1 - p2) ** 2 for p1, p2 in zip(params1, params2))).sqrt()
 
 
-def predict_client_type_with_krum(clients_parameters, clients_info, device=None):
-    key = list(clients_parameters[0].keys())[0]
-    # Perform simple averaging of the parameters
-    clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_parameters.values()]
+def aggregate_grads_with_krum(clients_grads, clients_info, device=None):
+    key = list(clients_grads[0].keys())[0]
+    clients_updates = [grads[key].cpu() for grads in clients_grads]
+    # clients_weights = torch.tensor([1] * len(clients_updates)) # default as 1
     clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, return_average=True)
+    _, clients_type_pred = refined_krum(clients_updates, clients_weights, return_average=True)
 
     return clients_type_pred
 
-def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, histories_server, server_epoch):
-    aggregate_method = 'retrain global cgan'
+
+def aggregate_cnns(clients_history, clients_info, global_cnn, histories_server, server_epoch):
+    aggregate_method = 'aggregate grads'
     if aggregate_method == 'parameter':  # aggregate clients' parameters
-        aggregate_with_krum(clients_gans, clients_info, global_cgan, DEVICE)
+        aggregate_with_krum(clients_history, clients_info, global_cnn, DEVICE)
         # aggregate_with_attention(client_parameters_list, global_gan, DEVICE)  # update global_gan inplace
     else:
-        #############################################################################################
-        # Find the benign clients cgans and ignore the attackers
-        clients_type_pred = predict_client_type_with_krum(clients_gans, clients_info, DEVICE)
-        print(f'clients_type_pred: {clients_type_pred}')
-        # clients_gans = {i_: clients_gans[i_] for i_ in range(len(clients_type_pred)) \
-        # if clients_type_pred[i_] == 'benign']}
-        # print(f'benign clients: {len(clients_gans)}')
-        # generated data
-        generated_data = {l_: torch.zeros((0, 28, 28)).to(DEVICE) for l_ in LABELS}
-        for i, (client_id, client_cgan_params) in enumerate(clients_gans.items()):
-            if clients_type_pred[i] == 'attacker':
-                print(f'client_id: {client_id} is an attacker, skip it.')
-                continue
-            generator = Generator().to(DEVICE)
-            generator.load_state_dict(client_cgan_params)
+        client_epochs = len(clients_history[0]['training_results'])
+        for client_epoch in range(client_epochs):
+            #############################################################################################
+            # Find the benign clients cgans and ignore the attackers
+            clients_grads = [his['training_results'][client_epoch]['grads'] for his in clients_history.values()]
+            clients_type_pred = aggregate_grads_with_krum(clients_grads, clients_info, DEVICE)
+            if client_epoch%50==0:
+                print(f'clients_type_pred: {clients_type_pred}')
 
-            # GEN_SIZE_PER_CLASS = 10  # for each class, we generate 10 images
-            for class_, cnt_ in clients_info[client_id]['label_cnts'].items():
-                c = torch.zeros((GEN_SIZE_PER_CLASS, NUM_CLASSES)).to(DEVICE)
-                c[:, class_] = 1
-                z = torch.randn(c.shape[0], 100).to(DEVICE)
-                with torch.no_grad():
-                    generated_imgs = generator(z, c)
-                    generated_imgs = generated_imgs.squeeze(1)  # Removes the second dimension (size 1)
+            aggregated_grads = {key: 0 for key, grad in
+                                clients_history[0]['training_results'][client_epoch]['grads'].items()}
+            # train_info[epoch] = {'grads': model_grads}
+            for i, (client_id, train_info) in enumerate(clients_history.items()):
+                if clients_type_pred[i] == 'attacker':
+                    if client_epoch % 50 == 0:
+                        print(f'client_id: {client_id} is an attacker, skip it.')
+                    continue
 
-                generated_data[class_] = torch.cat((generated_data[class_], generated_imgs), dim=0)
-        #######################################################################################################
-        # using the generated data to train a global cgan
-        X = torch.zeros((0, 28, 28)).to(DEVICE)
-        y = torch.zeros((0,)).to(DEVICE)
-        for l_, X_ in generated_data.items():
-            X = torch.cat((X, X_), dim=0)
-            y_ = torch.tensor([l_] * X_.shape[0]).to(DEVICE)
-            y = torch.cat((y, y_))
+                learning_rate = train_info['training_results'][client_epoch]['learning_rate']
+                for key in aggregated_grads.keys():
+                    aggregated_grads[key] = (aggregated_grads[key] +
+                                             train_info['training_results'][client_epoch]['grads'][key])
 
-        server_cgan(global_cgan, X, y)
+            # server gradient update. Note that we should use the same learning rate on clients
+            old_params = [param.clone() for param in global_cnn.parameters()]
+            # Update global model using aggregated gradients
+            with torch.no_grad():
+                # named_parameters() returns actual references to model parameters, so param.copy_() modifies them in place.
+                for key, param in global_cnn.named_parameters():
+                    if key in aggregated_grads.keys():
+                        grad = aggregated_grads[key]
+                        param.copy_(param - learning_rate * grad)  # In-place update
 
-    if server_epoch%50 == 0:
-        torch.save(global_cgan.state_dict(), f'global_cgan_{server_epoch}.pth')
+            if client_epoch % 50 == 0:
+                print(f'server_epoch: {server_epoch}, grad diff: {L2(global_cnn.parameters(), old_params)}, '
+                  f'client_epoch:{client_epoch}/{client_epochs}, learning_rate:{learning_rate}')
 
-    ##########################################################################################################
-    # check the generated data
-    generator = Generator().to(DEVICE)
-    generator.load_state_dict(global_cgan.state_dict())
-    with torch.no_grad():
-        z = torch.randn(100, 100).to(DEVICE)
-        c = torch.zeros((100, NUM_CLASSES)).to(DEVICE)
-        s = c.shape[0] // NUM_CLASSES
-        for i in range(NUM_CLASSES):
-            c[i * s:(i + 1) * s, i] = 1
+        if server_epoch % 50 == 0:
+            torch.save(global_cnn.state_dict(), f'global_cnn_{server_epoch}.pth')
 
-        generated_imgs = generator(z, c)
-        generated_imgs = generated_imgs.squeeze(1)  # Removes the second dimension (size 1)
-
-        generated_imgs = (generated_imgs + 1) * 127.5  # Convert [-1, 1] back to [0, 255]
-        generated_imgs = generated_imgs.clamp(0, 255)  # Ensure values are within [0, 255]
-        generated_imgs = generated_imgs.cpu().numpy().astype(int)
-
-        fig, axes = plt.subplots(16, 10, figsize=(8, 8))
-        for i, ax in enumerate(axes.flatten()):
-            if i < 100:
-                ax.imshow(generated_imgs[i], cmap='gray')
-
-            ax.axis('off')
-
-            # Draw a red horizontal line across the entire figure when i == 100
-            if i == 100:
-                # Add a red horizontal line spanning the entire width of the plot
-                # This gives the y-position of the 100th image in the figure
-                line_position = (160 - 100 - 2) / 160
-                plt.plot([0, 1], [line_position, line_position], color='red', linewidth=2,
-                         transform=fig.transFigure,
-                         clip_on=False)
-
-        plt.suptitle(f'server_epoch {server_epoch}')
-        plt.tight_layout()
-        fig_file = f'tmp/generated_server_{server_epoch}.png'
-        dir_path = os.path.dirname(os.path.abspath(fig_file))
-        os.makedirs(dir_path, exist_ok=True)
-        plt.savefig(fig_file)
-        plt.show()
-        plt.close(fig)
-
-    # sizes = {l: 100 for l in LABELS}
-    # print(sizes)
-    # # generated new data
-    # generated_data = gen_data(global_cgan, sizes, similarity_method=None,
-    #                           local_data=local_data)
-    #
-    # for l, vs in generated_data.items():
-    #     vs = vs['X']
-    #     vs = (vs + 1) * 127.5  # Convert [-1, 1] back to [0, 255]
-    #     vs = vs.clamp(0, 255)  # Ensure values are within [0, 255]
-    #     vs = vs.cpu().numpy().astype(int)
-    #     plot_img(vs, l, show=True, fig_file=f'tmp/generated_{l}_{server_epoch}~.png')
-
-    # ml_info = check_gen_data(generated_data, local_data)
-    # histories_server.append(ml_info)
+    # info = evaluate({0: (global_nn, None)}, X_train, y_train, X_val, y_val, X_test, y_test, X_test, y_test)
 
     # # generated new data
     # local_gans = {}
@@ -1086,11 +606,6 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
     #                           local_data=local_data)
     # ml_info = check_gen_data(generated_data, local_data)
     # histories_server.append(ml_info)
-
-
-def aggregate_cnns(clients_cnns, clients_info, global_cnn, histories_server, epoch):
-    print('*aggregate cnn...')
-    aggregate_with_krum(clients_cnns, clients_info, global_cnn, DEVICE)  # update global_cnn inplace
 
 
 @timer
@@ -1113,7 +628,9 @@ def evaluate(local_cnn, local_data, DEVICE, global_cnn, test_type='test', client
 
         # graph_data = train_info['cnn']['graph_data'].to(DEVICE)  # graph data
         # train_mask, val_mask, test_mask = graph_data.train_mask, graph_data.val_mask, graph_data.test_mask
-        X, Y, train_mask, val_mask, test_mask = train_info['cnn']['data']
+        # X, Y, train_mask, val_mask, test_mask = train_info['cnn']['data']
+        X, y = local_data['X'].to(DEVICE), local_data['y'].to(DEVICE)
+        train_mask, val_mask, test_mask = local_data['train_mask'], local_data['val_mask'], local_data['test_mask']
 
         cnn.eval()
         with torch.no_grad():
@@ -1127,32 +644,33 @@ def evaluate(local_cnn, local_data, DEVICE, global_cnn, test_type='test', client
                 # Calculate accuracy for the labeled data
                 # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
                 # print(f'labeled_indices {len(labeled_indices)}')
-                true_labels = Y
+                true_labels = y
 
                 predicted_labels_tmp = predicted_labels[mask_]
                 true_labels_tmp = true_labels[mask_]
-                y = true_labels_tmp.cpu().numpy()
+                y_true = true_labels_tmp.cpu().numpy()
                 y_pred = predicted_labels_tmp.cpu().numpy()
-                print(collections.Counter(y.tolist()))
+                print(collections.Counter(y_true.tolist()))
 
                 # Total samples and number of classes
-                total_samples = len(y)
+                total_samples = len(y_true)
                 # Compute class weights
-                class_weights = {c: total_samples / count for c, count in collections.Counter(y.tolist()).items()}
-                # sample_weight = [class_weights[y_0.item()] for y_0 in y]
-                sample_weight = [1 for y_0 in y]
+                class_weights = {c: total_samples / count for c, count in collections.Counter(y_true.tolist()).items()}
+                # sample_weight = [class_weights[y_0.item()] for y_0 in y_true]
+                sample_weight = [1 for y_0 in y_true]
                 print(f'class_weights: {class_weights}')
 
-                accuracy = accuracy_score(y, y_pred, sample_weight=sample_weight)
+                accuracy = accuracy_score(y_true, y_pred, sample_weight=sample_weight)
 
                 train_info[f'{model_type}_{data_type}_accuracy'] = accuracy
-                print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+                print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, "
+                      f"{collections.Counter(y_true.tolist())}")
                 # if 'all' in test_type:
                 #     client_result['labeled_accuracy_all'] = accuracy
                 # else:
                 #     client_result['labeled_accuracy'] = accuracy
                 # print(y, y_pred)
-                conf_matrix = confusion_matrix(y, y_pred, sample_weight=sample_weight)
+                conf_matrix = confusion_matrix(y_true, y_pred, sample_weight=sample_weight)
                 conf_matrix = conf_matrix.astype(int)
                 train_info[f'{model_type}_{data_type}_cm'] = conf_matrix
                 print("Confusion Matrix:\n", conf_matrix)
@@ -1821,8 +1339,7 @@ def normalize(X):
     return (X / 255.0 - 0.5) * 2  # [-1, 1]
 
 
-def clients_training(epoch, global_cgan, global_cnn):
-    clients_gans = {}
+def clients_training(epoch, global_cnn):
     clients_cnns = {}
     clients_info = {}  # extra information (e.g., number of samples) of clients that can be used in aggregation
     history = {}
@@ -1887,7 +1404,7 @@ def clients_training(epoch, global_cgan, global_cnn):
                 test_mask[test_indices] = True
 
                 local_data = {'client_type': client_type,
-                              'X': torch.tensor(X_sub), 'y': torch.tensor(y_sub),
+                              'X': torch.tensor(X_sub).float(), 'y': torch.tensor(y_sub),
                               'train_mask': torch.tensor(train_mask, dtype=torch.bool),
                               'val_mask': torch.tensor(val_mask, dtype=torch.bool),
                               'test_mask': torch.tensor(test_mask, dtype=torch.bool),
@@ -1899,27 +1416,19 @@ def clients_training(epoch, global_cgan, global_cnn):
                 print_data(local_data)
 
                 #####################################################################
-                if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG and epoch < 1:
-                    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                    local_cgan = Generator(latent_dim=100, num_classes=NUM_CLASSES)
-                    print('Train cgan...')
-                    train_cgan(local_cgan, global_cgan, local_data, train_info)
-                    clients_gans[c] = local_cgan.state_dict()
-
                 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                gen_local_data(global_cgan, local_data, train_info)
                 print('Train CNN...')
                 # local_cnn = CNN(input_dim=input_dim, hidden_dim=hidden_dim_cnn, output_dim=num_classes)
                 local_cnn = CNN(num_classes=NUM_CLASSES)
-                train_cnn(local_cnn, global_cnn, train_info)
+                train_cnn(local_cnn, global_cnn, local_data, train_info, client_type)
                 clients_cnns[c] = local_cnn.state_dict()
 
             else:
-                if l % 3 != 0: continue
+                if l % 5 != 0: continue
                 # for each 4 clients, the last one is attacker. attackers don't need to train local_cnn
                 # local_data = {'X': [], 'y': []}
                 local_data = {'client_type': client_type,
-                              'X': torch.tensor(X_sub) + 1000, 'y': torch.tensor(y_sub),
+                              'X': torch.tensor(X_sub).float() + 1000, 'y': torch.tensor(y_sub),
                               'train_mask': torch.tensor(train_mask, dtype=torch.bool),
                               'val_mask': torch.tensor(val_mask, dtype=torch.bool),
                               'test_mask': torch.tensor(test_mask, dtype=torch.bool),
@@ -1928,31 +1437,16 @@ def clients_training(epoch, global_cgan, global_cnn):
                 clients_info[c] = {'label_cnts': label_cnts, 'size': len(local_data['y'])}
 
                 #####################################################################
-                if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
-                    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                    local_cgan = Generator(latent_dim=100, num_classes=NUM_CLASSES).state_dict()
-                    # Aggregate parameters for each layer
-                    for key in local_cgan.keys():
-                        print(f'cgan, key: {key}')
-                        local_cgan[key] = local_cgan[key] + 1e6
-
-                    # Update the global model with the aggregated parameters
-                    # print('Train gans...')
-                    # train_cgan(local_gans, global_gans, local_data, train_info)
-                    clients_gans[c] = local_cgan
-
                 local_cnn = CNN(num_classes=NUM_CLASSES).to(DEVICE)
                 # Assign large values to all parameters
-                BIG_NUMBER = 1e6  # Example: Set all weights and biases to 1,000,000
-                for param in local_cnn.parameters():
-                    param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+                # BIG_NUMBER = 1e6  # Example: Set all weights and biases to 1,000,000
+                # for param in local_cnn.parameters():
+                #     param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+                train_cnn(local_cnn, global_cnn, local_data, train_info, client_type)
                 clients_cnns[c] = local_cnn.state_dict()
-                train_info['cnn']['data'] = (local_data['X'].float().to(DEVICE), local_data['y'].to(DEVICE),
-                                             local_data["train_mask"], local_data["val_mask"],
-                                             local_data["test_mask"])
 
             print('Evaluate CNNs...')
-            evaluate(local_cnn, None, DEVICE, global_cnn,
+            evaluate(local_cnn, local_data, DEVICE, global_cnn,
                      test_type='Client data', client_id=c, train_info=train_info)
             evaluate_shared_test(local_cnn, local_data, DEVICE, global_cnn, None,
                                  test_type='Shared test data', client_id=c, train_info=train_info)
@@ -1963,15 +1457,11 @@ def clients_training(epoch, global_cgan, global_cnn):
 
             history[c] = train_info
 
-    return clients_gans, clients_cnns, clients_info, history
+    return clients_cnns, clients_info, history
 
 
 @timer
 def main():
-    print(f"\n***************************** Global Models *************************************")
-    global_cgan = Generator(latent_dim=100, num_classes=NUM_CLASSES)
-    print(global_cgan)
-
     # global_cnn = CNN(input_dim=input_dim, hidden_dim=hidden_dim_cnn, output_dim=num_classes)
     global_cnn = CNN(num_classes=NUM_CLASSES)
     print(global_cnn)
@@ -1980,21 +1470,16 @@ def main():
     if debug:
         histories = {'clients': [], 'server': []}
         for server_epoch in range(SERVER_EPOCHS):
-
             print(f"\n***************************** {server_epoch}: Client Training ********************************")
-            clients_gans, clients_cnns, clients_info, history = clients_training(server_epoch, global_cgan, global_cnn)
-            histories['clients'].append(history)
+            clients_cnns, clients_info, clients_history = clients_training(server_epoch, global_cnn)
+            histories['clients'].append(clients_history)
 
             print(f"\n***************************** {server_epoch}: Sever Aggregation *******************************")
-            # if not os.path.exists(global_cgan_path):
-            if server_epoch < 1 and server_epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
-                aggregate_gans(clients_gans, clients_info, global_cgan, None,
-                               histories['server'], server_epoch)
 
-            aggregate_cnns(clients_cnns, clients_info, global_cnn, histories['server'], server_epoch)
+            aggregate_cnns(clients_history, clients_info, global_cnn, histories['server'], server_epoch)
 
     prefix = f'-n_{SERVER_EPOCHS}'
-    history_file = f'{IN_DIR}/histories_gan_{prefix}.pth'
+    history_file = f'{IN_DIR}/histories_cnn_{prefix}.pth'
     print(f'saving histories to {history_file}')
     # with open(history_file, 'wb') as f:
     #     pickle.dump(histories, f)

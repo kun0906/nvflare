@@ -6,14 +6,14 @@
 #SBATCH --ntasks=1                           # Number of tasks per array job
 #SBATCH --mem=16G                            # Memory allocation per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU
-#SBATCH --time=5:00:00                      # Time limit (hrs:min:sec)
-#SBATCH --array=0-25
+#SBATCH --time=1:00:00                      # Time limit (hrs:min:sec)
+#SBATCH --array=0-8
 
 # Define parameter combinations
-param1=(0.2 0.5)                                 # Example distillation weight values
-epochs_values=(1000 2000 3000 10000)             # Number of epochs
-hidden_values=(1000 5000 500)                          # Hidden layer sizes
-patience_values=(1001)        # Patience values for early stopping
+param1=(0)                                 # Example distillation weight values
+epochs_values=(10 30)             # Number of epochs
+hidden_values=(2 5 10)                          # Hidden layer sizes
+patience_values=('refined_krum' 'krum' 'median' 'mean')        # Patience values for early stopping
 
 # Calculate the total number of parameter combinations
 total_combinations=$(( ${#param1[@]} * ${#epochs_values[@]} * ${#hidden_values[@]} * ${#patience_values[@]} ))

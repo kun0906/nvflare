@@ -5,7 +5,7 @@
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 cgan_fl_cnn_attention_attacks.py
+    $PYTHONPATH=. python3 cgan_fl_cnn_attention_attacks2.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 """
@@ -25,7 +25,8 @@ from sklearn.model_selection import train_test_split
 from torch.optim.lr_scheduler import StepLR
 from torch_geometric.data import Data
 from torchvision import datasets
-
+from torchmetrics.image import StructuralSimilarityIndexMeasure
+import torch.nn.utils.spectral_norm as spectral_norm
 from attention import aggregate_with_krum
 from krum import refined_krum
 from utils import timer
@@ -46,13 +47,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.1,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.2,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=32,
                         help="The hidden dimension of CNN.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=30,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=int, required=False, default=1,
+    parser.add_argument('-p', '--patience', type=int, required=False, default=100,
                         help="The patience.")
     # Parse the arguments
     args = parser.parse_args()
@@ -95,10 +96,11 @@ class Generator(nn.Module):
 
         self.conv4 = nn.ConvTranspose2d(16, 1, kernel_size=3, stride=1, padding=1)  # Keep 28x28
         self.leaky_relu = nn.LeakyReLU(0.2)
-        self.tanh = nn.Tanh()
+        # self.tanh = nn.Tanh()
+        self.tanh = nn.Hardtanh(min_val=-1, max_val=1)  # Enforce high contrast
         self.latent_dim = latent_dim
 
-    def forward(self, z, c, num_layers=1):
+    def forward(self, z, c, num_layers=2):
         # x: (N, 100), c: (N, 10)
         # x, c = x.view(x.size(0), -1), c.float()  # may not need
         v = torch.cat((z, c), 1)  # v: (N, 110)
@@ -136,6 +138,20 @@ class Discriminator(nn.Module):
 
         self.fc1 = nn.Linear(64 * 3 * 3, 512)  # Adjust the dimensions after the convolution layers
         self.fc2 = nn.Linear(512, 1)
+
+        # self.conv1 = spectral_norm(
+        #     nn.Conv2d(1, 16, kernel_size=4, stride=2, padding=1))  # From 1 channel to 16 channels
+        # self.conv11 = spectral_norm(nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1))
+        #
+        # self.conv2 = spectral_norm(nn.Conv2d(16, 32, kernel_size=4, stride=2, padding=1))
+        # self.conv21 = spectral_norm(nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1))
+        #
+        # self.conv3 = spectral_norm(nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=1))
+        # self.conv31 = spectral_norm(nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1))
+        #
+        # self.fc1 = spectral_norm(nn.Linear(64 * 3 * 3, 512))  # Adjust the dimensions after the convolution layers
+        # self.fc2 = spectral_norm(nn.Linear(512, 1))
+
         self.leaky_relu = nn.LeakyReLU(0.2)
         self.sigmoid = nn.Sigmoid()
 
@@ -208,6 +224,16 @@ class CNN(nn.Module):
         x = self.fc2(x)
         return x
 
+
+# Initialize SSIM with the correct data range for images in [-1,1]
+ssim_metric = StructuralSimilarityIndexMeasure(data_range=2.0).to(DEVICE)
+compute_bce_loss = nn.BCEWithLogitsLoss().to(DEVICE)
+
+
+def compute_ssim_loss(fake, real):
+    return (1 - ssim_metric(fake, real))
+
+
 @timer
 def train_cgan(local_gan, global_cgan, local_data, train_info={}):
     print(f'train lcoal gan on client ...')
@@ -251,6 +277,8 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
     losses = []
     STEP = 2
     ALPHA = 1.0
+    BETA = 1.0
+    GAMMA = 2.0
     # EPOCHs = 51
     m = -1  # subset
     for epoch in range(GAN_EPOCHS):
@@ -286,7 +314,7 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
 
         scheduler_D.step()
 
-        STEP = 5
+        STEP = 20
 
         generator.train()
         z = torch.randn(batch_size, z_dim).to(DEVICE)
@@ -295,7 +323,12 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
         # Generator Loss (Discriminator should classify fake data as real)
         g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
         mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-        g_loss += ALPHA * mse_loss
+        ssim_loss = compute_ssim_loss(generated_data, real_data)
+        # bce_loss = compute_bce_loss(generated_data, real_data)
+        # Convert the target labels from [-1, 1] to [0, 1]
+        # real = (real + 1) / 2  # Convert -1 -> 0, 1 -> 1
+        bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
+        g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA*bce_loss
 
         optimizer_G.zero_grad()
         g_loss.backward()
@@ -316,7 +349,9 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
             # Generator Loss (Discriminator should classify fake data as real)
             g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
             mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-            g_loss += ALPHA * mse_loss
+            ssim_loss = compute_ssim_loss(generated_data, real_data)
+            bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
+            g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA * bce_loss
 
             optimizer_G.zero_grad()
             g_loss.backward()
@@ -330,11 +365,17 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
         if epoch % 100 == 0:
             print(f"Epoch {epoch}/{GAN_EPOCHS} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
                   f"LR_D: {scheduler_D.get_last_lr()}, LR_G: {scheduler_G.get_last_lr()}, "
-                  f"mse: {mse_loss.item():.4f}, STEP:{STEP}")
+                  f"mse: {mse_loss.item():.4f}, ssim_loss: {ssim_loss.item():.4f}, bce_loss: {bce_loss.item():.4f},"
+                  f" STEP:{STEP}")
         losses.append(g_loss.item())
 
         # Display some generated images after each epoch
-        if epoch % 100 == 0:
+        if epoch == GAN_EPOCHS - 1:  # epoch % 100 == 0:
+
+            print(f"Epoch {epoch}/{GAN_EPOCHS} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
+                  f"LR_D: {scheduler_D.get_last_lr()}, LR_G: {scheduler_G.get_last_lr()}, "
+                  f"mse: {mse_loss.item():.4f}, ssim_loss: {ssim_loss.item():.4f}, bce_loss: {bce_loss.item():.4f}"
+                  f"STEP:{STEP}")
 
             with torch.no_grad():
                 z = torch.randn(100, 100).to(DEVICE)
@@ -403,7 +444,7 @@ def gen_local_data(global_cgan, local_data, train_info):
         max_size = max(ct.values())
         # for each class, only generate 10% percent data to save computational resources.
         # if max_size > 100:
-        max_size = int(max_size * 0.1)
+        max_size = int(max_size * 0.5)
 
         if max_size == 0: max_size = 1
         print(f'For each class, we only generate {max_size} samples, '
@@ -518,6 +559,7 @@ def gen_local_data(global_cgan, local_data, train_info):
     # print('Train Link_predictor...')
     # tmp_data = {'X': node_features, 'y': labels, 'edge_indices': edge_indices, 'edge_weight': edge_weight, }
     # train_link_predictor(local_lp, global_lp, tmp_data, train_info)
+
 
 @timer
 def train_cnn(local_cnn, global_cnn, train_info={}):
@@ -801,7 +843,7 @@ def server_cgan(global_cgan, X, y):
     # local_labels = set(y.tolist())
     print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
 
-    generator = Generator()
+    generator = Generator(num_classes=NUM_CLASSES)
     generator.load_state_dict(global_cgan.state_dict())
     generator = generator.to(DEVICE)
     # local_gan.load_state_dict(global_gans[l].state_dict())
@@ -823,7 +865,9 @@ def server_cgan(global_cgan, X, y):
     # Training loop
     losses = []
     STEP = 2
-    ALPHA = 0.5
+    ALPHA = 1.0
+    BETA = 1.0
+    GAMMA = 2.0
     server_gan_epochs = GAN_EPOCHS * 2
     m = 100  # subset
     for epoch in range(server_gan_epochs):
@@ -868,7 +912,9 @@ def server_cgan(global_cgan, X, y):
         # Generator Loss (Discriminator should classify fake data as real)
         g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
         mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-        g_loss += ALPHA * mse_loss
+        ssim_loss = compute_ssim_loss(generated_data, real_data)
+        bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
+        g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA * bce_loss
 
         optimizer_G.zero_grad()
         g_loss.backward()
@@ -889,7 +935,9 @@ def server_cgan(global_cgan, X, y):
             # Generator Loss (Discriminator should classify fake data as real)
             g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
             mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-            g_loss += ALPHA * mse_loss
+            ssim_loss = compute_ssim_loss(generated_data, real_data)
+            bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
+            g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA * bce_loss
 
             optimizer_G.zero_grad()
             g_loss.backward()
@@ -965,6 +1013,7 @@ def predict_client_type_with_krum(clients_parameters, clients_info, device=None)
 
     return clients_type_pred
 
+
 def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, histories_server, server_epoch):
     aggregate_method = 'retrain global cgan'
     if aggregate_method == 'parameter':  # aggregate clients' parameters
@@ -984,7 +1033,7 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
             if clients_type_pred[i] == 'attacker':
                 print(f'client_id: {client_id} is an attacker, skip it.')
                 continue
-            generator = Generator().to(DEVICE)
+            generator = Generator(num_classes=NUM_CLASSES).to(DEVICE)
             generator.load_state_dict(client_cgan_params)
 
             # GEN_SIZE_PER_CLASS = 10  # for each class, we generate 10 images
@@ -1008,12 +1057,12 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
 
         server_cgan(global_cgan, X, y)
 
-    if server_epoch%50 == 0:
+    if server_epoch % 50 == 0:
         torch.save(global_cgan.state_dict(), f'global_cgan_{server_epoch}.pth')
 
     ##########################################################################################################
     # check the generated data
-    generator = Generator().to(DEVICE)
+    generator = Generator(num_classes=NUM_CLASSES).to(DEVICE)
     generator.load_state_dict(global_cgan.state_dict())
     with torch.no_grad():
         z = torch.randn(100, 100).to(DEVICE)
@@ -1831,8 +1880,14 @@ def clients_training(epoch, global_cgan, global_cnn):
     test_dataset = datasets.MNIST(root="./data", train=False, transform=None, download=True)
     X_test = test_dataset.data
     y_test = test_dataset.targets
+    mask = np.full(len(y_test), False)
+    for l in LABELS:
+        mask_ = y_test == l
+        mask[mask_] = True
+    X_test, y_test = X_test[mask], y_test[mask]
     X_test = normalize(X_test.numpy())
     y_test = y_test.numpy()
+
     shared_data = {"X": torch.tensor(X_test).float(), 'y': torch.tensor(y_test)}
 
     X = train_dataset.data  # Tensor of shape (60000, 28, 28)
@@ -1899,7 +1954,7 @@ def clients_training(epoch, global_cgan, global_cnn):
                 print_data(local_data)
 
                 #####################################################################
-                if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG and epoch < 1:
+                if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:  # and epoch < 1
                     print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
                     local_cgan = Generator(latent_dim=100, num_classes=NUM_CLASSES)
                     print('Train cgan...')
@@ -1987,7 +2042,7 @@ def main():
 
             print(f"\n***************************** {server_epoch}: Sever Aggregation *******************************")
             # if not os.path.exists(global_cgan_path):
-            if server_epoch < 1 and server_epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
+            if server_epoch < SERVER_EPOCHS and server_epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
                 aggregate_gans(clients_gans, clients_info, global_cgan, None,
                                histories['server'], server_epoch)
 
@@ -2010,9 +2065,9 @@ def main():
 if __name__ == '__main__':
     IN_DIR = 'fl/mnist'
     LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-    # LABELS = {0, 1}
+    # LABELS = {0, 1, 2, 3}
     NUM_CLASSES = len(LABELS)
-    GAN_UPDATE_FREQUENCY = 1
+    GAN_UPDATE_FREQUENCY = 2
     GAN_UPDATE_FLG = True
     print(f'IN_DIR: {IN_DIR}, '
           f'num_classes: {NUM_CLASSES}, where classes: {LABELS}')

@@ -17,13 +17,14 @@ def pairwise_distances(updates):
     return distances
 
 
-def krum(updates, f, return_average=False):
+def krum(updates, clients_info, f, return_average=True):
     """
     Krum aggregation for Byzantine-robust federated learning.
     :param updates: List of model updates, each being a 1D numpy array.
     :param f: Number of Byzantine clients to tolerate.
     :return: Selected update (numpy array).
     """
+    clients_type_pred = np.array(['benign'] * len(updates), dtype='U10')
     num_updates = len(updates)
     if num_updates <= 2 * f:
         raise ValueError("Number of updates must be greater than 2 * f.")
@@ -39,7 +40,7 @@ def krum(updates, f, return_average=False):
         score = np.sum(sorted_distances[1:num_updates - f])
         scores.append(score)
 
-    print(scores)
+    print(f'scores: {scores}')
     if return_average:
         # instead return the smallest value, we return the top weighted average
         # Sort scores
@@ -47,11 +48,15 @@ def krum(updates, f, return_average=False):
         sorted_indices = np.argsort(scores)
         sorted_scores = scores[sorted_indices]
         sorted_updates = torch.stack(updates)[sorted_indices]
+        sorted_clients_type_pred = clients_type_pred[sorted_indices]
 
-        diff_dists = np.diff(sorted_scores)
-        # Find the index of the maximum value (after the halfway point)
-        k = np.argmax(diff_dists)
+        k = (len(updates) - 1) - f
         print(f'k: {k}')
+
+        sorted_clients_type_pred[k + 1:] = 'attacker'
+        # **Map the sorted labels back to original order**
+        clients_type_pred[sorted_indices] = sorted_clients_type_pred
+
         # weight average
         update = 0.0
         cnt = 0.0
@@ -65,7 +70,9 @@ def krum(updates, f, return_average=False):
         print(selected_index)
         update = updates[selected_index]
 
-    return update
+        clients_type_pred[selected_index] = 'chose update'
+
+    return update, clients_type_pred
 
 
 def refined_krum(updates, clients_info, return_average=True):
@@ -101,8 +108,6 @@ def refined_krum(updates, clients_info, return_average=True):
         k = np.argmax(diff_dists[halfway_index:]) + halfway_index
         # print("Index of maximum value after halfway:", k)
 
-        # score = np.mean(sorted_distances[:k])   # sample average
-
         # weight average
         score = 0.0
         cnt = 0.0
@@ -124,7 +129,7 @@ def refined_krum(updates, clients_info, return_average=True):
         sorted_indices = np.argsort(scores)
         sorted_scores = scores[sorted_indices]
         sorted_info = clients_info[sorted_indices]
-        sorted_updates = torch.stack(updates)[sorted_indices]   # not vstack() or hstack()
+        sorted_updates = torch.stack(updates)[sorted_indices]  # not vstack() or hstack()
         sorted_clients_type_pred = clients_type_pred[sorted_indices]
 
         diff_dists = np.diff(sorted_scores)
@@ -132,7 +137,7 @@ def refined_krum(updates, clients_info, return_average=True):
         k = np.argmax(diff_dists)
         print(f'k: {k}')
 
-        sorted_clients_type_pred[k+1:] = 'attacker'
+        sorted_clients_type_pred[k + 1:] = 'attacker'
 
         # **Map the sorted labels back to original order**
         clients_type_pred[sorted_indices] = sorted_clients_type_pred
@@ -150,7 +155,7 @@ def refined_krum(updates, clients_info, return_average=True):
         print(selected_index)
         update = updates[selected_index]
 
-        clients_type_pred[selected_index] = 'attacker'
+        clients_type_pred[selected_index] = 'chose update'
 
     # print(update)
     # print(clients_type_pred)
