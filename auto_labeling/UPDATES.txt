@@ -1,7 +1,10 @@
+v0.3.1: Find good case that shows Krum is better than median on MNIST
+    1. For benign clients: 2 clients with part of classes, 3 clients with IID
+        For Byzantine clients: give model parameters large values.
+
 v0.3.0: Add robust aggregation for FedCNN
     1. IID for each client
     2. Refined_Krum, Krum, weighted median, weighted mean
-
 
 v0.2.9: FedCNN only
     1. Server aggregate clients gradients

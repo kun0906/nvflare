@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=param_combinations_job    # Job name
+#SBATCH --job-name=robust    # Job name
 #SBATCH --account=kunyang_nvflare_py31012_0001
 #SBATCH --output=log/output_%A_%a.out        # Standard output (job ID and array task ID)
 #SBATCH --error=log/error_%A_%a.err          # Standard error
@@ -10,13 +10,13 @@
 #SBATCH --array=0-8
 
 # Define parameter combinations
-param1=(0)                                 # Example distillation weight values
-epochs_values=(10 30)             # Number of epochs
-hidden_values=(2 5 10)                          # Hidden layer sizes
-patience_values=('refined_krum' 'krum' 'median' 'mean')        # Patience values for early stopping
+labeling_rates=(0.8)                            # Labeling rate
+epochs_values=(100 1000)                           # Number of server epochs
+benign_values=(2 5 10 50)                          # Number of benign clients
+aggregation_values=('refined_krum' 'krum' 'median' 'mean')        # Aggregation method
 
 # Calculate the total number of parameter combinations
-total_combinations=$(( ${#param1[@]} * ${#epochs_values[@]} * ${#hidden_values[@]} * ${#patience_values[@]} ))
+total_combinations=$(( ${#labeling_rates[@]} * ${#epochs_values[@]} * ${#benign_values[@]} * ${#aggregation_values[@]} ))
 
 ## SBATCH --array=0-$((total_combinations - 1)) # Array range for parameter combinations
 
@@ -27,21 +27,21 @@ if [ $SLURM_ARRAY_TASK_ID -ge $total_combinations ]; then
 fi
 
 # Compute indices for the current task
-dw_index=$((SLURM_ARRAY_TASK_ID / (${#epochs_values[@]} * ${#hidden_values[@]} * ${#patience_values[@]})))
-remaining=$((SLURM_ARRAY_TASK_ID % (${#epochs_values[@]} * ${#hidden_values[@]} * ${#patience_values[@]})))
-epochs_index=$((remaining / (${#hidden_values[@]} * ${#patience_values[@]})))
-remaining=$((remaining % (${#hidden_values[@]} * ${#patience_values[@]})))
-hidden_index=$((remaining / ${#patience_values[@]}))
-patience_index=$((remaining % ${#patience_values[@]}))
+lrate_index=$((SLURM_ARRAY_TASK_ID / (${#epochs_values[@]} * ${#benign_values[@]} * ${#aggregation_values[@]})))
+remaining=$((SLURM_ARRAY_TASK_ID % (${#epochs_values[@]} * ${#benign_values[@]} * ${#aggregation_values[@]})))
+epochs_index=$((remaining / (${#benign_values[@]} * ${#aggregation_values[@]})))
+remaining=$((remaining % (${#benign_values[@]} * ${#aggregation_values[@]})))
+benign_index=$((remaining / ${#aggregation_values[@]}))
+aggregation_index=$((remaining % ${#aggregation_values[@]}))
 
 # Get the values for the current combination
-distill_weight=${param1[$dw_index]}
+labeling_rate=${labeling_rates[$lrate_index]}
 epochs=${epochs_values[$epochs_index]}
-hidden=${hidden_values[$hidden_index]}
-patience=${patience_values[$patience_index]}
+benign=${benign_values[$benign_index]}
+aggregation=${aggregation_values[$aggregation_index]}
 
 # Combine selected parameters for the Python script
-PARAMS="-r $distill_weight -n $epochs -l $hidden -p $patience"
+PARAMS="-r $labeling_rate -n $epochs -b $benign -a $aggregation"
 
 # Load necessary modules
 module load conda
@@ -52,7 +52,4 @@ cd ~/nvflare/auto_labeling || exit
 pwd
 
 # Run the script with the selected parameters
-#PYTHONPATH=. python3 gnn_fl_vaes_attention_link_jaccard.py $PARAMS
-#PYTHONPATH=. python3 cgan_fl_generate.py $PARAMS
-PYTHONPATH=. python3 cgan_fl_cnn_attention_attacks.py $PARAMS
-#PYTHONPATH=. python3 cnn_fl_attention_attacks.py $PARAMS
+PYTHONPATH=. python3 fl_cnn_robust_aggregation.py $PARAMS

@@ -1,5 +1,69 @@
+import collections
+
 import numpy as np
 import torch
+
+
+
+def median(clients_updates, clients_weights, dim=0):
+    """
+    Compute the weighted median for updates of different shapes using (n,) weights.
+
+    Args:
+        updates (list of torch.Tensor): A list of `n` tensors with varying shapes.
+        weights (torch.Tensor): A 1D tensor of shape (n,) representing the weights.
+
+    Returns:
+        torch.Tensor: The weighted median tensor, matching the shape of the first update.
+    """
+    n = len(clients_updates)  # Number of updates
+    assert clients_weights.shape == (n,), "Weights must be of shape (n,) where n is the number of updates."
+
+    # clients_type_pred = np.array(['benign'] * n, dtype='U20')
+
+    # Flatten all updates to 1D and stack along a new dimension (first dimension)
+    flattened_updates = [u.flatten() for u in clients_updates]
+    stacked_updates = torch.stack(flattened_updates, dim=dim)  # Shape: (n, total_elements)
+
+    # Broadcast weights to match stacked shape, i.e., replicate the values across columns
+    expanded_weights = clients_weights.view(n, 1).expand_as(stacked_updates)
+
+    # Sort updates and apply sorting indices to weights
+    sorted_updates, sorted_indices = torch.sort(stacked_updates, dim=dim)
+    sorted_weights = torch.gather(expanded_weights, dim, sorted_indices)
+
+    # Compute cumulative weights
+    cumulative_weights = torch.cumsum(sorted_weights, dim=dim)
+
+    # Find index where cumulative weight reaches 50% of total weight
+    total_weight = cumulative_weights[-1]  # Total weight for each element
+    median_mask = cumulative_weights >= (total_weight / 2)
+
+    # Find the first index that crosses the 50% threshold
+    median_index = median_mask.to(dtype=torch.int).argmax(dim=dim)
+
+    # Gather median values from sorted updates, unsqueeze(dim) add a new dimension
+    weighted_median_values = sorted_updates.gather(dim, median_index.unsqueeze(dim)).squeeze(dim)
+
+    # Find the original index of the client whose update is selected as the median
+    original_median_indices = sorted_indices.gather(dim, median_index.unsqueeze(dim)).squeeze(dim)
+
+    # Mark the client whose update was chosen as the median
+    # clients_type_pred[original_median_indices.numpy()] = 'chosen update'
+    print(f'chosen update: {dict(collections.Counter(original_median_indices.tolist()))}, '
+          f'updates[0].shape: {tuple(clients_updates[0].shape)}, clients_weights: {clients_weights.numpy()}')
+    return weighted_median_values.view(clients_updates[0].shape), None
+
+
+def mean(clients_updates, clients_weights):
+    # weight average
+    update = 0.0
+    cnt = 0.0
+    for j in range(len(clients_updates)):
+        update += clients_updates[j] * clients_weights[j]
+        cnt += clients_weights[j]
+    update = update / cnt
+    return update, None
 
 
 def pairwise_distances(updates):
@@ -17,36 +81,56 @@ def pairwise_distances(updates):
     return distances
 
 
-def krum(updates, clients_info, f, return_average=True):
+def krum(updates, weights, f, return_average=True):
     """
     Krum aggregation for Byzantine-robust federated learning.
     :param updates: List of model updates, each being a 1D numpy array.
     :param f: Number of Byzantine clients to tolerate.
     :return: Selected update (numpy array).
     """
-    clients_type_pred = np.array(['benign'] * len(updates), dtype='U10')
+    clients_type_pred = np.array(['benign'] * len(updates), dtype='U20')
     num_updates = len(updates)
     if num_updates <= 2 * f:
         raise ValueError("Number of updates must be greater than 2 * f.")
 
+    # we don't need the weighted distance here.
     distances = pairwise_distances(updates)
     # print(distances)
+
     scores = []
-
     for i in range(num_updates):
-        # Sort distances for the current update and sum the closest (n-f-1) distances
-        sorted_distances = np.sort(distances[i])
-        # The first distance is the self-distance, we should exclude it.
-        score = np.sum(sorted_distances[1:num_updates - f])
-        scores.append(score)
+        # # Sort distances for the current update and sum the closest (n-f-1) distances
+        # sorted_distances = np.sort(distances[i])
+        # # The first distance is the self-distance, we should exclude it.
+        # score = np.sum(sorted_distances[1:num_updates - f])
+        # scores.append(score)
 
-    print(f'scores: {scores}')
+        # Sort distances for the current update and sum the closest (n-f-2) distances
+        sorted_indices = np.argsort(distances[i])
+        sorted_distances = distances[i][sorted_indices]
+        sorted_weights = weights[sorted_indices]
+
+        k = (num_updates - 1) - f
+        # weight average
+        score = 0.0
+        weight = 0.0
+        for j in range(1, k + 1):  # the first point is the itself, which should be 0 and we exclude it.
+            if sorted_distances[0] != 0:
+                raise ValueError
+            score += sorted_distances[j] * sorted_weights[j]
+            weight += sorted_weights[j]
+        score = score / weight
+
+        scores.append(score.item())
+
+    print('Krum scores: ', [f'{v:.2f}' for v in scores])
     if return_average:
         # instead return the smallest value, we return the top weighted average
         # Sort scores
         scores = np.array(scores)
         sorted_indices = np.argsort(scores)
         sorted_scores = scores[sorted_indices]
+        sorted_weights = weights[sorted_indices]
         sorted_updates = torch.stack(updates)[sorted_indices]
         sorted_clients_type_pred = clients_type_pred[sorted_indices]
 
@@ -59,23 +143,23 @@ def krum(updates, clients_info, f, return_average=True):
 
         # weight average
         update = 0.0
-        cnt = 0.0
+        weight = 0.0
         for j in range(k + 1):
-            update += sorted_updates[j]
-            cnt += 1
-        update = update / cnt
+            update += sorted_updates[j] * sorted_weights[j]
+            weight += sorted_weights[j]
+        update = update / weight
     else:
         # Select the update with the smallest score
         selected_index = np.argmin(scores)
-        print(selected_index)
+        print(f"selected_index: {selected_index}")
         update = updates[selected_index]
 
-        clients_type_pred[selected_index] = 'chose update'
+        clients_type_pred[selected_index] = 'chosen update'
 
     return update, clients_type_pred
 
 
-def refined_krum(updates, clients_info, return_average=True):
+def refined_krum(updates, weights, return_average=True):
     """
 
     Args:
@@ -85,7 +169,7 @@ def refined_krum(updates, clients_info, return_average=True):
     Returns:
         clients_type_pred
     """
-    clients_type_pred = np.array(['benign'] * len(updates), dtype='U10')
+    clients_type_pred = np.array(['benign'] * len(updates), dtype='U20')
     num_updates = len(updates)
 
     distances = pairwise_distances(updates)
@@ -96,7 +180,7 @@ def refined_krum(updates, clients_info, return_average=True):
         # Sort distances for the current update and sum the closest (n-f-2) distances
         sorted_indices = np.argsort(distances[i])
         sorted_distances = distances[i][sorted_indices]
-        sorted_info = clients_info[sorted_indices]
+        sorted_weights = weights[sorted_indices]
 
         # Calculate the halfway point
         n = len(sorted_indices)
@@ -110,17 +194,17 @@ def refined_krum(updates, clients_info, return_average=True):
 
         # weight average
         score = 0.0
-        cnt = 0.0
+        weight = 0.0
         for j in range(1, k + 1):  # the first point is the itself, which should be 0 and we exclude it.
             if sorted_distances[0] != 0:
                 raise ValueError
-            score += sorted_distances[j] * sorted_info[j]
-            cnt += sorted_info[j]
-        score = score / cnt
+            score += sorted_distances[j] * sorted_weights[j]
+            weight += sorted_weights[j]
+        score = score / weight
 
-        scores.append(score)
+        scores.append(score.item())
 
-    print(f'scores: {scores}')
+    print('Refined_Krum scores: ', [f'{v:.2f}' for v in scores])
 
     if return_average:
         # instead return the smallest value, we return the top weighted average
@@ -128,7 +212,7 @@ def refined_krum(updates, clients_info, return_average=True):
         scores = np.array(scores)
         sorted_indices = np.argsort(scores)
         sorted_scores = scores[sorted_indices]
-        sorted_info = clients_info[sorted_indices]
+        sorted_weights = weights[sorted_indices]
         sorted_updates = torch.stack(updates)[sorted_indices]  # not vstack() or hstack()
         sorted_clients_type_pred = clients_type_pred[sorted_indices]
 
@@ -144,18 +228,18 @@ def refined_krum(updates, clients_info, return_average=True):
 
         # weight average
         update = 0.0
-        cnt = 0.0
+        weight = 0.0
         for j in range(k + 1):
-            update += sorted_updates[j] * sorted_info[j]
-            cnt += sorted_info[j]
-        update = update / cnt
+            update += sorted_updates[j] * sorted_weights[j]
+            weight += sorted_weights[j]
+        update = update / weight
     else:
         # Select the update with the smallest score
         selected_index = np.argmin(scores)
-        print(selected_index)
+        print(f"selected_index: {selected_index}")
         update = updates[selected_index]
 
-        clients_type_pred[selected_index] = 'chose update'
+        clients_type_pred[selected_index] = 'chosen update'
 
     # print(update)
     # print(clients_type_pred)
