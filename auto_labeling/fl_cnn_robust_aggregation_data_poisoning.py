@@ -36,7 +36,6 @@ print(f"Device: {DEVICE}")
 
 # Set print options for 2 decimal places
 torch.set_printoptions(precision=2, sci_mode=False)
-np.set_printoptions(precision=2)
 
 seed = 42  # Set any integer seed
 np.random.seed(seed)
@@ -59,9 +58,9 @@ def parse_arguments():
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=10,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-b', '--benign_clients', type=int, required=False, default=3,
+    parser.add_argument('-b', '--benign_clients', type=int, required=False, default=5,
                         help="The number of benign clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='median',
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='refined_krum',
                         help="aggregation method.")
     # Parse the arguments
     args = parser.parse_args()
@@ -632,15 +631,18 @@ def clients_training(epoch, global_cnn):
         print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
         X_c = X[indices[c * step:(c + 1) * step]]
         y_c = y[indices[c * step:(c + 1) * step]]
+        np.random.seed(c)
         if c % 4 == 0:  # 1/4 of benign clients has part of classes
             mask_c = np.full(len(y_c), False)
-            for l in [0, 1, 2, 3, 4]:
+            for l in [0, 1, 2]:
+            # for l in np.random.choice([0, 1, 2, 3, 4], size=2, replace=False):
                 mask_ = y_c == l
                 mask_c[mask_] = True
             # mask_c = (y_c != (c%10))  # excluding one class for each client
         elif c % 4 == 1:  # 1/4 of benign clients has part of classes
             mask_c = np.full(len(y_c), False)
-            for l in [5, 6, 7, 8, 9]:
+            for l in [7, 8, 9]:
+            # for l in np.random.choice([5, 6, 7, 8, 9], size=2, replace=False):
                 mask_ = y_c == l
                 mask_c[mask_] = True
         else:  # 2/4 of benign clients has IID distributions
@@ -695,6 +697,15 @@ def clients_training(epoch, global_cnn):
         print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
         X_c = X[indices[(c - NUM_BENIGN_CLIENTS) * step:((c - NUM_BENIGN_CLIENTS) + 1) * step]]
         y_c = y[indices[(c - NUM_BENIGN_CLIENTS) * step:((c - NUM_BENIGN_CLIENTS) + 1) * step]]
+
+        np.random.seed(c)
+        mask_c = np.full(len(y_c), False)
+        for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=c, replace=False):
+            mask_ = y_c == l
+            mask_c[mask_] = True
+        X_c = X_c[mask_c]
+        y_c = y_c[mask_c]
+
         # might be used in server
         train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
         # Create indices for train/test split
@@ -710,6 +721,7 @@ def clients_training(epoch, global_cnn):
         train_mask[train_indices] = True
         val_mask[val_indices] = True
         test_mask[test_indices] = True
+        y_c[train_mask] = (NUM_CLASSES-1) - y_c[train_mask]   # flip label
 
         train_info['NUM_BYZANTINE_CLIENTS'] = NUM_BYZANTINE_CLIENTS
         local_data = {'client_type': client_type,
@@ -722,20 +734,21 @@ def clients_training(epoch, global_cnn):
         clients_info[c] = {'label_cnts': label_cnts, 'size': len(local_data['y'])}
 
         local_cnn = CNN(num_classes=NUM_CLASSES).to(DEVICE)
-        byzantine_method = 'mean--'
-        if byzantine_method == 'last_global_model':
-            local_cnn.load_state_dict(global_cnn.state_dict())
-        elif byzantine_method == 'mean':  # assign mean to each parameter
-            for param in local_cnn.parameters():
-                param.data = param.data/2  # Assign big number to each parameter
-        elif byzantine_method == 'zero':  # assign 0 to each parameter
-            for param in local_cnn.parameters():
-                param.data.fill_(0.0)  # Assign big number to each parameter
-        else:  # assign large values
-            # Assign large values to all parameters
-            BIG_NUMBER = 1  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
-            for param in local_cnn.parameters():
-                param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+        # byzantine_method = 'large_value'
+        # if byzantine_method == 'last_global_model':
+        #     local_cnn.load_state_dict(global_cnn.state_dict())
+        # elif byzantine_method == 'mean':  # assign mean to each parameter
+        #     for param in local_cnn.parameters():
+        #         param.data = param.data/2  # not work
+        # elif byzantine_method == 'zero':  # assign 0 to each parameter
+        #     for param in local_cnn.parameters():
+        #         param.data.fill_(0.0)  # Assign big number to each parameter
+        # else:  # assign large values
+        #     # Assign large values to all parameters
+        #     BIG_NUMBER = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
+        #     for param in local_cnn.parameters():
+        #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+        train_cnn(local_cnn, global_cnn, local_data, train_info)
         clients_cnns[c] = local_cnn.state_dict()
 
         print('Evaluate CNNs...')

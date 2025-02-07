@@ -1,3 +1,7 @@
+v0.3.2: Add more byzantine attacks
+    1. sign_flipping, model_poisoning, data poisoning
+
+
 v0.3.1: Find good case that shows Krum is better than median on MNIST
     1. For benign clients: 2 clients with part of classes, 3 clients with IID
         For Byzantine clients: give model parameters large values.

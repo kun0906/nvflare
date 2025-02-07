@@ -6,13 +6,13 @@
 #SBATCH --ntasks=1                           # Number of tasks per array job
 #SBATCH --mem=16G                            # Memory allocation per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU
-#SBATCH --time=1:00:00                      # Time limit (hrs:min:sec)
-#SBATCH --array=0-8
+#SBATCH --time=4:00:00                      # Time limit (hrs:min:sec)
+#SBATCH --array=0-16
 
 # Define parameter combinations
 labeling_rates=(0.8)                            # Labeling rate
-epochs_values=(100 1000)                           # Number of server epochs
-benign_values=(2 5 10 50)                          # Number of benign clients
+epochs_values=(100)                           # Number of server epochs
+benign_values=(4 10)                          # Number of benign clients
 aggregation_values=('refined_krum' 'krum' 'median' 'mean')        # Aggregation method
 
 # Calculate the total number of parameter combinations
@@ -52,4 +52,7 @@ cd ~/nvflare/auto_labeling || exit
 pwd
 
 # Run the script with the selected parameters
-PYTHONPATH=. python3 fl_cnn_robust_aggregation.py $PARAMS
+#PYTHONPATH=. python3 fl_cnn_robust_aggregation.py $PARAMS
+#PYTHONPATH=. python3 fl_cnn_robust_aggregation_data_poisoning.py $PARAMS
+PYTHONPATH=. python3 fl_cnn_robust_aggregation_model_poisoning.py $PARAMS
+

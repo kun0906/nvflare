@@ -3,7 +3,7 @@ import collections
 import numpy as np
 import torch
 
-
+np.set_printoptions(precision=2)
 
 def median(clients_updates, clients_weights, dim=0):
     """
@@ -50,7 +50,7 @@ def median(clients_updates, clients_weights, dim=0):
 
     # Mark the client whose update was chosen as the median
     # clients_type_pred[original_median_indices.numpy()] = 'chosen update'
-    print(f'chosen update: {dict(collections.Counter(original_median_indices.tolist()))}, '
+    print(f'chosen update: {dict(collections.Counter(original_median_indices.tolist()))}, {stacked_updates.numpy()} '
           f'updates[0].shape: {tuple(clients_updates[0].shape)}, clients_weights: {clients_weights.numpy()}')
     return weighted_median_values.view(clients_updates[0].shape), None
 
