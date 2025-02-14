@@ -5,54 +5,102 @@ import torch
 
 np.set_printoptions(precision=2)
 
-def median(clients_updates, clients_weights, dim=0):
-    """
-    Compute the weighted median for updates of different shapes using (n,) weights.
+#
+# def median_array(clients_updates, clients_weights, dim=0):
+#     """
+#     Compute the weighted median for updates of different shapes using (n,) weights.
+#
+#     Args:
+#         updates (list of torch.Tensor): A list of `n` tensors with varying shapes.
+#         weights (torch.Tensor): A 1D tensor of shape (n,) representing the weights.
+#
+#     Returns:
+#         torch.Tensor: The weighted median tensor, matching the shape of the first update.
+#     """
+#     n = len(clients_updates)  # Number of updates
+#     assert clients_weights.shape == (n,), "Weights must be of shape (n,) where n is the number of updates."
+#
+#     # clients_type_pred = np.array(['benign'] * n, dtype='U20')
+#
+#     # Flatten all updates to 1D and stack along a new dimension (first dimension)
+#     flattened_updates = [u.flatten() for u in clients_updates]
+#     stacked_updates = torch.stack(flattened_updates, dim=dim)  # Shape: (n, total_elements)
+#
+#     # Broadcast weights to match stacked shape, i.e., replicate the values across columns
+#     expanded_weights = clients_weights.view(n, 1).expand_as(stacked_updates)
+#
+#     # Sort updates and apply sorting indices to weights
+#     sorted_updates, sorted_indices = torch.sort(stacked_updates, dim=dim)
+#     sorted_weights = torch.gather(expanded_weights, dim, sorted_indices)
+#
+#     # Compute cumulative weights
+#     cumulative_weights = torch.cumsum(sorted_weights, dim=dim)
+#
+#     # Find index where cumulative weight reaches 50% of total weight
+#     total_weight = cumulative_weights[-1]  # Total weight for each element
+#     median_mask = cumulative_weights >= (total_weight / 2)
+#
+#     # Find the first index that crosses the 50% threshold
+#     median_index = median_mask.to(dtype=torch.int).argmax(dim=dim)
+#
+#     # Gather median values from sorted updates, unsqueeze(dim) add a new dimension
+#     weighted_median_values = sorted_updates.gather(dim, median_index.unsqueeze(dim)).squeeze(dim)
+#
+#     # Find the original index of the client whose update is selected as the median
+#     original_median_indices = sorted_indices.gather(dim, median_index.unsqueeze(dim)).squeeze(dim)
+#
+#     # Mark the client whose update was chosen as the median
+#     # clients_type_pred[original_median_indices.numpy()] = 'chosen update'  # {stacked_updates.numpy()}
+#     print(f'chosen update: {dict(collections.Counter(original_median_indices.tolist()))}, '
+#           f'updates[0].shape: {tuple(clients_updates[0].shape)}, clients_weights: {clients_weights.numpy()}')
+#     return weighted_median_values.view(clients_updates[0].shape), None
+#
 
-    Args:
-        updates (list of torch.Tensor): A list of `n` tensors with varying shapes.
-        weights (torch.Tensor): A 1D tensor of shape (n,) representing the weights.
-
-    Returns:
-        torch.Tensor: The weighted median tensor, matching the shape of the first update.
+def median(clients_updates, clients_weights, verbose=1):
     """
-    n = len(clients_updates)  # Number of updates
+        Compute the weighted median for flattened tensors.
+
+        Args:
+            clients_updates (list of torch.Tensor): A list of `n` flattened tensors (e.g., shape (d,)).
+            clients_weights (torch.Tensor): A 1D tensor of shape (n,) representing the weights.
+
+        Returns:
+            torch.Tensor: The weighted median tensor, matching the shape of the first update.
+        """
+    n = len(clients_updates)
     assert clients_weights.shape == (n,), "Weights must be of shape (n,) where n is the number of updates."
 
-    # clients_type_pred = np.array(['benign'] * n, dtype='U20')
+    # Stack updates into a matrix of shape (n, d)
+    stacked_updates = torch.stack(clients_updates)
 
-    # Flatten all updates to 1D and stack along a new dimension (first dimension)
-    flattened_updates = [u.flatten() for u in clients_updates]
-    stacked_updates = torch.stack(flattened_updates, dim=dim)  # Shape: (n, total_elements)
+    # Sort updates along the first dimension (client axis)
+    sorted_updates, sorted_indices = torch.sort(stacked_updates, dim=0)
 
-    # Broadcast weights to match stacked shape, i.e., replicate the values across columns
-    expanded_weights = clients_weights.view(n, 1).expand_as(stacked_updates)
+    # Sort weights accordingly
+    sorted_weights = clients_weights[sorted_indices]
 
-    # Sort updates and apply sorting indices to weights
-    sorted_updates, sorted_indices = torch.sort(stacked_updates, dim=dim)
-    sorted_weights = torch.gather(expanded_weights, dim, sorted_indices)
+    # Compute cumulative sum of weights
+    cumulative_weights = torch.cumsum(sorted_weights, dim=0)
 
-    # Compute cumulative weights
-    cumulative_weights = torch.cumsum(sorted_weights, dim=dim)
-
-    # Find index where cumulative weight reaches 50% of total weight
     total_weight = cumulative_weights[-1]  # Total weight for each element
-    median_mask = cumulative_weights >= (total_weight / 2)
 
-    # Find the first index that crosses the 50% threshold
-    median_index = median_mask.to(dtype=torch.int).argmax(dim=dim)
+    # Find first index where cumulative weight reaches 50% of total weight
+    median_index = (cumulative_weights >= (total_weight / 2)).to(dtype=torch.int).argmax(dim=0)
 
-    # Gather median values from sorted updates, unsqueeze(dim) add a new dimension
-    weighted_median_values = sorted_updates.gather(dim, median_index.unsqueeze(dim)).squeeze(dim)
+    # Select median values
+    weighted_median_values = sorted_updates[median_index, torch.arange(stacked_updates.shape[1])]
 
-    # Find the original index of the client whose update is selected as the median
-    original_median_indices = sorted_indices.gather(dim, median_index.unsqueeze(dim)).squeeze(dim)
+    # Find the original client indices whose updates were chosen
+    original_median_indices = sorted_indices[median_index, torch.arange(stacked_updates.shape[1])]
 
+    # print(f'Chosen update indices: {dict(collections.Counter(original_median_indices.tolist()))}')
     # Mark the client whose update was chosen as the median
-    # clients_type_pred[original_median_indices.numpy()] = 'chosen update'
-    print(f'chosen update: {dict(collections.Counter(original_median_indices.tolist()))}, {stacked_updates.numpy()} '
-          f'updates[0].shape: {tuple(clients_updates[0].shape)}, clients_weights: {clients_weights.numpy()}')
-    return weighted_median_values.view(clients_updates[0].shape), None
+    # clients_type_pred[original_median_indices.numpy()] = 'chosen update'  # {stacked_updates.numpy()}
+    if verbose >= 5:
+        print(f'chosen update: {dict(collections.Counter(original_median_indices.tolist()))}, '
+              f'updates[0].shape: {tuple(clients_updates[0].shape)}, clients_weights: {clients_weights.numpy()}')
+
+    return weighted_median_values, None
 
 
 def mean(clients_updates, clients_weights):
@@ -81,7 +129,7 @@ def pairwise_distances(updates):
     return distances
 
 
-def krum(updates, weights, f, return_average=True):
+def krum(updates, weights, f, return_average=False, verbose=1):
     """
     Krum aggregation for Byzantine-robust federated learning.
     :param updates: List of model updates, each being a 1D numpy array.
@@ -95,7 +143,8 @@ def krum(updates, weights, f, return_average=True):
 
     # we don't need the weighted distance here.
     distances = pairwise_distances(updates)
-    # print(distances)
+    if verbose >= 10:
+        print(distances)
 
     scores = []
     for i in range(num_updates):
@@ -123,7 +172,8 @@ def krum(updates, weights, f, return_average=True):
 
         scores.append(score.item())
 
-    print('Krum scores: ', [f'{v:.2f}' for v in scores])
+    if verbose >= 5:
+        print('Krum scores: ', [f'{v:.2f}' for v in scores])
     if return_average:
         # instead return the smallest value, we return the top weighted average
         # Sort scores
@@ -135,7 +185,8 @@ def krum(updates, weights, f, return_average=True):
         sorted_clients_type_pred = clients_type_pred[sorted_indices]
 
         k = (len(updates) - 1) - f
-        print(f'k: {k}')
+        if verbose >= 10:
+            print(f'k: {k}')
 
         sorted_clients_type_pred[k + 1:] = 'attacker'
         # **Map the sorted labels back to original order**
@@ -151,7 +202,8 @@ def krum(updates, weights, f, return_average=True):
     else:
         # Select the update with the smallest score
         selected_index = np.argmin(scores)
-        print(f"selected_index: {selected_index}")
+        if verbose >= 10:
+            print(f"selected_index: {selected_index}")
         update = updates[selected_index]
 
         clients_type_pred[selected_index] = 'chosen update'
@@ -159,7 +211,7 @@ def krum(updates, weights, f, return_average=True):
     return update, clients_type_pred
 
 
-def refined_krum(updates, weights, return_average=True):
+def refined_krum(updates, weights, return_average=False, verbose=1):
     """
 
     Args:
@@ -173,7 +225,8 @@ def refined_krum(updates, weights, return_average=True):
     num_updates = len(updates)
 
     distances = pairwise_distances(updates)
-    # print(distances)
+    if verbose >= 10:
+        print(distances)
 
     scores = []
     for i in range(num_updates):
@@ -186,11 +239,23 @@ def refined_krum(updates, weights, return_average=True):
         n = len(sorted_indices)
         halfway_index = n // 2
 
-        diff_dists = np.diff(sorted_distances)
+        # Initialize max difference and index
+        max_diff = 0
+        k = halfway_index
 
-        # Find the index of the maximum value after the halfway point
-        k = np.argmax(diff_dists[halfway_index:]) + halfway_index
-        # print("Index of maximum value after halfway:", k)
+        # Find the first occurrence of the max diff in one pass
+        for i in range(halfway_index, n - 1):
+            t = sorted_distances[i + 1] - sorted_distances[i]
+            if t > max_diff:
+                max_diff = t
+                k = i  # Store the first occurrence of max diff
+
+        if verbose >= 20:
+            print(f'*** i: {i} ***')
+            print(f'sorted_distances: {sorted_distances}')
+            # print(f'halfway_index: {halfway_index}, n: {n}')
+            # print('diff_dists: ', diff_dists)
+            print("Index of maximum value:", k)
 
         # weight average
         score = 0.0
@@ -204,7 +269,8 @@ def refined_krum(updates, weights, return_average=True):
 
         scores.append(score.item())
 
-    print('Refined_Krum scores: ', [f'{v:.2f}' for v in scores])
+    if verbose >= 5:
+        print('Refined_Krum scores: ', [f'{v:.2f}' for v in scores])
 
     if return_average:
         # instead return the smallest value, we return the top weighted average
@@ -219,7 +285,8 @@ def refined_krum(updates, weights, return_average=True):
         diff_dists = np.diff(sorted_scores)
         # Find the index of the maximum value (after the halfway point)
         k = np.argmax(diff_dists)
-        print(f'k: {k}')
+        if verbose >= 10:
+            print(f'k: {k}')
 
         sorted_clients_type_pred[k + 1:] = 'attacker'
 
@@ -236,7 +303,8 @@ def refined_krum(updates, weights, return_average=True):
     else:
         # Select the update with the smallest score
         selected_index = np.argmin(scores)
-        print(f"selected_index: {selected_index}")
+        if verbose >= 5:
+            print(f"selected_index: {selected_index}")
         update = updates[selected_index]
 
         clients_type_pred[selected_index] = 'chosen update'

@@ -1,3 +1,8 @@
+v0.3.3: Update Krum.py and aggregate_cnns
+    1. aggregate_cnns aggregate on all parameters, instead of each layer.
+    2. update refined_Krum
+    3. update median
+
 v0.3.2: Add more byzantine attacks
     1. sign_flipping, model_poisoning, data poisoning
 
