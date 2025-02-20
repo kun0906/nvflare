@@ -1965,30 +1965,30 @@ def clients_training(epoch, global_gans, global_cnn):
     y = y.numpy()
 
     for l in LABELS:
-        # in each four clients, the first three are benign clients, and the last one is attacker
+        # in each four clients, the first three are honest clients, and the last one is attacker
         mask = y == l
         X_label, y_label = X[mask], y[mask]
         # each client has s images
         m = X_label.shape[0]
-        n_benign_clients_in_each_group = 2
+        n_honest_clients_in_each_group = 2
         n_attackers_in_each_group = 1
-        n_clients_in_each_group = n_benign_clients_in_each_group + n_attackers_in_each_group
-        s = m // n_benign_clients_in_each_group
+        n_clients_in_each_group = n_honest_clients_in_each_group + n_attackers_in_each_group
+        s = m // n_honest_clients_in_each_group
 
         random_state = 42 * l
         torch.manual_seed(random_state)
         indices = torch.randperm(m)  # Randomly shuffle
         for i in range(
-                n_clients_in_each_group):  # in each 4 clients, the first 3 are benign clients and the last one is attacker
+                n_clients_in_each_group):  # in each 4 clients, the first 3 are honest clients and the last one is attacker
             client_id = l * n_clients_in_each_group + i
             c = client_id
-            client_type = 'benign' if i < n_benign_clients_in_each_group else 'attacker'
+            client_type = 'honest' if i < n_honest_clients_in_each_group else 'attacker'
             print(f"\n\n***server_epoch:{epoch}, client_{c}: {client_type}...")
             # might be used in server
             train_info = {"client_type": client_type, "gan": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
             print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
             print('Load data...')
-            if i < n_benign_clients_in_each_group:
+            if i < n_honest_clients_in_each_group:
                 # client_data_file = f'{IN_DIR}/c_{c}-{prefix}-data.pth'
                 # local_data = torch.load(client_data_file, weights_only=True)
 

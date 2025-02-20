@@ -27,7 +27,7 @@ from torch_geometric.data import Data
 from torchvision import datasets
 
 from attention import aggregate_with_krum
-from krum import refined_krum
+from robust_aggregation import refined_krum
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -961,7 +961,7 @@ def predict_client_type_with_krum(clients_parameters, clients_info, device=None)
     # Perform simple averaging of the parameters
     clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_parameters.values()]
     clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, return_average=True)
+    aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=True)
 
     return clients_type_pred
 
@@ -972,12 +972,12 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
         # aggregate_with_attention(client_parameters_list, global_gan, DEVICE)  # update global_gan inplace
     else:
         #############################################################################################
-        # Find the benign clients cgans and ignore the attackers
+        # Find the honest clients cgans and ignore the attackers
         clients_type_pred = predict_client_type_with_krum(clients_gans, clients_info, DEVICE)
         print(f'clients_type_pred: {clients_type_pred}')
         # clients_gans = {i_: clients_gans[i_] for i_ in range(len(clients_type_pred)) \
-        # if clients_type_pred[i_] == 'benign']}
-        # print(f'benign clients: {len(clients_gans)}')
+        # if clients_type_pred[i_] == 'honest']}
+        # print(f'honest clients: {len(clients_gans)}')
         # generated data
         generated_data = {l_: torch.zeros((0, 28, 28)).to(DEVICE) for l_ in LABELS}
         for i, (client_id, client_cgan_params) in enumerate(clients_gans.items()):
@@ -1841,30 +1841,30 @@ def clients_training(epoch, global_cgan, global_cnn):
     y = y.numpy()
 
     for l in LABELS:
-        # in each four clients, the first three are benign clients, and the last one is attacker
+        # in each four clients, the first three are honest clients, and the last one is attacker
         mask = y == l
         X_label, y_label = X[mask], y[mask]
         # each client has s images
         m = X_label.shape[0]
-        n_benign_clients_in_each_group = 1
+        n_honest_clients_in_each_group = 1
         n_attackers_in_each_group = 1
-        n_clients_in_each_group = n_benign_clients_in_each_group + n_attackers_in_each_group
-        s = m // n_benign_clients_in_each_group
+        n_clients_in_each_group = n_honest_clients_in_each_group + n_attackers_in_each_group
+        s = m // n_honest_clients_in_each_group
 
         random_state = 42 * l
         torch.manual_seed(random_state)
         indices = torch.randperm(m)  # Randomly shuffle
-        # in each 4 clients, the first 3 are benign clients and the last one is attacker
+        # in each 4 clients, the first 3 are honest clients and the last one is attacker
         for i in range(n_clients_in_each_group):
             client_id = l * n_clients_in_each_group + i
             c = client_id
-            client_type = 'benign' if i < n_benign_clients_in_each_group else 'attacker'
+            client_type = 'honest' if i < n_honest_clients_in_each_group else 'attacker'
             print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
             # might be used in server
             train_info = {"client_type": client_type, "gan": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
             print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
             print('Load data...')
-            if i < n_benign_clients_in_each_group:
+            if i < n_honest_clients_in_each_group:
                 # client_data_file = f'{IN_DIR}/c_{c}-{prefix}-data.pth'
                 # local_data = torch.load(client_data_file, weights_only=True)
 

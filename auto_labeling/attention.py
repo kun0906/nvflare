@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import Adam
 
-from krum import refined_krum
+from robust_aggregation import refined_krum
 
 
 class AttentionAggregation(nn.Module):
@@ -134,7 +134,7 @@ def aggregate_with_krum(clients_parameters, clients_info, global_model, device=N
         # each client extra information (such as, number of samples)
         # clients_weights = torch.tensor([1] * len(clients_updates)) # default as 1
         clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-        aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, return_average=True)
+        aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=True)
         print(key, clients_type_pred)
         global_state_dict[key] = aggregated_update.to(device)
 

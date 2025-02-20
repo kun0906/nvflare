@@ -6,39 +6,47 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-import numpy as np
+random_state=42
+torch.manual_seed(random_state)
+num_samples = 10
+indices = torch.randperm(num_samples)  # Randomly shuffle
+print(indices)
+indices = torch.randperm(num_samples)  # Randomly shuffle
+print(indices)
 
-NUM_BENIGN_CLIENTS = 4
-for c in range(NUM_BENIGN_CLIENTS):
-    # client_type = 'benign'
-    # print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
-    X_c = [1] * 10
-    y_c = [0] * 10
-    np.random.seed(c)
-    if c % 4 == 0:  # 1/4 of benign clients has part of classes
-        mask_c = np.full(len(y_c), False)
-        # for l in [0, 1, 2, 3, 4]:
-        ls = []
-        for l in np.random.choice([0, 1, 2, 3, 4], size=2, replace=False):
-            mask_ = y_c == l
-            mask_c[mask_] = True
-            ls.append(l)
-        print(c, ls)
-        # mask_c = (y_c != (c%10))  # excluding one class for each client
-    elif c % 4 == 1:  # 1/4 of benign clients has part of classes
-        mask_c = np.full(len(y_c), False)
-        # for l in [5, 6, 7, 8, 9]:
-        ls = []
-        for l in np.random.choice([5, 6, 7, 8, 9], size=2, replace=False):
-            mask_ = y_c == l
-            mask_c[mask_] = True
-            ls.append(l)
-        print(c, ls)
-        #
-    else:  # 2/4 of benign clients has IID distributions
-        mask_c = np.full(len(y_c), True)
-
-exit(0)
+# import numpy as np
+#
+# NUM_HONEST_CLIENTS = 4
+# for c in range(NUM_HONEST_CLIENTS):
+#     # client_type = 'honest'
+#     # print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
+#     X_c = [1] * 10
+#     y_c = [0] * 10
+#     np.random.seed(c)
+#     if c % 4 == 0:  # 1/4 of honest clients has part of classes
+#         mask_c = np.full(len(y_c), False)
+#         # for l in [0, 1, 2, 3, 4]:
+#         ls = []
+#         for l in np.random.choice([0, 1, 2, 3, 4], size=2, replace=False):
+#             mask_ = y_c == l
+#             mask_c[mask_] = True
+#             ls.append(l)
+#         print(c, ls)
+#         # mask_c = (y_c != (c%10))  # excluding one class for each client
+#     elif c % 4 == 1:  # 1/4 of honest clients has part of classes
+#         mask_c = np.full(len(y_c), False)
+#         # for l in [5, 6, 7, 8, 9]:
+#         ls = []
+#         for l in np.random.choice([5, 6, 7, 8, 9], size=2, replace=False):
+#             mask_ = y_c == l
+#             mask_c[mask_] = True
+#             ls.append(l)
+#         print(c, ls)
+#         #
+#     else:  # 2/4 of honest clients has IID distributions
+#         mask_c = np.full(len(y_c), True)
+#
+# exit(0)
 
 
 file_path = 'histories_gan_r_0.1-n_1.pth'

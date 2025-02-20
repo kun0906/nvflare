@@ -22,8 +22,6 @@ def extract_namespace(filepath):
 
 def plot_robust_aggregation(start=0):
     global_accs = {}
-    JOBID = 256405  # it works
-
     method_txt_files = [
         ('refined_krum', f'log/output_{JOBID}_{start}.out'),
         ('krum', f'log/output_{JOBID}_{start + 1}.out'),
@@ -36,7 +34,7 @@ def plot_robust_aggregation(start=0):
     if namespace_params['server_epochs'] != 5:
         return
 
-    title = ', '.join(['benign_clients:' + str(namespace_params['benign_clients']),
+    title = ', '.join(['honest_clients:' + str(namespace_params['honest_clients']),
                        'classes_cnt:' + str(namespace_params['server_epochs']),
                        'large_value:' + str(namespace_params['labeling_rate'])])
     for method, txt_file in method_txt_files:
@@ -58,14 +56,14 @@ def plot_robust_aggregation(start=0):
     plt.title(f'Global CNN, start:{start}, {title}', fontsize=10)
     plt.legend(fontsize=6.5, loc='lower right')
 
-    # attacker_ratio = NUM_BYZANTINE_CLIENTS / (NUM_BENIGN_CLIENTS + NUM_BYZANTINE_CLIENTS)
+    # attacker_ratio = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
     # title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
     #          f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
 
     # Adjust layout to prevent overlap
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
-    #             f'{SERVER_EPOCHS}_{NUM_BENIGN_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
+    #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_MALICIOUS_CLIENTS}_accuracy.png')
     fig_file = 'global_cnn.png'
     # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)
@@ -121,7 +119,9 @@ def parse_file(txt_file):
 
 if __name__ == '__main__':
     # plot_robust_aggregation()
-    for start in range(0, 300, 4):
+    # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
+    JOBID = 259744
+    for start in range(0, 100, 4):
         try:
             print(f'\nstart: {start}')
             plot_robust_aggregation(start)

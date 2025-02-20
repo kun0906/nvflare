@@ -115,7 +115,7 @@ datasets with images and multiple annotations:
    - Available from: [DeepLesion Dataset](https://nihcc.app.box.com/v/DeepLesion)
 
 3. **ISIC Archive** (International Skin Imaging Collaboration):
-   - Focuses on skin lesions and their classifications (benign or malignant).
+   - Focuses on skin lesions and their classifications (honest or malignant).
    - Each image can have multiple labels corresponding to different attributes of the lesion.
    - Available from: [ISIC Archive](https://www.isic-archive.com/)
 

@@ -5,13 +5,19 @@
     $module load conda
     $conda activate nvflare-3.10
     $cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 cgan_fl_cnn_attention_attacks2.py
+    $PYTHONPATH=. python3 diffusion_fl_cnn_mnist.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
+
+
+    https://medium.com/@j.calzaretta.ai/exploring-diffusion-models-a-hands-on-approach-with-mnist-baf79aa4d195
+
 """
 
 import argparse
 import collections
+import functools
+import math
 import os
 
 import numpy as np
@@ -22,13 +28,13 @@ import torch.optim as optim
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
+from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
 from torch_geometric.data import Data
 from torchvision import datasets
-from torchmetrics.image import StructuralSimilarityIndexMeasure
-import torch.nn.utils.spectral_norm as spectral_norm
+
 from attention import aggregate_with_krum
-from robust_aggregation import refined_krum
+from robust_aggregation import refined_krum, krum, median, mean
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -47,13 +53,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.2,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.1,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-l', '--hidden_dimension', type=int, required=False, default=32,
                         help="The hidden dimension of CNN.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=30,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=1,
                         help="The number of epochs (integer).")
-    parser.add_argument('-p', '--patience', type=int, required=False, default=100,
+    parser.add_argument('-p', '--patience', type=int, required=False, default=10,
                         help="The patience.")
     # Parse the arguments
     args = parser.parse_args()
@@ -68,7 +74,7 @@ args = parse_arguments()
 # Access the arguments
 LABELING_RATE = args.labeling_rate
 SERVER_EPOCHS = args.server_epochs
-GAN_EPOCHS = args.patience
+DIFFUSION_EPOCHS = args.patience
 GEN_SIZE_PER_CLASS = args.hidden_dimension
 # hidden_dim_cnn = args.hidden_dimension
 # patience = args.patience
@@ -77,109 +83,186 @@ GEN_SIZE_PER_CLASS = args.hidden_dimension
 # print(f"server_epochs: {SERVER_EPOCHS}")
 print(args)
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+import numpy as np
+import matplotlib.pyplot as plt
 
-class Generator(nn.Module):
-    def __init__(self, latent_dim=100, num_classes=10):
-        super(Generator, self).__init__()
-        # Fully connected layer to project z into a 128 * 7 * 7 tensor
-        self.fc1 = nn.Linear(latent_dim + num_classes, 128 * 7 * 7)
+# Device configuration
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        # Transposed convolutional layers to upsample to 28x28
-        self.conv1 = nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1)  # Upsample to 14x14
-        self.conv11 = nn.ConvTranspose2d(64, 64, kernel_size=3, stride=1, padding=1)  #
+# Load MNIST dataset
+transform = transforms.Compose([
+    transforms.Resize((32, 32)),  # Upscale for higher resolution
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,))
+])
 
-        self.conv2 = nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=1)  # Upsample to 28x28
-        self.conv21 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)  #
+dataset = torchvision.datasets.MNIST(root="./data", train=True, transform=transform, download=True)
+dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
 
-        self.conv3 = nn.ConvTranspose2d(32, 16, kernel_size=3, stride=1, padding=1)  # Keep 28x28
-        self.conv31 = nn.ConvTranspose2d(16, 16, kernel_size=3, stride=1, padding=1)  # Keep 28x28
-
-        self.conv4 = nn.ConvTranspose2d(16, 1, kernel_size=3, stride=1, padding=1)  # Keep 28x28
-        self.leaky_relu = nn.LeakyReLU(0.2)
-        # self.tanh = nn.Tanh()
-        self.tanh = nn.Hardtanh(min_val=-1, max_val=1)  # Enforce high contrast
-        self.latent_dim = latent_dim
-
-    def forward(self, z, c, num_layers=2):
-        # x: (N, 100), c: (N, 10)
-        # x, c = x.view(x.size(0), -1), c.float()  # may not need
-        v = torch.cat((z, c), 1)  # v: (N, 110)
-        x = self.fc1(v)
-        x = x.view(-1, 128, 7, 7)  # Reshape into feature map (batch_size, channels, height, width)
-
-        x = self.leaky_relu(self.conv1(x))  # Upsample to 14x14
-        for _ in range(num_layers):
-            x = self.leaky_relu(self.conv11(x))  # Upsample to 14x14
-
-        x = self.leaky_relu(self.conv2(x))  # Upsample to 28x28
-        for _ in range(num_layers):
-            x = self.leaky_relu(self.conv21(x))  # Upsample to 28x28
-
-        x = self.leaky_relu(self.conv3(x))  # Keep 28x28
-        for _ in range(num_layers):
-            x = self.leaky_relu(self.conv31(x))  # Upsample to 28x28
-
-        x = self.tanh(self.conv4(x))  # Output is in the range [-1, 1]
-
-        return x
+from diffusion_models import *
 
 
-class Discriminator(nn.Module):
-    def __init__(self, num_classes=10):
-        super(Discriminator, self).__init__()
-        self.conv1 = nn.Conv2d(1, 16, kernel_size=4, stride=2, padding=1)  # From 1 channel to 16 channels
-        self.conv11 = nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1)
+def marginal_prob_std(t, sigma=25.0):
+    t = t.to(device)
+    return torch.sqrt((sigma ** (2 * t) - 1.) / 2. / np.log(sigma))
 
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=4, stride=2, padding=1)
-        self.conv21 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
 
-        self.conv3 = nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=1)
-        self.conv31 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1)
+# Define noise fns, params
+sigma = 25.0
+marginal_prob_std_fn = functools.partial(marginal_prob_std, sigma=sigma)
 
-        self.fc1 = nn.Linear(64 * 3 * 3, 512)  # Adjust the dimensions after the convolution layers
-        self.fc2 = nn.Linear(512, 1)
 
-        # self.conv1 = spectral_norm(
-        #     nn.Conv2d(1, 16, kernel_size=4, stride=2, padding=1))  # From 1 channel to 16 channels
-        # self.conv11 = spectral_norm(nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1))
-        #
-        # self.conv2 = spectral_norm(nn.Conv2d(16, 32, kernel_size=4, stride=2, padding=1))
-        # self.conv21 = spectral_norm(nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1))
-        #
-        # self.conv3 = spectral_norm(nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=1))
-        # self.conv31 = spectral_norm(nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1))
-        #
-        # self.fc1 = spectral_norm(nn.Linear(64 * 3 * 3, 512))  # Adjust the dimensions after the convolution layers
-        # self.fc2 = spectral_norm(nn.Linear(512, 1))
+#
+# class Latent_UNet_Tranformer(nn.Module):
+#     """A time-dependent score-based model built upon U-Net architecture."""
+#
+#     def __init__(self, marginal_prob_std=marginal_prob_std_fn, channels=[1, 64, 128, 256], embed_dim=256,
+#                  text_dim=256, nClass=10):
+#         """Initialize a time-dependent score-based network.
+#
+#         Args:
+#           marginal_prob_std: A function that takes time t and gives the standard
+#             deviation of the perturbation kernel p_{0t}(x(t) | x(0)).
+#           channels: The number of channels for feature maps of each resolution.
+#           embed_dim: The dimensionality of Gaussian random feature embeddings.
+#         """
+#         super().__init__()
+#         # Gaussian random feature embedding layer for time
+#         self.time_embed = nn.Sequential(
+#             GaussianFourierProjection(embed_dim=embed_dim),
+#             nn.Linear(embed_dim, embed_dim))
+#         # Encoding layers where the resolution decreases
+#         self.conv1 = nn.Conv2d(channels[0], channels[1], 3, stride=1, bias=False)
+#         self.dense1 = Dense(embed_dim, channels[1])
+#         self.gnorm1 = nn.GroupNorm(4, num_channels=channels[1])
+#         self.conv2 = nn.Conv2d(channels[1], channels[2], 3, stride=2, bias=False)
+#         self.dense2 = Dense(embed_dim, channels[2])
+#         self.gnorm2 = nn.GroupNorm(4, num_channels=channels[2])
+#         self.attn2 = SpatialTransformer(channels[2], text_dim)
+#         self.conv3 = nn.Conv2d(channels[2], channels[3], 3, stride=2, bias=False)
+#         self.dense3 = Dense(embed_dim, channels[3])
+#         self.gnorm3 = nn.GroupNorm(4, num_channels=channels[3])
+#         self.attn3 = SpatialTransformer(channels[3], text_dim)
+#
+#         self.tconv3 = nn.ConvTranspose2d(channels[3], channels[2], 3, stride=2, bias=False, output_padding=1)
+#         self.dense6 = Dense(embed_dim, channels[2])
+#         self.tgnorm3 = nn.GroupNorm(4, num_channels=channels[2])
+#         self.attn6 = SpatialTransformer(channels[2], text_dim)
+#         self.tconv2 = nn.ConvTranspose2d(channels[2], channels[1], 3, stride=2, bias=False,
+#                                          output_padding=1)  # + channels[2]
+#         self.dense7 = Dense(embed_dim, channels[1])
+#         self.tgnorm2 = nn.GroupNorm(4, num_channels=channels[1])
+#         self.tconv1 = nn.ConvTranspose2d(channels[1], channels[0], 3, stride=1)  # + channels[1]
+#
+#         # The swish activation function
+#         self.act = nn.SiLU()  # lambda x: x * torch.sigmoid(x)
+#         self.marginal_prob_std = marginal_prob_std
+#         self.cond_embed = nn.Embedding(nClass, text_dim)
+#
+#     def forward(self, x, t, y=None):
+#         # Obtain the Gaussian random feature embedding for t
+#         embed = self.act(self.time_embed(t))
+#         y_embed = self.cond_embed(y).unsqueeze(1)
+#         # Encoding path
+#         h1 = self.conv1(x) + self.dense1(embed)
+#         h1 = self.act(self.gnorm1(h1))
+#         h2 = self.conv2(h1) + self.dense2(embed)
+#         h2 = self.act(self.gnorm2(h2))
+#         h2 = self.attn2(h2, y_embed)
+#         h3 = self.conv3(h2) + self.dense3(embed)
+#         h3 = self.act(self.gnorm3(h3))
+#         h3 = self.attn3(h3, y_embed)
+#
+#         # Decoding path
+#         ## Skip connection from the encoding path
+#         h = self.tconv3(h3) + self.dense6(embed)
+#         h = self.act(self.tgnorm3(h))
+#         h = self.attn6(h, y_embed)
+#         h = self.tconv2(h + h2)
+#         h += self.dense7(embed)
+#         h = self.act(self.tgnorm2(h))
+#         h = self.tconv1(h + h1)
+#
+#         # Normalize output
+#         h = h / self.marginal_prob_std(t)[:, None, None, None]
+#         return h
+#
 
-        self.leaky_relu = nn.LeakyReLU(0.2)
-        self.sigmoid = nn.Sigmoid()
 
-        self.transform = nn.Sequential(
-            nn.Linear(28 * 28 + num_classes, 784),
-            nn.LeakyReLU(0.2),
+class UNet_Tranformer(nn.Module):
+    def __init__(self, marginal_prob_std=marginal_prob_std_fn, channels=[32, 64, 128, 256], embed_dim=256,
+                 text_dim=256, nClass=10):
+        super().__init__()
+        self.time_embed = nn.Sequential(
+            GaussianFourierProjection(embed_dim=embed_dim),
+            nn.Linear(embed_dim, embed_dim)
         )
 
-    def forward(self, x, c):
-        x, c = x.view(x.size(0), -1), c.float()  # may not need
-        v = torch.cat((x, c), 1)  # v: (N, 794)
-        y_ = self.transform(v)  # (N, 784)
-        x = y_.view(y_.shape[0], 1, 28, 28)  # (N, 1, 28, 28)
+        # Encoding layers
+        self.conv1 = nn.Conv2d(1, channels[0], 3, stride=1, bias=False)
+        self.dense1 = Dense(embed_dim, channels[0])
+        self.gnorm1 = nn.GroupNorm(4, num_channels=channels[0])
 
-        # Ensure input has the correct shape (batch_size, 1, 28, 28)
-        x = self.leaky_relu(self.conv1(x))
-        x = self.leaky_relu(self.conv11(x))
+        self.conv2 = nn.Conv2d(channels[0], channels[1], 3, stride=2, bias=False)
+        self.dense2 = Dense(embed_dim, channels[1])
+        self.gnorm2 = nn.GroupNorm(32, num_channels=channels[1])
 
-        x = self.leaky_relu(self.conv2(x))
-        x = self.leaky_relu(self.conv21(x))
+        self.conv3 = nn.Conv2d(channels[1], channels[2], 3, stride=2, bias=False)
+        self.dense3 = Dense(embed_dim, channels[2])
+        self.gnorm3 = nn.GroupNorm(32, num_channels=channels[2])
+        self.attn3 = SpatialTransformer(channels[2], text_dim)
 
-        x = self.leaky_relu(self.conv3(x))
-        x = self.leaky_relu(self.conv31(x))
+        self.conv4 = nn.Conv2d(channels[2], channels[3], 3, stride=2, bias=False)
+        self.dense4 = Dense(embed_dim, channels[3])
+        self.gnorm4 = nn.GroupNorm(32, num_channels=channels[3])
+        self.attn4 = SpatialTransformer(channels[3], text_dim)
 
-        x = x.view(x.size(0), -1)  # Flatten the output for the fully connected layers
-        x = self.leaky_relu(self.fc1(x))
-        x = self.sigmoid(self.fc2(x))
-        return x
+        # Decoding layers
+        self.tconv4 = nn.ConvTranspose2d(channels[3], channels[2], 3, stride=2, bias=False)
+        self.dense5 = Dense(embed_dim, channels[2])
+        self.tgnorm4 = nn.GroupNorm(32, num_channels=channels[2])
+
+        self.tconv3 = nn.ConvTranspose2d(channels[2], channels[1], 3, stride=2, bias=False, output_padding=1)
+        self.dense6 = Dense(embed_dim, channels[1])
+        self.tgnorm3 = nn.GroupNorm(32, num_channels=channels[1])
+
+        self.tconv2 = nn.ConvTranspose2d(channels[1], channels[0], 3, stride=2, bias=False, output_padding=1)
+        self.dense7 = Dense(embed_dim, channels[0])
+        self.tgnorm2 = nn.GroupNorm(32, num_channels=channels[0])
+        self.tconv1 = nn.ConvTranspose2d(channels[0], 1, 3, stride=1)
+
+        self.act = nn.SiLU()
+        self.marginal_prob_std = marginal_prob_std
+        self.cond_embed = nn.Embedding(nClass, text_dim)
+
+    def forward(self, x, t, y=None):
+        # Embed time and text
+        embed = self.act(self.time_embed(t))
+        y_embed = self.cond_embed(y).unsqueeze(1)
+
+        # Encoding
+        h1 = self.act(self.gnorm1(self.conv1(x) + self.dense1(embed)))
+        h2 = self.act(self.gnorm2(self.conv2(h1) + self.dense2(embed)))
+        h3 = self.act(self.gnorm3(self.conv3(h2) + self.dense3(embed)))
+        h3 = self.attn3(h3, y_embed)
+        h4 = self.act(self.gnorm4(self.conv4(h3) + self.dense4(embed)))
+        h4 = self.attn4(h4, y_embed)
+
+        # Decoding
+        h = self.act(self.tgnorm4(self.tconv4(h4) + self.dense5(embed)))
+        h = self.act(self.tgnorm3(self.tconv3(h + h3) + self.dense6(embed)))
+        h = self.act(self.tgnorm2(self.tconv2(h + h2) + self.dense7(embed)))
+        h = self.tconv1(h + h1)
+
+        # Normalize predicted noise by std at time t
+        h = h / self.marginal_prob_std(t)[:, None, None, None]
+        return h
 
 
 class CNN(nn.Module):
@@ -225,24 +308,23 @@ class CNN(nn.Module):
         return x
 
 
-# Initialize SSIM with the correct data range for images in [-1,1]
-ssim_metric = StructuralSimilarityIndexMeasure(data_range=2.0).to(DEVICE)
-compute_bce_loss = nn.BCEWithLogitsLoss().to(DEVICE)
-
-
-def compute_ssim_loss(fake, real):
-    return (1 - ssim_metric(fake, real))
-
+augmentations = transforms.Compose([
+    transforms.RandomRotation(10),  # Randomly rotate images
+    transforms.RandomHorizontalFlip(),  # Flip images horizontally
+    transforms.GaussianBlur(3)  # Apply Gaussian blur
+])
+# images = augmentations(images)
 
 @timer
-def train_cgan(local_gan, global_cgan, local_data, train_info={}):
-    print(f'train lcoal gan on client ...')
-    # Initialize local_gan with global_gan
-    local_gan.load_state_dict(global_cgan.state_dict())
+def train_unet(local_unet, global_unet, DIFFUSION_EPOCHS, local_data, train_info={}):
+    print(f'train lcoal unet on client ...')
+    # Initialize local_unet with global_unet
+    local_unet.load_state_dict(global_unet.state_dict())
+    local_unet = local_unet.to(DEVICE)
 
     X, y = local_data['X'], local_data['y']
     mask = local_data['train_mask']
-    # only use labeled data for training gan
+    # only use labeled data for training unet
     X = X[mask]
     y = y[mask]
 
@@ -251,144 +333,183 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
         mask = y.numpy() == i
         onehot_labels[mask, i] = 1
 
-    # Only update available local labels, i.e., not all the local_gans will be updated.
+    # Only update available local labels, i.e., not all the local_unets will be updated.
     # local_labels = set(y.tolist())
     print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
 
-    generator = local_gan
-    generator = generator.to(DEVICE)
-    # local_gan.load_state_dict(global_gans[l].state_dict())
-    z_dim = generator.latent_dim
+    # generator = local_unet
+    # generator = generator.to(DEVICE)
+    # local_unet.load_state_dict(global_unets[l].state_dict())
+    # z_dim = generator.latent_dim
 
-    discriminator = Discriminator(num_classes=NUM_CLASSES).to(DEVICE)
+    # discriminator = Discriminator(num_classes=NUM_CLASSES).to(DEVICE)
+    #
+    # LR = 1e-3
+    # optimizer_G = optim.Adam(generator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
+    # scheduler_G = StepLR(optimizer_G, step_size=1000, gamma=0.8)
+    #
+    # optimizer_D = optim.Adam(discriminator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
+    # scheduler_D = StepLR(optimizer_D, step_size=1000, gamma=0.8)
+    # # optimizer_G = optim.Adam(generator.parameters(), lr=lr)
+    # # optimizer_D = optim.Adam(discriminator.parameters(), lr=lr)
+    #
+    # adversarial_loss = nn.BCELoss(reduction='mean')  # Binary Cross-Entropy Loss
 
-    LR = 1e-3
-    optimizer_G = optim.Adam(generator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
-    scheduler_G = StepLR(optimizer_G, step_size=1000, gamma=0.8)
+    # unet = VAE(latent_dim).to(device)
+    # unet = UNet().to(device)
+    # optimizer_unet = optim.Adam(local_unet.parameters(), lr=1e-3)
+    # optimizer_unet = optim.Adam(local_unet.parameters(), lr=1e-3)
+    lr = 10e-4
+    optimizer = Adam(local_unet.parameters(), lr=lr)
+    # scheduler = LambdaLR(optimizer, lr_lambda=lambda epoch: max(0.2, 0.98 ** epoch))
+    # scheduler = StepLR(optimizer, step_size=1000, gamma=0.8)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=DIFFUSION_EPOCHS, eta_min=1e-6)
 
-    optimizer_D = optim.Adam(discriminator.parameters(), lr=LR, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
-    scheduler_D = StepLR(optimizer_D, step_size=1000, gamma=0.8)
-    # optimizer_G = optim.Adam(generator.parameters(), lr=lr)
-    # optimizer_D = optim.Adam(discriminator.parameters(), lr=lr)
-
-    adversarial_loss = nn.BCELoss(reduction='mean')  # Binary Cross-Entropy Loss
+    loss_fn = nn.MSELoss()
 
     # Training loop
     losses = []
     STEP = 2
     ALPHA = 1.0
-    BETA = 1.0
-    GAMMA = 2.0
     # EPOCHs = 51
     m = -1  # subset
-    for epoch in range(GAN_EPOCHS):
-        # ---- Train Discriminator ----
-        discriminator.train()
+    DIFFUSION_EPOCHS = 10000
+    augmentation_flg = True
+    for epoch in range(DIFFUSION_EPOCHS):
+
+        local_unet.train()
 
         indices = torch.randperm(len(X))[:m]  # Randomly shuffle and pick the first 10 indices
-        real_data = X[indices].float().to(DEVICE)
-        labels = onehot_labels[indices]
-
+        images = X[indices].float().to(DEVICE)
+        # labels = onehot_labels[indices]
         # real_data = X.clone().detach().float().to(DEVICE) / 255  # Replace with your local data (class-specific)
-        real_data = real_data.to(DEVICE)
-        real_data = real_data.view(-1, 1, 28, 28)  # Ensure shape is (batch_size, 1, 28, 28)
+        labels = y[indices].to(DEVICE)
+        images = images.to(DEVICE)
+        images = images.view(-1, 1, 28, 28)  # Ensure shape is (batch_size, 1, 28, 28)
+        x = images
+        if augmentation_flg:
+            # Number of augmentations per image
+            num_augmentations = 3
+            # Store augmented images and labels in lists
+            augmented_images = [x]  # Start with original images
+            augmented_labels = [labels]  # Labels remain unchanged
 
-        batch_size = real_data.size(0)
-        real_labels = torch.ones(batch_size, 1).to(DEVICE)
-        fake_labels = torch.zeros(batch_size, 1).to(DEVICE)
+            # Apply augmentations
+            for _ in range(num_augmentations):
+                augmented_images.append(augmentations(x))  # Apply augmentation to x
+                augmented_labels.append(labels)
 
-        # Generate synthetic data
-        z = torch.randn(batch_size, z_dim).to(DEVICE)
-        fake_data = generator(z, labels).detach()  # Freeze Generator when training Discriminator
-        # print(fake_data.shape,flush=True)
-        # print(epoch, collections.Counter(labels.cpu().numpy().argmax(axis=1).tolist()))
+            # Concatenate all images and labels efficiently
+            x = torch.cat(augmented_images, dim=0).to(DEVICE)
+            labels = torch.cat(augmented_labels, dim=0).to(DEVICE)
 
-        # Discriminator Loss
-        real_loss = adversarial_loss(discriminator(real_data, labels), real_labels)
-        fake_loss = adversarial_loss(discriminator(fake_data, labels), fake_labels)
-        d_loss = (real_loss + fake_loss) / 2
+        """
+            Computes the loss for a conditional denoising diffusion probabilistic model (DDPM).
 
-        optimizer_D.zero_grad()
-        d_loss.backward()
-        optimizer_D.step()
+            Args:
+                model: The neural network model that predicts the score (i.e., the gradient of the log probability).
+                x (torch.Tensor): The original data samples (e.g., images) with shape (batch_size, channels, height, width).
+                y (torch.Tensor): The conditional information (e.g., class labels or other auxiliary data).
+                marginal_prob_std (function): A function that returns the standard deviation of the noise 
+                                                at a given time step.
+                eps (float, optional): A small value to ensure numerical stability. Default is 1e-5.
 
-        scheduler_D.step()
+            Returns:
+                torch.Tensor: The computed loss as a scalar tensor.
+            """
 
-        STEP = 20
+        eps = 1e-5
+        # Sample a random time step for each sample in the batch. Sample from a uniform distribution
+        #     on the interval :math:`[0, 1)`
+        random_t = torch.rand(x.shape[0], device=x.device) * (1. - eps) + eps
 
-        generator.train()
-        z = torch.randn(batch_size, z_dim).to(DEVICE)
-        generated_data = generator(z, labels)
+        # Sample random noise from a standard normal distribution with the same shape as the input.
+        z = torch.randn_like(x)
+        # z = torch.empty_like(x).normal_(mean=0, std=1).clamp_(-2, 2)
 
-        # Generator Loss (Discriminator should classify fake data as real)
-        g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
-        mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-        ssim_loss = compute_ssim_loss(generated_data, real_data)
-        # bce_loss = compute_bce_loss(generated_data, real_data)
-        # Convert the target labels from [-1, 1] to [0, 1]
-        # real = (real + 1) / 2  # Convert -1 -> 0, 1 -> 1
-        bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
-        g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA*bce_loss
+        # Compute the standard deviation of the noise at the sampled time step.
+        std = marginal_prob_std_fn(random_t)
 
-        optimizer_G.zero_grad()
-        g_loss.backward()
-        optimizer_G.step()
+        # Perturb the input data with the sampled noise, scaled by the computed standard deviation.
+        perturbed_x = x + z * std[:, None, None, None]
 
-        # print(epoch, d_loss, '...')
-        while g_loss > d_loss and STEP > 0:
-            # print(epoch, g_loss, d_loss.item(), STEP)
-            # ---- Train Generator ----
-            # we don't need to freeze the discriminator because the optimizer for the discriminator
-            # (optimizer_D) is not called.
-            # This ensures that no updates are made to the discriminator's parameters,
-            # even if gradients are computed during the backward pass.
-            generator.train()
-            z = torch.randn(batch_size, z_dim).to(DEVICE)
-            generated_data = generator(z, labels)
+        # Predict the score (denoising direction) using the model.
+        # The model takes the perturbed data, the time step, and the conditional information as inputs.
+        score = local_unet(perturbed_x, random_t, y=labels)
 
-            # Generator Loss (Discriminator should classify fake data as real)
-            g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
-            mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-            ssim_loss = compute_ssim_loss(generated_data, real_data)
-            bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
-            g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA * bce_loss
+        # Compute the loss as the mean squared error between the predicted score and the true noise,
+        # weighted by the standard deviation.
+        # loss = torch.mean(torch.sum((score * std[:, None, None, None] - z)**2, dim=(1,2,3)))
+        # loss = F.mse_loss(score * std[:, None, None, None], -z, reduction='mean')
+        loss = F.mse_loss(score * std[:, None, None, None], -z, reduction='mean')
 
-            optimizer_G.zero_grad()
-            g_loss.backward()
-            optimizer_G.step()
+        # weight = std ** 2  # Give higher weight to noisier samples
+        # loss = F.mse_loss(score * std[:, None, None, None], -z, reduction='none')
+        # loss = (weight[:, None, None, None] * loss).mean()
 
-            STEP -= 1
+        # l1_lambda = 1e-5
+        # l1_norm = sum(p.abs().sum() for p in local_unet.parameters())
+        # loss = loss + l1_lambda * l1_norm
 
-        scheduler_G.step()
+        optimizer.zero_grad()
+        loss.backward()
+        # torch.nn.utils.clip_grad_norm_(local_unet.parameters(), max_norm=1.0)
+        optimizer.step()
+        total_loss = loss.item() * x.shape[0]
+
+        scheduler.step()
+        lr_current = scheduler.get_last_lr()[0]
 
         # ---- Logging ----
         if epoch % 100 == 0:
-            print(f"Epoch {epoch}/{GAN_EPOCHS} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
-                  f"LR_D: {scheduler_D.get_last_lr()}, LR_G: {scheduler_G.get_last_lr()}, "
-                  f"mse: {mse_loss.item():.4f}, ssim_loss: {ssim_loss.item():.4f}, bce_loss: {bce_loss.item():.4f},"
-                  f" STEP:{STEP}")
-        losses.append(g_loss.item())
+            print(f"Epoch {epoch}/{DIFFUSION_EPOCHS} | unet Loss: {loss.item():.4f} lr_current: {lr_current} ")
+        losses.append(total_loss)
 
         # Display some generated images after each epoch
-        if epoch == GAN_EPOCHS - 1:  # epoch % 100 == 0:
+        if epoch > 0 and epoch % 200 == 0 or epoch == DIFFUSION_EPOCHS - 1:
+            for num_steps in [500]:
+                batch_size = len(x)
+                # num_steps = 50
+                x_shape = (1, 28, 28)
+                score_model = local_unet
+                t = torch.ones(batch_size, device=device)
+                init_x = torch.randn(batch_size, *x_shape, device=device) \
+                         * marginal_prob_std(t)[:, None, None, None]
+                time_steps = torch.linspace(1., eps, num_steps, device=device)
+                # time_steps = torch.exp(torch.linspace(math.log(1), math.log(eps), num_steps, device=device))
+                step_size = time_steps[0] - time_steps[1]
 
-            print(f"Epoch {epoch}/{GAN_EPOCHS} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
-                  f"LR_D: {scheduler_D.get_last_lr()}, LR_G: {scheduler_G.get_last_lr()}, "
-                  f"mse: {mse_loss.item():.4f}, ssim_loss: {ssim_loss.item():.4f}, bce_loss: {bce_loss.item():.4f}"
-                  f"STEP:{STEP}")
+                x = init_x
+                with torch.no_grad():
+                    for time_step in tqdm(time_steps):
+                        batch_time_step = torch.ones(batch_size, device=device) * time_step
+                        g = diffusion_coeff(batch_time_step, sigma)
+                        mean_x = x + (g ** 2)[:, None, None, None] * score_model(x, batch_time_step,
+                                                                                 y=labels) * step_size
+                        x = mean_x + torch.sqrt(step_size) * g[:, None, None, None] * torch.randn_like(x)
 
-            with torch.no_grad():
-                z = torch.randn(100, 100).to(DEVICE)
-                c = torch.zeros((100, NUM_CLASSES)).to(DEVICE)
-                s = c.shape[0] // NUM_CLASSES
-                for i in range(NUM_CLASSES):
-                    c[i * s:(i + 1) * s, i] = 1
+                samples = mean_x
+                # ## Sample visualization.
+                # rng = torch.max(samples) - torch.min(samples)
+                # if rng != 0:
+                #     samples = (samples - torch.min(samples))/rng
+                # else:
+                #     samples = (samples - torch.min(samples))
+                # print(f'max: {torch.max(samples)}, min: {torch.min(samples)}')
+                generated_imgs = torch.tanh(samples)
+                # generated_imgs = samples.clamp(0.0, 1.0)
 
-                generated_imgs = generator(z, c)
-
-                # # Binarization: Threshold the generated image at 0.5 (assuming Tanh output range is [-1, 1])
-                # generated_images = (generated_imgs + 1) / 2  # Scale from [-1, 1] to [0, 1]
-                # binarized_images = (generated_images > 0.5).float()
+                # z = torch.randn(100, 100).to(DEVICE)
+                # c = torch.zeros((100, NUM_CLASSES)).to(DEVICE)
+                # s = c.shape[0] // NUM_CLASSES
+                # labels = torch.zeros((100,)).int().to(DEVICE)
+                # for i in range(NUM_CLASSES):
+                #     c[i * s:(i + 1) * s, i] = 1
+                #     labels[i * s:(i + 1) * s] = i
+                #
+                # generated_images = local_unet.decode(z, labels)
+                # denoised_images = local_unet(generated_images, labels)
+                # generated_imgs = denoised_images.cpu().detach()
 
                 generated_imgs = (generated_imgs + 1) * 127.5  # Convert [-1, 1] back to [0, 255]
                 generated_imgs = generated_imgs.clamp(0, 255)  # Ensure values are within [0, 255]
@@ -399,7 +520,7 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
                     if i < 100:
                         ax.imshow(generated_imgs[i, 0], cmap='gray')
                     else:
-                        ax.imshow(((real_data[i - 100, 0].cpu().numpy() + 1) * 127.5).astype(int), cmap='gray')
+                        ax.imshow(((images[i - 100, 0].cpu().numpy() + 1) * 127.5).astype(int), cmap='gray')
 
                     ax.axis('off')
 
@@ -421,12 +542,12 @@ def train_cgan(local_gan, global_cgan, local_data, train_info={}):
                 plt.show()
                 plt.close(fig)
 
-    train_info[f'cgan'] = {"losses": losses}
+    train_info[f'cunet'] = {"losses": losses}
 
-    local_gan.load_state_dict(generator.state_dict())  # update local_gan again
+    local_unet.load_state_dict(local_unet.state_dict())  # update local_unet again
 
 
-def gen_local_data(global_cgan, local_data, train_info):
+def gen_local_data(global_unet, DIFFUSION_EPOCHS, local_data, train_info):
     print_data(local_data)
 
     # local data
@@ -444,7 +565,7 @@ def gen_local_data(global_cgan, local_data, train_info):
         max_size = max(ct.values())
         # for each class, only generate 10% percent data to save computational resources.
         # if max_size > 100:
-        max_size = int(max_size * 0.5)
+        max_size = int(max_size * 0.1)
 
         if max_size == 0: max_size = 1
         print(f'For each class, we only generate {max_size} samples, '
@@ -464,7 +585,7 @@ def gen_local_data(global_cgan, local_data, train_info):
         print(f'we need to generate samples ({sum(sizes.values())}),where each class sizes:{sizes}')
 
         # generated new data
-        generated_data = gen_data(global_cgan, sizes, similarity_method=None,
+        generated_data = gen_data(global_unet, DIFFUSION_EPOCHS, sizes, similarity_method=None,
                                   local_data=local_data)
         # train_info['generated_size'] = sum(sizes.values())
 
@@ -486,7 +607,7 @@ def gen_local_data(global_cgan, local_data, train_info):
         # if debug:  # plot the generated data
         #     train_mask = torch.cat(
         #         [local_data['train_mask'], torch.tensor([True] * (sum(sizes.values())), dtype=torch.bool)])
-        #     plot_data(data['X'], data['y'], train_mask, generated_size, train_info, local_data, global_vaes)
+        #     plot_data(data['X'], data['y'], train_mask, generated_size, train_info, local_data, global_unets)
         #     return global_lp
     else:
         sizes = {}
@@ -564,12 +685,12 @@ def gen_local_data(global_cgan, local_data, train_info):
 @timer
 def train_cnn(local_cnn, global_cnn, train_info={}):
     """
-        1. Use gans to generated data for each class
+        1. Use unets to generated data for each class
         2. Use the generated data + local data to train local cnn with initial parameters of global_cnn
         3. Send local cnn'parameters to server.
     Args:
         local_cnn:
-        gan:
+        unet:
         global_cnn:
         local_data:
 
@@ -599,7 +720,7 @@ def train_cnn(local_cnn, global_cnn, train_info={}):
     #       {k: float(f"{v:.2f}") for k, v in labeled_classes_weights.items()})
 
     # only train smaller model
-    epochs_client = 501
+    epochs_client = 0
     losses = []
     val_losses = []
     best = {'epoch': -1, 'val_accuracy': -1.0, 'val_accs': [], 'val_losses': [], 'train_accs': [], 'train_losses': []}
@@ -623,8 +744,8 @@ def train_cnn(local_cnn, global_cnn, train_info={}):
         local_cnn.train()  #
         # epoch_model_loss = 0
         # _model_loss, _model_distill_loss = 0, 0
-        # epoch_gan_loss = 0
-        # _gan_recon_loss, _gan_kl_loss = 0, 0
+        # epoch_unet_loss = 0
+        # _unet_recon_loss, _unet_kl_loss = 0, 0
         # graph_data.to(DEVICE)
         # data_size, data_dim = graph_data.x.shape
         # your local personal model
@@ -823,14 +944,14 @@ def evaluate_train(cnn, graph_data, gen_start, generated_size, epoch, local_data
             evaluate_ML2(X_train, y_train, X_val, y_val, X_test, y_test, X_shared_test, y_shared_test, verbose=10)
 
 
-def server_cgan(global_cgan, X, y):
-    print(f'train server cgan on generated data ...')
-    # # Initialize local_gan with global_gan
-    # local_gan.load_state_dict(global_cgan.state_dict())
+def server_cunet(global_unet, X, y):
+    print(f'train server cunet on generated data ...')
+    # # Initialize local_unet with global_unet
+    # local_unet.load_state_dict(global_unet.state_dict())
     #
     # X, y = local_data['X'], local_data['y']
     # mask = local_data['train_mask']
-    # # only use labeled data for training gan
+    # # only use labeled data for training unet
     # X = X[mask]
     # y = y[mask]
 
@@ -839,14 +960,14 @@ def server_cgan(global_cgan, X, y):
         mask = y.cpu().numpy() == i
         onehot_labels[mask, i] = 1
 
-    # Only update available local labels, i.e., not all the local_gans will be updated.
+    # Only update available local labels, i.e., not all the local_unets will be updated.
     # local_labels = set(y.tolist())
     print(f'local labels: {collections.Counter(y.tolist())}, with {len(y)} samples.')
 
-    generator = Generator(num_classes=NUM_CLASSES)
-    generator.load_state_dict(global_cgan.state_dict())
+    generator = Generator()
+    generator.load_state_dict(global_unet.state_dict())
     generator = generator.to(DEVICE)
-    # local_gan.load_state_dict(global_gans[l].state_dict())
+    # local_unet.load_state_dict(global_unets[l].state_dict())
     z_dim = generator.latent_dim
 
     discriminator = Discriminator(num_classes=NUM_CLASSES).to(DEVICE)
@@ -865,12 +986,10 @@ def server_cgan(global_cgan, X, y):
     # Training loop
     losses = []
     STEP = 2
-    ALPHA = 1.0
-    BETA = 1.0
-    GAMMA = 2.0
-    server_gan_epochs = GAN_EPOCHS * 2
+    ALPHA = 0.5
+    server_unet_epochs = DIFFUSION_EPOCHS * 2
     m = 100  # subset
-    for epoch in range(server_gan_epochs):
+    for epoch in range(server_unet_epochs):
         # ---- Train Discriminator ----
         discriminator.train()
 
@@ -912,9 +1031,7 @@ def server_cgan(global_cgan, X, y):
         # Generator Loss (Discriminator should classify fake data as real)
         g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
         mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-        ssim_loss = compute_ssim_loss(generated_data, real_data)
-        bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
-        g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA * bce_loss
+        g_loss += ALPHA * mse_loss
 
         optimizer_G.zero_grad()
         g_loss.backward()
@@ -935,9 +1052,7 @@ def server_cgan(global_cgan, X, y):
             # Generator Loss (Discriminator should classify fake data as real)
             g_loss = adversarial_loss(discriminator(generated_data, labels), real_labels)
             mse_loss = torch.nn.functional.mse_loss(generated_data, real_data)
-            ssim_loss = compute_ssim_loss(generated_data, real_data)
-            bce_loss = compute_bce_loss(generated_data, (real_data + 1) / 2)
-            g_loss += ALPHA * mse_loss + BETA * ssim_loss + GAMMA * bce_loss
+            g_loss += ALPHA * mse_loss
 
             optimizer_G.zero_grad()
             g_loss.backward()
@@ -949,7 +1064,7 @@ def server_cgan(global_cgan, X, y):
 
         # ---- Logging ----
         if epoch % 100 == 0:
-            print(f"Epoch {epoch}/{server_gan_epochs} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
+            print(f"Epoch {epoch}/{server_unet_epochs} | D Loss: {d_loss.item():.4f} | G Loss: {g_loss.item():.4f} |  "
                   f"LR_D: {scheduler_D.get_last_lr()}, LR_G: {scheduler_G.get_last_lr()}, "
                   f"mse: {mse_loss.item():.4f}, STEP:{STEP}")
         losses.append(g_loss.item())
@@ -999,9 +1114,9 @@ def server_cgan(global_cgan, X, y):
         #         plt.savefig(fig_file)
         #         plt.show()
 
-    # train_info[f'cgan'] = {"losses": losses}
+    # train_info[f'cunet'] = {"losses": losses}
 
-    global_cgan.load_state_dict(generator.state_dict())  # update local_gan again
+    global_unet.load_state_dict(generator.state_dict())  # update local_unet again
 
 
 def predict_client_type_with_krum(clients_parameters, clients_info, device=None):
@@ -1014,27 +1129,94 @@ def predict_client_type_with_krum(clients_parameters, clients_info, device=None)
     return clients_type_pred
 
 
-def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, histories_server, server_epoch):
-    aggregate_method = 'retrain global cgan'
+@timer
+def aggregate_parameters(clients_cnns, clients_info, global_cnn, aggregation_method, model_name, histories, epoch):
+    VERBOSE = 5
+    print('*aggregate cnn...')
+    # flatten all the parameters into a long vector
+    # clients_updates = [client_state_dict.cpu() for client_state_dict in clients_cnns.values()]
+
+    # Concatenate all parameter tensors into one vector.
+    # Note: The order here is the iteration order of the OrderedDict, which
+    # may not match the order of model.parameters().
+    # vector_from_state = torch.cat([param.view(-1) for param in state.values()])
+    # flatten_clients_updates = [torch.cat([param.view(-1).cpu() for param in client_state_dict.values()]) for
+    #                            client_state_dict in clients_cnns.values()]
+    tmp_models = []
+    for client_state_dict in clients_cnns.values():
+        # if model_name == 'CVAE':
+        #     model = ConditionalVAE(latent_dim=100, num_classes=NUM_CLASSES)
+        if model_name == 'UNET':
+            model = UNet_Tranformer()
+        else:
+            model = CNN(num_classes=NUM_CLASSES)
+        model.load_state_dict(client_state_dict)
+        tmp_models.append(model)
+    flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]
+
+    if VERBOSE >= 30:
+        # for debugging
+        for i, update in enumerate(flatten_clients_updates):
+            print(f'client_{i}:', end='  ')
+            print_histgram(update, bins=5, value_type='params')
+
+    NUM_HONEST_CLIENTS = -1
+    NUM_MALICIOUS_CLIENTS = 0
+    min_value = min([torch.min(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
+    max_value = max([torch.max(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
+
+    # each client extra information (such as, number of samples)
+    # client_weights will affect median and krum, so be careful to weights
+    # if assign byzantine clients with very large weights (e.g., 1e6),
+    # then median will choose byzantine client's parameters.
+    clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
+    # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
+    if aggregation_method == 'refined_krum':
+        aggregated_update, clients_type_pred = refined_krum(flatten_clients_updates, clients_weights,
+                                                            trimmed_average=False, verbose=VERBOSE)
+    elif aggregation_method == 'krum':
+        # train_info = list(histories['clients'][-1].values())[-1]
+        # f = train_info['NUM_MALICIOUS_CLIENTS']
+        f = NUM_MALICIOUS_CLIENTS
+        # client_type = train_info['client_type']
+        aggregated_update, clients_type_pred = krum(flatten_clients_updates, clients_weights, f,
+                                                    trimmed_average=False, verbose=VERBOSE)
+    elif aggregation_method == 'median':
+        aggregated_update, clients_type_pred = median(flatten_clients_updates, clients_weights, verbose=VERBOSE)
+    else:
+        aggregated_update, clients_type_pred = mean(flatten_clients_updates, clients_weights)
+    print(f'{aggregation_method}, clients_type: {clients_type_pred}, '
+          f'client_updates: min: {min_value}, max: {max_value}')  # f'clients_weights: {clients_weights.numpy()},
+
+    # Update the global model with the aggregated parameters
+    vector_to_parameters(aggregated_update, global_cnn.parameters())  # in_place
+    # global_cnn.load_state_dict(aggregated_update)
+
+
+def aggregate_unets(clients_unets, clients_info, global_unet, DIFFUSION_EPOCHS, local_data,
+                    histories_server, server_epoch):
+    aggregate_method = 'parameter'
     if aggregate_method == 'parameter':  # aggregate clients' parameters
-        aggregate_with_krum(clients_gans, clients_info, global_cgan, DEVICE)
-        # aggregate_with_attention(client_parameters_list, global_gan, DEVICE)  # update global_gan inplace
+        aggregation_method = 'median'
+        aggregate_parameters(clients_unets, clients_info, DIFFUSION_EPOCHS, aggregation_method, 'UNET',
+                             histories_server, server_epoch)
+        # aggregate_with_attention(client_parameters_list, global_unet, DEVICE)  # update global_unet inplace
     else:
         #############################################################################################
-        # Find the honest clients cgans and ignore the attackers
-        clients_type_pred = predict_client_type_with_krum(clients_gans, clients_info, DEVICE)
+        # Find the honest clients cunets and ignore the attackers
+        clients_type_pred = predict_client_type_with_krum(clients_unets, clients_info, DEVICE)
         print(f'clients_type_pred: {clients_type_pred}')
-        # clients_gans = {i_: clients_gans[i_] for i_ in range(len(clients_type_pred)) \
+        # clients_unets = {i_: clients_unets[i_] for i_ in range(len(clients_type_pred)) \
         # if clients_type_pred[i_] == 'honest']}
-        # print(f'honest clients: {len(clients_gans)}')
+        # print(f'honest clients: {len(clients_unets)}')
         # generated data
         generated_data = {l_: torch.zeros((0, 28, 28)).to(DEVICE) for l_ in LABELS}
-        for i, (client_id, client_cgan_params) in enumerate(clients_gans.items()):
+        for i, (client_id, client_cunet_params) in enumerate(clients_unets.items()):
             if clients_type_pred[i] == 'attacker':
                 print(f'client_id: {client_id} is an attacker, skip it.')
                 continue
-            generator = Generator(num_classes=NUM_CLASSES).to(DEVICE)
-            generator.load_state_dict(client_cgan_params)
+            generator = Generator().to(DEVICE)
+            generator.load_state_dict(client_cunet_params)
 
             # GEN_SIZE_PER_CLASS = 10  # for each class, we generate 10 images
             for class_, cnt_ in clients_info[client_id]['label_cnts'].items():
@@ -1047,7 +1229,7 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
 
                 generated_data[class_] = torch.cat((generated_data[class_], generated_imgs), dim=0)
         #######################################################################################################
-        # using the generated data to train a global cgan
+        # using the generated data to train a global cunet
         X = torch.zeros((0, 28, 28)).to(DEVICE)
         y = torch.zeros((0,)).to(DEVICE)
         for l_, X_ in generated_data.items():
@@ -1055,23 +1237,29 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
             y_ = torch.tensor([l_] * X_.shape[0]).to(DEVICE)
             y = torch.cat((y, y_))
 
-        server_cgan(global_cgan, X, y)
+        server_cunet(global_unet, X, y)
 
     if server_epoch % 50 == 0:
-        torch.save(global_cgan.state_dict(), f'global_cgan_{server_epoch}.pth')
+        torch.save(global_unet.state_dict(), f'global_unet_{server_epoch}.pth')
 
     ##########################################################################################################
     # check the generated data
-    generator = Generator(num_classes=NUM_CLASSES).to(DEVICE)
-    generator.load_state_dict(global_cgan.state_dict())
+    cunet = ConditionalVAE(latent_dim=100, num_classes=NUM_CLASSES).to(DEVICE)
+    unet = ConditionalUNet().to(DEVICE)
+    cunet.load_state_dict(global_unet.state_dict())
+    unet.load_state_dict(DIFFUSION_EPOCHS.state_dict())
     with torch.no_grad():
         z = torch.randn(100, 100).to(DEVICE)
         c = torch.zeros((100, NUM_CLASSES)).to(DEVICE)
         s = c.shape[0] // NUM_CLASSES
+        labels = torch.zeros((100,)).int().to(DEVICE)
         for i in range(NUM_CLASSES):
             c[i * s:(i + 1) * s, i] = 1
+            labels[i * s:(i + 1) * s] = i
 
-        generated_imgs = generator(z, c)
+        generated_images = cunet.decode(z, labels)
+        denoised_images = unet(generated_images, labels)
+        generated_imgs = denoised_images.cpu().detach()
         generated_imgs = generated_imgs.squeeze(1)  # Removes the second dimension (size 1)
 
         generated_imgs = (generated_imgs + 1) * 127.5  # Convert [-1, 1] back to [0, 255]
@@ -1106,7 +1294,7 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
     # sizes = {l: 100 for l in LABELS}
     # print(sizes)
     # # generated new data
-    # generated_data = gen_data(global_cgan, sizes, similarity_method=None,
+    # generated_data = gen_data(global_unet, sizes, similarity_method=None,
     #                           local_data=local_data)
     #
     # for l, vs in generated_data.items():
@@ -1120,18 +1308,18 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
     # histories_server.append(ml_info)
 
     # # generated new data
-    # local_gans = {}
+    # local_unets = {}
     # # for client 0, we only use class 0 and 3
     # # for client 1, we only use class 1 and 4
     # # for client 2, we only use class 2 and 5
     # # for client 3, we only use class 6
     # for c, ls in [(0, (0, 3)), (1, (1, 4)), (2, (2, 5)), (3, (6,))]:
     #     for l in ls:
-    #         local_gans[l] = gans[c][l]
+    #         local_unets[l] = unets[c][l]
     #
-    # torch.save(local_gans, global_gan_path)
+    # torch.save(local_unets, global_unet_path)
     #
-    # generated_data = gen_data(local_gans, sizes, similarity_method='cosine',
+    # generated_data = gen_data(local_unets, sizes, similarity_method='cosine',
     #                           local_data=local_data)
     # ml_info = check_gen_data(generated_data, local_data)
     # histories_server.append(ml_info)
@@ -1560,7 +1748,7 @@ def _gen_models(model, l, size, method='T5'):
         # Print the shape of the CLS embedding
         print(f"CLS Embedding Shape: {cls_embedding.shape}")
         embedding = cls_embedding
-    elif method == 'gan':
+    elif method == 'unet':
         generator = model
         generator.eval()
         z_dim = generator.latent_dim
@@ -1568,7 +1756,7 @@ def _gen_models(model, l, size, method='T5'):
             z = torch.randn(size, z_dim).to(DEVICE)
             synthetic_data = generator(z)
         embedding = synthetic_data
-    elif method == 'cgan':
+    elif method == 'cunet':
         generator = model
         generator.eval()
         z_dim = generator.latent_dim
@@ -1581,13 +1769,13 @@ def _gen_models(model, l, size, method='T5'):
         embedding = synthetic_data
 
     else:  # default one is autoencoder
-        vae = model
-        latent_dim = vae.latent_dim
+        unet = model
+        latent_dim = unet.latent_dim
         # generate latent vector from N(0, 1)
         z = torch.randn(size, latent_dim).to(DEVICE)  # Sample latent vectors
         # ohe_labels = torch.zeros((size, len(LABELS))).to(DEVICE)  # One-hot encoding for class labels
         # ohe_labels[:, l] = 1
-        pseudo_logits = vae.decoder(z)  # Reconstruct probabilities from latent space
+        pseudo_logits = unet.decoder(z)  # Reconstruct probabilities from latent space
         embedding = pseudo_logits
 
     return embedding
@@ -1620,13 +1808,20 @@ def plot_img(generated_imgs, l, show=True, fig_file=f'tmp/generated~.png'):
         plt.close(fig)
 
 
-def gen_data(cgan, sizes, similarity_method='cosine', local_data={}):
+def gen_data(cunet, unet, sizes, similarity_method='cosine', local_data={}):
     data = {}
     for l, size in sizes.items():
-        gan = cgan
-        gan.to(DEVICE)
-        pseudo_logits = _gen_models(gan, l, size, method='cgan')
-        pseudo_logits = pseudo_logits.detach().to(DEVICE)
+        unet = cunet
+        unet.to(DEVICE)
+        # pseudo_logits = _gen_models(unet, l, size, method='cunet')
+        with torch.no_grad():
+            z = torch.randn(size, 100).to(DEVICE)
+            labels = torch.ones((size,)).int().to(DEVICE) * l
+
+        generated_images = cunet.decode(z, labels)
+        denoised_images = unet(generated_images, labels)
+        denoised_images = denoised_images.squeeze(1)  # Removes the second dimension (size 1)
+        pseudo_logits = denoised_images.detach().to(DEVICE)
 
         # plot_img(pseudo_logits.cpu(), l, show=True, fig_file=f'tmp/generated_{l}~.png')
 
@@ -1669,8 +1864,8 @@ def merge_data(data, local_data):
     return new_data
 
 
-# gan loss function
-def gan_loss_function(recon_x, x, mean, log_var, beta=0):
+# unet loss function
+def unet_loss_function(recon_x, x, mean, log_var, beta=0):
     # BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / (x.shape[0] * x.shape[1]) == reduction='mean'
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum') / x.shape[0]
     # BCE = F.mse_loss(recon_x, x, reduction='mean')
@@ -1710,18 +1905,18 @@ def print_histgram(new_probs, value_type='probs'):
 def print_histories(histories):
     num_server_epoches = len(histories)
     num_clients = len(histories[0])
-    num_classes = len(histories[0][0]["gan"])
+    num_classes = len(histories[0][0]["unet"])
     print('num_server_epoches:', num_server_epoches, ' num_clients:', num_clients, ' num_classes:', num_classes)
     # for c in range(num_clients):
     #     print(f"\n\nclient {c}")
     #     for s in range(num_server_epoches):
     #         client = histories[s][c]
-    #         local_gan = client['gan']
+    #         local_unet = client['unet']
     #         local_cnn = client['cnn']
-    #         print(f'\t*local gan:', local_gan.keys(), f' server_epoch: {s}')
-    #         losses_ = [float(f"{v:.2f}") for v in local_gan['losses']]
-    #         # print(f'\t\tlocal gan ({len(losses_)}): {losses_[:5]} ... {losses_[-5:]}')
-    #         print(f'\tlocal gan ({len(losses_)}): [{", ".join(map(str, losses_[:5]))}, ..., '
+    #         print(f'\t*local unet:', local_unet.keys(), f' server_epoch: {s}')
+    #         losses_ = [float(f"{v:.2f}") for v in local_unet['losses']]
+    #         # print(f'\t\tlocal unet ({len(losses_)}): {losses_[:5]} ... {losses_[-5:]}')
+    #         print(f'\tlocal unet ({len(losses_)}): [{", ".join(map(str, losses_[:5]))}, ..., '
     #               f'{", ".join(map(str, losses_[-5:]))}]')
     #         # print('\t*local cnn:', [f"{v:.2f}" for v in local_cnn['losses']])
     #         # labeled_acc = client['labeled_accuracy']
@@ -1746,11 +1941,11 @@ def print_histories(histories):
             shared_accs = []
             for s in range(num_server_epoches):
                 client = histories[s][c]
-                # local_gan = client['gan']
+                # local_unet = client['unet']
                 # local_cnn = client['cnn']
-                # print(f'\t*local gan:', local_gan.keys(), f' server_epoch: {s}')
-                # losses_ = [float(f"{v:.2f}") for v in local_gan['losses']]
-                # print(f'\t\tlocal gan:', losses_)
+                # print(f'\t*local unet:', local_unet.keys(), f' server_epoch: {s}')
+                # losses_ = [float(f"{v:.2f}") for v in local_unet['losses']]
+                # print(f'\t\tlocal unet:', losses_)
                 # # print('\t*local cnn:', [f"{v:.2f}" for v in local_cnn['losses']])
                 train_acc = client[f'{model_type}_train_accuracy']
                 val_acc = client[f'{model_type}_val_accuracy']
@@ -1870,8 +2065,9 @@ def normalize(X):
     return (X / 255.0 - 0.5) * 2  # [-1, 1]
 
 
-def clients_training(epoch, global_cgan, global_cnn):
-    clients_gans = {}
+def clients_training(epoch, global_unet, DIFFUSION_EPOCHS, global_cnn):
+    clients_unets = {}
+    clients_unets = {}
     clients_cnns = {}
     clients_info = {}  # extra information (e.g., number of samples) of clients that can be used in aggregation
     history = {}
@@ -1880,14 +2076,8 @@ def clients_training(epoch, global_cgan, global_cnn):
     test_dataset = datasets.MNIST(root="./data", train=False, transform=None, download=True)
     X_test = test_dataset.data
     y_test = test_dataset.targets
-    mask = np.full(len(y_test), False)
-    for l in LABELS:
-        mask_ = y_test == l
-        mask[mask_] = True
-    X_test, y_test = X_test[mask], y_test[mask]
     X_test = normalize(X_test.numpy())
     y_test = y_test.numpy()
-
     shared_data = {"X": torch.tensor(X_test).float(), 'y': torch.tensor(y_test)}
 
     X = train_dataset.data  # Tensor of shape (60000, 28, 28)
@@ -1916,7 +2106,7 @@ def clients_training(epoch, global_cgan, global_cnn):
             client_type = 'honest' if i < n_honest_clients_in_each_group else 'attacker'
             print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
             # might be used in server
-            train_info = {"client_type": client_type, "gan": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
+            train_info = {"client_type": client_type, "unet": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
             print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
             print('Load data...')
             if i < n_honest_clients_in_each_group:
@@ -1954,78 +2144,78 @@ def clients_training(epoch, global_cgan, global_cnn):
                 print_data(local_data)
 
                 #####################################################################
-                if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:  # and epoch < 1
+                if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG and epoch < 1:
                     print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                    local_cgan = Generator(latent_dim=100, num_classes=NUM_CLASSES)
-                    print('Train cgan...')
-                    train_cgan(local_cgan, global_cgan, local_data, train_info)
-                    clients_gans[c] = local_cgan.state_dict()
+                    local_unet = UNet_Tranformer(embed_dim=100, nClass=NUM_CLASSES)
+                    print('Train cunet...')
+                    train_unet(local_unet, global_unet, DIFFUSION_EPOCHS, local_data, train_info)
+                    clients_unets[c] = local_unet.state_dict()
 
                 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                gen_local_data(global_cgan, local_data, train_info)
+                gen_local_data(global_unet, DIFFUSION_EPOCHS, local_data, train_info)
                 print('Train CNN...')
                 # local_cnn = CNN(input_dim=input_dim, hidden_dim=hidden_dim_cnn, output_dim=num_classes)
                 local_cnn = CNN(num_classes=NUM_CLASSES)
                 train_cnn(local_cnn, global_cnn, train_info)
                 clients_cnns[c] = local_cnn.state_dict()
 
-            else:
-                if l % 3 != 0: continue
-                # for each 4 clients, the last one is attacker. attackers don't need to train local_cnn
-                # local_data = {'X': [], 'y': []}
-                local_data = {'client_type': client_type,
-                              'X': torch.tensor(X_sub) + 1000, 'y': torch.tensor(y_sub),
-                              'train_mask': torch.tensor(train_mask, dtype=torch.bool),
-                              'val_mask': torch.tensor(val_mask, dtype=torch.bool),
-                              'test_mask': torch.tensor(test_mask, dtype=torch.bool),
-                              'shared_data': shared_data}
-                label_cnts = collections.Counter(local_data['y'].tolist())
-                clients_info[c] = {'label_cnts': label_cnts, 'size': len(local_data['y'])}
+            # else:
+            #     if l % 3 != 0: continue
+            #     # for each 4 clients, the last one is attacker. attackers don't need to train local_cnn
+            #     # local_data = {'X': [], 'y': []}
+            #     local_data = {'client_type': client_type,
+            #                   'X': torch.tensor(X_sub) + 1000, 'y': torch.tensor(y_sub),
+            #                   'train_mask': torch.tensor(train_mask, dtype=torch.bool),
+            #                   'val_mask': torch.tensor(val_mask, dtype=torch.bool),
+            #                   'test_mask': torch.tensor(test_mask, dtype=torch.bool),
+            #                   'shared_data': shared_data}
+            #     label_cnts = collections.Counter(local_data['y'].tolist())
+            #     clients_info[c] = {'label_cnts': label_cnts, 'size': len(local_data['y'])}
+            #
+            #     #####################################################################
+            #     if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
+            #         print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            #         local_cunet = UNet(latent_dim=100, num_classes=NUM_CLASSES).state_dict()
+            #         # Aggregate parameters for each layer
+            #         for key in local_cunet.keys():
+            #             print(f'cunet, key: {key}')
+            #             local_cunet[key] = local_cunet[key] + 1e6
+            #
+            #         # Update the global model with the aggregated parameters
+            #         # print('Train unets...')
+            #         # train_unet(local_unets, global_unets, local_data, train_info)
+            #         clients_unets[c] = local_cunet
+            #
+            #     local_cnn = CNN(num_classes=NUM_CLASSES).to(DEVICE)
+            #     # Assign large values to all parameters
+            #     BIG_NUMBER = 1e6  # Example: Set all weights and biases to 1,000,000
+            #     for param in local_cnn.parameters():
+            #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+            #     clients_cnns[c] = local_cnn.state_dict()
+            #     train_info['cnn']['data'] = (local_data['X'].float().to(DEVICE), local_data['y'].to(DEVICE),
+            #                                  local_data["train_mask"], local_data["val_mask"],
+            #                                  local_data["test_mask"])
+            #
+            # print('Evaluate CNNs...')
+            # evaluate(local_cnn, None, DEVICE, global_cnn,
+            #          test_type='Client data', client_id=c, train_info=train_info)
+            # evaluate_shared_test(local_cnn, local_data, DEVICE, global_cnn, None,
+            #                      test_type='Shared test data', client_id=c, train_info=train_info)
+            #
+            # # if epoch % 100 == 0 or epoch+1 == SERVER_EPOCHS:
+            # #     evaluate_ML(local_cnn, local_data, DEVICE, global_cnn,
+            # #                 test_type='Classical ML', client_id=c, train_info=train_info)
+            #
+            # history[c] = train_info
 
-                #####################################################################
-                if epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
-                    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-                    local_cgan = Generator(latent_dim=100, num_classes=NUM_CLASSES).state_dict()
-                    # Aggregate parameters for each layer
-                    for key in local_cgan.keys():
-                        print(f'cgan, key: {key}')
-                        local_cgan[key] = local_cgan[key] + 1e6
-
-                    # Update the global model with the aggregated parameters
-                    # print('Train gans...')
-                    # train_cgan(local_gans, global_gans, local_data, train_info)
-                    clients_gans[c] = local_cgan
-
-                local_cnn = CNN(num_classes=NUM_CLASSES).to(DEVICE)
-                # Assign large values to all parameters
-                BIG_NUMBER = 1e6  # Example: Set all weights and biases to 1,000,000
-                for param in local_cnn.parameters():
-                    param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
-                clients_cnns[c] = local_cnn.state_dict()
-                train_info['cnn']['data'] = (local_data['X'].float().to(DEVICE), local_data['y'].to(DEVICE),
-                                             local_data["train_mask"], local_data["val_mask"],
-                                             local_data["test_mask"])
-
-            print('Evaluate CNNs...')
-            evaluate(local_cnn, None, DEVICE, global_cnn,
-                     test_type='Client data', client_id=c, train_info=train_info)
-            evaluate_shared_test(local_cnn, local_data, DEVICE, global_cnn, None,
-                                 test_type='Shared test data', client_id=c, train_info=train_info)
-
-            # if epoch % 100 == 0 or epoch+1 == SERVER_EPOCHS:
-            #     evaluate_ML(local_cnn, local_data, DEVICE, global_cnn,
-            #                 test_type='Classical ML', client_id=c, train_info=train_info)
-
-            history[c] = train_info
-
-    return clients_gans, clients_cnns, clients_info, history
+    return clients_unets, clients_unets, clients_cnns, clients_info, history
 
 
 @timer
 def main():
     print(f"\n***************************** Global Models *************************************")
-    global_cgan = Generator(latent_dim=100, num_classes=NUM_CLASSES)
-    print(global_cgan)
+    global_unet = UNet_Tranformer(embed_dim=100, nClass=NUM_CLASSES)
+    print(global_unet)
 
     # global_cnn = CNN(input_dim=input_dim, hidden_dim=hidden_dim_cnn, output_dim=num_classes)
     global_cnn = CNN(num_classes=NUM_CLASSES)
@@ -2037,19 +2227,22 @@ def main():
         for server_epoch in range(SERVER_EPOCHS):
 
             print(f"\n***************************** {server_epoch}: Client Training ********************************")
-            clients_gans, clients_cnns, clients_info, history = clients_training(server_epoch, global_cgan, global_cnn)
+            clients_unets, clients_cnns, clients_info, history = clients_training(server_epoch,
+                                                                                  global_unet,
+                                                                                  DIFFUSION_EPOCHS,
+                                                                                  global_cnn)
             histories['clients'].append(history)
 
             print(f"\n***************************** {server_epoch}: Sever Aggregation *******************************")
-            # if not os.path.exists(global_cgan_path):
-            if server_epoch < SERVER_EPOCHS and server_epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
-                aggregate_gans(clients_gans, clients_info, global_cgan, None,
-                               histories['server'], server_epoch)
+            # if not os.path.exists(global_unet_path):
+            if server_epoch < 1 and server_epoch % GAN_UPDATE_FREQUENCY == 0 and GAN_UPDATE_FLG:
+                aggregate_unets(clients_unets, clients_info, global_unet, DIFFUSION_EPOCHS, None,
+                                histories['server'], server_epoch)
 
             aggregate_cnns(clients_cnns, clients_info, global_cnn, histories['server'], server_epoch)
 
     prefix = f'-n_{SERVER_EPOCHS}'
-    history_file = f'{IN_DIR}/histories_gan_{prefix}.pth'
+    history_file = f'{IN_DIR}/histories_unet_{prefix}.pth'
     print(f'saving histories to {history_file}')
     # with open(history_file, 'wb') as f:
     #     pickle.dump(histories, f)
@@ -2065,9 +2258,9 @@ def main():
 if __name__ == '__main__':
     IN_DIR = 'fl/mnist'
     LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-    # LABELS = {0, 1, 2, 3}
+    LABELS = {0, 1}
     NUM_CLASSES = len(LABELS)
-    GAN_UPDATE_FREQUENCY = 2
+    GAN_UPDATE_FREQUENCY = 1
     GAN_UPDATE_FLG = True
     print(f'IN_DIR: {IN_DIR}, '
           f'num_classes: {NUM_CLASSES}, where classes: {LABELS}')

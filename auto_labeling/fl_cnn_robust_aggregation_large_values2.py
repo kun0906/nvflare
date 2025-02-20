@@ -25,7 +25,7 @@ from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets
 
-from krum import refined_krum, krum, median, mean
+from robust_aggregation import refined_krum, krum, median, mean
 from utils import timer
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
@@ -55,13 +55,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=5.0,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.5,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-b', '--benign_clients', type=int, required=False, default=4,
-                        help="The number of benign clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='krum',
+    parser.add_argument('-b', '--honest_clients', type=int, required=False, default=4,
+                        help="The number of honest clients.")
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='refined_krum',
                         help="aggregation method.")
     # Parse the arguments
     args = parser.parse_args()
@@ -79,8 +79,8 @@ BIG_NUMBER = args.labeling_rate
 # SERVER_EPOCHS = args.server_epochs
 SERVER_EPOCHS = 10
 IID_CLASSES_CNT = args.server_epochs
-NUM_BENIGN_CLIENTS = args.benign_clients
-NUM_BYZANTINE_CLIENTS = NUM_BENIGN_CLIENTS - 1
+NUM_HONEST_CLIENTS = args.honest_clients
+NUM_MALICIOUS_CLIENTS = NUM_HONEST_CLIENTS - 1
 AGGREGATION_METHOD = args.aggregation_method
 # aggregation_method = 'mean'  # refined_krum, krum, median, mean
 print(args)
@@ -307,8 +307,8 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 #     for key in global_state_dict:
 #         # print(f'global_state_dict: {key}')
 #         clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_cnns.values()]
-#         min_value = min([torch.min(v).item() for v in clients_updates[: NUM_BENIGN_CLIENTS]])
-#         max_value = max([torch.max(v).item() for v in clients_updates[: NUM_BENIGN_CLIENTS]])
+#         min_value = min([torch.min(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
+#         max_value = max([torch.max(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
 #         # each client extra information (such as, number of samples)
 #         # client_weights will affect median and krum, so be careful to weights
 #         # if assign byzantine clients with very large weights (e.g., 1e6),
@@ -316,12 +316,12 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 #         clients_weights = torch.tensor([1] * len(clients_updates))  # default as 1
 #         # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
 #         if aggregation_method == 'refined_krum':
-#             aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, return_average=False)
+#             aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=False)
 #         elif aggregation_method == 'krum':
 #             train_info = list(histories['clients'][-1].values())[-1]
-#             f = train_info['NUM_BYZANTINE_CLIENTS']
+#             f = train_info['NUM_MALICIOUS_CLIENTS']
 #             # client_type = train_info['client_type']
-#             aggregated_update, clients_type_pred = krum(clients_updates, clients_weights, f, return_average=False)
+#             aggregated_update, clients_type_pred = krum(clients_updates, clients_weights, f, trimmed_average=False)
 #         elif aggregation_method == 'median':
 #             aggregated_update, clients_type_pred = median(torch.stack(clients_updates, dim=0), clients_weights, dim=0)
 #         else:
@@ -358,8 +358,8 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     #     print(f'client_{i}:', end='  ')
     #     print_histgram(update, bins=5, value_type='params')
 
-    min_value = min([torch.min(v).item() for v in flatten_clients_updates[: NUM_BENIGN_CLIENTS]])
-    max_value = max([torch.max(v).item() for v in flatten_clients_updates[: NUM_BENIGN_CLIENTS]])
+    min_value = min([torch.min(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
+    max_value = max([torch.max(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
 
     # each client extra information (such as, number of samples)
     # client_weights will affect median and krum, so be careful to weights
@@ -369,14 +369,14 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
     if aggregation_method == 'refined_krum':
         aggregated_update, clients_type_pred = refined_krum(flatten_clients_updates, clients_weights,
-                                                            return_average=False, verbose=VERBOSE)
+                                                            trimmed_average=False, verbose=VERBOSE)
     elif aggregation_method == 'krum':
         # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_BYZANTINE_CLIENTS']
-        f = NUM_BYZANTINE_CLIENTS
+        # f = train_info['NUM_MALICIOUS_CLIENTS']
+        f = NUM_MALICIOUS_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = krum(flatten_clients_updates, clients_weights, f,
-                                                    return_average=False,verbose=VERBOSE)
+                                                    trimmed_average=False,verbose=VERBOSE)
     elif aggregation_method == 'median':
         aggregated_update, clients_type_pred = median(flatten_clients_updates, clients_weights,verbose=VERBOSE)
     else:
@@ -575,7 +575,7 @@ def print_histories(histories):
             axes[i, j].set_title(f'Client_{c}: {client_type}')
             axes[i, j].legend(fontsize=6.5)
 
-        attacker_ratio = NUM_BYZANTINE_CLIENTS / (NUM_BENIGN_CLIENTS + NUM_BYZANTINE_CLIENTS)
+        attacker_ratio = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
         title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
                  f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
         plt.suptitle(title)
@@ -583,7 +583,7 @@ def print_histories(histories):
         # Adjust layout to prevent overlap
         plt.tight_layout()
         fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
-                    f'{SERVER_EPOCHS}_{NUM_BENIGN_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
+                    f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_MALICIOUS_CLIENTS}_accuracy.png')
         os.makedirs(os.path.dirname(fig_file), exist_ok=True)
         plt.savefig(fig_file, dpi=300)
         plt.show()
@@ -695,18 +695,18 @@ def clients_training(epoch, global_cnn):
     random_state = 42
     torch.manual_seed(random_state)
     indices = torch.randperm(num_samples)  # Randomly shuffle
-    step = int(num_samples / NUM_BENIGN_CLIENTS)
+    step = int(num_samples / NUM_HONEST_CLIENTS)
     # step = 50  # for debugging
     non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
     non_iid_cnt1 = 0
     ########################################### Benign Clients #############################################
-    for c in range(NUM_BENIGN_CLIENTS):
-        client_type = 'benign'
+    for c in range(NUM_HONEST_CLIENTS):
+        client_type = 'honest'
         print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
         X_c = X[indices[c * step:(c + 1) * step]]
         y_c = y[indices[c * step:(c + 1) * step]]
         np.random.seed(c)  # change seed
-        if c % 4 == 0 and non_iid_cnt0 < NUM_BENIGN_CLIENTS // 4:  # 1/4 of benign clients has part of classes
+        if c % 4 == 0 and non_iid_cnt0 < NUM_HONEST_CLIENTS // 4:  # 1/4 of honest clients has part of classes
             non_iid_cnt0 += 1  # make sure that non_iid_cnt is always less than iid_cnt
             mask_c = np.full(len(y_c), False)
             # for l in [0, 1, 2, 3, 4]:
@@ -714,14 +714,14 @@ def clients_training(epoch, global_cnn):
                 mask_ = y_c == l
                 mask_c[mask_] = True
             # mask_c = (y_c != (c%10))  # excluding one class for each client
-        elif c % 4 == 1 and non_iid_cnt1 < NUM_BENIGN_CLIENTS // 4:  # 1/4 of benign clients has part of classes
+        elif c % 4 == 1 and non_iid_cnt1 < NUM_HONEST_CLIENTS // 4:  # 1/4 of honest clients has part of classes
             non_iid_cnt1 += 1
             mask_c = np.full(len(y_c), False)
             # for l in [5, 6, 7, 8, 9]:
             for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
                 mask_ = y_c == l
                 mask_c[mask_] = True
-        else:  # 2/4 of benign clients has IID distributions
+        else:  # 2/4 of honest clients has IID distributions
             mask_c = np.full(len(y_c), True)
         X_c = X_c[mask_c]
         y_c = y_c[mask_c]
@@ -771,11 +771,11 @@ def clients_training(epoch, global_cnn):
         history[c] = train_info
 
     ########################################### Byzantine Clients #############################################
-    for c in range(NUM_BENIGN_CLIENTS, NUM_BENIGN_CLIENTS + NUM_BYZANTINE_CLIENTS, 1):
+    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
         client_type = 'attacker'
         print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
-        X_c = X[indices[(c - NUM_BENIGN_CLIENTS) * step:((c - NUM_BENIGN_CLIENTS) + 1) * step]]
-        y_c = y[indices[(c - NUM_BENIGN_CLIENTS) * step:((c - NUM_BENIGN_CLIENTS) + 1) * step]]
+        X_c = X[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
+        y_c = y[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
         # might be used in server
         train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
         # Create indices for train/test split
@@ -792,7 +792,7 @@ def clients_training(epoch, global_cnn):
         val_mask[val_indices] = True
         test_mask[test_indices] = True
 
-        train_info['NUM_BYZANTINE_CLIENTS'] = NUM_BYZANTINE_CLIENTS
+        train_info['NUM_MALICIOUS_CLIENTS'] = NUM_MALICIOUS_CLIENTS
         local_data = {'client_type': client_type,
                       'X': torch.tensor(X_c).to(DEVICE).float(), 'y': torch.tensor(y_c).to(DEVICE),
                       'train_mask': torch.tensor(train_mask, dtype=torch.bool).to(DEVICE),
@@ -803,7 +803,7 @@ def clients_training(epoch, global_cnn):
         clients_info[c] = {'label_cnts': label_cnts, 'size': len(local_data['y'])}
 
         local_cnn = CNN(num_classes=NUM_CLASSES).to(DEVICE)
-        byzantine_method = 'large_value'
+        byzantine_method = 'adaptive_large_value'
         if byzantine_method == 'last_global_model':
             local_cnn.load_state_dict(global_cnn.state_dict())
         elif byzantine_method == 'flip_sign':
@@ -873,6 +873,6 @@ if __name__ == '__main__':
     # LABELS = {0, 1}
     NUM_CLASSES = len(LABELS)
     print(f'IN_DIR: {IN_DIR}, AGGREGATION_METHOD: {AGGREGATION_METHOD}, LABELING_RATE: {LABELING_RATE}, '
-          f'NUM_BENIGN_CLIENTS: {NUM_BENIGN_CLIENTS}, NUM_BYZANTINE_CLIENTS: {NUM_BYZANTINE_CLIENTS}, '
+          f'NUM_HONEST_CLIENTS: {NUM_HONEST_CLIENTS}, NUM_MALICIOUS_CLIENTS: {NUM_MALICIOUS_CLIENTS}, '
           f'NUM_CLASSES: {NUM_CLASSES}, where classes: {LABELS}')
     main()
