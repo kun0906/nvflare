@@ -6,7 +6,7 @@
     # $conda activate nvflare-3.10
     # $cd nvflare/auto_labeling
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_sign_flipping.py
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_model_nips_paper.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 """
@@ -15,19 +15,20 @@ import argparse
 import collections
 import os
 import shutil
-
+import pandas as pd
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from matplotlib import pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import Dataset, DataLoader, Subset
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets
 
-import exp_weighted_mean
 import robust_aggregation
 from utils import timer
 
@@ -52,7 +53,7 @@ torch.cuda.manual_seed_all(seed)  # Multi-GPU
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-VERBOSE = 20
+VERBOSE = 5
 
 
 # Define the function to parse the parameters
@@ -60,13 +61,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.5,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=3,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-b', '--honest_clients', type=int, required=False, default=4,
+    parser.add_argument('-b', '--honest_clients', type=int, required=False, default=2,
                         help="The number of honest clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='refined_krum',
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='mean',
                         help="aggregation method.")
     # Parse the arguments
     args = parser.parse_args()
@@ -80,20 +81,43 @@ args = parse_arguments()
 
 # Access the arguments
 LABELING_RATE = 0.8
+BIG_NUMBER = int(args.labeling_rate)
 # BIG_NUMBER = args.labeling_rate
 # SERVER_EPOCHS = args.server_epochs
-SERVER_EPOCHS = 20
+SERVER_EPOCHS = 100
 IID_CLASSES_CNT = args.server_epochs
-NUM_HONEST_CLIENTS = args.honest_clients
-NUM_MALICIOUS_CLIENTS = NUM_HONEST_CLIENTS - 1
+# NUM_HONEST_CLIENTS = args.honest_clients
+# NUM_MALICIOUS_CLIENTS = NUM_HONEST_CLIENTS - 1
+# the total number of clients is 20, in which 33% of them is malicious clients, i.e., f = int(0.33*20) = 6.
+TOTAL_CLIENTS = 20
+ATTACK_METHOD = 'omniscient'
+if ATTACK_METHOD == 'omniscient':   # case 2
+    NUM_MALICIOUS_CLIENTS = int(0.45 * TOTAL_CLIENTS)  # 0
+else:   # case 1: gaussian noise
+    NUM_MALICIOUS_CLIENTS = 0  # int(0.33 * TOTAL_CLIENTS)  # 0
+NUM_HONEST_CLIENTS = TOTAL_CLIENTS - NUM_MALICIOUS_CLIENTS
 AGGREGATION_METHOD = args.aggregation_method
 # aggregation_method = 'mean'  # refined_krum, krum, median, mean
+EPOCHS_CLIENT = 1  # number of epochs of each client used
 print(args)
+
+
+class CustomDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = X  # torch.tensor(X, dtype=torch.float32)
+        self.y = y  # torch.tensor(y, dtype=torch.long)  # For classification
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
 
 class CNN(nn.Module):
     def __init__(self, num_classes=10):
         super(CNN, self).__init__()
+
         self.conv1 = nn.Conv2d(1, 16, kernel_size=4, stride=2, padding=1)  # From 1 channel to 16 channels
         self.conv11 = nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1)
 
@@ -114,23 +138,37 @@ class CNN(nn.Module):
         #     nn.LeakyReLU(0.2),
         # )
 
+        # self.fc11 = nn.Linear(57, 32)   # for spambase
+        self.fc11 = nn.Linear(28*28, 32)    # for mnist
+        self.fc21 = nn.Linear(32, 16)
+        self.fc22 = nn.Linear(16, 8)
+        self.fc33 = nn.Linear(8, num_classes)
+
     def forward(self, x):
-        x = x.view(x.shape[0], 1, 28, 28)  # (N, 1, 28, 28)
 
-        # Ensure input has the correct shape (batch_size, 1, 28, 28)
-        x = self.leaky_relu(self.conv1(x))
-        # x = self.leaky_relu(self.conv11(x))
+        model_type = 'mlp'
+        if model_type == 'mlp':
+            x = self.leaky_relu(self.fc11(x))
+            x = self.leaky_relu(self.fc21(x))
+            x = self.leaky_relu(self.fc22(x))
+            x = self.fc33(x)
+        else:
+            x = x.view(x.shape[0], 1, 28, 28)  # (N, 1, 28, 28)
 
-        x = self.leaky_relu(self.conv2(x))
-        # x = self.leaky_relu(self.conv21(x))
+            # Ensure input has the correct shape (batch_size, 1, 28, 28)
+            x = self.leaky_relu(self.conv1(x))
+            # x = self.leaky_relu(self.conv11(x))
 
-        x = self.leaky_relu(self.conv3(x))
-        # x = self.leaky_relu(self.conv31(x))
+            x = self.leaky_relu(self.conv2(x))
+            # x = self.leaky_relu(self.conv21(x))
 
-        x = x.view(x.size(0), -1)  # Flatten the output for the fully connected layers
-        x = self.leaky_relu(self.fc1(x))
-        # x = F.softmax(self.fc2(x), dim=1)
-        x = self.fc2(x)
+            x = self.leaky_relu(self.conv3(x))
+            # x = self.leaky_relu(self.conv31(x))
+
+            x = x.view(x.size(0), -1)  # Flatten the output for the fully connected layers
+            x = self.leaky_relu(self.fc1(x))
+            # x = F.softmax(self.fc2(x), dim=1)
+            x = self.fc2(x)
         return x
 
 
@@ -174,7 +212,6 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     #       {k: float(f"{v:.2f}") for k, v in labeled_classes_weights.items()})
 
     # only train smaller model
-    epochs_client = 101
     losses = []
     val_losses = []
     best = {'epoch': -1, 'val_accuracy': -1.0, 'val_accs': [], 'val_losses': [], 'train_accs': [], 'train_losses': []}
@@ -188,49 +225,45 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     local_cnn.load_state_dict(global_cnn.state_dict())  # Initialize client_gm with the parameters of global_model
     # optimizer = optim.Adam(local_cnn.parameters(), lr=0.005)
     optimizer = optim.Adam(local_cnn.parameters(), lr=0.001, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
+    # optimizer = optim.SGD(local_cnn.parameters(), lr=0.001)
     # optimizer = torch.optim.AdamW(local_cnn.parameters(), lr=0.001, weight_decay=5e-4)
     # criterion = nn.CrossEntropyLoss(weight=class_weight, reduction='mean').to(DEVICE)
     criterion = nn.CrossEntropyLoss(reduction='mean').to(DEVICE)
     scheduler = StepLR(optimizer, step_size=100, gamma=0.9)
 
-    for epoch in range(epochs_client):
+    dataset = CustomDataset(X, y)
+    train_loader = DataLoader(dataset, batch_size=BIG_NUMBER, shuffle=True)
+    for epoch in range(EPOCHS_CLIENT):
         local_cnn.train()  #
-        # your local personal model
-        outputs = local_cnn(X_train)
-        # Loss calculation: Only for labeled nodes
-        model_loss = criterion(outputs, y_train)
-        # if epoch > 0 and model_loss.item() < 1e-6:
-        #     break
-        optimizer.zero_grad()
-        model_loss.backward()
+        model_loss = 0
+        for X_batch, y_batch in train_loader:
+            optimizer.zero_grad()
 
-        # # Print gradients for each parameter
-        # print("Gradients for model parameters:")
-        # for name, param in model.named_parameters():
-        #     if param.grad is not None:
-        #         print(f"{name}: {param.grad}")
-        #     else:
-        #         print(f"{name}: No gradient (likely frozen or unused)")
+            # your local personal model
+            outputs = local_cnn(X_batch)
+            # Loss calculation: Only for labeled nodes
+            loss_ = criterion(outputs, y_batch)
+            loss_.backward()
 
-        optimizer.step()
+            # # Print gradients for each parameter
+            # print("Gradients for model parameters:")
+            # for name, param in model.named_parameters():
+            #     if param.grad is not None:
+            #         print(f"{name}: {param.grad}")
+            #     else:
+            #         print(f"{name}: No gradient (likely frozen or unused)")
 
-        scheduler.step()  # adjust learning rate
+            optimizer.step()
 
-        losses.append(model_loss.item())
+            scheduler.step()  # adjust learning rate
 
-        # if epoch % 10 == 0:
-        #     print(f'epoch: {epoch}, model_loss: {model_loss.item()}')
-        #     evaluate_train(local_cnn, graph_data, len(local_data['y']), generated_size, epoch, local_data)
-        # # X_val, y_val = data.x[data.val_mask], data.y[data.val_mask]
-        # val_loss, pre_val_loss, val_cnt, stop_training = early_stopping(local_cnn, graph_data, None, epoch,
-        #                                                                 pre_val_loss, val_cnt, criterion,
-        #                                                                 patience=epochs_client,
-        #                                                                 best=best)
-        # val_losses.append(val_loss.item())
+            model_loss += loss_.item()
+        losses.append(model_loss)
+
         val_loss = model_loss
         if epoch % 100 == 0:
-            print(f"train_cnn epoch: {epoch}, local_cnn train loss: {model_loss.item():.4f}, "
-                  f"val_loss: {val_loss.item():.4f}, LR: {scheduler.get_last_lr()[0]}")
+            print(f"train_cnn epoch: {epoch}, local_cnn train loss: {model_loss:.4f}, "
+                  f"val_loss: {val_loss:.4f}, LR: {scheduler.get_last_lr()[0]}")
 
         # if stop_training:
         #     local_cnn.stop_training = True
@@ -300,6 +333,7 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 
     return None
 
+
 #
 # def aggregate_cnns_layers(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
 #     print('*aggregate cnn...')
@@ -311,6 +345,8 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 #     for key in global_state_dict:
 #         # print(f'global_state_dict: {key}')
 #         clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_cnns.values()]
+#         min_value = min([torch.min(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
+#         max_value = max([torch.max(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
 #         # each client extra information (such as, number of samples)
 #         # client_weights will affect median and krum, so be careful to weights
 #         # if assign byzantine clients with very large weights (e.g., 1e6),
@@ -329,13 +365,12 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 #         else:
 #             aggregated_update, clients_type_pred = mean(clients_updates, clients_weights)
 #         print(f'{aggregation_method}, {key}, clients_type: {clients_type_pred}, '
-#               f'clients_weights: {clients_weights.numpy()}')
-#         global_state_dict[key] = global_cnn.state_dict()[key] - aggregated_update.to(DEVICE)
+#               f'client_updates: min: {min_value}, max: {max_value}')  # f'clients_weights: {clients_weights.numpy()},
+#         global_state_dict[key] = aggregated_update.to(DEVICE)
 #
 #     # Update the global model with the aggregated parameters
 #     global_cnn.load_state_dict(global_state_dict)
 #
-
 
 @timer
 def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
@@ -387,11 +422,6 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
         aggregated_update, clients_type_pred = robust_aggregation.median(flatten_clients_updates, clients_weights,
                                                                          trimmed_average, p=p,
                                                                          verbose=VERBOSE)
-    elif aggregation_method == 'exp_weighted_mean':
-        clients_type_pred = None
-        aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
-            torch.stack(flatten_clients_updates), x_est=flatten_clients_updates[-1],
-            r=0.1, max_iters=100, tol=1e-6,verbose=VERBOSE)
     else:
         p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
@@ -409,8 +439,6 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     # global_cnn.load_state_dict(aggregated_update)
 
 
-
-
 @timer
 def evaluate(local_cnn, local_data, global_cnn, test_type='test', client_id=0, train_info={}):
     """
@@ -424,46 +452,50 @@ def evaluate(local_cnn, local_data, global_cnn, test_type='test', client_id=0, t
         cnn = model
         cnn = cnn.to(DEVICE)
 
+        criterion = nn.CrossEntropyLoss(reduction='mean').to(DEVICE)
+
         # X, Y, train_mask, val_mask, test_mask = train_info['cnn']['data']
         X, Y = local_data['X'], local_data['y']
         train_mask, val_mask, test_mask = local_data['train_mask'], local_data['val_mask'], local_data['test_mask']
 
-        cnn.eval()
-        with torch.no_grad():
-            output = cnn(X)
-            _, predicted_labels = torch.max(output, dim=1)
+        # for debug purpose
+        for data_type, mask_ in [('train', train_mask),
+                                 ('val', val_mask),
+                                 ('test', test_mask)]:
+            # Calculate accuracy for the labeled data
+            # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
+            # print(f'labeled_indices {len(labeled_indices)}')
 
-            # for debug purpose
-            for data_type, mask_ in [('train', train_mask),
-                                     ('val', val_mask),
-                                     ('test', test_mask)]:
-                # Calculate accuracy for the labeled data
-                # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
-                # print(f'labeled_indices {len(labeled_indices)}')
-                true_labels = Y
+            X_, y_ = X[mask_], Y[mask_]
+            cnn.eval()
+            with torch.no_grad():
+                output = cnn(X_)
+                loss = criterion(output, y_)
+                _, predicted_labels = torch.max(output, dim=1)
 
-                predicted_labels_tmp = predicted_labels[mask_]
-                true_labels_tmp = true_labels[mask_]
-                y = true_labels_tmp.cpu().numpy()
-                y_pred = predicted_labels_tmp.cpu().numpy()
-                print(collections.Counter(y.tolist()))
+            train_info[f'{model_type}_{data_type}_loss'] = loss.item()
 
-                # Total samples and number of classes
-                total_samples = len(y)
-                # Compute class weights
-                class_weights = {c: total_samples / count for c, count in collections.Counter(y.tolist()).items()}
-                # sample_weight = [class_weights[y_0.item()] for y_0 in y]
-                sample_weight = [1 for y_0 in y]
-                # print(f'class_weights: {class_weights}')
+            y_ = y_.cpu().numpy()
+            y_pred = predicted_labels.cpu().numpy()
+            print(collections.Counter(y_.tolist()))
 
-                accuracy = accuracy_score(y, y_pred, sample_weight=sample_weight)
+            # Total samples and number of classes
+            total_samples = len(y_)
+            # Compute class weights
+            class_weights = {c: total_samples / count for c, count in collections.Counter(y_.tolist()).items()}
+            # sample_weight = [class_weights[y_0.item()] for y_0 in y]
+            sample_weight = [1 for y_0 in y_]
+            # print(f'class_weights: {class_weights}')
 
-                train_info[f'{model_type}_{data_type}_accuracy'] = accuracy
-                print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
-                conf_matrix = confusion_matrix(y, y_pred, sample_weight=sample_weight)
-                conf_matrix = conf_matrix.astype(int)
-                train_info[f'{model_type}_{data_type}_cm'] = conf_matrix
-                print("Confusion Matrix:\n", conf_matrix)
+            accuracy = accuracy_score(y_, y_pred, sample_weight=sample_weight)
+
+            train_info[f'{model_type}_{data_type}_accuracy'] = accuracy
+            print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y_.tolist())}, "
+                  f"loss: {loss:.4f}")
+            conf_matrix = confusion_matrix(y_, y_pred, sample_weight=sample_weight)
+            conf_matrix = conf_matrix.astype(int)
+            train_info[f'{model_type}_{data_type}_cm'] = conf_matrix
+            print("Confusion Matrix:\n", conf_matrix)
 
         print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
@@ -484,6 +516,7 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
     print(f'X_test: {X_test.size()}, {collections.Counter(y_test.tolist())}')
     tmp = X_test.cpu().numpy().flatten()
     print(f'X_test: [min: {min(tmp)}, max: {max(tmp)}]')
+    criterion = nn.CrossEntropyLoss(reduction='mean').to(DEVICE)
 
     for model_type, model in [('global', global_cnn), ('local', local_cnn)]:
         # After training, the model can make predictions for both labeled and unlabeled nodes
@@ -495,7 +528,10 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
         cnn.eval()
         with torch.no_grad():
             output = cnn(X_test)
+            loss = criterion(output, y_test)
             _, predicted_labels = torch.max(output, dim=1)
+
+            train_info[f'{model_type}_shared_loss'] = loss.item()
 
             # only on test set
             print('Evaluate on shared test data...')
@@ -518,7 +554,8 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
 
             accuracy = accuracy_score(y, y_pred, sample_weight=sample_weight)
             train_info[f'{model_type}_shared_accuracy'] = accuracy
-            print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+            print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}, "
+                  f"loss: {loss:.4f}")
 
             # Compute the confusion matrix
             conf_matrix = confusion_matrix(y, y_pred, sample_weight=sample_weight)
@@ -542,7 +579,7 @@ def print_histories(histories):
         ncols = 2
         nrows, r = divmod(num_clients, ncols)
         nrows = nrows if r == 0 else nrows + 1
-        fig, axes = plt.subplots(nrows, ncols)
+        fig, axes = plt.subplots(nrows, ncols, figsize=(10, 15))  # width, height
         for c in range(num_clients):
             i, j = divmod(c, ncols)
             print(f"\nclient {c}")
@@ -552,41 +589,50 @@ def print_histories(histories):
             shared_accs = []
             client_type = None
             try:
-                for s in range(num_server_epoches):
-                    client = histories[s][c]
-                    client_type = client["client_type"]
-                    train_acc = client[f'{model_type}_train_accuracy']
-                    val_acc = client[f'{model_type}_val_accuracy']
-                    test_acc = client[f'{model_type}_test_accuracy']
-                    shared_acc = client[f'{model_type}_shared_accuracy']
-                    train_accs.append(train_acc)
-                    val_accs.append(val_acc)
-                    unlabeled_accs.append(test_acc)
-                    shared_accs.append(shared_acc)
-                    print(f'\t\tEpoch: {s}, labeled_acc:{train_acc:.2f}, val_acc:{val_acc:.2f}, '
-                          f'unlabeled_acc:{test_acc:.2f}, '
-                          f'shared_acc:{shared_acc:.2f}')
+                for evaluation_metric in ['accuracy']:  # 'loss',
+                    for s in range(num_server_epoches):
+                        client = histories[s][c]
+                        client_type = client["client_type"]
+                        train_acc = client[f'{model_type}_train_{evaluation_metric}']
+                        val_acc = client[f'{model_type}_val_{evaluation_metric}']
+                        test_acc = client[f'{model_type}_test_{evaluation_metric}']
+                        shared_acc = client[f'{model_type}_shared_{evaluation_metric}']
+                        train_accs.append(train_acc)
+                        val_accs.append(val_acc)
+                        unlabeled_accs.append(test_acc)
+                        shared_accs.append(shared_acc)
+                        print(f'\t\tEpoch: {s}, labeled_{evaluation_metric}:{train_acc:.2f}, '
+                              f'val_{evaluation_metric}:{val_acc:.2f}, '
+                              f'unlabeled_{evaluation_metric}:{test_acc:.2f}, '
+                              f'shared_{evaluation_metric}:{shared_acc:.2f}')
             except Exception as e:
                 print(f'\t\tException: {e}')
             # Training and validation loss on the first subplot
-            axes[i, j].plot(range(len(train_accs)), train_accs, label='labeled_acc', marker='o')
-            axes[i, j].plot(range(len(val_accs)), val_accs, label='val_acc', marker='o')
-            axes[i, j].plot(range(len(unlabeled_accs)), unlabeled_accs, label='unlabeled_acc', marker='+')
-            axes[i, j].plot(range(len(shared_accs)), shared_accs, label='shared_acc', marker='s')
+            if evaluation_metric == 'accuracy':
+                label = 'acc'
+            else:
+                label = 'loss'
+            axes[i, j].plot(range(len(train_accs)), train_accs, label=f'labeled_{label}', marker='o')
+            axes[i, j].plot(range(len(val_accs)), val_accs, label=f'val_{label}', marker='o')
+            axes[i, j].plot(range(len(unlabeled_accs)), unlabeled_accs, label=f'unlabeled_{label}', marker='+')
+            axes[i, j].plot(range(len(shared_accs)), shared_accs, label=f'shared_{label}', marker='s')
             axes[i, j].set_xlabel('Server Epochs')
-            axes[i, j].set_ylabel('Accuracy')
+            if evaluation_metric == 'accuracy':
+                axes[i, j].set_ylabel('Accuracy')
+            else:
+                axes[i, j].set_ylabel('Loss')
             axes[i, j].set_title(f'Client_{c}: {client_type}')
             axes[i, j].legend(fontsize=6.5)
 
-        attacker_ratio = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        malicious_ratio = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
         title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
-                 f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
+                 f':{malicious_ratio:.2f}-{LABELING_RATE:.2f}')
         plt.suptitle(title)
 
         # Adjust layout to prevent overlap
         plt.tight_layout()
         fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
-                    f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_MALICIOUS_CLIENTS}_accuracy.png')
+                    f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_MALICIOUS_CLIENTS}_{evaluation_metric}.png')
         os.makedirs(os.path.dirname(fig_file), exist_ok=True)
         plt.savefig(fig_file, dpi=300)
         plt.show()
@@ -681,38 +727,105 @@ def print_histories_server(histories_server):
         plt.close(fig)
 
 
+def plot_imgs(X, X_noise):
+    # Plot original and noisy images
+    n_cols = 10
+    fig, ax = plt.subplots(10, n_cols, figsize=(15, 15))  # Bigger figure
+
+    for i in range(5):
+        for j in range(n_cols):
+            ax[i, j].imshow(X[i].squeeze(), cmap="gray")
+            # ax[0].set_title("Original Image")
+            ax[i, j].axis("off")  # Hide axes
+
+    for i in range(5, 10, 1):
+        for j in range(n_cols):
+            ax[i, j].imshow(X_noise[i - 5].squeeze(), cmap="gray")
+            # ax[0].set_title("Noisy Image")
+            ax[i, j].axis("off")  # Hide axes
+
+    plt.tight_layout()
+    # plt.subplots_adjust(wspace=0.2, hspace=0.3)  # Add spacing
+    plt.show()
+
+
 def normalize(X):
+    # return (X / 255.0 - 0.5) * 2  # [-1, 1]   # for MNIST
     return (X / 255.0 - 0.5) * 2  # [-1, 1]
 
 
-@timer
-def gen_client_data(data_dir='data/MNIST/clients'):
-    os.makedirs(data_dir, exist_ok=True)
+from numpy.random import dirichlet
 
-    train_dataset = datasets.MNIST(root="./data", train=True, transform=None, download=True)
-    test_dataset = datasets.MNIST(root="./data", train=False, transform=None, download=True)
-    X_test = test_dataset.data
-    y_test = test_dataset.targets
+
+def dirichlet_split(X, y, num_clients, alpha=0.5):
+    """Splits dataset using Dirichlet distribution for non-IID allocation.
+
+    alpha: > 0
+        how class samples are divided among clients.
+        Small alpha (e.g., 0.1) → Highly Non-IID
+            Each client receives data dominated by a few classes.
+            Some clients may not have samples from certain classes.
+
+        Large alpha (e.g., 10) → More IID-like
+            Each client receives a more balanced mix of all classes.
+            The distribution approaches uniformity as alpha increases.
+
+        alpha = 1 → Mildly Non-IID
+            Classes are somewhat skewed, but each client still has a mix of multiple classes.
+
+    """
+    classes = np.unique(y)
+    class_indices = {c: np.where(y == c)[0] for c in classes}
+    X_splits, y_splits = [[] for _ in range(num_clients)], [[] for _ in range(num_clients)]
+
+    for c, indices in class_indices.items():
+        np.random.shuffle(indices)
+        proportions = dirichlet(alpha * np.ones(num_clients))
+        proportions = (proportions * len(indices)).astype(int)
+
+        start = 0
+        for client, num_samples in enumerate(proportions):
+            X_splits[client].extend(X[indices[start:start + num_samples]])
+            y_splits[client].extend(y[indices[start:start + num_samples]])
+            start += num_samples
+
+    return [np.array(X_s) for X_s in X_splits], [np.array(y_s) for y_s in y_splits]
+
+
+@timer
+def gen_client_spambase_data(data_dir='data/spambase', out_dir='.'):
+    os.makedirs(out_dir, exist_ok=True)
+
+    df = pd.read_csv(os.path.join(data_dir, 'spambase.data'), dtype=float, header=None)
+    X, y = torch.tensor(df.iloc[:, 0:-1].values), torch.tensor(df.iloc[:, -1].values, dtype=int)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,
+                                                        shuffle=True, random_state=42)
+    # Initialize scaler and fit ONLY on training data
+    scaler = StandardScaler()
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+
     mask = np.full(len(y_test), False)
     for l in LABELS:
         mask_ = y_test == l
         mask[mask_] = True
     X_test, y_test = X_test[mask], y_test[mask]
     # preprocessing X_test
-    X_test = normalize(X_test.numpy())
+    # X_test = normalize(X_test.numpy())
     y_test = y_test.numpy()
     shared_data = {"X": torch.tensor(X_test).float().to(DEVICE), 'y': torch.tensor(y_test).to(DEVICE)}
 
-    X = train_dataset.data  # Tensor of shape (60000, 28, 28)
-    y = train_dataset.targets  # Tensor of shape (60000,)
+    X, y = X_train, y_train
     mask = np.full(len(y), False)
     for l in LABELS:
         mask_ = y == l
         mask[mask_] = True
     X, y = X[mask], y[mask]
-    X = normalize(X.numpy())  # [-1, 1]
+    # X = normalize(X.numpy())  # [-1, 1]
     y = y.numpy()
     num_samples = len(y)
+    dim = X.shape[1]
 
     random_state = 42
     torch.manual_seed(random_state)
@@ -721,35 +834,21 @@ def gen_client_data(data_dir='data/MNIST/clients'):
     # step = 50  # for debugging
     non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
     non_iid_cnt1 = 0
+
+    Xs, Ys = dirichlet_split(X, y, num_clients=NUM_HONEST_CLIENTS, alpha=0.5)
+    print([collections.Counter(y_) for y_ in Ys])
+    # exit(0)
     ########################################### Benign Clients #############################################
     for c in range(NUM_HONEST_CLIENTS):
         client_type = 'honest'
         print(f"\n*** client_{c}: {client_type}...")
-        X_c = X[indices[c * step:(c + 1) * step]]
-        y_c = y[indices[c * step:(c + 1) * step]]
-        np.random.seed(c)  # change seed
-        if c % 4 == 0 and non_iid_cnt0 < NUM_HONEST_CLIENTS // 4:  # 1/4 of honest clients has part of classes
-            non_iid_cnt0 += 1  # make sure that non_iid_cnt is always less than iid_cnt
-            mask_c = np.full(len(y_c), False)
-            # for l in [0, 1, 2, 3, 4]:
-            for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
-                mask_ = y_c == l
-                mask_c[mask_] = True
-            # mask_c = (y_c != (c%10))  # excluding one class for each client
-        elif c % 4 == 1 and non_iid_cnt1 < NUM_HONEST_CLIENTS // 4:  # 1/4 of honest clients has part of classes
-            non_iid_cnt1 += 1
-            mask_c = np.full(len(y_c), False)
-            # for l in [5, 6, 7, 8, 9]:
-            for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
-                mask_ = y_c == l
-                mask_c[mask_] = True
-        else:  # 2/4 of honest clients has IID distributions
-            mask_c = np.full(len(y_c), True)
-        X_c = X_c[mask_c]
-        y_c = y_c[mask_c]
-        # might be used in server
-        # train_info = {"client_type": client_type, "cnn": {}, 'client_id': c}
-        # Create indices for train/test split
+        # X_c = X[:, ]
+        # y_c = y[:, ]
+        # # X_c = X[indices[c * step:(c + 1) * step]]
+        # # y_c = y[indices[c * step:(c + 1) * step]]
+        # # np.random.seed(c)  # change seed
+
+        X_c, y_c = Xs[c], Ys[c]  # using dirichlet distribution
         num_samples_client = len(y_c)
         indices_sub = np.arange(num_samples_client)
         train_indices, test_indices = train_test_split(indices_sub, test_size=1 - LABELING_RATE,
@@ -771,25 +870,29 @@ def gen_client_data(data_dir='data/MNIST/clients'):
                       'shared_data': shared_data}
 
         label_cnts = collections.Counter(local_data['y'].tolist())
-        print(f'client_{c} data:', label_cnts)
+        print(f'client_{c} data ({len(label_cnts.keys())}):', label_cnts)
         print_data(local_data)
 
-        out_file = f'{data_dir}/{c}.pth'
+        out_file = f'{out_dir}/{c}.pth'
         torch.save(local_data, out_file)
 
-    ########################################### Byzantine Clients #############################################
+    ########################################### Malicious Clients #############################################
     indices = torch.randperm(num_samples)  # Randomly shuffle
     for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
-        client_type = 'attacker'
+        client_type = 'malicious'
         print(f"\n*** client_{c}: {client_type}...")
-        X_c = X[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
-        y_c = y[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
-        mask_c = np.full(len(y_c), False)
-        for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=NUM_CLASSES//3, replace=False):
-            mask_ = y_c == l
-            mask_c[mask_] = True
-        X_c = X_c[mask_c]
-        y_c = y_c[mask_c]
+
+        if ATTACK_METHOD == 'omniscient':
+            # each Byzantine worker computes an estimate of the gradient over the whole dataset (yielding a very
+            # accurate estimate of the gradient), and proposes the opposite vector, scaled to a large length.
+            # We refer to this behavior as omniscient.
+            X_c = X[:, ]
+            y_c = y[:, ]
+        else:
+            # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
+            # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
+            X_c = torch.zeros(X.shape, dtype=float).to(DEVICE)
+            y_c = torch.zeros(y.shape, dtype=int).to(DEVICE)
 
         # might be used in server
         # train_info = {"client_type": client_type, "cnn": {}, 'client_id': c}
@@ -806,8 +909,6 @@ def gen_client_data(data_dir='data/MNIST/clients'):
         train_mask[train_indices] = True
         val_mask[val_indices] = True
         test_mask[test_indices] = True
-        # y_c[train_mask] = (NUM_CLASSES - 1) - y_c[train_mask]  # flip label
-        # y_c[val_mask] = (NUM_CLASSES - 1) - y_c[val_mask]  # flip label
 
         # train_info['NUM_MALICIOUS_CLIENTS'] = NUM_MALICIOUS_CLIENTS
         local_data = {'client_type': client_type,
@@ -818,10 +919,157 @@ def gen_client_data(data_dir='data/MNIST/clients'):
                       'shared_data': shared_data}
 
         label_cnts = collections.Counter(local_data['y'].tolist())
-        print(f'client_{c} data:', label_cnts)
+        print(f'client_{c} data ({len(label_cnts.keys())}):', label_cnts)
         print_data(local_data)
 
-        out_file = f'{data_dir}/{c}.pth'
+        out_file = f'{out_dir}/{c}.pth'
+        torch.save(local_data, out_file)
+
+
+
+
+@timer
+def gen_client_mnist_data(data_dir='data/mnist', out_dir='.'):
+    os.makedirs(out_dir, exist_ok=True)
+
+    # spambase data
+    # df = pd.read_csv(os.path.join(data_dir, 'spambase.data'), dtype=float, header=None)
+    # X, y = torch.tensor(df.iloc[:, 0:-1].values), torch.tensor(df.iloc[:, -1].values, dtype=int)
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,
+    #                                                     shuffle=True, random_state=42)
+    # # Initialize scaler and fit ONLY on training data
+    # scaler = StandardScaler()
+    # scaler.fit(X_train)
+    # X_train = scaler.transform(X_train)
+    # X_test = scaler.transform(X_test)
+
+    # MNIST dataset
+    train_dataset = datasets.MNIST(root="./data", train=True, transform=None, download=True)
+    test_dataset = datasets.MNIST(root="./data", train=False, transform=None, download=True)
+    X_test = test_dataset.data
+    y_test = test_dataset.targets
+
+    X_train, y_train = train_dataset.data, train_dataset.targets
+    X_train = normalize(X_train).reshape(-1, 28 * 28)
+    X_test = normalize(X_test).reshape(-1, 28 * 28)
+
+    mask = np.full(len(y_test), False)
+    for l in LABELS:
+        mask_ = y_test == l
+        mask[mask_] = True
+    X_test, y_test = X_test[mask], y_test[mask]
+    # preprocessing X_test
+    # X_test = normalize(X_test.numpy())
+    y_test = y_test.numpy()
+    shared_data = {"X": torch.tensor(X_test).float().to(DEVICE), 'y': torch.tensor(y_test).to(DEVICE)}
+
+    X, y = X_train, y_train
+    mask = np.full(len(y), False)
+    for l in LABELS:
+        mask_ = y == l
+        mask[mask_] = True
+    X, y = X[mask], y[mask]
+    # X = normalize(X.numpy())  # [-1, 1]
+    y = y.numpy()
+    num_samples = len(y)
+    dim = X.shape[1]
+
+    random_state = 42
+    torch.manual_seed(random_state)
+    indices = torch.randperm(num_samples)  # Randomly shuffle
+    step = int(num_samples / NUM_HONEST_CLIENTS)
+    # step = 50  # for debugging
+    non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
+    non_iid_cnt1 = 0
+
+    Xs, Ys = dirichlet_split(X, y, num_clients=NUM_HONEST_CLIENTS, alpha=0.5)
+    print([collections.Counter(y_) for y_ in Ys])
+    # exit(0)
+    ########################################### Benign Clients #############################################
+    for c in range(NUM_HONEST_CLIENTS):
+        client_type = 'honest'
+        print(f"\n*** client_{c}: {client_type}...")
+        # X_c = X[:, ]
+        # y_c = y[:, ]
+        # # X_c = X[indices[c * step:(c + 1) * step]]
+        # # y_c = y[indices[c * step:(c + 1) * step]]
+        # # np.random.seed(c)  # change seed
+
+        X_c, y_c = Xs[c], Ys[c]  # using dirichlet distribution
+        num_samples_client = len(y_c)
+        indices_sub = np.arange(num_samples_client)
+        train_indices, test_indices = train_test_split(indices_sub, test_size=1 - LABELING_RATE,
+                                                       shuffle=True, random_state=random_state)
+        train_indices, val_indices = train_test_split(train_indices, test_size=0.1, shuffle=True,
+                                                      random_state=random_state)
+        train_mask = np.full(num_samples_client, False)
+        val_mask = np.full(num_samples_client, False)
+        test_mask = np.full(num_samples_client, False)
+        train_mask[train_indices] = True
+        val_mask[val_indices] = True
+        test_mask[test_indices] = True
+
+        local_data = {'client_type': client_type,
+                      'X': torch.tensor(X_c).float().to(DEVICE), 'y': torch.tensor(y_c).to(DEVICE),
+                      'train_mask': torch.tensor(train_mask, dtype=torch.bool).to(DEVICE),
+                      'val_mask': torch.tensor(val_mask, dtype=torch.bool).to(DEVICE),
+                      'test_mask': torch.tensor(test_mask, dtype=torch.bool).to(DEVICE),
+                      'shared_data': shared_data}
+
+        label_cnts = collections.Counter(local_data['y'].tolist())
+        print(f'client_{c} data ({len(label_cnts.keys())}):', label_cnts)
+        print_data(local_data)
+
+        out_file = f'{out_dir}/{c}.pth'
+        torch.save(local_data, out_file)
+
+    ########################################### Malicious Clients #############################################
+    indices = torch.randperm(num_samples)  # Randomly shuffle
+    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
+        client_type = 'malicious'
+        print(f"\n*** client_{c}: {client_type}...")
+
+        if ATTACK_METHOD == 'omniscient':
+            # each Byzantine worker computes an estimate of the gradient over the whole dataset (yielding a very
+            # accurate estimate of the gradient), and proposes the opposite vector, scaled to a large length.
+            # We refer to this behavior as omniscient.
+            X_c = X[:, ]
+            y_c = y[:, ]
+        else:
+            # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
+            # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
+            X_c = torch.zeros(X.shape, dtype=float).to(DEVICE)
+            y_c = torch.zeros(y.shape, dtype=int).to(DEVICE)
+
+        # might be used in server
+        # train_info = {"client_type": client_type, "cnn": {}, 'client_id': c}
+        # Create indices for train/test split
+        num_samples_client = len(y_c)
+        indices_sub = np.arange(num_samples_client)
+        train_indices, test_indices = train_test_split(indices_sub, test_size=1 - LABELING_RATE,
+                                                       shuffle=True, random_state=random_state)
+        train_indices, val_indices = train_test_split(train_indices, test_size=0.1, shuffle=True,
+                                                      random_state=random_state)
+        train_mask = np.full(num_samples_client, False)
+        val_mask = np.full(num_samples_client, False)
+        test_mask = np.full(num_samples_client, False)
+        train_mask[train_indices] = True
+        val_mask[val_indices] = True
+        test_mask[test_indices] = True
+
+        # train_info['NUM_MALICIOUS_CLIENTS'] = NUM_MALICIOUS_CLIENTS
+        local_data = {'client_type': client_type,
+                      'X': torch.tensor(X_c).to(DEVICE).float(), 'y': torch.tensor(y_c).to(DEVICE),
+                      'train_mask': torch.tensor(train_mask, dtype=torch.bool).to(DEVICE),
+                      'val_mask': torch.tensor(val_mask, dtype=torch.bool).to(DEVICE),
+                      'test_mask': torch.tensor(test_mask, dtype=torch.bool).to(DEVICE),
+                      'shared_data': shared_data}
+
+        label_cnts = collections.Counter(local_data['y'].tolist())
+        print(f'client_{c} data ({len(label_cnts.keys())}):', label_cnts)
+        print_data(local_data)
+
+        out_file = f'{out_dir}/{c}.pth'
         torch.save(local_data, out_file)
 
 
@@ -850,7 +1098,7 @@ def clients_training(data_dir, epoch, global_cnn):
         local_cnn = CNN(num_classes=NUM_CLASSES)
         train_cnn(local_cnn, global_cnn, local_data, train_info)
         # w = w0 - \eta * \namba_w, so delta_w = w0 - w
-        delta_w = {key: global_cnn.state_dict()[key]-local_cnn.state_dict()[key] for key in global_cnn.state_dict()}
+        delta_w = {key: global_cnn.state_dict()[key] - local_cnn.state_dict()[key] for key in global_cnn.state_dict()}
         clients_cnns[c] = delta_w
         delta_dist = sum([torch.norm(local_cnn.state_dict()[key].cpu() - global_cnn.state_dict()[key].cpu()) for key
                           in global_cnn.state_dict()])
@@ -864,9 +1112,9 @@ def clients_training(data_dir, epoch, global_cnn):
 
         history[c] = train_info
 
-    ########################################### Byzantine Clients #############################################
+    ########################################### Malicious Clients #############################################
     for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
-        client_type = 'attacker'
+        client_type = 'malicious'
         print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
         # might be used in server
         train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
@@ -874,6 +1122,7 @@ def clients_training(data_dir, epoch, global_cnn):
         data_file = f'{data_dir}/{c}.pth'
         with open(data_file, 'rb') as f:
             local_data = torch.load(f)
+
         num_samples_client = len(local_data['y'].tolist())
         label_cnts = collections.Counter(local_data['y'].tolist())
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
@@ -902,9 +1151,28 @@ def clients_training(data_dir, epoch, global_cnn):
         #     # BIG_NUMBER = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
         #     for param in local_cnn.parameters():
         #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
-        train_cnn(local_cnn, global_cnn, local_data, train_info)
-        delta_w = {key: -1 * (global_cnn.state_dict()[key]-local_cnn.state_dict()[key]) for key
-                   in global_cnn.state_dict()}
+        # train_cnn(local_cnn, global_cnn, local_data, train_info)
+
+        # from paper: Machine Learning with Adversaries: Byzantine Tolerant Gradient Descent
+        if ATTACK_METHOD == 'omniscient':
+            # each Byzantine worker computes an estimate of the gradient over the whole dataset (yielding a very
+            # accurate estimate of the gradient), and proposes the opposite vector, scaled to a large length.
+            # We refer to this behavior as omniscient.
+            scale_factor = 2.0
+            train_cnn(local_cnn, global_cnn, local_data, train_info)
+            delta_w = {key: -1 * scale_factor * (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
+                       in global_cnn.state_dict()}
+        else:
+            # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
+            # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
+            new_state_dict = {}
+            for key, param in global_cnn.state_dict().items():
+                noise = torch.normal(0, 200, size=param.shape).to(DEVICE)
+                new_state_dict[key] = noise
+            local_cnn.load_state_dict(new_state_dict)
+            # w = w0 - \eta * \namba_w, so delta_w = w0 - w, only send update difference to the server
+            delta_w = {key: (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
+                       in global_cnn.state_dict()}
         clients_cnns[c] = delta_w
 
         print('Evaluate CNNs...')
@@ -915,15 +1183,28 @@ def clients_training(data_dir, epoch, global_cnn):
 
         history[c] = train_info
 
+    torch.manual_seed(seed)  # CPU
     return clients_cnns, clients_info, history
 
 
 @timer
 def main():
     print(f"\n*************************** Generate Clients Data ******************************")
-    data_dir = (f'data/MNIST/sign_flipping/h_{NUM_HONEST_CLIENTS}-b_{NUM_MALICIOUS_CLIENTS}'
-                f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{AGGREGATION_METHOD}')
-    gen_client_data(data_dir=data_dir)
+    if dataset == 'spambase':
+        data_dir = '../data/spambase'
+        sub_dir = (f'data/spambase/random_noise/h_{NUM_HONEST_CLIENTS}-b_{NUM_MALICIOUS_CLIENTS}'
+                   f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
+        data_out_dir = data_dir
+        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
+        print(data_out_dir)
+        gen_client_spambase_data(data_dir=data_dir, out_dir=data_out_dir)  # for spambase dataset
+    else:
+        data_dir = (f'data/MNIST/random_noise/h_{NUM_HONEST_CLIENTS}-b_{NUM_MALICIOUS_CLIENTS}'
+                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
+        print(data_dir)
+        data_out_dir = data_dir
+        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
+        gen_client_mnist_data(data_dir=data_dir, out_dir=data_out_dir)  # for mnist dataset
 
     print(f"\n***************************** Global Models *************************************")
     global_cnn = CNN(num_classes=NUM_CLASSES)
@@ -933,7 +1214,7 @@ def main():
     histories = {'clients': [], 'server': []}
     for server_epoch in range(SERVER_EPOCHS):
         print(f"\n*************** Server Epoch: {server_epoch}/{SERVER_EPOCHS}, Client Training *****************")
-        clients_cnns, clients_info, history = clients_training(data_dir, server_epoch, global_cnn)
+        clients_cnns, clients_info, history = clients_training(data_out_dir, server_epoch, global_cnn)
         histories['clients'].append(history)
 
         print(f"\n*************** Server Epoch: {server_epoch}/{SERVER_EPOCHS}, Server Aggregation **************")
@@ -953,11 +1234,16 @@ def main():
     # print_histories_server(histories['server'])
 
     # Delete all the generated data
-    shutil.rmtree(data_dir)
+    if data_out_dir != data_dir:
+        shutil.rmtree(data_out_dir)
 
 
 if __name__ == '__main__':
-    IN_DIR = 'fl/mnist'
+    # IN_DIR = 'data/spambase'
+    # dataset = 'spambase'
+    # LABELS = {0, 1}
+    IN_DIR = '../fl/mnist'
+    dataset = 'mnist'
     LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
     # LABELS = {0, 1}
     NUM_CLASSES = len(LABELS)

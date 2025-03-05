@@ -1,3 +1,8 @@
+v0.3.5: Add more robust algorithms
+    1. E.g., geometric_median, trimmed_mean
+    2. Store common functions into base.py
+
+
 v0.3.4: Try different attacks and Update Krum.py
     1. Add weighted version for each method in krum.py
     2. Rename Krum.py as robust_aggregation.py
@@ -7,6 +12,7 @@ v0.3.3: Update Krum.py and aggregate_cnns
     1. aggregate_cnns aggregate on all parameters, instead of each layer.
     2. update refined_Krum
     3. update median
+
 
 v0.3.2: Add more byzantine attacks
     1. sign_flipping, model_poisoning, data poisoning

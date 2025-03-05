@@ -26,6 +26,7 @@ from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets
 
+import exp_weighted_mean
 import robust_aggregation
 from utils import timer
 
@@ -380,6 +381,11 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
                                                     trimmed_average=False, verbose=VERBOSE)
     elif aggregation_method == 'median':
         aggregated_update, clients_type_pred = robust_aggregation.median(flatten_clients_updates, clients_weights, verbose=VERBOSE)
+    elif aggregation_method == 'exp_weighted_mean':
+        clients_type_pred = None
+        aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
+            torch.stack(flatten_clients_updates), x_est=flatten_clients_updates[-1],
+            r=0.1, max_iters=100, tol=1e-6,verbose=VERBOSE)
     else:
         aggregated_update, clients_type_pred = robust_aggregation.mean(flatten_clients_updates, clients_weights)
     print(f'{aggregation_method}, clients_type: {clients_type_pred}, '

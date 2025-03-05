@@ -1,5 +1,5 @@
 import time
-
+import numpy as np
 import time
 from datetime import datetime
 
@@ -21,3 +21,41 @@ def timer(func):
         return result
 
     return wrapper
+
+
+from numpy.random import dirichlet
+
+
+def dirichlet_split(X, y, num_clients, alpha=0.5):
+    """Splits dataset using Dirichlet distribution for non-IID allocation.
+
+    alpha: > 0
+        how class samples are divided among clients.
+        Small alpha (e.g., 0.1) → Highly Non-IID
+            Each client receives data dominated by a few classes.
+            Some clients may not have samples from certain classes.
+
+        Large alpha (e.g., 10) → More IID-like
+            Each client receives a more balanced mix of all classes.
+            The distribution approaches uniformity as alpha increases.
+
+        alpha = 1 → Mildly Non-IID
+            Classes are somewhat skewed, but each client still has a mix of multiple classes.
+
+    """
+    classes = np.unique(y)
+    class_indices = {c: np.where(y == c)[0] for c in classes}
+    X_splits, y_splits = [[] for _ in range(num_clients)], [[] for _ in range(num_clients)]
+
+    for c, indices in class_indices.items():
+        np.random.shuffle(indices)
+        proportions = dirichlet(alpha * np.ones(num_clients))
+        proportions = (proportions * len(indices)).astype(int)
+
+        start = 0
+        for client, num_samples in enumerate(proportions):
+            X_splits[client].extend(X[indices[start:start + num_samples]])
+            y_splits[client].extend(y[indices[start:start + num_samples]])
+            start += num_samples
+
+    return [np.array(X_s) for X_s in X_splits], [np.array(y_s) for y_s in y_splits]

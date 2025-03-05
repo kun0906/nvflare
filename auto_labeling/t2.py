@@ -6,13 +6,206 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-random_state=42
-torch.manual_seed(random_state)
-num_samples = 10
-indices = torch.randperm(num_samples)  # Randomly shuffle
-print(indices)
-indices = torch.randperm(num_samples)  # Randomly shuffle
-print(indices)
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.spatial.distance import cdist
+np.set_printoptions(precision=1, suppress=True)
+
+
+# Re-import necessary libraries after execution state reset
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define the range of 'a' from 0 to pi/2
+
+alpha_values = np.linspace(0, np.pi/2, 100)
+y_values = 1 - np.sin(alpha_values)
+
+# Plot the function
+plt.figure(figsize=(6, 4))
+plt.plot(alpha_values, y_values, label=r'$1 - \sin(a)$', color='b')
+plt.xlabel(r'$a$ (radians)')
+plt.ylabel(r'$1 - \sin(a)$')
+plt.title(r'Plot of $1 - \sin(\alpha)$ for $0 \leq \alpha < \frac{\pi}{2}$')
+plt.axhline(0, color='black', linewidth=0.5, linestyle='--')
+plt.axvline(0, color='black', linewidth=0.5, linestyle='--')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+
+exit(0)
+
+# Generate 10 points on a circle of radius 1 centered at (0,0)
+n = 10
+angles = np.linspace(0, 2 * np.pi, n, endpoint=False)
+circle_points = np.array([(np.cos(a), np.sin(a)) for a in angles])
+
+# Add an outlier at (100,100)
+outlier = np.array([[10, 10]]*(n-2))
+
+# Combine points
+points = np.vstack((circle_points, outlier))
+print(points)
+
+
+# Compute Mean (average of all points)
+mean_point = np.mean(points, axis=0)
+
+# Compute Median (coordinate-wise median)
+median_point = np.median(points, axis=0)
+
+# Compute Medoid (point closest to all others in terms of total distance)
+dist_matrix = cdist(points, points, metric='euclidean')
+total_distances = np.sum(dist_matrix, axis=1)
+medoid_index = np.argmin(total_distances)
+medoid_point = points[medoid_index]
+
+# Compute Krum (Selects a point closest to its nearest neighbors, ignoring the farthest)
+k = len(points) - len(outlier) - 2  # k = total_n -f-2  = 19 - 9 - 2 = 8
+print(f'k:{k}')
+krum_scores = np.sum(np.sort(dist_matrix, axis=1)[:, 1:k+1], axis=1)  # Ignore self-distance (0)
+print(krum_scores)
+krum_index = np.argmin(krum_scores)
+krum_point = points[krum_index]
+#
+# def adaptive_weighted_mean(points, beta_values):
+#     center_guess = np.median(points, axis=0)  # Initial guess
+#     distances = np.linalg.norm(points - center_guess, axis=1)
+#
+#     plt.figure(figsize=(8, 6))
+#
+#     for beta in beta_values:
+#         weights = np.exp(-beta * distances)  # Exponential decay for far points
+#         weights /= np.sum(weights)  # Normalize
+#         plt.plot(points[:, 0], weights, 'o', label=f'β={beta}')
+#
+#     plt.xlabel("Distance from Median")
+#     plt.ylabel("Weight")
+#     plt.title("Adaptive Weighted Mean: Weights vs. Distance for Different β")
+#     plt.legend()
+#     plt.grid()
+#     plt.show()
+#
+# # Test with different β values
+# beta_values = [0.1, 1, 5, 10, 20]
+# adaptive_weighted_mean(points, beta_values)
+# exit(0)
+
+# Compute Adaptive Weighted Mean
+def adaptive_weighted_mean(points, beta=1):
+    center_guess = np.median(points, axis=0)  # Initial guess
+    distances = np.linalg.norm(points - center_guess, axis=1)
+    weights = np.exp(-beta * distances)  # Exponential decay for far points
+    weights /= np.sum(weights)
+    print(weights)
+    return np.sum(points * weights[:, np.newaxis], axis=0)
+
+adaptive_mean = adaptive_weighted_mean(points)
+
+# Compute Geometric Median using Weiszfeld’s algorithm
+def geometric_median(X, eps=1e-5):
+    y = np.mean(X, axis=0)  # Initial guess
+    while True:
+        distances = np.linalg.norm(X - y, axis=1)
+        nonzero_distances = np.where(distances > eps, distances, eps)  # Avoid division by zero
+        weights = 1 / nonzero_distances
+        new_y = np.average(X, axis=0, weights=weights)
+        if np.linalg.norm(y - new_y) < eps:
+            return new_y
+        y = new_y
+
+geo_median = geometric_median(points)
+
+# Plot results
+plt.figure(figsize=(6, 6))
+plt.scatter(circle_points[:, 0], circle_points[:, 1], label="Circle Points", color="blue", alpha=0.7)
+plt.scatter(outlier[:, 0], outlier[:, 1], label="Outlier (100,100)", color="red", marker="x", s=150)
+plt.scatter(*mean_point, color="purple", label="Mean", marker="o", s=100)
+plt.scatter(*median_point, color="green", label="Median", marker="s", s=100)
+plt.scatter(*medoid_point, color="orange", label="Medoid", marker="D", s=100)
+plt.scatter(*krum_point, color="brown", label="Krum", marker="P", s=100)
+plt.scatter(*geo_median, color="black", label="Geo_median", marker="o", s=100)
+plt.scatter(*adaptive_mean, color="yellow", label="adaptive_mean", marker="s", s=100)
+
+# plt.xlim(-2, 105)
+# plt.ylim(-2, 105)
+plt.axhline(0, color='black', linewidth=0.5)
+plt.axvline(0, color='black', linewidth=0.5)
+plt.legend()
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.title("Comparison of Aggregation Methods")
+plt.grid()
+plt.show()
+
+# Print results
+print(mean_point, median_point, medoid_point, krum_point, geo_median, adaptive_mean)
+
+
+#
+# random_state=42
+# torch.manual_seed(random_state)
+# num_samples = 10
+# indices = torch.randperm(num_samples)  # Randomly shuffle
+# print(indices)
+# indices = torch.randperm(num_samples)  # Randomly shuffle
+# print(indices)
+#
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from scipy.spatial.distance import cdist
+# from scipy.optimize import minimize
+#
+# # Generate 2D points along the line y = x
+# np.random.seed(42)
+# n = 20
+# x_values = np.linspace(1, 10, n)
+# points = np.vstack((x_values, x_values)).T  # Each point (x, x)
+#
+# # # Compute coordinate-wise median (marginal median)
+# # coord_median = np.median(points, axis=0)
+#
+# # Compute geometric median using optimization
+# def geometric_median(X, eps=1e-5):
+#     """Compute the geometric median using Weiszfeld's algorithm."""
+#     y = np.mean(X, axis=0)  # Initial guess: mean of points
+#     while True:
+#         distances = np.linalg.norm(X - y, axis=1)
+#         nonzero_distances = np.where(distances > eps, distances, eps)  # Avoid division by zero
+#         weights = 1 / nonzero_distances
+#         new_y = np.average(X, axis=0, weights=weights)
+#         if np.linalg.norm(y - new_y) < eps:
+#             return new_y
+#         y = new_y
+#
+# # geo_median = geometric_median(points)
+#
+# # Add some noise to y values
+# noise = np.random.normal(scale=2000.0, size=n)
+# points_noisy = np.vstack((x_values, x_values + noise)).T  # Slightly off the y=x line
+#
+# coord_median_noisy = np.median(points_noisy, axis=0)
+# geo_median_noisy = geometric_median(points_noisy)
+#
+# # Plot
+# plt.figure(figsize=(6, 6))
+# plt.scatter(points_noisy[:, 0], points_noisy[:, 1], label="Noisy Data Points", color="blue")
+# plt.scatter(*coord_median_noisy, color="red", label="Coordinate-wise Median", marker="x", s=150)
+# plt.scatter(*geo_median_noisy, color="green", label="Geometric Median", marker="o", s=150)
+#
+# plt.plot(x_values, x_values, 'k--', label="y = x")
+# plt.legend()
+# plt.xlabel("X")
+# plt.ylabel("Y")
+# plt.title("Geometric Median vs. Coordinate-wise Median (With Noise)")
+# plt.grid()
+# plt.show()
+#
+
+exit(0)
 
 # import numpy as np
 #

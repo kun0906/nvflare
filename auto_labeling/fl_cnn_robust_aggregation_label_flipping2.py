@@ -2,10 +2,11 @@
     $ssh kunyang@slogin-01.superpod.smu.edu
     $srun -A kunyang_nvflare_py31012_0001 -t 60 -G 1 -w bcm-dgxa100-0008 --pty $SHELL
     $srun -A kunyang_nvflare_py31012_0001 -t 260 -G 1 --pty $SHELL
-    $module load conda
-    $conda activate nvflare-3.10
-    $cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 fl_cnn_robust_aggregation.py
+    # $module load conda
+    # $conda activate nvflare-3.10
+    # $cd nvflare/auto_labeling
+    $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 """
@@ -13,6 +14,7 @@
 import argparse
 import collections
 import os
+import shutil
 
 import numpy as np
 import torch
@@ -21,11 +23,11 @@ import torch.optim as optim
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
+from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets
 
-import exp_weighted_mean
-from robust_aggregation import refined_krum, krum, median, mean
+import robust_aggregation
 from utils import timer
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
@@ -49,19 +51,22 @@ torch.cuda.manual_seed_all(seed)  # Multi-GPU
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
+# Print level
+VERBOSE = 20
+
 
 # Define the function to parse the parameters
 def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.8,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=2,
                         help="label rate, how much labeled data in local data.")
-    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=10,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-b', '--honest_clients', type=int, required=False, default=4,
+    parser.add_argument('-b', '--honest_clients', type=int, required=False, default=80,
                         help="The number of honest clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='median',
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='refined_krum',
                         help="aggregation method.")
     # Parse the arguments
     args = parser.parse_args()
@@ -74,10 +79,13 @@ def parse_arguments():
 args = parse_arguments()
 
 # Access the arguments
-LABELING_RATE = args.labeling_rate
-SERVER_EPOCHS = args.server_epochs
+LABELING_RATE = 0.8
+BIG_NUMBER = int(args.labeling_rate)
+# SERVER_EPOCHS = args.server_epochs
+SERVER_EPOCHS = 10
+IID_CLASSES_CNT = 3
 NUM_HONEST_CLIENTS = args.honest_clients
-NUM_MALICIOUS_CLIENTS = NUM_HONEST_CLIENTS - 1
+NUM_MALICIOUS_CLIENTS = 1 # NUM_HONEST_CLIENTS - 1
 AGGREGATION_METHOD = args.aggregation_method
 # aggregation_method = 'mean'  # refined_krum, krum, median, mean
 print(args)
@@ -293,46 +301,109 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     return None
 
 
+#
+# def aggregate_cnns_layers(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
+#     print('*aggregate cnn...')
+#
+#     # Initialize the aggregated state_dict for the global model
+#     global_state_dict = {key: torch.zeros_like(value).to(DEVICE) for key, value in global_cnn.state_dict().items()}
+#
+#     # Aggregate parameters for each layer
+#     for key in global_state_dict:
+#         # print(f'global_state_dict: {key}')
+#         clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_cnns.values()]
+#         min_value = min([torch.min(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
+#         max_value = max([torch.max(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
+#         # each client extra information (such as, number of samples)
+#         # client_weights will affect median and krum, so be careful to weights
+#         # if assign byzantine clients with very large weights (e.g., 1e6),
+#         # then median will choose byzantine client's parameters.
+#         clients_weights = torch.tensor([1] * len(clients_updates))  # default as 1
+#         # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
+#         if aggregation_method == 'refined_krum':
+#             aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=False)
+#         elif aggregation_method == 'krum':
+#             train_info = list(histories['clients'][-1].values())[-1]
+#             f = train_info['NUM_MALICIOUS_CLIENTS']
+#             # client_type = train_info['client_type']
+#             aggregated_update, clients_type_pred = krum(clients_updates, clients_weights, f, trimmed_average=False)
+#         elif aggregation_method == 'median':
+#             aggregated_update, clients_type_pred = median(torch.stack(clients_updates, dim=0), clients_weights, dim=0)
+#         else:
+#             aggregated_update, clients_type_pred = mean(clients_updates, clients_weights)
+#         print(f'{aggregation_method}, {key}, clients_type: {clients_type_pred}, '
+#               f'client_updates: min: {min_value}, max: {max_value}')  # f'clients_weights: {clients_weights.numpy()},
+#         global_state_dict[key] = aggregated_update.to(DEVICE)
+#
+#     # Update the global model with the aggregated parameters
+#     global_cnn.load_state_dict(global_state_dict)
+#
+
+@timer
 def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
     print('*aggregate cnn...')
+    # flatten all the parameters into a long vector
+    # clients_updates = [client_state_dict.cpu() for client_state_dict in clients_cnns.values()]
 
-    # Initialize the aggregated state_dict for the global model
-    global_state_dict = {key: torch.zeros_like(value).to(DEVICE) for key, value in global_cnn.state_dict().items()}
+    # Concatenate all parameter tensors into one vector.
+    # Note: The order here is the iteration order of the OrderedDict, which
+    # may not match the order of model.parameters().
+    # vector_from_state = torch.cat([param.view(-1) for param in state.values()])
+    # flatten_clients_updates = [torch.cat([param.view(-1).cpu() for param in client_state_dict.values()]) for
+    #                            client_state_dict in clients_cnns.values()]
+    tmp_models = []
+    for client_state_dict in clients_cnns.values():
+        model = CNN(num_classes=NUM_CLASSES)
+        model.load_state_dict(client_state_dict)
+        tmp_models.append(model)
+    flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]
+    # for debugging
+    if VERBOSE >= 30:
+        for i, update in enumerate(flatten_clients_updates):
+            print(f'client_{i}:', end='  ')
+            print_histgram(update, bins=5, value_type='params')
 
-    # Aggregate parameters for each layer
-    for key in global_state_dict:
-        # print(f'global_state_dict: {key}')
-        clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_cnns.values()]
-        min_value = min([torch.min(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
-        max_value = max([torch.max(v).item() for v in clients_updates[: NUM_HONEST_CLIENTS]])
-        # each client extra information (such as, number of samples)
-        # client_weights will affect median and krum, so be careful to weights
-        # if assign byzantine clients with very large weights (e.g., 1e6),
-        # then median will choose byzantine client's parameters.
-        clients_weights = torch.tensor([1] * len(clients_updates))  # default as 1
-        # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-        if aggregation_method == 'refined_krum':
-            aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=False)
-        elif aggregation_method == 'krum':
-            train_info = list(histories['clients'][-1].values())[-1]
-            f = train_info['NUM_MALICIOUS_CLIENTS']
-            # client_type = train_info['client_type']
-            aggregated_update, clients_type_pred = krum(clients_updates, clients_weights, f, trimmed_average=False)
-        elif aggregation_method == 'median':
-            aggregated_update, clients_type_pred = median(torch.stack(clients_updates, dim=0), clients_weights, dim=0)
-        elif aggregation_method == 'exp_weighted_mean':
-            clients_type_pred = None
-            aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
-                torch.stack(flatten_clients_updates), x_est=flatten_clients_updates[-1],
-                r=0.1, max_iters=100, tol=1e-6, verbose=VERBOSE)
-        else:
-            aggregated_update, clients_type_pred = mean(clients_updates, clients_weights)
-        print(f'{aggregation_method}, {key}, clients_type: {clients_type_pred}, '
-              f'clients_weights: {clients_weights.numpy()}, client_updates: min: {min_value}, max: {max_value}')
-        global_state_dict[key] = aggregated_update.to(DEVICE)
+    min_value = min([torch.min(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
+    max_value = max([torch.max(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
+
+    trimmed_average = False
+    # each client extra information (such as, number of samples)
+    # client_weights will affect median and krum, so be careful to weights
+    # if assign byzantine clients with very large weights (e.g., 1e6),
+    # then median will choose byzantine client's parameters.
+    clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
+    # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
+    if aggregation_method == 'refined_krum':
+        aggregated_update, clients_type_pred = robust_aggregation.refined_krum(flatten_clients_updates, clients_weights,
+                                                                               trimmed_average, verbose=VERBOSE)
+    elif aggregation_method == 'krum':
+        # train_info = list(histories['clients'][-1].values())[-1]
+        # f = train_info['NUM_MALICIOUS_CLIENTS']
+        f = NUM_MALICIOUS_CLIENTS
+        # client_type = train_info['client_type']
+        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
+                                                                       trimmed_average, verbose=VERBOSE)
+    elif aggregation_method == 'median':
+        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        p = p / 2  # top p/2 and bottom p/2 are removed
+        aggregated_update, clients_type_pred = robust_aggregation.median(flatten_clients_updates, clients_weights,
+                                                                         trimmed_average, p=p,
+                                                                         verbose=VERBOSE)
+    else:
+        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        p = p / 2  # top p/2 and bottom p/2 are removed
+        aggregated_update, clients_type_pred = robust_aggregation.mean(flatten_clients_updates, clients_weights,
+                                                                       trimmed_average, p=p,
+                                                                       verbose=VERBOSE)
+    print(f'{aggregation_method}, clients_type: {clients_type_pred}, '
+          f'client_updates: min: {min_value}, max: {max_value}')  # f'clients_weights: {clients_weights.numpy()},
 
     # Update the global model with the aggregated parameters
-    global_cnn.load_state_dict(global_state_dict)
+    # w = w0 - (delta_w), where delta_w = \eta*\namba_w
+    aggregated_update = parameters_to_vector(global_cnn.parameters()).detach().cpu() - aggregated_update
+    aggregated_update = aggregated_update.to(DEVICE)
+    vector_to_parameters(aggregated_update, global_cnn.parameters())  # in_place
+    # global_cnn.load_state_dict(aggregated_update)
 
 
 @timer
@@ -456,6 +527,25 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
     return
 
 
+def print_data(local_data):
+    print('Local_data: ')
+    X, y = local_data['X'], local_data['y']
+    print(f'X: {X.shape}, y: '
+          f'{collections.Counter(y.tolist())}, in which, ')
+    train_mask = local_data['train_mask']
+    val_mask = local_data['val_mask']
+    test_mask = local_data['test_mask']
+    X_train, y_train = local_data['X'][train_mask], local_data['y'][train_mask]
+    X_val, y_val = local_data['X'][val_mask], local_data['y'][val_mask]
+    X_test, y_test = local_data['X'][test_mask], local_data['y'][test_mask]
+    print(f'\tX_train: {X_train.shape}, y_train: '
+          f'{collections.Counter(y_train.tolist())}')
+    print(f'\tX_val: {X_val.shape}, y_val: '
+          f'{collections.Counter(y_val.tolist())}')
+    print(f'\tX_test: {X_test.shape}, y_test: '
+          f'{collections.Counter(y_test.tolist())}')
+
+
 def print_histories(histories):
     num_server_epoches = len(histories)
     num_clients = len(histories[0])
@@ -517,24 +607,15 @@ def print_histories(histories):
         plt.close(fig)
 
 
-def print_data(local_data):
-    # print('Local_data: ')
-    X, y = local_data['X'], local_data['y']
-    tmp = X.cpu().numpy().flatten()
-    print(f'X: {X.shape} [min: {min(tmp)}, max:{max(tmp)}], y: '
-          f'{collections.Counter(y.tolist())}, in which, ')
-    train_mask = local_data['train_mask']
-    val_mask = local_data['val_mask']
-    test_mask = local_data['test_mask']
-    X_train, y_train = local_data['X'][train_mask], local_data['y'][train_mask]
-    X_val, y_val = local_data['X'][val_mask], local_data['y'][val_mask]
-    X_test, y_test = local_data['X'][test_mask], local_data['y'][test_mask]
-    print(f'\tX_train: {X_train.shape}, y_train: '
-          f'{collections.Counter(y_train.tolist())}')
-    print(f'\tX_val: {X_val.shape}, y_val: '
-          f'{collections.Counter(y_val.tolist())}')
-    print(f'\tX_test: {X_test.shape}, y_test: '
-          f'{collections.Counter(y_test.tolist())}')
+def print_histgram(new_probs, bins=5, value_type='probs'):
+    print(f'***Print histgram of {value_type}, min:{min(new_probs)}, max: {max(new_probs)}***')
+    # # Convert the probabilities to numpy for histogram calculation
+    # new_probs = new_probs.detach().cpu().numpy()
+    # Compute histogram
+    hist, bin_edges = torch.histogram(new_probs, bins=bins)
+    # Print histogram
+    for i in range(len(hist)):
+        print(f"\tBin {i}: {value_type} Range ({bin_edges[i]}, {bin_edges[i + 1]}), Frequency: {hist[i]}")
 
 
 def print_histories_server(histories_server):
@@ -598,10 +679,10 @@ def normalize(X):
     return (X / 255.0 - 0.5) * 2  # [-1, 1]
 
 
-def clients_training(epoch, global_cnn):
-    clients_cnns = {}
-    clients_info = {}  # extra information (e.g., number of samples) of clients that can be used in aggregation
-    history = {}
+@timer
+def gen_client_data(data_dir='data/MNIST/clients', out_dir='.'):
+    os.makedirs(data_dir, exist_ok=True)
+    os.makedirs(out_dir, exist_ok=True)
 
     train_dataset = datasets.MNIST(root="./data", train=True, transform=None, download=True)
     test_dataset = datasets.MNIST(root="./data", train=False, transform=None, download=True)
@@ -632,25 +713,31 @@ def clients_training(epoch, global_cnn):
     torch.manual_seed(random_state)
     indices = torch.randperm(num_samples)  # Randomly shuffle
     step = int(num_samples / NUM_HONEST_CLIENTS)
-    # step = 100  # for debugging
+    # step = 50  # for debugging
+    non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
+    non_iid_cnt1 = 0
     ########################################### Benign Clients #############################################
     for c in range(NUM_HONEST_CLIENTS):
         client_type = 'honest'
-        print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
+        print(f"\n*** client_{c}: {client_type}...")
         X_c = X[indices[c * step:(c + 1) * step]]
         y_c = y[indices[c * step:(c + 1) * step]]
-        np.random.seed(c)
-        if c % 4 == 0:  # 1/4 of honest clients has part of classes
+        np.random.seed(c)  # change seed
+        # if c % 4 == 0 and non_iid_cnt0 < NUM_HONEST_CLIENTS // 4:  # 1/4 of honest clients has part of classes
+        if c == 0:
+            non_iid_cnt0 += 1  # make sure that non_iid_cnt is always less than iid_cnt
             mask_c = np.full(len(y_c), False)
             # for l in [0, 1, 2, 3, 4]:
-            for l in np.random.choice([0, 1, 2, 3, 4], size=2, replace=False):
+            for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
                 mask_ = y_c == l
                 mask_c[mask_] = True
             # mask_c = (y_c != (c%10))  # excluding one class for each client
-        elif c % 4 == 1:  # 1/4 of honest clients has part of classes
+        elif c == 1:
+            # elif c % 4 == 1 and non_iid_cnt1 < NUM_HONEST_CLIENTS // 4:  # 1/4 of honest clients has part of classes
+            non_iid_cnt1 += 1
             mask_c = np.full(len(y_c), False)
             # for l in [5, 6, 7, 8, 9]:
-            for l in np.random.choice([5, 6, 7, 8, 9], size=2, replace=False):
+            for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT*2, replace=False):
                 mask_ = y_c == l
                 mask_c[mask_] = True
         else:  # 2/4 of honest clients has IID distributions
@@ -658,7 +745,7 @@ def clients_training(epoch, global_cnn):
         X_c = X_c[mask_c]
         y_c = y_c[mask_c]
         # might be used in server
-        train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
+        # train_info = {"client_type": client_type, "cnn": {}, 'client_id': c}
         # Create indices for train/test split
         num_samples_client = len(y_c)
         indices_sub = np.arange(num_samples_client)
@@ -681,32 +768,29 @@ def clients_training(epoch, global_cnn):
                       'shared_data': shared_data}
 
         label_cnts = collections.Counter(local_data['y'].tolist())
-        clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data:', label_cnts)
         print_data(local_data)
 
-        print('Train CNN...')
-        # local_cnn = CNN(input_dim=input_dim, hidden_dim=hidden_dim_cnn, output_dim=num_classes)
-        local_cnn = CNN(num_classes=NUM_CLASSES)
-        train_cnn(local_cnn, global_cnn, local_data, train_info)
-        clients_cnns[c] = local_cnn.state_dict()
-
-        print('Evaluate CNNs...')
-        evaluate(local_cnn, local_data, global_cnn,
-                 test_type='Client data', client_id=c, train_info=train_info)
-        evaluate_shared_test(local_cnn, local_data, global_cnn,
-                             test_type='Shared test data', client_id=c, train_info=train_info)
-
-        history[c] = train_info
+        out_file = f'{out_dir}/{c}.pth'
+        torch.save(local_data, out_file)
 
     ########################################### Byzantine Clients #############################################
+    indices = torch.randperm(num_samples)  # Randomly shuffle
     for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
         client_type = 'attacker'
-        print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
+        print(f"\n*** client_{c}: {client_type}...")
         X_c = X[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
         y_c = y[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
+
+        mask_c = np.full(len(y_c), False)
+        for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=BIG_NUMBER, replace=False):
+            mask_ = y_c == l
+            mask_c[mask_] = True
+        X_c = X_c[mask_c]
+        y_c = y_c[mask_c]
+
         # might be used in server
-        train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
+        # train_info = {"client_type": client_type, "cnn": {}, 'client_id': c}
         # Create indices for train/test split
         num_samples_client = len(y_c)
         indices_sub = np.arange(num_samples_client)
@@ -720,37 +804,108 @@ def clients_training(epoch, global_cnn):
         train_mask[train_indices] = True
         val_mask[val_indices] = True
         test_mask[test_indices] = True
+        # y_c[train_mask] = (NUM_CLASSES - 1) - y_c[train_mask]  # flip label
+        # y_c[val_mask] = (NUM_CLASSES - 1) - y_c[val_mask]  # flip label
+        y_c[train_mask] = torch.tensor([(NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[train_mask]])
+        y_c[val_mask] = torch.tensor([(NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[val_mask]])  # flip label
 
-        train_info['NUM_MALICIOUS_CLIENTS'] = NUM_MALICIOUS_CLIENTS
+        # train_info['NUM_MALICIOUS_CLIENTS'] = NUM_MALICIOUS_CLIENTS
         local_data = {'client_type': client_type,
                       'X': torch.tensor(X_c).to(DEVICE).float(), 'y': torch.tensor(y_c).to(DEVICE),
                       'train_mask': torch.tensor(train_mask, dtype=torch.bool).to(DEVICE),
                       'val_mask': torch.tensor(val_mask, dtype=torch.bool).to(DEVICE),
                       'test_mask': torch.tensor(test_mask, dtype=torch.bool).to(DEVICE),
                       'shared_data': shared_data}
+
         label_cnts = collections.Counter(local_data['y'].tolist())
-        clients_info[c] = {'label_cnts': label_cnts, 'size': len(local_data['y'])}
+        print(f'client_{c} data:', label_cnts)
+        print_data(local_data)
+
+        out_file = f'{out_dir}/{c}.pth'
+        torch.save(local_data, out_file)
+
+
+def clients_training(data_dir, epoch, global_cnn):
+    clients_cnns = {}
+    clients_info = {}  # extra information (e.g., number of samples) of clients that can be used in aggregation
+    history = {}
+    ########################################### Benign Clients #############################################
+    for c in range(NUM_HONEST_CLIENTS):
+        client_type = 'honest'
+        print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
+        # might be used in server
+        train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
+
+        data_file = f'{data_dir}/{c}.pth'
+        with open(data_file, 'rb') as f:
+            local_data = torch.load(f)
+        num_samples_client = len(local_data['y'].tolist())
+        label_cnts = collections.Counter(local_data['y'].tolist())
+        clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
+        print(f'client_{c} data:', label_cnts)
+        print_data(local_data)
+
+        print('Train CNN...')
+        # local_cnn = CNN(input_dim=input_dim, hidden_dim=hidden_dim_cnn, output_dim=num_classes)
+        local_cnn = CNN(num_classes=NUM_CLASSES)
+        train_cnn(local_cnn, global_cnn, local_data, train_info)
+        # w = w0 - \eta * \namba_w, so delta_w = w0 - w
+        delta_w = {key: global_cnn.state_dict()[key] - local_cnn.state_dict()[key] for key in global_cnn.state_dict()}
+        clients_cnns[c] = delta_w
+        delta_dist = sum([torch.norm(local_cnn.state_dict()[key].cpu() - global_cnn.state_dict()[key].cpu()) for key
+                          in global_cnn.state_dict()])
+        print(f'dist(local, global): {delta_dist}')
+
+        print('Evaluate CNNs...')
+        evaluate(local_cnn, local_data, global_cnn,
+                 test_type='Client data', client_id=c, train_info=train_info)
+        evaluate_shared_test(local_cnn, local_data, global_cnn,
+                             test_type='Shared test data', client_id=c, train_info=train_info)
+
+        history[c] = train_info
+
+    ########################################### Byzantine Clients #############################################
+    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
+        client_type = 'attacker'
+        print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
+        # might be used in server
+        train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
+
+        data_file = f'{data_dir}/{c}.pth'
+        with open(data_file, 'rb') as f:
+            local_data = torch.load(f)
+        num_samples_client = len(local_data['y'].tolist())
+        label_cnts = collections.Counter(local_data['y'].tolist())
+        clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
+        print(f'client_{c} data:', label_cnts)
+        print_data(local_data)
 
         local_cnn = CNN(num_classes=NUM_CLASSES).to(DEVICE)
-        byzantine_method = 'adaptive_large_value'
-        if byzantine_method == 'last_global_model':
-            local_cnn.load_state_dict(global_cnn.state_dict())
-        elif byzantine_method == 'flip_sign':
-            local_cnn.load_state_dict(-1*global_cnn.state_dict())
-        elif byzantine_method == 'mean':  # assign mean to each parameter
-            for param in local_cnn.parameters():
-                param.data = param.data/2  # not work
-        elif byzantine_method == 'zero':  # assign 0 to each parameter
-            for param in local_cnn.parameters():
-                param.data.fill_(0.0)  # Assign big number to each parameter
-        elif byzantine_method == 'adaptive_large_value':
-            local_cnn.load_state_dict(global_cnn.state_dict()*2.0)
-        else:  # assign large values
-            # Assign large values to all parameters
-            BIG_NUMBER = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
-            for param in local_cnn.parameters():
-                param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
-        clients_cnns[c] = local_cnn.state_dict()
+        # byzantine_method = 'adaptive_large_value'
+        # if byzantine_method == 'last_global_model':
+        #     local_cnn.load_state_dict(global_cnn.state_dict())
+        # elif byzantine_method == 'flip_sign':
+        #     local_cnn.load_state_dict(-1 * global_cnn.state_dict())
+        # elif byzantine_method == 'mean':  # assign mean to each parameter
+        #     for param in local_cnn.parameters():
+        #         param.data = param.data / 2  # not work
+        # elif byzantine_method == 'zero':  # assign 0 to each parameter
+        #     for param in local_cnn.parameters():
+        #         param.data.fill_(0.0)  # Assign big number to each parameter
+        # elif byzantine_method == 'adaptive_large_value':
+        #     new_state_dict = {}
+        #     for key, param in global_cnn.state_dict().items():
+        #         new_state_dict[key] = param * BIG_NUMBER
+        #     local_cnn.load_state_dict(new_state_dict)
+        # else:  # assign large values
+        #     # Assign fixed large values to all parameters
+        #     # BIG_NUMBER = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
+        #     for param in local_cnn.parameters():
+        #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+        train_cnn(local_cnn, global_cnn, local_data, train_info)
+        delta_w = {key: (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
+                   in global_cnn.state_dict()}
+        clients_cnns[c] = delta_w
 
         print('Evaluate CNNs...')
         evaluate(local_cnn, local_data, global_cnn,
@@ -765,14 +920,22 @@ def clients_training(epoch, global_cnn):
 
 @timer
 def main():
+    print(f"\n*************************** Generate Clients Data ******************************")
+    data_dir = (f'data/MNIST/label_flipping/h_{NUM_HONEST_CLIENTS}-b_{NUM_MALICIOUS_CLIENTS}'
+                f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
+    # data_out_dir = data_dir
+    data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
+    gen_client_data(data_dir, data_out_dir)
+
     print(f"\n***************************** Global Models *************************************")
     global_cnn = CNN(num_classes=NUM_CLASSES)
+    global_cnn = global_cnn.to(DEVICE)
     print(global_cnn)
 
     histories = {'clients': [], 'server': []}
     for server_epoch in range(SERVER_EPOCHS):
         print(f"\n*************** Server Epoch: {server_epoch}/{SERVER_EPOCHS}, Client Training *****************")
-        clients_cnns, clients_info, history = clients_training(server_epoch, global_cnn)
+        clients_cnns, clients_info, history = clients_training(data_out_dir, server_epoch, global_cnn)
         histories['clients'].append(history)
 
         print(f"\n*************** Server Epoch: {server_epoch}/{SERVER_EPOCHS}, Server Aggregation **************")
@@ -790,6 +953,9 @@ def main():
     except Exception as e:
         print('Exception: ', e)
     # print_histories_server(histories['server'])
+
+    # Delete all the generated data
+    shutil.rmtree(data_out_dir)
 
 
 if __name__ == '__main__':
