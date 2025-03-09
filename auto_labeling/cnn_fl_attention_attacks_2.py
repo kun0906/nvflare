@@ -27,7 +27,7 @@ from torch_geometric.data import Data
 from torchvision import datasets
 
 from attention import aggregate_with_krum
-from robust_aggregation import refined_krum
+from robust_aggregation import adaptive_krum
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -257,7 +257,7 @@ def gen_local_data(global_cgan, local_data, train_info):
     # train_link_predictor(local_lp, global_lp, tmp_data, train_info)
 
 
-def train_cnn(local_cnn, global_cnn, local_data, train_info={}, client_type='attacker'):
+def train_cnn(local_cnn, global_cnn, local_data, train_info={}, client_type='Byzantine'):
     """
         1. Use gans to generated data for each class
         2. Use the generated data + local data to train local cnn with initial parameters of global_cnn
@@ -340,7 +340,7 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}, client_type='att
         #         print(f"{name}: {param.grad}")
         #     else:
         #         print(f"{name}: No gradient (likely frozen or unused)")
-        if client_type == 'attacker':
+        if client_type == 'Byzantine':
             model_grads = {key: param.grad.clone() + 1e6 for key, param in local_cnn.named_parameters()
                            if param.grad is not None}
         else:
@@ -537,7 +537,7 @@ def aggregate_grads_with_krum(clients_grads, clients_info, device=None):
     clients_updates = [grads[key].cpu() for grads in clients_grads]
     # clients_weights = torch.tensor([1] * len(clients_updates)) # default as 1
     clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    _, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=True)
+    _, clients_type_pred = adaptive_krum(clients_updates, clients_weights, trimmed_average=True)
 
     return clients_type_pred
 
@@ -561,9 +561,9 @@ def aggregate_cnns(clients_history, clients_info, global_cnn, histories_server, 
                                 clients_history[0]['training_results'][client_epoch]['grads'].items()}
             # train_info[epoch] = {'grads': model_grads}
             for i, (client_id, train_info) in enumerate(clients_history.items()):
-                if clients_type_pred[i] == 'attacker':
+                if clients_type_pred[i] == 'Byzantine':
                     if client_epoch % 50 == 0:
-                        print(f'client_id: {client_id} is an attacker, skip it.')
+                        print(f'client_id: {client_id} is an Byzantine, skip it.')
                     continue
 
                 learning_rate = train_info['training_results'][client_epoch]['learning_rate']
@@ -1358,7 +1358,7 @@ def clients_training(epoch, global_cnn):
     y = y.numpy()
 
     for l in LABELS:
-        # in each four clients, the first three are honest clients, and the last one is attacker
+        # in each four clients, the first three are honest clients, and the last one is Byzantine
         mask = y == l
         X_label, y_label = X[mask], y[mask]
         # each client has s images
@@ -1371,11 +1371,11 @@ def clients_training(epoch, global_cnn):
         random_state = 42 * l
         torch.manual_seed(random_state)
         indices = torch.randperm(m)  # Randomly shuffle
-        # in each 4 clients, the first 3 are honest clients and the last one is attacker
+        # in each 4 clients, the first 3 are honest clients and the last one is Byzantine
         for i in range(n_clients_in_each_group):
             client_id = l * n_clients_in_each_group + i
             c = client_id
-            client_type = 'honest' if i < n_honest_clients_in_each_group else 'attacker'
+            client_type = 'Honest' if i < n_honest_clients_in_each_group else 'Byzantine'
             print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
             # might be used in server
             train_info = {"client_type": client_type, "gan": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
@@ -1425,7 +1425,7 @@ def clients_training(epoch, global_cnn):
 
             else:
                 if l % 5 != 0: continue
-                # for each 4 clients, the last one is attacker. attackers don't need to train local_cnn
+                # for each 4 clients, the last one is Byzantine. attackers don't need to train local_cnn
                 # local_data = {'X': [], 'y': []}
                 local_data = {'client_type': client_type,
                               'X': torch.tensor(X_sub).float() + 1000, 'y': torch.tensor(y_sub),

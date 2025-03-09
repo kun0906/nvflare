@@ -66,7 +66,7 @@ def parse_arguments():
                         help="The number of server epochs (integer).")
     parser.add_argument('-b', '--honest_clients', type=int, required=False, default=80,
                         help="The number of honest clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='refined_krum',
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='adaptive_krum',
                         help="aggregation method.")
     # Parse the arguments
     args = parser.parse_args()
@@ -85,9 +85,9 @@ BIG_NUMBER = int(args.labeling_rate)
 SERVER_EPOCHS = 10
 IID_CLASSES_CNT = 3
 NUM_HONEST_CLIENTS = args.honest_clients
-NUM_MALICIOUS_CLIENTS = 1 # NUM_HONEST_CLIENTS - 1
+NUM_BYZANTINE_CLIENTS = 1 # NUM_HONEST_CLIENTS - 1
 AGGREGATION_METHOD = args.aggregation_method
-# aggregation_method = 'mean'  # refined_krum, krum, median, mean
+# aggregation_method = 'mean'  # adaptive_krum, krum, median, mean
 print(args)
 
 
@@ -320,11 +320,11 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 #         # then median will choose byzantine client's parameters.
 #         clients_weights = torch.tensor([1] * len(clients_updates))  # default as 1
 #         # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-#         if aggregation_method == 'refined_krum':
-#             aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=False)
+#         if aggregation_method == 'adaptive_krum':
+#             aggregated_update, clients_type_pred = adaptive_krum(clients_updates, clients_weights, trimmed_average=False)
 #         elif aggregation_method == 'krum':
 #             train_info = list(histories['clients'][-1].values())[-1]
-#             f = train_info['NUM_MALICIOUS_CLIENTS']
+#             f = train_info['NUM_BYZANTINE_CLIENTS']
 #             # client_type = train_info['client_type']
 #             aggregated_update, clients_type_pred = krum(clients_updates, clients_weights, f, trimmed_average=False)
 #         elif aggregation_method == 'median':
@@ -373,24 +373,24 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     # then median will choose byzantine client's parameters.
     clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
     # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    if aggregation_method == 'refined_krum':
-        aggregated_update, clients_type_pred = robust_aggregation.refined_krum(flatten_clients_updates, clients_weights,
+    if aggregation_method == 'adaptive_krum':
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates, clients_weights,
                                                                                trimmed_average, verbose=VERBOSE)
     elif aggregation_method == 'krum':
         # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_MALICIOUS_CLIENTS']
-        f = NUM_MALICIOUS_CLIENTS
+        # f = train_info['NUM_BYZANTINE_CLIENTS']
+        f = NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
                                                                        trimmed_average, verbose=VERBOSE)
     elif aggregation_method == 'median':
-        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        p = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
         aggregated_update, clients_type_pred = robust_aggregation.median(flatten_clients_updates, clients_weights,
                                                                          trimmed_average, p=p,
                                                                          verbose=VERBOSE)
     else:
-        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        p = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
         aggregated_update, clients_type_pred = robust_aggregation.mean(flatten_clients_updates, clients_weights,
                                                                        trimmed_average, p=p,
@@ -592,7 +592,7 @@ def print_histories(histories):
             axes[i, j].set_title(f'Client_{c}: {client_type}')
             axes[i, j].legend(fontsize=6.5)
 
-        attacker_ratio = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        attacker_ratio = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
         title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
                  f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
         plt.suptitle(title)
@@ -600,7 +600,7 @@ def print_histories(histories):
         # Adjust layout to prevent overlap
         plt.tight_layout()
         fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
-                    f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_MALICIOUS_CLIENTS}_accuracy.png')
+                    f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
         os.makedirs(os.path.dirname(fig_file), exist_ok=True)
         plt.savefig(fig_file, dpi=300)
         plt.show()
@@ -718,7 +718,7 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.'):
     non_iid_cnt1 = 0
     ########################################### Benign Clients #############################################
     for c in range(NUM_HONEST_CLIENTS):
-        client_type = 'honest'
+        client_type = 'Honest'
         print(f"\n*** client_{c}: {client_type}...")
         X_c = X[indices[c * step:(c + 1) * step]]
         y_c = y[indices[c * step:(c + 1) * step]]
@@ -776,8 +776,8 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.'):
 
     ########################################### Byzantine Clients #############################################
     indices = torch.randperm(num_samples)  # Randomly shuffle
-    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
-        client_type = 'attacker'
+    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS, 1):
+        client_type = 'Byzantine'
         print(f"\n*** client_{c}: {client_type}...")
         X_c = X[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
         y_c = y[indices[(c - NUM_HONEST_CLIENTS) * step:((c - NUM_HONEST_CLIENTS) + 1) * step]]
@@ -809,7 +809,7 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.'):
         y_c[train_mask] = torch.tensor([(NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[train_mask]])
         y_c[val_mask] = torch.tensor([(NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[val_mask]])  # flip label
 
-        # train_info['NUM_MALICIOUS_CLIENTS'] = NUM_MALICIOUS_CLIENTS
+        # train_info['NUM_BYZANTINE_CLIENTS'] = NUM_BYZANTINE_CLIENTS
         local_data = {'client_type': client_type,
                       'X': torch.tensor(X_c).to(DEVICE).float(), 'y': torch.tensor(y_c).to(DEVICE),
                       'train_mask': torch.tensor(train_mask, dtype=torch.bool).to(DEVICE),
@@ -831,7 +831,7 @@ def clients_training(data_dir, epoch, global_cnn):
     history = {}
     ########################################### Benign Clients #############################################
     for c in range(NUM_HONEST_CLIENTS):
-        client_type = 'honest'
+        client_type = 'Honest'
         print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
         # might be used in server
         train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
@@ -865,8 +865,8 @@ def clients_training(data_dir, epoch, global_cnn):
         history[c] = train_info
 
     ########################################### Byzantine Clients #############################################
-    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS, 1):
-        client_type = 'attacker'
+    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS, 1):
+        client_type = 'Byzantine'
         print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
         # might be used in server
         train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
@@ -921,7 +921,7 @@ def clients_training(data_dir, epoch, global_cnn):
 @timer
 def main():
     print(f"\n*************************** Generate Clients Data ******************************")
-    data_dir = (f'data/MNIST/label_flipping/h_{NUM_HONEST_CLIENTS}-b_{NUM_MALICIOUS_CLIENTS}'
+    data_dir = (f'data/MNIST/label_flipping/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                 f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
     # data_out_dir = data_dir
     data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
@@ -964,6 +964,6 @@ if __name__ == '__main__':
     # LABELS = {0, 1}
     NUM_CLASSES = len(LABELS)
     print(f'IN_DIR: {IN_DIR}, AGGREGATION_METHOD: {AGGREGATION_METHOD}, LABELING_RATE: {LABELING_RATE}, '
-          f'NUM_HONEST_CLIENTS: {NUM_HONEST_CLIENTS}, NUM_MALICIOUS_CLIENTS: {NUM_MALICIOUS_CLIENTS}, '
+          f'NUM_HONEST_CLIENTS: {NUM_HONEST_CLIENTS}, NUM_BYZANTINE_CLIENTS: {NUM_BYZANTINE_CLIENTS}, '
           f'NUM_CLASSES: {NUM_CLASSES}, where classes: {LABELS}')
     main()

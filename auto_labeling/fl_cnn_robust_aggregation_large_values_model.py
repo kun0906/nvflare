@@ -7,7 +7,7 @@
     # $conda activate nvflare-3.10
     # $cd nvflare/auto_labeling
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping.py
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_large_values_model.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 
@@ -29,6 +29,7 @@ Author: kun88.yang@gmail.com
 import argparse
 import pickle
 import shutil
+import random
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -46,6 +47,8 @@ torch.set_printoptions(precision=2, sci_mode=False)
 
 # Set random seed for reproducibility
 SEED = 42
+# Set a random seed for reproducibility
+random.seed(SEED)
 np.random.seed(SEED)
 
 torch.manual_seed(SEED)  # CPU
@@ -60,21 +63,19 @@ torch.backends.cudnn.benchmark = False
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {DEVICE}")
 
-# Set print options to avoid scientific notation
-np.set_printoptions(suppress=True)
 
 # Define the function to parse the parameters
 def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=1,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=100,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-n', '--num_clients', type=int, required=False, default=6,
+    parser.add_argument('-n', '--num_clients', type=int, required=False, default=5,
                         help="The number of total clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='mean',
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='krum+rp',
                         help="aggregation method.")
     parser.add_argument('-v', '--verbose', type=int, required=False, default=10,
                         help="verbose mode.")
@@ -120,18 +121,16 @@ def get_configuration(train_val_seed):
     CFG.DEVICE = DEVICE
     # Print level
     CFG.VERBOSE = args.verbose
-    # Access the arguments
     CFG.LABELING_RATE = 0.8
     CFG.BIG_NUMBER = args.labeling_rate
-    # SERVER_EPOCHS = args.server_epochs
     CFG.SERVER_EPOCHS = args.server_epochs
-    CFG.IID_CLASSES_CNT = 5
+    # CFG.IID_CLASSES_CNT = 5
     CFG.NUM_CLIENTS = args.num_clients
     # 2 + 2f < n for Krum, so f < (n-2)/2, not equal to (n-2)/2
     if CFG.NUM_CLIENTS < 5:  # if n == 4, f will be 0
-        raise ValueError(f"NUM_CLIENTS ({CFG.NUM_CLIENTS}) must be >= 5")
+        raise ValueError(f"NUM_CLIENTS ({CFG.NUM_CLIENTS}) must be >= 5 as we require 2 + 2f < n.")
     CFG.NUM_BYZANTINE_CLIENTS = (CFG.NUM_CLIENTS - 2) // 2
-    if 2 + 2 * CFG.NUM_BYZANTINE_CLIENTS == CFG.NUM_CLIENTS:
+    if 2 + 2 * CFG.NUM_BYZANTINE_CLIENTS == CFG.NUM_CLIENTS:  # 2 + 2f < n
         CFG.NUM_BYZANTINE_CLIENTS -= 1
     CFG.NUM_HONEST_CLIENTS = CFG.NUM_CLIENTS - CFG.NUM_BYZANTINE_CLIENTS  # n - f
     CFG.AGGREGATION_METHOD = args.aggregation_method  # adaptive_krum, krum, median, mean
@@ -139,13 +138,8 @@ def get_configuration(train_val_seed):
     print(f'NUM_CLIENTS: {CFG.NUM_CLIENTS}, in which NUM_HONEST_CLIENTS: {CFG.NUM_HONEST_CLIENTS} and '
           f'NUM_BYZANTINE_CLIENTS: {CFG.NUM_BYZANTINE_CLIENTS}')
 
-    # CFG.IN_DIR = 'fl/mnist'
     CFG.LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-    # LABELS = {0, 1}
     CFG.NUM_CLASSES = len(CFG.LABELS)
-    # print(f'IN_DIR: {IN_DIR}, AGGREGATION_METHOD: {AGGREGATION_METHOD}, LABELING_RATE: {LABELING_RATE}, '
-    #       f'NUM_HONEST_CLIENTS: {NUM_HONEST_CLIENTS}, NUM_BYZANTINE_CLIENTS: {NUM_BYZANTINE_CLIENTS}, '
-    #       f'NUM_CLASSES: {NUM_CLASSES}, where classes: {LABELS}')
     print(CFG)
     return CFG
 
@@ -187,15 +181,23 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
     # step = 50  # for debugging
     # non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
     # non_iid_cnt1 = 0
-    Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=0.5, random_state=SEED)
+    m = len(y)//2
+    Xs1, Ys1 = dirichlet_split(X[:m, :], y[:m], num_clients=CFG.NUM_CLIENTS // 2, alpha=0.5, random_state=SEED)
+    Xs2, Ys2 = dirichlet_split(X[m:], y[m:], num_clients=CFG.NUM_CLIENTS - CFG.NUM_CLIENTS // 2, alpha=100,
+                               random_state=SEED)
+    Xs, Ys = Xs1 + Xs2, Ys1 + Ys2
+    # Shuffle the lists X and y in the same order
+    combined = list(zip(Xs, Ys))  # Combine the lists into pairs of (X[i], y[i])
+    random.shuffle(combined)  # Shuffle the combined list
+    # Unzip the shuffled list back into X and y
+    Xs, Ys = zip(*combined)
     # Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=CFG.BIG_NUMBER, random_state=SEED)
     # Xs, Ys = [X[:]] * NUM_CLIENTS, [y[:]]*NUM_CLIENTS   # if each client has all the data
     total_size = 0
     for j, y_ in enumerate(Ys):
         vs = collections.Counter(y_.tolist())
         vs = dict(sorted(vs.items(), key=lambda x: x[0], reverse=False))
-        print(f"client {j}'s data size: {len(y_)}, total classes: {len(vs)}, in which {vs}, "
-              f"alpha: {CFG.BIG_NUMBER}")
+        print(f"client {j}'s data size: {len(y_)}, total classes: {len(vs)}, in which {vs}")
         total_size += len(y_)
     print(f"total size: {total_size}")
     ########################################### Benign Clients #############################################
@@ -227,7 +229,13 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         #     non_iid_cnt1 += 1
         #     mask_c = np.full(len(y_c), False)
         #     # for l in [5, 6, 7, 8, 9]:
-        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT * 2, replace=False):
+        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
+        #         mask_ = y_c == l
+        #         mask_c[mask_] = True
+        # if c <= NUM_HONEST_CLIENTS//BIG_NUMBER:
+        #     mask_c = np.full(len(y_c), False)
+        #     # for l in [5, 6, 7, 8, 9]:
+        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
         #         mask_ = y_c == l
         #         mask_c[mask_] = True
         # else:  # 2/4 of honest clients has IID distributions
@@ -320,11 +328,37 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         torch.save(local_data, out_file)
 
 
+# Function to add Gaussian noise
+def add_gaussian_noise(image, mean=0, std=0.2):
+    noise = torch.randn(image.size()) * std + mean  # Generate Gaussian noise
+    noisy_image = image + noise  # Add noise
+    noisy_image = torch.clamp(noisy_image, 0, 1)  # Keep pixel values in [0,1]
+    return noisy_image
+
+
+def add_salt_and_pepper_noise(image, prob=0.02):
+    np_image = image.numpy()  # Convert to NumPy array
+    noisy_image = np_image.copy()
+
+    # Generate mask for salt and pepper noise
+    salt_pepper = np.random.rand(*np_image.shape)
+    noisy_image[salt_pepper < prob / 2] = 0  # Black pixels
+    noisy_image[salt_pepper > 1 - prob / 2] = 1  # White pixels
+
+    return torch.tensor(noisy_image)
+
+
+def add_speckle_noise(image, std=0.2):
+    noise = torch.randn(image.size()) * image * std  # Noise proportional to pixel values
+    noisy_image = image + noise
+    return torch.clamp(noisy_image, 0, 1)
+
+
 def clients_training(data_dir, epoch, global_cnn, CFG):
     clients_cnns = {}
     clients_info = {}  # extra information (e.g., number of samples) of clients that can be used in aggregation
     history = {}
-    ########################################### Benign Clients #############################################
+    ########################################## Benign Clients #############################################
     for c in range(CFG.NUM_HONEST_CLIENTS):
         client_type = 'Honest'
         print(f"\n*** server_epoch:{epoch}, client_{c}: {client_type}... ***")
@@ -401,8 +435,35 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         #     # BIG_NUMBER = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
         #     for param in local_cnn.parameters():
         #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
-        train_cnn(local_cnn, global_cnn, local_data, train_info)
-        delta_w = {key: -1 * CFG.BIG_NUMBER * (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
+        # train_cnn(local_cnn, global_cnn, local_data, train_info)
+
+        # # Inject noise to malicious clients' CNNs
+        # new_state_dict = {}
+        # for key, param in global_cnn.state_dict().items():
+        #     noise = torch.normal(0, CFG.BIG_NUMBER, size=param.shape).to(DEVICE)
+        #     new_state_dict[key] = param + noise
+
+        # # only inject noise to partial dimensions of model parameters.
+        # model = CNN(num_classes=CFG.NUM_CLASSES)
+        # model.load_state_dict(global_cnn.state_dict())
+        # ps = parameters_to_vector(model.parameters()).detach()
+        # # Randomly select the indices
+        # cnt = max(1, int(CFG.BIG_NUMBER * len(ps)))
+        # selected_indices = random.sample(range(len(ps)), cnt)
+        # noise = torch.normal(0, 10, size=(cnt, )).to(DEVICE)
+        # ps[selected_indices] = ps[selected_indices] + noise
+        # vector_to_parameters(ps, model.parameters())  # in_place
+        # new_state_dict = model.state_dict()
+
+        # # Large values malicious clients' CNNs
+        new_state_dict = {}
+        for key, param in global_cnn.state_dict().items():
+            # noise = torch.normal(0, CFG.BIG_NUMBER, size=param.shape).to(DEVICE)
+            new_state_dict[key] = param * CFG.BIG_NUMBER
+
+        local_cnn.load_state_dict(new_state_dict)
+        # w = w0 - \eta * \namba_w, so delta_w = w0 - w, only send update difference to the server
+        delta_w = {key: (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
                    in global_cnn.state_dict()}
         clients_cnns[c] = delta_w
 
@@ -420,15 +481,15 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
 @timer
 def main():
     all_histories = {}
-    NUM_REPEATS = 5
+    NUM_REPEATS = 1
     for train_val_seed in range(0, 1000, 1000 // NUM_REPEATS):
         print('\n')
         CFG = get_configuration(train_val_seed)
         print(f"\n*************************** Generate Clients Data ******************************")
-        data_dir = (f'data/MNIST/sign_flipping/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
+        data_dir = (f'data/MNIST/random_noise_model/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
                     f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
                     f'/{CFG.TRAIN_VAL_SEED}')
-        # data_out_dir = data_dir
+        data_out_dir = data_dir
         data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
         CFG.data_out_dir = data_out_dir
         gen_client_data(data_dir, data_out_dir, CFG)
@@ -440,13 +501,11 @@ def main():
 
         histories = {'clients': [], 'server': [], 'CFG': CFG}
         for server_epoch in range(CFG.SERVER_EPOCHS):
-            print(
-                f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Client Training *****************")
+            print(f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Client Training *************")
             clients_cnns, clients_info, history = clients_training(data_out_dir, server_epoch, global_cnn, CFG)
             histories['clients'].append(history)
 
-            print(
-                f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Server Aggregation **************")
+            print(f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Server Aggregation **********")
             aggregate_cnns(clients_cnns, clients_info, global_cnn, CFG.AGGREGATION_METHOD, histories, server_epoch)
 
         prefix = f'-n_{CFG.SERVER_EPOCHS}'

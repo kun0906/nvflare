@@ -7,7 +7,7 @@
     # $conda activate nvflare-3.10
     # $cd nvflare/auto_labeling
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping.py
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_rotation_data.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 
@@ -37,6 +37,7 @@ from dataclasses import dataclass, field
 
 from base import *
 from utils import dirichlet_split
+import torchvision.transforms.functional as F
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
 print(f'current file: {__file__}')
@@ -60,15 +61,13 @@ torch.backends.cudnn.benchmark = False
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {DEVICE}")
 
-# Set print options to avoid scientific notation
-np.set_printoptions(suppress=True)
 
 # Define the function to parse the parameters
 def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=1,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.1,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
                         help="The number of server epochs (integer).")
@@ -187,7 +186,7 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
     # step = 50  # for debugging
     # non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
     # non_iid_cnt1 = 0
-    Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=0.5, random_state=SEED)
+    Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=1.0, random_state=SEED)
     # Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=CFG.BIG_NUMBER, random_state=SEED)
     # Xs, Ys = [X[:]] * NUM_CLIENTS, [y[:]]*NUM_CLIENTS   # if each client has all the data
     total_size = 0
@@ -320,6 +319,32 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         torch.save(local_data, out_file)
 
 
+# Function to add Gaussian noise
+def add_gaussian_noise(image, mean=0, std=0.2):
+    noise = torch.randn(image.size()) * std + mean  # Generate Gaussian noise
+    noisy_image = image + noise  # Add noise
+    noisy_image = torch.clamp(noisy_image, 0, 1)  # Keep pixel values in [0,1]
+    return noisy_image
+
+
+def add_salt_and_pepper_noise(image, prob=0.02):
+    np_image = image.numpy()  # Convert to NumPy array
+    noisy_image = np_image.copy()
+
+    # Generate mask for salt and pepper noise
+    salt_pepper = np.random.rand(*np_image.shape)
+    noisy_image[salt_pepper < prob / 2] = 0  # Black pixels
+    noisy_image[salt_pepper > 1 - prob / 2] = 1  # White pixels
+
+    return torch.tensor(noisy_image)
+
+
+def add_speckle_noise(image, std=0.2):
+    noise = torch.randn(image.size()) * image * std  # Noise proportional to pixel values
+    noisy_image = image + noise
+    return torch.clamp(noisy_image, 0, 1)
+
+
 def clients_training(data_dir, epoch, global_cnn, CFG):
     clients_cnns = {}
     clients_info = {}  # extra information (e.g., number of samples) of clients that can be used in aggregation
@@ -372,6 +397,65 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         data_file = f'{data_dir}/{c}.pth'
         with open(data_file, 'rb') as f:
             local_data = torch.load(f)
+
+        # # Inject random noise to input data in each server epoch
+        # # std = np.random.normal(0, 1, size=1)  # random select a value from [0, BIG_NUMBER]
+        # torch.manual_seed(c * epoch)  # CPU
+        # # noise = torch.normal((c - NUM_HONEST_CLIENTS) / NUM_BYZANTINE_CLIENTS, BIG_NUMBER, size=local_data['X'].shape)
+        # noise = torch.normal((c - NUM_HONEST_CLIENTS) / NUM_BYZANTINE_CLIENTS, BIG_NUMBER, size=local_data['X'].shape)
+        # # noise_rng_ = noise.max() - noise.min()
+        # # noise = (noise - noise.min())/noise_rng_ if noise_rng_ > 0 else (noise_rng_ + 1e-5)     # [0, 1]
+        # # noise = (noise - 0.5) * 2  # [-1, 1]
+        # noise = noise.to(DEVICE)
+        # # noise[noise < 0] = 0  # only add positive values
+        # original_data = torch.clone(local_data['X']).to(DEVICE)
+        # # local_data['X'] = local_data['X'] + noise
+        # mask_ = local_data['X'] > 0.5       # only add for digits， as the values are in [-1, 1]
+        # local_data['X'][mask_] = local_data['X'][mask_] + noise[mask_]
+        # # local_data['X'] = torch.clamp(local_data['X'], -1, 1)  # Keep pixel values in [-1,1]
+
+        # # Generate mask for salt and pepper noise: works for krum
+        # torch.manual_seed(c * epoch)  # CPU
+        # noisy_image = local_data['X']
+        # original_data = torch.clone(local_data['X'])
+        # prob = 0.2  # BIG_NUMBER  # 0.2
+        # # salt_pepper = torch.normal((c - NUM_HONEST_CLIENTS) / NUM_BYZANTINE_CLIENTS, 1.0, size=local_data['X'].shape)
+        # salt_pepper = torch.normal(0, CFG.BIG_NUMBER, size=local_data['X'].shape)
+        # salt_pepper = torch.clamp(salt_pepper, 0, 1)
+        # # salt_pepper = np.random.rand(*np_image.shape)
+        # noisy_image[salt_pepper < prob] = 0  # Black pixels
+        # noisy_image[salt_pepper > 1 - prob] = 1  # White pixels
+        # local_data['X'] = noisy_image
+        # local_data['X'] = torch.clamp(local_data['X'], -1, 1)  # Keep pixel values in [-1,1]
+
+        # torch.manual_seed(c * epoch)  # CPU
+        # original_data = torch.clone(local_data['X'])
+        # noisy_images = []
+        # std = BIG_NUMBER
+        # for idx_ in range(len(local_data['y'])):
+        #     image = local_data['X'][idx_].cpu()
+        #     noise = torch.randn(image.size()) * image * std  # Noise proportional to pixel values
+        #     noisy_image = image + noise
+        #     noisy_image = torch.clamp(noisy_image, -1, 1)
+        #     noisy_image = noisy_image.to(DEVICE)
+        #     noisy_images.append(noisy_image)
+        # local_data['X'] = torch.stack(noisy_images)
+
+        # # scale attack
+        # scale_factor = BIG_NUMBER
+        # local_data['X']  = torch.clamp(local_data['X'] * scale_factor, -1, 1)
+        # scale_factors = np.random.uniform(scale_range[0], scale_range[1], size=(len(images), 1, 1))
+        # noisy_images = images * scale_factors
+        # noisy_images = np.clip(noisy_images, 0, 255)
+
+        # original_data = torch.clone(local_data['X'])
+        # local_data['X'][:, 0:int(BIG_NUMBER), 0:c] = 0.9
+
+        # plot_imgs(original_data.cpu().numpy(), local_data['X'].cpu().numpy())
+
+        local_data['X'] = torch.stack([F.rotate(image.unsqueeze(0), CFG.BIG_NUMBER).squeeze(0)
+                                       for image in local_data['X']])
+
         num_samples_client = len(local_data['y'].tolist())
         label_cnts = collections.Counter(local_data['y'].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
@@ -402,7 +486,7 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         #     for param in local_cnn.parameters():
         #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
         train_cnn(local_cnn, global_cnn, local_data, train_info)
-        delta_w = {key: -1 * CFG.BIG_NUMBER * (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
+        delta_w = {key: (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
                    in global_cnn.state_dict()}
         clients_cnns[c] = delta_w
 
@@ -420,15 +504,15 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
 @timer
 def main():
     all_histories = {}
-    NUM_REPEATS = 5
+    NUM_REPEATS = 1
     for train_val_seed in range(0, 1000, 1000 // NUM_REPEATS):
         print('\n')
         CFG = get_configuration(train_val_seed)
         print(f"\n*************************** Generate Clients Data ******************************")
-        data_dir = (f'data/MNIST/sign_flipping/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
+        data_dir = (f'data/MNIST/rotation_data/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
                     f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
                     f'/{CFG.TRAIN_VAL_SEED}')
-        # data_out_dir = data_dir
+        data_out_dir = data_dir
         data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
         CFG.data_out_dir = data_out_dir
         gen_client_data(data_dir, data_out_dir, CFG)
@@ -440,13 +524,11 @@ def main():
 
         histories = {'clients': [], 'server': [], 'CFG': CFG}
         for server_epoch in range(CFG.SERVER_EPOCHS):
-            print(
-                f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Client Training *****************")
+            print(f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Client Training *************")
             clients_cnns, clients_info, history = clients_training(data_out_dir, server_epoch, global_cnn, CFG)
             histories['clients'].append(history)
 
-            print(
-                f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Server Aggregation **************")
+            print(f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Server Aggregation **********")
             aggregate_cnns(clients_cnns, clients_info, global_cnn, CFG.AGGREGATION_METHOD, histories, server_epoch)
 
         prefix = f'-n_{CFG.SERVER_EPOCHS}'

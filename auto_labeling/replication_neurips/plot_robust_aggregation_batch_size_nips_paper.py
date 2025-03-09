@@ -90,12 +90,12 @@ def plot_robust_aggregation():
     for start in starts:
         global_accs = {}
         method_txt_files = [
-            # ('refined_krum', f'log/output_{JOBID_no_malicious}_{start}.out'),
+            # ('adaptive_krum', f'log/output_{JOBID_no_malicious}_{start}.out'),
             ('krum (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 1}.out'),
             # ('median', f'log/output_{JOBID}_{start + 2}.out'),
             ('mean (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 3}.out'),
 
-            # ('refined_krum', f'log/output_{JOBID_with_malicious}_{start}.out'),
+            # ('adaptive_krum', f'log/output_{JOBID_with_malicious}_{start}.out'),
             ('krum (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 1}.out'),
             # ('median', f'log/output_{JOBID_with_malicious}_{start + 2}.out'),
             ('mean (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 3}.out'),
@@ -133,14 +133,14 @@ def plot_robust_aggregation():
     plt.title(f'Global Model, start:{start}, {title}', fontsize=10)
     plt.legend(fontsize=6.5, loc='lower right')
 
-    # attacker_ratio = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+    # attacker_ratio = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
     # title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
     #          f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
 
     # Adjust layout to prevent overlap
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
-    #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_MALICIOUS_CLIENTS}_accuracy.png')
+    #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
     fig_file = '../global_cnn.png'
     # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)

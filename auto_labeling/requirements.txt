@@ -6,7 +6,7 @@ torchmetrics    # will install torch and others..
 torch==2.4.0
 torchvision
 pytest
-matplotlib
+matplotlib=3.9.0
 scikit-learn
 seaborn
 

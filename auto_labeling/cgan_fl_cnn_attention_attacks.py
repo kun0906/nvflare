@@ -27,7 +27,7 @@ from torch_geometric.data import Data
 from torchvision import datasets
 
 from attention import aggregate_with_krum
-from robust_aggregation import refined_krum
+from robust_aggregation import adaptive_krum
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -961,7 +961,7 @@ def predict_client_type_with_krum(clients_parameters, clients_info, device=None)
     # Perform simple averaging of the parameters
     clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_parameters.values()]
     clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=True)
+    aggregated_update, clients_type_pred = adaptive_krum(clients_updates, clients_weights, trimmed_average=True)
 
     return clients_type_pred
 
@@ -981,8 +981,8 @@ def aggregate_gans(clients_gans, clients_info, global_cgan, local_data, historie
         # generated data
         generated_data = {l_: torch.zeros((0, 28, 28)).to(DEVICE) for l_ in LABELS}
         for i, (client_id, client_cgan_params) in enumerate(clients_gans.items()):
-            if clients_type_pred[i] == 'attacker':
-                print(f'client_id: {client_id} is an attacker, skip it.')
+            if clients_type_pred[i] == 'Byzantine':
+                print(f'client_id: {client_id} is an Byzantine, skip it.')
                 continue
             generator = Generator().to(DEVICE)
             generator.load_state_dict(client_cgan_params)
@@ -1841,7 +1841,7 @@ def clients_training(epoch, global_cgan, global_cnn):
     y = y.numpy()
 
     for l in LABELS:
-        # in each four clients, the first three are honest clients, and the last one is attacker
+        # in each four clients, the first three are honest clients, and the last one is Byzantine
         mask = y == l
         X_label, y_label = X[mask], y[mask]
         # each client has s images
@@ -1854,11 +1854,11 @@ def clients_training(epoch, global_cgan, global_cnn):
         random_state = 42 * l
         torch.manual_seed(random_state)
         indices = torch.randperm(m)  # Randomly shuffle
-        # in each 4 clients, the first 3 are honest clients and the last one is attacker
+        # in each 4 clients, the first 3 are honest clients and the last one is Byzantine
         for i in range(n_clients_in_each_group):
             client_id = l * n_clients_in_each_group + i
             c = client_id
-            client_type = 'honest' if i < n_honest_clients_in_each_group else 'attacker'
+            client_type = 'Honest' if i < n_honest_clients_in_each_group else 'Byzantine'
             print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
             # might be used in server
             train_info = {"client_type": client_type, "gan": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
@@ -1916,7 +1916,7 @@ def clients_training(epoch, global_cgan, global_cnn):
 
             else:
                 if l % 3 != 0: continue
-                # for each 4 clients, the last one is attacker. attackers don't need to train local_cnn
+                # for each 4 clients, the last one is Byzantine. attackers don't need to train local_cnn
                 # local_data = {'X': [], 'y': []}
                 local_data = {'client_type': client_type,
                               'X': torch.tensor(X_sub) + 1000, 'y': torch.tensor(y_sub),

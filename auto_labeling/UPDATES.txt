@@ -1,3 +1,6 @@
+v0.3.6: Rewrite robust aggregation
+
+
 v0.3.5: Add more robust algorithms
     1. E.g., geometric_median, trimmed_mean
     2. Store common functions into base.py

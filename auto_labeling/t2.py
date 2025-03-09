@@ -211,7 +211,7 @@ exit(0)
 #
 # NUM_HONEST_CLIENTS = 4
 # for c in range(NUM_HONEST_CLIENTS):
-#     # client_type = 'honest'
+#     # client_type = 'Honest'
 #     # print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
 #     X_c = [1] * 10
 #     y_c = [0] * 10

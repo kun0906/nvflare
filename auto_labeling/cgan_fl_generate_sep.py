@@ -523,7 +523,7 @@ def train_gan(X_train, y_train, X_val, y_val, X_test, y_test):
             # each client extra information (such as, number of samples)
             clients_weights = torch.tensor([1] * len(clients_updates))  # default as 1
             # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-            # aggregated_update = refined_krum(clients_updates, clients_weights)
+            # aggregated_update = adaptive_krum(clients_updates, clients_weights)
             aggregated_update = torch.zeros_like(global_state_dict[key])
             for idx, client_update in enumerate(clients_updates):
                 aggregated_update += client_update * clients_weights[idx]

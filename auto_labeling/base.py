@@ -1,21 +1,31 @@
 import collections
 import os
-import shutil
-
+import time
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.model_selection import train_test_split
 from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
-from torchvision import datasets
+from torch.utils.data import Dataset, DataLoader, Subset
 
-import exp_weighted_mean
+# import exp_weighted_mean
 import robust_aggregation
 from utils import timer
+
+
+class CustomDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = X  # torch.tensor(X, dtype=torch.float32)
+        self.y = y  # torch.tensor(y, dtype=torch.long)  # For classification
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
 
 class CNN(nn.Module):
@@ -90,6 +100,7 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     indices = torch.tensor(y_indices).to(DEVICE)  # total labeled data
     new_y = y[indices]
     labeled_cnt = collections.Counter(new_y.tolist())
+    labeled_cnt = dict(sorted(labeled_cnt.items(), key=lambda x: x[0], reverse=False))
     print('labeled_y: ', labeled_cnt.items(), flush=True)
     s = sum(labeled_cnt.values())
     labeled_classes_weights = {k: s / v for k, v in labeled_cnt.items()}
@@ -120,31 +131,31 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     criterion = nn.CrossEntropyLoss(reduction='mean').to(DEVICE)
     scheduler = StepLR(optimizer, step_size=100, gamma=0.9)
 
+    dataset = CustomDataset(X_train, y_train)
+    train_loader = DataLoader(dataset, batch_size=512, shuffle=True)
     for epoch in range(epochs_client):
         local_cnn.train()  #
-        # your local personal model
-        outputs = local_cnn(X_train)
-        # Loss calculation: Only for labeled nodes
-        model_loss = criterion(outputs, y_train)
-        # if epoch > 0 and model_loss.item() < 1e-6:
-        #     break
-        optimizer.zero_grad()
-        model_loss.backward()
+        model_loss = 0
+        for X_batch, y_batch in train_loader:
+            optimizer.zero_grad()
+            # your local personal model
+            outputs = local_cnn(X_batch)
+            # Loss calculation: Only for labeled nodes
+            loss_ = criterion(outputs, y_batch)
+            loss_.backward()
+            # # Print gradients for each parameter
+            # print("Gradients for model parameters:")
+            # for name, param in model.named_parameters():
+            #     if param.grad is not None:
+            #         print(f"{name}: {param.grad}")
+            #     else:
+            #         print(f"{name}: No gradient (likely frozen or unused)")
+            optimizer.step()
+            scheduler.step()  # adjust learning rate
+            model_loss += loss_.item()
+        losses.append(model_loss)
 
-        # # Print gradients for each parameter
-        # print("Gradients for model parameters:")
-        # for name, param in model.named_parameters():
-        #     if param.grad is not None:
-        #         print(f"{name}: {param.grad}")
-        #     else:
-        #         print(f"{name}: No gradient (likely frozen or unused)")
-
-        optimizer.step()
-
-        scheduler.step()  # adjust learning rate
-
-        losses.append(model_loss.item())
-
+        # val_loss = model_loss
         # if epoch % 10 == 0:
         #     print(f'epoch: {epoch}, model_loss: {model_loss.item()}')
         #     evaluate_train(local_cnn, graph_data, len(local_data['y']), generated_size, epoch, local_data)
@@ -155,9 +166,9 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
         #                                                                 best=best)
         # val_losses.append(val_loss.item())
         val_loss = model_loss
-        if epoch % 100 == 0:
-            print(f"train_cnn epoch: {epoch}, local_cnn train loss: {model_loss.item():.4f}, "
-                  f"val_loss: {val_loss.item():.4f}, LR: {scheduler.get_last_lr()[0]}")
+        if epoch % 100 == 0 or epoch == epochs_client - 1:
+            print(f"train_cnn epoch: {epoch}, local_cnn train loss: {model_loss:.4f}, "
+                  f"val_loss: {val_loss:.4f}, LR: {scheduler.get_last_lr()[0]}")
 
         # if stop_training:
         #     local_cnn.stop_training = True
@@ -186,6 +197,7 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 
     show = False
     if show:
+        IN_DIR = '.'
         client_id = train_info['client_id']
         server_epoch = train_info['server_epoch']
         fig_file = f'{IN_DIR}/{client_id}/server_epoch_{server_epoch}.png'
@@ -247,11 +259,11 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 #         # then median will choose byzantine client's parameters.
 #         clients_weights = torch.tensor([1] * len(clients_updates))  # default as 1
 #         # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-#         if aggregation_method == 'refined_krum':
-#             aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=False)
+#         if aggregation_method == 'adaptive_krum':
+#             aggregated_update, clients_type_pred = adaptive_krum(clients_updates, clients_weights, trimmed_average=False)
 #         elif aggregation_method == 'krum':
 #             train_info = list(histories['clients'][-1].values())[-1]
-#             f = train_info['NUM_MALICIOUS_CLIENTS']
+#             f = train_info['NUM_BYZANTINE_CLIENTS']
 #             # client_type = train_info['client_type']
 #             aggregated_update, clients_type_pred = krum(clients_updates, clients_weights, f, trimmed_average=False)
 #         elif aggregation_method == 'median':
@@ -269,11 +281,7 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
 @timer
 def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
     print('*aggregate cnn...')
-    NUM_CLASSES = clients_info['NUM_CLASSES']
-    VERBOSE = clients_info["VERBOSE"]
-    NUM_HONEST_CLIENTS = clients_info['NUM_HONEST_CLIENTS']
-    NUM_MALICIOUS_CLIENTS = clients_info['NUM_MALICIOUS_CLIENTS']
-    DEVICE = clients_info['DEVICE']
+    CFG = histories['CFG']
     # flatten all the parameters into a long vector
     # clients_updates = [client_state_dict.cpu() for client_state_dict in clients_cnns.values()]
 
@@ -285,118 +293,148 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     #                            client_state_dict in clients_cnns.values()]
     tmp_models = []
     for client_state_dict in clients_cnns.values():
-        model = CNN(num_classes=NUM_CLASSES)
+        model = CNN(num_classes=CFG.NUM_CLASSES)
         model.load_state_dict(client_state_dict)
         tmp_models.append(model)
     flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]
+    flatten_clients_updates = torch.stack(flatten_clients_updates)
+    print(f'each update shape: {flatten_clients_updates[1].shape}')
     # for debugging
-    if VERBOSE >= 30:
+    if CFG.VERBOSE >= 30:
         for i, update in enumerate(flatten_clients_updates):
             print(f'client_{i}:', end='  ')
             print_histgram(update, bins=5, value_type='params')
 
-    min_value = min([torch.min(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
-    max_value = max([torch.max(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
+    min_value = min([torch.min(v).item() for v in flatten_clients_updates[: CFG.NUM_HONEST_CLIENTS]])
+    max_value = max([torch.max(v).item() for v in flatten_clients_updates[: CFG.NUM_HONEST_CLIENTS]])
 
-    trimmed_average = False
     # each client extra information (such as, number of samples)
     # client_weights will affect median and krum, so be careful to weights
     # if assign byzantine clients with very large weights (e.g., 1e6),
     # then median will choose byzantine client's parameters.
     clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
     # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    if aggregation_method == 'refined_krum':
-        aggregated_update, clients_type_pred = robust_aggregation.refined_krum(flatten_clients_updates, clients_weights,
-                                                                               trimmed_average, verbose=VERBOSE)
-    elif aggregation_method == 'refined_krum_avg':
-        aggregated_update, clients_type_pred = robust_aggregation.refined_krum(flatten_clients_updates, clients_weights,
-                                                                               trimmed_average=True, verbose=VERBOSE)
+    start = time.time()
+    if aggregation_method == 'adaptive_krum':
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
+                                                                                clients_weights,
+                                                                                trimmed_average=False,
+                                                                                verbose=CFG.VERBOSE)
+    elif aggregation_method == 'adaptive_krum_avg':
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
+                                                                                clients_weights,
+                                                                                trimmed_average=True,
+                                                                                verbose=CFG.VERBOSE)
 
-    elif aggregation_method == 'refined_krum+rp':  # refined_krum + random projection
-        aggregated_update, clients_type_pred = robust_aggregation.refined_krum_with_random_projection(
+    elif aggregation_method == 'adaptive_krum+rp':  # adaptive_krum + random projection
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum_with_random_projection(
+            flatten_clients_updates, clients_weights, trimmed_average=False, random_state=CFG.TRAIN_VAL_SEED,
+            verbose=CFG.VERBOSE)
+    elif aggregation_method == 'adaptive_krum+rp_avg':  # adaptive_krum + random projection
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum_with_random_projection(
             flatten_clients_updates, clients_weights,
-            trimmed_average, verbose=VERBOSE)
-    elif aggregation_method == 'refined_krum+rp_avg':  # refined_krum + random projection
-        aggregated_update, clients_type_pred = robust_aggregation.refined_krum_with_random_projection(
-            flatten_clients_updates, clients_weights,
-            trimmed_average=True, verbose=VERBOSE)
+            trimmed_average=True, random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum':
         # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_MALICIOUS_CLIENTS']
-        f = NUM_MALICIOUS_CLIENTS
+        # f = train_info['NUM_BYZANTINE_CLIENTS']
+        f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
-                                                                       trimmed_average, verbose=VERBOSE)
+                                                                       trimmed_average=False, verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum_avg':
         # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_MALICIOUS_CLIENTS']
-        f = NUM_MALICIOUS_CLIENTS
+        # f = train_info['NUM_BYZANTINE_CLIENTS']
+        f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
-                                                                       trimmed_average=True, verbose=VERBOSE)
+                                                                       trimmed_average=True, verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum+rp':
         # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_MALICIOUS_CLIENTS']
-        f = NUM_MALICIOUS_CLIENTS
+        # f = train_info['NUM_BYZANTINE_CLIENTS']
+        f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = robust_aggregation.krum_with_random_projection(flatten_clients_updates,
                                                                                               clients_weights, f,
                                                                                               trimmed_average=False,
-                                                                                              verbose=VERBOSE)
+                                                                                              random_state=CFG.TRAIN_VAL_SEED,
+                                                                                              verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum+rp_avg':
         # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_MALICIOUS_CLIENTS']
-        f = NUM_MALICIOUS_CLIENTS
+        # f = train_info['NUM_BYZANTINE_CLIENTS']
+        f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = robust_aggregation.krum_with_random_projection(flatten_clients_updates,
                                                                                               clients_weights, f,
                                                                                               trimmed_average=True,
-                                                                                              verbose=VERBOSE)
+                                                                                              random_state=CFG.TRAIN_VAL_SEED,
+                                                                                              verbose=CFG.VERBOSE)
     elif aggregation_method == 'median':
-        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = robust_aggregation.median(flatten_clients_updates, clients_weights,
-                                                                         trimmed_average, p=p,
-                                                                         verbose=VERBOSE)
+        aggregated_update, clients_type_pred = robust_aggregation.cw_median(flatten_clients_updates, clients_weights,
+                                                                            verbose=CFG.VERBOSE)
 
-    elif aggregation_method == 'median_avg':
-        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
-        p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = robust_aggregation.trimmed_median(flatten_clients_updates,
-                                                                                 clients_weights,
-                                                                                 p=p,
-                                                                                 verbose=VERBOSE)
-    elif aggregation_method == 'trimmed_mean':
-        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
-        p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = robust_aggregation.trimmed_mean(flatten_clients_updates, clients_weights,
-                                                                               trim_ratio=p,
-                                                                               verbose=VERBOSE)
+    elif aggregation_method == 'medoid':
+        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
+        aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
+                                                                         clients_weights,
+                                                                         trimmed_average=False,
+                                                                         upper_trimmed_ratio=p,
+                                                                         verbose=CFG.VERBOSE)
+
+    elif aggregation_method == 'medoid_avg':
+        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
+        aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
+                                                                         clients_weights,
+                                                                         trimmed_average=True,
+                                                                         upper_trimmed_ratio=p,
+                                                                         verbose=CFG.VERBOSE)
 
     elif aggregation_method == 'geometric_median':
         aggregated_update, clients_type_pred = robust_aggregation.geometric_median(flatten_clients_updates,
                                                                                    clients_weights,
                                                                                    max_iters=100, tol=1e-6,
-                                                                                   verbose=VERBOSE)
+                                                                                   verbose=CFG.VERBOSE)
 
-    elif aggregation_method == 'exp_weighted_mean':
-        clients_type_pred = None
-        aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
-            torch.stack(flatten_clients_updates), x_est=flatten_clients_updates[-1],
-            r=0.1, max_iters=100, tol=1e-6, verbose=VERBOSE)
-    else:
-        p = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+    # elif aggregation_method == 'exp_weighted_mean':
+    #     clients_type_pred = None
+    #     aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
+    #         torch.stack(flatten_clients_updates), x_est=flatten_clients_updates[-1],
+    #         r=0.1, max_iters=100, tol=1e-6, verbose=CFG.VERBOSE)
+    elif aggregation_method == 'trimmed_mean':
+        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = robust_aggregation.mean(flatten_clients_updates, clients_weights,
-                                                                       trimmed_average, p=p,
-                                                                       verbose=VERBOSE)
+        aggregated_update, clients_type_pred = robust_aggregation.trimmed_mean(flatten_clients_updates, clients_weights,
+                                                                               trim_ratio=p,
+                                                                               verbose=CFG.VERBOSE)
+    else:
+        # empirical mean
+        aggregated_update, clients_type_pred = robust_aggregation.cw_mean(flatten_clients_updates, clients_weights,
+                                                                          verbose=CFG.VERBOSE)
+    end = time.time()
+    time_taken = end - start
+    n = len(flatten_clients_updates)
+    f = CFG.NUM_BYZANTINE_CLIENTS
+    # # weight average
+    # update = 0.0
+    # weight = 0.0
+    # for j in range(n-f):  # note here is k+1 because we want to add all values before k+1
+    #     update += flatten_clients_updates[j] * clients_weights[j]
+    #     weight += clients_weights[j]
+    # empirical_mean = update / weight
+    empirical_mean = torch.sum(flatten_clients_updates[:n - f] *
+                               clients_weights[:n - f, None], dim=0) / torch.sum(clients_weights[:n - f])
+    l2_error = torch.norm(empirical_mean - aggregated_update, p=2).item()  # l2 norm
+    histories['server'].append({"time_taken": time_taken, 'l2_error': l2_error})
+    # f'clients_weights: {clients_weights.numpy()},
     print(f'{aggregation_method}, clients_type: {clients_type_pred}, '
-          f'client_updates: min: {min_value}, max: {max_value}')  # f'clients_weights: {clients_weights.numpy()},
+          f'client_updates: min: {min_value:.2f}, max: {max_value:.2f}, '
+          f'time taken: {time_taken:.4f}s, l2_error: {l2_error:.2f}')
 
     # Update the global model with the aggregated parameters
     # w = w0 - (delta_w), where delta_w = \eta*\namba_w
     aggregated_update = parameters_to_vector(global_cnn.parameters()).detach().cpu() - aggregated_update
-    aggregated_update = aggregated_update.to(DEVICE)
+    aggregated_update = aggregated_update.to(CFG.DEVICE)
     vector_to_parameters(aggregated_update, global_cnn.parameters())  # in_place
     # global_cnn.load_state_dict(aggregated_update)
 
@@ -527,8 +565,9 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
 def print_data(local_data):
     print('Local_data: ')
     X, y = local_data['X'], local_data['y']
-    print(f'X: {X.shape}, y: '
-          f'{collections.Counter(y.tolist())}, in which, ')
+    vs = collections.Counter(y.tolist())
+    vs = dict(sorted(vs.items(), key=lambda x: x[0], reverse=False))
+    print(f'X: {X.shape}, y({len(vs)}): {vs}, in which, ')
     train_mask = local_data['train_mask']
     val_mask = local_data['val_mask']
     test_mask = local_data['test_mask']
@@ -548,17 +587,9 @@ def normalize(X):
 
 
 def print_histories(histories):
-    IN_DIR = histories['IN_DIR']
-    NUM_CLASSES = histories['NUM_CLASSES']
-    VERBOSE = histories["VERBOSE"]
-    AGGREGATION_METHOD = histories["AGGREGATION_METHOD"]
-    SERVER_EPOCHS = histories["SERVER_EPOCHS"]
-    LABELING_RATE = histories["LABELING_RATE"]
-    NUM_HONEST_CLIENTS = histories['NUM_HONEST_CLIENTS']
-    NUM_MALICIOUS_CLIENTS = histories['NUM_MALICIOUS_CLIENTS']
-    DEVICE = histories['DEVICE']
-
+    CFG = histories['CFG']
     clients_histories = histories['clients']
+    server_histories = histories['server']
     num_server_epoches = len(clients_histories)
     num_clients = len(clients_histories[0])
     print('num_server_epoches:', num_server_epoches, ' num_clients:', num_clients)
@@ -576,6 +607,8 @@ def print_histories(histories):
             val_accs = []
             unlabeled_accs = []  # test
             shared_accs = []
+            time_taken_list = []  # server
+            l2_error_list = []  # server
             client_type = None
             try:
                 for s in range(num_server_epoches):
@@ -589,9 +622,15 @@ def print_histories(histories):
                     val_accs.append(val_acc)
                     unlabeled_accs.append(test_acc)
                     shared_accs.append(shared_acc)
+
+                    time_taken = server_histories[s]['time_taken']
+                    time_taken_list.append(time_taken)
+                    l2_error = server_histories[s]['l2_error']
+                    l2_error_list.append(l2_error)
                     print(f'\t\tEpoch: {s}, labeled_acc:{train_acc:.2f}, val_acc:{val_acc:.2f}, '
                           f'unlabeled_acc:{test_acc:.2f}, '
-                          f'shared_acc:{shared_acc:.2f}')
+                          f'shared_acc:{shared_acc:.2f}, '
+                          f'time_taken:{time_taken:.2f}, l2_error:{l2_error:.2f}')
             except Exception as e:
                 print(f'\t\tException: {e}')
             # Training and validation loss on the first subplot
@@ -604,15 +643,15 @@ def print_histories(histories):
             axes[i, j].set_title(f'Client_{c}: {client_type}')
             axes[i, j].legend(fontsize=6.5)
 
-        attacker_ratio = NUM_MALICIOUS_CLIENTS / (NUM_HONEST_CLIENTS + NUM_MALICIOUS_CLIENTS)
+        attacker_ratio = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
         title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
-                 f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
+                 f':{attacker_ratio:.2f}-{CFG.LABELING_RATE:.2f}')
         plt.suptitle(title)
 
         # Adjust layout to prevent overlap
         plt.tight_layout()
-        fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
-                    f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_MALICIOUS_CLIENTS}_accuracy.png')
+        fig_file = (f'{CFG.data_out_dir}/{model_type}_{CFG.LABELING_RATE}_{CFG.AGGREGATION_METHOD}_'
+                    f'{CFG.SERVER_EPOCHS}_{CFG.NUM_HONEST_CLIENTS}_{CFG.NUM_BYZANTINE_CLIENTS}_accuracy.png')
         os.makedirs(os.path.dirname(fig_file), exist_ok=True)
         plt.savefig(fig_file, dpi=300)
         plt.show()
@@ -671,17 +710,47 @@ def print_histories_server(histories_server):
             axes[i, j].set_ylabel('Accuracy')
             axes[i, j].set_title(f'{clf_name}')
             axes[i, j].legend(fontsize=5)
-
-        if model_type == 'global':
-            title = f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}' + '}$' + f':{LABELING_RATE}'
-        else:
-            title = f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' + f':{LABELING_RATE}'
-        plt.suptitle(title)
-
-        # Adjust layout to prevent overlap
-        plt.tight_layout()
-        fig_file = f'{IN_DIR}/{LABELING_RATE}/{model_type}_accuracy.png'
-        os.makedirs(os.path.dirname(fig_file), exist_ok=True)
-        plt.savefig(fig_file, dpi=300)
+        #
+        # if model_type == 'global':
+        #     title = f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}' + '}$' + f':{LABELING_RATE}'
+        # else:
+        #     title = f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' + f':{LABELING_RATE}'
+        # plt.suptitle(title)
+        #
+        # # Adjust layout to prevent overlap
+        # plt.tight_layout()
+        # fig_file = f'{IN_DIR}/{LABELING_RATE}/{model_type}_accuracy.png'
+        # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+        # plt.savefig(fig_file, dpi=300)
         plt.show()
         plt.close(fig)
+
+
+def print_all(all_histories, precision=4):
+    # Set print options to avoid scientific notation
+    np.set_printoptions(suppress=True)
+    print(f"\n***************************** Final Results (mu+/-std) *************************************")
+    REPETAS_SEEDS = all_histories.keys()
+    for model_type in ['global', 'local']:
+        print(f'\n Final***model_type: {model_type}***')
+        NUM_CLIENTS = all_histories[0]['CFG'].NUM_CLIENTS
+        for idx_client in range(NUM_CLIENTS):
+            print(f'*client_{idx_client}:')
+            # compute mu +\- std for each client, data_type, metric_type
+            SERVER_EPOCHS = all_histories[0]['CFG'].SERVER_EPOCHS
+            for idx_server_epoch in range(SERVER_EPOCHS):
+                print(f'\tserver_epoch_{idx_server_epoch}, ', end='')
+                for data_type in ['train', 'val', 'test', 'shared']:
+                    res = [all_histories[repeat_seed]['clients'][idx_server_epoch][idx_client][
+                               f'{model_type}_{data_type}_accuracy'] for repeat_seed in REPETAS_SEEDS]  # model type
+                    mu, std = np.mean(res), np.std(res)
+                    # .f ensures fixed-point notation instead of scientific notation.
+                    print(f"{data_type}_acc:{mu:.{precision}f}-{std:.{precision}f}, ", end='')
+
+                for metric_type in ['l2_error', 'time_taken']:
+                    res = [all_histories[repeat_seed]['server'][idx_server_epoch][metric_type] for repeat_seed in
+                           REPETAS_SEEDS]
+                    res = np.array(res)
+                    mu, std = np.mean(res), np.std(res)
+                    print(f"{metric_type}:{mu:.{precision}f}-{std:.{precision}f}, ", end='')
+                print()

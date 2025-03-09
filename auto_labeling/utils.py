@@ -26,7 +26,7 @@ def timer(func):
 from numpy.random import dirichlet
 
 
-def dirichlet_split(X, y, num_clients, alpha=0.5):
+def dirichlet_split(X, y, num_clients, alpha=0.5, random_state=42):
     """Splits dataset using Dirichlet distribution for non-IID allocation.
 
     alpha: > 0
@@ -43,14 +43,25 @@ def dirichlet_split(X, y, num_clients, alpha=0.5):
             Classes are somewhat skewed, but each client still has a mix of multiple classes.
 
     """
+    np.random.seed(random_state)  # Set random seed for reproducibility
+
     classes = np.unique(y)
     class_indices = {c: np.where(y == c)[0] for c in classes}
     X_splits, y_splits = [[] for _ in range(num_clients)], [[] for _ in range(num_clients)]
-
+    print('\n\t: size, ' + ",  ".join(f'Client_{c}' for c in range(num_clients)))
     for c, indices in class_indices.items():
         np.random.shuffle(indices)
         proportions = dirichlet(alpha * np.ones(num_clients))
         proportions = (proportions * len(indices)).astype(int)
+
+        # even split the left data to each client
+        left = len(indices) - sum(proportions)
+        left_per_each = left // num_clients
+        if left_per_each > 0:
+            proportions = [v + left_per_each for v in proportions]
+        # Adjust the last client to ensure total sum matches
+        proportions[-1] += len(indices) - sum(proportions)
+        print(f'class {c}: ', sum(proportions), list(proportions), left, f', alpha: {alpha}')
 
         start = 0
         for client, num_samples in enumerate(proportions):

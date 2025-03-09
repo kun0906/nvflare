@@ -7,19 +7,16 @@
 #SBATCH --mem=16G                            # Memory allocation per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU
 #SBATCH --time=4:00:00                      # Time limit (hrs:min:sec)
-#SBATCH --array=0-100
+#SBATCH --array=0-65
 
 # Define parameter combinations
 #labeling_rates=(-5 -2.5 -1 -0.5 -0.1 -0.05 -0.01 -0.001 -0.0001 0 0.0001 0.001 0.01 0.05 0.1 0.5 1 2.5 5)                            # Labeling rate
 #labeling_rates=(0.01 0.05 0.1)                            # random_noise rate
-#labeling_rates=(10 30 45 90 135 270 5)          # degree
-#labeling_rates=(0.001 0.01 0.1 0.3 0.5 0.8 1.0)          # percent of parameters will be changed
-labeling_rates=(0.001 0.1 1 3 5 10)          # larger values
-#labeling_rates=(0.1 0.5 1 5 10 100) #(10 30 45 90 135 20 5)                            # Labeling rate
-server_epochs_values=(6)                           # Number of server epochs
+labeling_rates=(0.1 0.5 1 2 5)                            # Labeling rate
+server_epochs_values=(20)                           # Number of server epochs
 num_clients_values=(20)                          # Number of total clients
-aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum+rp' 'krum+rp' 'medoid' 'median' 'mean'
-'adaptive_krum_avg' 'krum_avg' 'adaptive_krum+rp_avg' 'krum+rp_avg' 'medoid_avg' 'trimmed_mean' 'geometric_median')
+aggregation_values=('refined_krum' 'krum' 'refined_krum+rp' 'krum+rp' 'median' 'mean'
+'refined_krum_avg' 'krum_avg' 'refined_krum+rp_avg' 'krum+rp_avg' 'median_avg' 'trimmed_mean' 'geometric_median')
 # Aggregation method
 
 # Calculate the total number of parameter combinations
@@ -68,14 +65,14 @@ pwd
 #PYTHONPATH=. python3 fl_cnn_robust_aggregation.py $PARAMS
 
 # Data Poisoning
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_data.py $PARAMS
+PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_data.py $PARAMS
 #PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping.py $PARAMS
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_rotation_data.py $PARAMS
+#PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping_single.py $PARAMS
 
 # Model Poisoning
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_model.py $PARAMS
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_sign_flipping.py $PARAMS
-PYTHONPATH=. python3 fl_cnn_robust_aggregation_large_values_model.py $PARAMS
+PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_model.py $PARAMS
+PYTHONPATH=. python3 fl_cnn_robust_aggregation_sign_flipping.py $PARAMS
+#PYTHONPATH=. python3 fl_cnn_robust_aggregation_large_values.py $PARAMS
 
 
 

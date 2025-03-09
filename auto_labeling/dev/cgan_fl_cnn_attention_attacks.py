@@ -1940,7 +1940,7 @@ def clients_training(epoch, global_cgan, global_cnn):
     y = y.numpy()
 
     for l in LABELS:
-        # in each four clients, the first three are honest clients, and the last one is attacker
+        # in each four clients, the first three are honest clients, and the last one is Byzantine
         mask = y == l
         X_label, y_label = X[mask], y[mask]
         # each client has s images
@@ -1954,10 +1954,10 @@ def clients_training(epoch, global_cgan, global_cnn):
         torch.manual_seed(random_state)
         indices = torch.randperm(m)  # Randomly shuffle
         for i in range(
-                n_clients_in_each_group):  # in each 4 clients, the first 3 are honest clients and the last one is attacker
+                n_clients_in_each_group):  # in each 4 clients, the first 3 are honest clients and the last one is Byzantine
             client_id = l * n_clients_in_each_group + i
             c = client_id
-            client_type = 'honest' if i < n_honest_clients_in_each_group else 'attacker'
+            client_type = 'Honest' if i < n_honest_clients_in_each_group else 'Byzantine'
             print(f"\n\n***server_epoch:{epoch}, client_{c}: {client_type}...")
             # might be used in server
             train_info = {"client_type": client_type, "gan": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
@@ -2014,7 +2014,7 @@ def clients_training(epoch, global_cgan, global_cnn):
                 clients_cnns[c] = local_cnn.state_dict()
 
             else:
-                # for each 4 clients, the last one is attacker. attackers don't need to train local_cnn
+                # for each 4 clients, the last one is Byzantine. attackers don't need to train local_cnn
                 # local_data = {'X': [], 'y': []}
                 local_data = {'client_type': client_type,
                               'X': torch.tensor(X_sub) + 1000, 'y': torch.tensor(y_sub),

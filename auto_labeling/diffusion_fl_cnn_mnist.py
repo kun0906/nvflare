@@ -34,7 +34,7 @@ from torch_geometric.data import Data
 from torchvision import datasets
 
 from attention import aggregate_with_krum
-from robust_aggregation import refined_krum, krum, median, mean
+from robust_aggregation import adaptive_krum, krum, median, mean
 from utils import timer
 
 print(os.path.abspath(os.getcwd()))
@@ -1124,7 +1124,7 @@ def predict_client_type_with_krum(clients_parameters, clients_info, device=None)
     # Perform simple averaging of the parameters
     clients_updates = [client_state_dict[key].cpu() for client_state_dict in clients_parameters.values()]
     clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    aggregated_update, clients_type_pred = refined_krum(clients_updates, clients_weights, trimmed_average=True)
+    aggregated_update, clients_type_pred = adaptive_krum(clients_updates, clients_weights, trimmed_average=True)
 
     return clients_type_pred
 
@@ -1161,7 +1161,7 @@ def aggregate_parameters(clients_cnns, clients_info, global_cnn, aggregation_met
             print_histgram(update, bins=5, value_type='params')
 
     NUM_HONEST_CLIENTS = -1
-    NUM_MALICIOUS_CLIENTS = 0
+    NUM_BYZANTINE_CLIENTS = 0
     min_value = min([torch.min(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
     max_value = max([torch.max(v).item() for v in flatten_clients_updates[: NUM_HONEST_CLIENTS]])
 
@@ -1171,13 +1171,13 @@ def aggregate_parameters(clients_cnns, clients_info, global_cnn, aggregation_met
     # then median will choose byzantine client's parameters.
     clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
     # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    if aggregation_method == 'refined_krum':
-        aggregated_update, clients_type_pred = refined_krum(flatten_clients_updates, clients_weights,
+    if aggregation_method == 'adaptive_krum':
+        aggregated_update, clients_type_pred = adaptive_krum(flatten_clients_updates, clients_weights,
                                                             trimmed_average=False, verbose=VERBOSE)
     elif aggregation_method == 'krum':
         # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_MALICIOUS_CLIENTS']
-        f = NUM_MALICIOUS_CLIENTS
+        # f = train_info['NUM_BYZANTINE_CLIENTS']
+        f = NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = krum(flatten_clients_updates, clients_weights, f,
                                                     trimmed_average=False, verbose=VERBOSE)
@@ -1212,8 +1212,8 @@ def aggregate_unets(clients_unets, clients_info, global_unet, DIFFUSION_EPOCHS, 
         # generated data
         generated_data = {l_: torch.zeros((0, 28, 28)).to(DEVICE) for l_ in LABELS}
         for i, (client_id, client_cunet_params) in enumerate(clients_unets.items()):
-            if clients_type_pred[i] == 'attacker':
-                print(f'client_id: {client_id} is an attacker, skip it.')
+            if clients_type_pred[i] == 'Byzantine':
+                print(f'client_id: {client_id} is an Byzantine, skip it.')
                 continue
             generator = Generator().to(DEVICE)
             generator.load_state_dict(client_cunet_params)
@@ -2086,7 +2086,7 @@ def clients_training(epoch, global_unet, DIFFUSION_EPOCHS, global_cnn):
     y = y.numpy()
 
     for l in LABELS:
-        # in each four clients, the first three are honest clients, and the last one is attacker
+        # in each four clients, the first three are honest clients, and the last one is Byzantine
         mask = y == l
         X_label, y_label = X[mask], y[mask]
         # each client has s images
@@ -2099,11 +2099,11 @@ def clients_training(epoch, global_unet, DIFFUSION_EPOCHS, global_cnn):
         random_state = 42 * l
         torch.manual_seed(random_state)
         indices = torch.randperm(m)  # Randomly shuffle
-        # in each 4 clients, the first 3 are honest clients and the last one is attacker
+        # in each 4 clients, the first 3 are honest clients and the last one is Byzantine
         for i in range(n_clients_in_each_group):
             client_id = l * n_clients_in_each_group + i
             c = client_id
-            client_type = 'honest' if i < n_honest_clients_in_each_group else 'attacker'
+            client_type = 'Honest' if i < n_honest_clients_in_each_group else 'Byzantine'
             print(f"\n***server_epoch:{epoch}, client_{c}: {client_type}...")
             # might be used in server
             train_info = {"client_type": client_type, "unet": {}, "cnn": {}, 'client_id': c, 'server_epoch': epoch}
@@ -2161,7 +2161,7 @@ def clients_training(epoch, global_unet, DIFFUSION_EPOCHS, global_cnn):
 
             # else:
             #     if l % 3 != 0: continue
-            #     # for each 4 clients, the last one is attacker. attackers don't need to train local_cnn
+            #     # for each 4 clients, the last one is Byzantine. attackers don't need to train local_cnn
             #     # local_data = {'X': [], 'y': []}
             #     local_data = {'client_type': client_type,
             #                   'X': torch.tensor(X_sub) + 1000, 'y': torch.tensor(y_sub),
