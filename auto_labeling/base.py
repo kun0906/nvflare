@@ -319,55 +319,61 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
                                                                                 clients_weights,
                                                                                 trimmed_average=False,
+                                                                                random_projection=False,
                                                                                 verbose=CFG.VERBOSE)
     elif aggregation_method == 'adaptive_krum_avg':
         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
                                                                                 clients_weights,
                                                                                 trimmed_average=True,
+                                                                                random_projection=False,
                                                                                 verbose=CFG.VERBOSE)
 
     elif aggregation_method == 'adaptive_krum+rp':  # adaptive_krum + random projection
-        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum_with_random_projection(
-            flatten_clients_updates, clients_weights, trimmed_average=False, random_state=CFG.TRAIN_VAL_SEED,
-            verbose=CFG.VERBOSE)
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
+            flatten_clients_updates, clients_weights, trimmed_average=False, random_projection=True,
+            random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
     elif aggregation_method == 'adaptive_krum+rp_avg':  # adaptive_krum + random projection
-        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum_with_random_projection(
-            flatten_clients_updates, clients_weights,
-            trimmed_average=True, random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
+            flatten_clients_updates, clients_weights, trimmed_average=True, random_projection=True,
+            random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum':
         # train_info = list(histories['clients'][-1].values())[-1]
         # f = train_info['NUM_BYZANTINE_CLIENTS']
         f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
-                                                                       trimmed_average=False, verbose=CFG.VERBOSE)
+                                                                       trimmed_average=False, random_projection=False,
+                                                                       verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum_avg':
         # train_info = list(histories['clients'][-1].values())[-1]
         # f = train_info['NUM_BYZANTINE_CLIENTS']
         f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
-                                                                       trimmed_average=True, verbose=CFG.VERBOSE)
+                                                                       trimmed_average=True, random_projection=False,
+                                                                       verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum+rp':
         # train_info = list(histories['clients'][-1].values())[-1]
         # f = train_info['NUM_BYZANTINE_CLIENTS']
         f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = robust_aggregation.krum_with_random_projection(flatten_clients_updates,
-                                                                                              clients_weights, f,
-                                                                                              trimmed_average=False,
-                                                                                              random_state=CFG.TRAIN_VAL_SEED,
-                                                                                              verbose=CFG.VERBOSE)
+        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates,
+                                                                       clients_weights, f,
+                                                                       trimmed_average=False,
+                                                                       random_projection=True,
+                                                                       random_state=CFG.TRAIN_VAL_SEED,
+                                                                       verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum+rp_avg':
         # train_info = list(histories['clients'][-1].values())[-1]
         # f = train_info['NUM_BYZANTINE_CLIENTS']
         f = CFG.NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = robust_aggregation.krum_with_random_projection(flatten_clients_updates,
-                                                                                              clients_weights, f,
-                                                                                              trimmed_average=True,
-                                                                                              random_state=CFG.TRAIN_VAL_SEED,
-                                                                                              verbose=CFG.VERBOSE)
+        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates,
+                                                                       clients_weights, f,
+                                                                       trimmed_average=True,
+                                                                       random_projection=True,
+                                                                       random_state=CFG.TRAIN_VAL_SEED,
+                                                                       verbose=CFG.VERBOSE)
     elif aggregation_method == 'median':
         p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed

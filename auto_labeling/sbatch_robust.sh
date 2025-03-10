@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1                           # Number of tasks per array job
 #SBATCH --mem=16G                            # Memory allocation per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU
-#SBATCH --time=4:00:00                      # Time limit (hrs:min:sec)
+#SBATCH --time=6:00:00                      # Time limit (hrs:min:sec)
 #SBATCH --array=0-100
 
 # Define parameter combinations
@@ -16,7 +16,7 @@
 #labeling_rates=(0.001 0.01 0.1 0.3 0.5 0.8 1.0)          # percent of parameters will be changed
 labeling_rates=(0.001 0.1 1 3 5 10)          # larger values
 #labeling_rates=(0.1 0.5 1 5 10 100) #(10 30 45 90 135 20 5)                            # Labeling rate
-server_epochs_values=(6)                           # Number of server epochs
+server_epochs_values=(10)                           # Number of server epochs
 num_clients_values=(20)                          # Number of total clients
 aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum+rp' 'krum+rp' 'medoid' 'median' 'mean'
 'adaptive_krum_avg' 'krum_avg' 'adaptive_krum+rp_avg' 'krum+rp_avg' 'medoid_avg' 'trimmed_mean' 'geometric_median')

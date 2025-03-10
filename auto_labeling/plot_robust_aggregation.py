@@ -11,6 +11,7 @@ def extract_case_info(filepath):
     case_name = lines[2].split('/')[-1]
     return case_name
 
+
 def extract_namespace(filepath):
     with open(filepath, "r") as file:
         match = re.search(r'Namespace\((.*?)\)', file.read())
@@ -273,29 +274,30 @@ def plot_robust_aggregation_all():
     # axes = axes.reshape((1, -1))
 
     j_col = 0
-    for start in range(0, 110, 13):
+    for start in range(0, 110, 14):
         i_row = 0
         for METRIC in ['accuracy', 'l2_error', 'time_taken']:
             try:
                 print(f'\nstart: {start}, {METRIC}')
                 global_accs = {}
-                start2 = start + 6
+                start2 = start + 7
                 method_txt_files = [
                     # # # # # Aggregated results: single point
                     # ('adaptive_krum', f'log/output_{JOBID}_{start}.out'),
                     # ('krum', f'log/output_{JOBID}_{start + 1}.out'),
                     # ('adaptive_krum+rp', f'log/output_{JOBID}_{start + 2}.out'),
-                    # ('krum+rp', f'log/output_{JOBID}_{start + 3}.out'),
-                    # ('median', f'log/output_{JOBID}_{start + 4}.out'),
-                    # ('mean', f'log/output_{JOBID}_{start + 5}.out'),
-                    # # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 6}.out'),
+                    # ('krum+rp', f'log/output_{JOBID}_{start + 3}.out')
+                    # ('medoid', f'log/output_{JOBID}_{start + 4}.out'),,
+                    # ('median', f'log/output_{JOBID}_{start + 5}.out'),
+                    # ('mean', f'log/output_{JOBID}_{start + 6}.out'),
+                    # # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 7}.out'),
 
                     # # Aggregated results: average point
                     ('adaptive_krum_avg', f'log/output_{JOBID}_{start2}.out'),
                     ('krum_avg', f'log/output_{JOBID}_{start2 + 1}.out'),
                     ('adaptive_krum+rp_avg', f'log/output_{JOBID}_{start2 + 2}.out'),
                     ('krum+rp_avg', f'log/output_{JOBID}_{start2 + 3}.out'),
-                    ('median_avg', f'log/output_{JOBID}_{start2 + 4}.out'),
+                    ('medoid_avg', f'log/output_{JOBID}_{start2 + 4}.out'),
                     ('trimmed_mean', f'log/output_{JOBID}_{start2 + 5}.out'),
                     ('geometric_median', f'log/output_{JOBID}_{start2 + 6}.out'),
 
@@ -309,7 +311,7 @@ def plot_robust_aggregation_all():
                 #         or namespace_params['num_clients'] in []):
                 #     return
                 # print(namespace_params)
-                if (namespace_params['server_epochs'] == 6 and namespace_params['labeling_rate'] != 0.0
+                if (namespace_params['server_epochs'] == 10 and namespace_params['labeling_rate'] != 0.0
                         and namespace_params['num_clients'] == 20):
                     pass
 
@@ -404,12 +406,12 @@ def plot_robust_aggregation_all():
 if __name__ == '__main__':
     # plot_robust_aggregation()
     # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
-    JOBID = 270674  # 266353 #266233 #265651 #265426 #265364 #265338 # 265030
+    JOBID = 271247  # 266353 #266233 #265651 #265426 #265364 #265338 # 265030
     # METRIC = 'loss'
     # METRIC = 'misclassified_error'  # or misclassification Rate
     # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken
 
-    # for start in range(0, 100, 13):
+    # for start in range(0, 100, 14):
     #     try:
     #         print(f'\nstart: {start}')
     #         plot_robust_aggregation(start, METRIC)

@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from sklearn.random_projection import GaussianRandomProjection
 
+from change_point_detection import binary_segmentation, find_significant_change_point
+
 np.set_printoptions(precision=4)
 
 
@@ -284,7 +286,7 @@ def geometric_median(clients_updates, clients_weights, init_value=None, max_iter
 
         estimated_center = weighted_update
 
-    if verbose >= 1:
+    if verbose >= 5:
         print(f"Geometric median found in {iteration + 1} iterations.")
 
     return weighted_update, predict_clients_type
@@ -303,16 +305,16 @@ def pairwise_distances(clients_updates):
     #         distances[i, j] = np.linalg.norm(updates[i] - updates[j])
     #         distances[j, i] = distances[i, j]
 
-    # Numpy Version
-    updates = np.array(clients_updates)  # Ensure updates is a NumPy array
-    # Use broadcasting to compute pairwise distances
-    diff = updates[:, np.newaxis, :] - updates[np.newaxis, :, :]
-    distances = np.linalg.norm(diff, axis=2)
-    distances = torch.tensor(distances, device=clients_updates.device)
+    # # Numpy Version
+    # updates = np.array(clients_updates)  # Ensure updates is a NumPy array
+    # # Use broadcasting to compute pairwise distances
+    # diff = updates[:, np.newaxis, :] - updates[np.newaxis, :, :]
+    # distances = np.linalg.norm(diff, axis=2)
+    # distances = torch.tensor(distances, device=clients_updates.device)
 
-    # # Tensor Version
-    # diff = updates.unsqueeze(1) - updates.unsqueeze(0)  # Broadcasting to compute pairwise differences
-    # distances = torch.norm(diff, dim=2)  # Compute Euclidean norm along the last dimension
+    # Tensor Version
+    diff = clients_updates.unsqueeze(1) - clients_updates.unsqueeze(0)  # Broadcasting to compute pairwise differences
+    distances = torch.norm(diff, dim=2)  # Compute Euclidean norm along the last dimension
 
     return distances
 
@@ -384,7 +386,7 @@ def medoid(clients_updates, clients_weights, trimmed_average=False, upper_trimme
         total_weight = cumulative_weights[-1]
 
         # Optimized implementation
-        weight_threshold = upper_trimmed_ratio * total_weight       # one value
+        weight_threshold = upper_trimmed_ratio * total_weight  # one value
         upper_bound = torch.searchsorted(cumulative_weights.contiguous(), total_weight - weight_threshold,
                                          side="right")
         trimmed_updates = sorted_updates[:upper_bound]
@@ -504,10 +506,10 @@ def krum(clients_updates, clients_weights, f, trimmed_average=False, random_proj
     return weighted_update, predict_clients_type
 
 
-def krum_with_random_projection(clients_updates, clients_weights, f, trimmed_average=False, k_factor=1,
-                                random_state=42, verbose=1):
-    return krum(clients_updates, clients_weights, f, trimmed_average, True, k_factor,
-                random_state, verbose)
+# def krum_with_random_projection(clients_updates, clients_weights, f, trimmed_average=False, k_factor=1,
+#                                 random_state=42, verbose=1):
+#     return krum(clients_updates, clients_weights, f, trimmed_average, True, k_factor,
+#                 random_state, verbose)
 
 
 def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, random_projection=False, k_factor=10,
@@ -548,29 +550,36 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         print(distances)
 
     scores = torch.zeros(N, dtype=torch.float32)
+    ks = []
     for i in range(N):
         # Sort distances for the current update and sum the closest (N-f-2) distances
         sorted_indices = np.argsort(distances[i])
         sorted_distances = distances[i][sorted_indices]
         sorted_weights = clients_weights[sorted_indices]
 
-        # Calculate the middle point
-        n2 = len(sorted_indices)  # n2 must be equal to N
-        middle_index = (n2 - 1) // 2  # lower index for even updates
+        # # Calculate the middle point
+        # n2 = len(sorted_indices)  # n2 must be equal to N
+        # middle_index = (n2 - 1) // 2  # lower index for even updates
+        #
+        # # Initialize max difference and index
+        # max_diff = -1
+        # k = middle_index  # default value for k
+        # # Find the first occurrence of the max diff in one pass
+        # for j in range(middle_index, N - 1):
+        #     t = sorted_distances[j + 1] - sorted_distances[j]
+        #     if t < 0 or sorted_distances[j] < 0 or sorted_distances[j + 1] < 0:
+        #         # if it is true, there must be an error as the distance must be >=0.
+        #         raise ValueError("Distance values must be non-negative.")
+        #     if t > max_diff:
+        #         max_diff = t
+        #         k = j  # Store the first occurrence of max diff
 
-        # Initialize max difference and index
-        max_diff = -1
-        k = middle_index  # default value for k
-        # Find the first occurrence of the max diff in one pass
-        for j in range(middle_index, N - 1):
-            t = sorted_distances[j + 1] - sorted_distances[j]
-            if t < 0 or sorted_distances[j] < 0 or sorted_distances[j + 1] < 0:
-                # if it is true, there must be an error as the distance must be >=0.
-                raise ValueError("Distance values must be non-negative.")
-            if t > max_diff:
-                max_diff = t
-                k = j  # Store the first occurrence of max diff
-
+        # breakpoints = binary_segmentation(sorted_distances)
+        # h = n-f , 2+2f < n => 2*f <= n-2-1, so f <= (n-3)//2, h = n - f = n - (n-3)//2
+        # each point must be >= half of data neighbors, as f is strictly less than half of data
+        h = N - (N-3)//2    # the number of honest points
+        k = find_significant_change_point(sorted_distances, start=h)
+        ks.append(k)
         if verbose >= 20:
             # print(f'*** j: {j} ***')
             print(f'sorted_distances: {sorted_distances}')
@@ -581,68 +590,50 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         if sorted_distances[0] != 0:
             raise ValueError("First distance should be zero (self-distance).")
 
-        # # weight average
-        # score = 0.0
-        # weight = 0.0
-        # if sorted_distances[0] != 0:
-        #     raise ValueError
-        # for j in range(1, k + 1):  # the first point is the itself, which should be 0 and we exclude it.
-        #     score += sorted_distances[j] * sorted_weights[j]
-        #     weight += sorted_weights[j]
-        # score = score / weight
-        #
-        # scores.append(score.item())
-
-        scores[i] = (sorted_distances[1:k + 1] * sorted_weights[1:k + 1]).sum() / sorted_weights[1:k + 1].sum()
+        scores[i] = (sorted_distances[1:k] * sorted_weights[1:k]).sum() / sorted_weights[1:k].sum()
 
     if verbose >= 5:
         print('adaptive_Krum scores: ', [f'{v:.2f}' for v in scores.tolist()])
+        print(f'ks: {ks}')
 
     if trimmed_average:
         # instead return the smallest value, we return the top weighted average
         # Sort scores
-        scores = np.array(scores)
-        sorted_indices = np.argsort(scores)
+        sorted_indices = torch.argsort(scores)
         sorted_scores = scores[sorted_indices]
         sorted_weights = clients_weights[sorted_indices]
         sorted_updates = clients_updates[sorted_indices]
         sorted_predict_clients_type = predict_clients_type[sorted_indices]
 
-        # Find the index of the maximum value (after the halfway point)
-        # Calculate the middle point
-        middle_index = (N - 1) // 2
+        # # Find the index of the maximum value (after the halfway point)
+        # # Calculate the middle point
+        # middle_index = (N - 1) // 2
+        #
+        # # Initialize max difference and index
+        # max_diff = -1
+        # k = middle_index  # default value for k
+        # # Find the first occurrence of the max diff in one pass
+        # for j in range(middle_index, N - 1):
+        #     t = sorted_scores[j + 1] - sorted_scores[j]
+        #     if t < 0 or sorted_scores[j] < 0 or sorted_scores[j + 1] < 0:
+        #         # if it is true, there must be an error as the distance must be >=0.
+        #         raise ValueError("Score values must be non-negative.")
+        #     if t > max_diff:
+        #         max_diff = t
+        #         k = j  # Store the first occurrence of max diff
 
-        # Initialize max difference and index
-        max_diff = -1
-        k = middle_index  # default value for k
-        # Find the first occurrence of the max diff in one pass
-        for j in range(middle_index, N - 1):
-            t = sorted_scores[j + 1] - sorted_scores[j]
-            if t < 0 or sorted_scores[j] < 0 or sorted_scores[j + 1] < 0:
-                # if it is true, there must be an error as the distance must be >=0.
-                raise ValueError("Score values must be non-negative.")
-            if t > max_diff:
-                max_diff = t
-                k = j  # Store the first occurrence of max diff
+        k = find_significant_change_point(sorted_scores, start=h)
 
         if verbose >= 20:
             print(f'trimmed_average: sorted_scores: {sorted_scores}')
             print("Index of maximum scores difference after half of values:", k)
 
-        m = k + 1  # we will average over top m closet updates
+        m = k  # we will average over top m closet updates
         if verbose >= 5:
             print(f'm: {m}')
         sorted_predict_clients_type[m:] = 'Byzantine'
         # **Map the sorted labels back to original order**
         predict_clients_type[sorted_indices] = sorted_predict_clients_type
-
-        # # weight average
-        # update = 0.0
-        # weight = 0.0
-        # for j in range(m):  # note here is k+1 because we want to add all values before k+1
-        #     update += sorted_updates[j] * sorted_weights[j]
-        #     weight += sorted_weights[j]
-        # update = update / weight
 
         weighted_update = torch.sum(sorted_updates[:m] * sorted_weights[:m, None], dim=0) / torch.sum(
             sorted_weights[:m])
@@ -660,11 +651,11 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
     return weighted_update, predict_clients_type
 
 
-def adaptive_krum_with_random_projection(clients_updates, clients_weights,
-                                         trimmed_average=False, k_factor=10,
-                                         random_state=42, verbose=1):
-    return adaptive_krum(clients_updates, clients_weights, trimmed_average, True, k_factor,
-                         random_state, verbose)
+# def adaptive_krum_with_random_projection(clients_updates, clients_weights,
+#                                          trimmed_average=False, k_factor=10,
+#                                          random_state=42, verbose=1):
+#     return adaptive_krum(clients_updates, clients_weights, trimmed_average, True, k_factor,
+#                          random_state, verbose)
 
 
 def conduct_random_projection(updates, k_factor, random_state=42, verbose=1):
@@ -711,13 +702,13 @@ def conduct_random_projection(updates, k_factor, random_state=42, verbose=1):
 def main():
     import time
     results = []
-    N = 10
     verbose = 20
     time_taken_list = []
-    for i in range(N):
+    num_repetitions = 10
+    for i in range(num_repetitions):
         print(f'\nthe {i}th trial: ')
         # Example updates from clients
-        dim = 2000
+        dim = 30000
         # clients_updates = [
         #     np.random.randn(dim),  # Update from client 1
         #     np.random.randn(dim),  # Update from client 2
@@ -726,11 +717,13 @@ def main():
         #     np.random.randn(dim) + 10,  # Malicious update
         # ]
         # if number of clients is too small, with Random Projection will take more time.
-        clients_updates = [np.random.randn(dim)] * 50 + [np.random.randn(dim) + 10]
+        n = 300
+        # Number of Byzantine clients to tolerate
+        f = (n-3)//2
+        h = n-f
+        clients_updates = [np.random.randn(dim)] * h + [np.random.randn(dim) + f]
         clients_updates = torch.stack([torch.tensor(v, dtype=torch.float) for v in clients_updates])
         weights = torch.tensor([1] * len(clients_updates))
-        # Number of Byzantine clients to tolerate
-        f = 1
 
         # Perform Krum aggregation
         trimmed_average = True
@@ -746,7 +739,7 @@ def main():
 
         print('\nadaptive Krum with Random Projection...')
         start = time.time()
-        aggregated_update2 = adaptive_krum_with_random_projection(clients_updates, weights, trimmed_average,
+        aggregated_update2 = adaptive_krum(clients_updates, weights, trimmed_average, random_projection=True,
                                                                   verbose=verbose)
         end = time.time()
         time_taken2 = end - start
@@ -757,7 +750,7 @@ def main():
         #     print("Different updates were aggregated")
         #     results.append(clients_updates)
         # break
-    print(f'\naccuracy: {1 - len(results) / N}')
+    print(f'\naccuracy: {1 - len(results) / num_repetitions}')
 
     from matplotlib import pyplot as plt
     xs = range(len(time_taken_list))

@@ -7,7 +7,7 @@
     # $conda activate nvflare-3.10
     # $cd nvflare/auto_labeling
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping.py
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_sign_flipping.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 
