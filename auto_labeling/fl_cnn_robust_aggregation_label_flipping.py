@@ -70,7 +70,7 @@ def parse_arguments():
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-n', '--num_clients', type=int, required=False, default=6,
+    parser.add_argument('-n', '--num_clients', type=int, required=False, default=5,
                         help="The number of total clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='mean',
                         help="aggregation method.")
@@ -128,7 +128,7 @@ def get_configuration(train_val_seed):
     # 2 + 2f < n for Krum, so f < (n-2)/2, not equal to (n-2)/2
     if CFG.NUM_CLIENTS < 5:  # if n == 4, f will be 0
         raise ValueError(f"NUM_CLIENTS ({CFG.NUM_CLIENTS}) must be >= 5")
-    CFG.NUM_BYZANTINE_CLIENTS = (CFG.NUM_CLIENTS - 2) // 2
+    CFG.NUM_BYZANTINE_CLIENTS = (CFG.NUM_CLIENTS - 3) // 2
     if 2 + 2 * CFG.NUM_BYZANTINE_CLIENTS == CFG.NUM_CLIENTS:
         CFG.NUM_BYZANTINE_CLIENTS -= 1
     CFG.NUM_HONEST_CLIENTS = CFG.NUM_CLIENTS - CFG.NUM_BYZANTINE_CLIENTS  # n - f
@@ -421,7 +421,7 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
 @timer
 def main():
     all_histories = {}
-    NUM_REPEATS = 5
+    NUM_REPEATS = 1
     for train_val_seed in range(0, 1000, 1000 // NUM_REPEATS):
         print('\n')
         CFG = get_configuration(train_val_seed)
@@ -429,8 +429,8 @@ def main():
         data_dir = (f'data/MNIST/label_flipping/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
                     f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
                     f'/{CFG.TRAIN_VAL_SEED}')
-        # data_out_dir = data_dir
-        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
+        data_out_dir = data_dir
+        # data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
         CFG.data_out_dir = data_out_dir
         gen_client_data(data_dir, data_out_dir, CFG)
 

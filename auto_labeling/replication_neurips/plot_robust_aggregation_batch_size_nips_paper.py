@@ -19,6 +19,59 @@ def extract_namespace(filepath):
 
         return params
 
+#
+# def parse_file(txt_file):
+#     # Read the entire file into a string
+#     with open(txt_file, "r") as f:
+#         text = f.read()
+#
+#     # Find the section that starts after the global model marker
+#     global_marker = r"\*\*\*model_type: global\*\*\*"
+#     global_match = re.search(global_marker, text)
+#     local_marker = r"\*\*\*model_type: local\*\*\*"
+#     local_match = re.search(local_marker, text)
+#
+#     results_text = text[global_match.end():local_match.start()]
+#
+#     # Find the block for client 0.
+#     # We assume the client block starts with 'client 0' and ends before 'client 1' (or the end of file if no client 1).
+#     client0_match = re.search(r"client 0(.*?)(client \d+|$)", results_text, re.S)
+#     if client0_match:
+#         client0_block = client0_match.group(1)
+#     else:
+#         raise ValueError("Client 0 block not found.")
+#
+#     # Define a regex pattern to extract the required metrics:
+#     # It matches lines like:
+#     if METRIC == 'loss':
+#         # "Epoch: 0, labeled_loss: 0.00, val_loss: 0.00, unlabeled_loss: 0.00, shared_loss: 0.14"
+#         pattern = (r"Epoch:\s*(\d+),\s*labeled_loss:\s*([\d\.]+),\s*val_loss:\s*([\d\.]+),"
+#                    r"\s*unlabeled_loss:\s*([\d\.]+),\s*shared_loss:\s*([\d\.]+)")
+#     else:
+#         pattern = (r"Epoch:\s*(\d+),\s*labeled_accuracy:\s*([\d\.]+),\s*val_accuracy:\s*([\d\.]+),"
+#                    r"\s*unlabeled_accuracy:\s*([\d\.]+),\s*shared_accuracy:\s*([\d\.]+)")
+#         # "Epoch: 0, labeled_acc: 0.00, val_acc: 0.00, unlabeled_acc: 0.00, shared_acc: 0.14"
+#         # pattern = (r"Epoch:\s*(\d+),\s*labeled_acc:\s*([\d\.]+),\s*val_acc:\s*([\d\.]+),"
+#         #            r"\s*unlabeled_acc:\s*([\d\.]+),\s*shared_acc:\s*([\d\.]+)")
+#
+#     # Find all matches in the client 0 block
+#     matches = re.findall(pattern, client0_block)
+#
+#     # Extract epochs and labeled_acc values
+#     results = {'epochs': [],
+#                'labeled_accs': [],
+#                'val_accs': [],
+#                'unlabeled_accs': [],
+#                'shared_accs': []}
+#     for m in matches:
+#         results['epochs'].append(int(m[0]))
+#         results['labeled_accs'].append(float(m[1]))
+#         results['val_accs'].append(float(m[2]))
+#         results['unlabeled_accs'].append(float(m[3]))
+#         results['shared_accs'].append(float(m[4]))
+#
+#     return results
+
 
 def parse_file(txt_file):
     # Read the entire file into a string
@@ -81,23 +134,30 @@ def plot_robust_aggregation():
     # epochs = [3, 20, 50, 80, 100]
 
 
-    JOBID_no_malicious = 265412  # with 0% malicious clients
-    JOBID_with_malicious = 265651  # with 45% malicious clients
-    starts = [4, 8, 12, 16, 20, 24] #  the correpsoding batch_sizes = [20, 50, 80, 100]
-    batch_sizes = [2, 3, 20, 50, 80, 100]
+    # JOBID_no_malicious = 265412  # with 0% malicious clients
+    # JOBID_with_malicious = 265651  # with 45% malicious clients
+    # starts = [4, 8, 12, 16, 20, 24] #  the correpsoding batch_sizes = [20, 50, 80, 100]
+    # batch_sizes = [2, 3, 20, 50, 80, 100]
+
+    JOBID_no_malicious = 272544  # with 0% malicious clients
+    JOBID_with_malicious = 272544  # with 45% malicious clients
+    starts = [8]  # the correpsoding batch_sizes = [20, 50, 80, 100]
+    # batch_sizes = [2, 3, 20, 50, 80, 100]
+    # batch_sizes = [2, 3, 20, 50, 80, 100]
+    batch_sizes = range(20)
 
     all_results = {}
     for start in starts:
         global_accs = {}
         method_txt_files = [
-            # ('adaptive_krum', f'log/output_{JOBID_no_malicious}_{start}.out'),
-            ('krum (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 1}.out'),
-            # ('median', f'log/output_{JOBID}_{start + 2}.out'),
-            ('mean (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 3}.out'),
+            # # ('adaptive_krum', f'log/output_{JOBID_no_malicious}_{start}.out'),
+            # ('krum (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 1}.out'),
+            # # ('median', f'log/output_{JOBID}_{start + 2}.out'),
+            # ('mean (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 3}.out'),
 
-            # ('adaptive_krum', f'log/output_{JOBID_with_malicious}_{start}.out'),
+            ('adaptive_krum (45% byz)', f'log/output_{JOBID_with_malicious}_{start}.out'),
             ('krum (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 1}.out'),
-            # ('median', f'log/output_{JOBID_with_malicious}_{start + 2}.out'),
+            ('median (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 2}.out'),
             ('mean (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 3}.out'),
         ]
 
@@ -113,14 +173,15 @@ def plot_robust_aggregation():
     for i in range(len(aggregation_methods)):
         agg_method = aggregation_methods[i]
         label = agg_method
-        # ys = global_accs[agg_method]['shared_accs'] #[:10]
-        # choose sever_epoch = 10 for each method
-        sever_epoch = 100
-        ys = [res[agg_method]['shared_accs'][sever_epoch] for res in all_results.values()]
+        ys = global_accs[agg_method]['shared_accs'] #[:10]
+        # # choose sever_epoch = 10 for each method
+        # sever_epoch = 100
+        # ys = [res[agg_method]['shared_accs'][sever_epoch] for res in all_results.values()]
         if METRIC == 'misclassified_error':
             ys = [1-v for v in ys]
-        # xs = range(len(ys))
-        xs = batch_sizes
+        print(agg_method, [float(f'{v:.2f}') for v in ys])
+        xs = range(len(ys))
+        # xs = batch_sizes
         plt.plot(xs, ys, label=label, marker=makers[i])
     plt.xlabel('Batch size')
     if METRIC == 'loss':
@@ -151,6 +212,8 @@ def plot_robust_aggregation():
 if __name__ == '__main__':
     METRIC = 'misclassified_error'  # or misclassification Rate
     plot_robust_aggregation()
+
+
     # # plot_robust_aggregation()
     # # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
     # JOBID = 265290 # 265030

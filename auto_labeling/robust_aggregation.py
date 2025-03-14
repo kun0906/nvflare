@@ -292,9 +292,12 @@ def geometric_median(clients_updates, clients_weights, init_value=None, max_iter
     return weighted_update, predict_clients_type
 
 
-def pairwise_distances(clients_updates):
-    """
-    Compute pairwise Euclidean distances between updates.
+def pairwise_distances(clients_updates, is_squared_distance = True):
+    """ Squared Euclidean distance has the effect of penalizing larger deviations more than the regular Euclidean
+    distance, which could make the algorithm more sensitive to outliers (i.e., adversarial gradients). Using
+    regular Euclidean distance might slightly reduce this sensitivity.
+
+    Compute pairwise squared Euclidean distances between updates.
     :param updates: tensors
     :return: Pairwise distance matrix.
     """
@@ -302,19 +305,24 @@ def pairwise_distances(clients_updates):
     # distances = np.zeros((num_updates, num_updates))
     # for i in range(num_updates):
     #     for j in range(i + 1, num_updates):
-    #         distances[i, j] = np.linalg.norm(updates[i] - updates[j])
+    #         # distances[i, j] = np.linalg.norm(updates[i] - updates[j])
+    #         distances[i, j] = np.sum((updates[i] - updates[j]) ** 2)  # squared Euclidean distances
     #         distances[j, i] = distances[i, j]
 
     # # Numpy Version
     # updates = np.array(clients_updates)  # Ensure updates is a NumPy array
     # # Use broadcasting to compute pairwise distances
     # diff = updates[:, np.newaxis, :] - updates[np.newaxis, :, :]
-    # distances = np.linalg.norm(diff, axis=2)
+    # # distances = np.linalg.norm(diff, axis=2)
+    # distances = np.sum(diff ** 2, axis=2)  # squared Euclidean distances
     # distances = torch.tensor(distances, device=clients_updates.device)
 
     # Tensor Version
     diff = clients_updates.unsqueeze(1) - clients_updates.unsqueeze(0)  # Broadcasting to compute pairwise differences
-    distances = torch.norm(diff, dim=2)  # Compute Euclidean norm along the last dimension
+    if is_squared_distance:
+        distances = torch.sum(diff ** 2, dim=2)  # Compute squared Euclidean distance along the last dimension
+    else:
+        distances = torch.norm(diff, dim=2)  # Compute Euclidean norm along the last dimension
 
     return distances
 
@@ -346,6 +354,7 @@ def medoid(clients_updates, clients_weights, trimmed_average=False, upper_trimme
     """
     Computes the medoid from a set of client updates based on pairwise distances.
 
+    # medoid is an approximate method to geometric median, so use Euclidean distance, not squared Euclidean distance.
     Args:
         clients_updates (torch.Tensor): Tensor of shape (N, D) containing client updates.
         clients_weights (torch.Tensor): Tensor of shape (N,) containing weights for each client.
@@ -365,7 +374,7 @@ def medoid(clients_updates, clients_weights, trimmed_average=False, upper_trimme
         print(f'Unique weights: {unique_ws}, counts: {counts}')
 
     # Compute pairwise distances (without weighted distances)
-    distances = pairwise_distances(clients_updates)
+    distances = pairwise_distances(clients_updates, is_squared_distance=False)
 
     # Compute sum of distances for each point to all others
     total_distances = torch.sum(distances, dim=0)
@@ -442,9 +451,9 @@ def krum(clients_updates, clients_weights, f, trimmed_average=False, random_proj
     # Compute pairwise distances:   # we don't need the weighted distance here.
     if random_projection:
         projected_updates = conduct_random_projection(clients_updates, k_factor, random_state)
-        distances = pairwise_distances(projected_updates)
+        distances = pairwise_distances(projected_updates, is_squared_distance=True)
     else:
-        distances = pairwise_distances(clients_updates)
+        distances = pairwise_distances(clients_updates, is_squared_distance=True)
 
     if verbose >= 20:
         print(distances)
@@ -542,9 +551,9 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
     # Compute pairwise distances:   # we don't need the weighted distance here.
     if random_projection:
         projected_updates = conduct_random_projection(clients_updates, k_factor, random_state)
-        distances = pairwise_distances(projected_updates)
+        distances = pairwise_distances(projected_updates, is_squared_distance=True)
     else:
-        distances = pairwise_distances(clients_updates)
+        distances = pairwise_distances(clients_updates, is_squared_distance=True)
 
     if verbose >= 20:
         print(distances)
@@ -575,9 +584,9 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         #         k = j  # Store the first occurrence of max diff
 
         # breakpoints = binary_segmentation(sorted_distances)
-        # h = n-f , 2+2f < n => 2*f <= n-2-1, so f <= (n-3)//2, h = n - f = n - (n-3)//2
+        # h = n-f , 2+2f < n => 2*f <= n-2-1, so f <= (n-3)//2, h >= n - f = n - (n-3)//2
         # each point must be >= half of data neighbors, as f is strictly less than half of data
-        h = N - (N-3)//2    # the number of honest points
+        h = N - (N - 3) // 2  # the number of honest points
         k = find_significant_change_point(sorted_distances, start=h)
         ks.append(k)
         if verbose >= 20:
@@ -658,7 +667,7 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
 #                          random_state, verbose)
 
 
-def conduct_random_projection(updates, k_factor, random_state=42, verbose=1):
+def conduct_random_projection(updates, k_factor=1, random_state=42, verbose=1):
     """
     Applies random projection to reduce the dimensionality of model updates.
 
@@ -717,10 +726,10 @@ def main():
         #     np.random.randn(dim) + 10,  # Malicious update
         # ]
         # if number of clients is too small, with Random Projection will take more time.
-        n = 300
+        n = 100
         # Number of Byzantine clients to tolerate
-        f = (n-3)//2
-        h = n-f
+        f = (n - 3) // 2
+        h = n - f
         clients_updates = [np.random.randn(dim)] * h + [np.random.randn(dim) + f]
         clients_updates = torch.stack([torch.tensor(v, dtype=torch.float) for v in clients_updates])
         weights = torch.tensor([1] * len(clients_updates))
@@ -740,7 +749,7 @@ def main():
         print('\nadaptive Krum with Random Projection...')
         start = time.time()
         aggregated_update2 = adaptive_krum(clients_updates, weights, trimmed_average, random_projection=True,
-                                                                  verbose=verbose)
+                                           verbose=verbose)
         end = time.time()
         time_taken2 = end - start
         print("Aggregated Update (adaptive Krum) with RP:", aggregated_update2, time_taken2)
@@ -758,6 +767,7 @@ def main():
     plt.plot(xs, ys, label='Without RP', color='b', marker='*')
     ys = [vs[1] for vs in time_taken_list]
     plt.plot(xs, ys, label='with RP', color='r', marker='s')
+    plt.title(f'n:{n}')
     plt.legend()
     plt.show()
 

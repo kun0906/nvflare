@@ -214,7 +214,7 @@ def trimmed_mean_case():
     plt.show()
 
 
-def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, random_state=42):
+def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, show=False, random_state=42):
     """
     """
     # random_state=200
@@ -246,8 +246,14 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, random_state=42)
         honest_points = np.random.multivariate_normal(mean=mean, cov=cov, size=h)
 
         mean = np.ones(D) * byzantine_mu  # d-dimensional mean vector (all zeros)
+        # mean[1:] = 0
         cov = np.eye(D) * 2  # d x d identity matrix as covariance (independent variables)
         byzantine_points = np.random.multivariate_normal(mean, cov=cov, size=f)
+
+        # mean = np.ones(D) * byzantine_mu*10  # d-dimensional mean vector (all zeros)
+        # cov = np.eye(D) * 2  # d x d identity matrix as covariance (independent variables)
+        # byzantine_points2 = np.random.multivariate_normal(mean, cov=cov, size=f//2)
+        # byzantine_points = np.concatenate([byzantine_points, byzantine_points2], axis=0)
 
     elif attack_type == "sign_flipping":
         honest_points = [(0.4, .0), (0.5, 0.6), (0.6, 0.5), (0, 0.4)]
@@ -269,11 +275,31 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, random_state=42)
     # print(f"points: {points}, {weights}")
     print(f'N: {N}, f: {f}, h: {h}, D: {D}, byzantine_mu:{byzantine_mu}, seed: {random_state}')
 
+    if show:
+        # Plotting
+        plt.figure(figsize=(6, 6))
+        plt.scatter(honest_points[:, 0], honest_points[:, 1], color='blue', label='Honest Updates', s=100)
+        plt.scatter(byzantine_points[:, 0], byzantine_points[:, 1], color='red', label='Byzantine Updates', s=100,
+                    marker='x')
+        # Labels and legend
+        # plt.xlabel("X-axis")
+        # plt.ylabel("Y-axis")
+        plt.title("Honest and Byzantine Updates in $\mathbb{R}^2$")
+        plt.legend()
+        # plt.grid(True)
+        # plt.xlim(0, 2.2)
+        # plt.ylim(0, 2.2)
+        plt.tight_layout()
+        plt.savefig('synthetic_data.png', dpi=300)
+
+        plt.show()
+
     # True median if only honest points were considered
-    true_cw_mean, clients_type = robust_aggregation.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
-    method = 'true_cw_mean'
+    empirical_cw_mean, clients_type = robust_aggregation.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
+    method = 'empirical_cw_mean'
     SPACES = 16
-    print(f'{method:{SPACES}s}: {[f"{v:.3f}" for v in true_cw_mean.tolist()]}, clients_type: {clients_type.tolist()}')
+    print(
+        f'{method:{SPACES}s}: {[float(f"{v:.3f}") for v in empirical_cw_mean.tolist()]}, clients_type: {clients_type.tolist()}')
 
     results = {}
 
@@ -281,7 +307,8 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, random_state=42)
         # Single value
         # 'adaptive_krum', 'krum', 'adaptive_krum+rp', 'krum+rp', 'medoid', 'median', 'mean',
         'adaptive_krum', 'krum', 'medoid',
-        'median', 'mean',
+        'median',
+        'mean',
         # Merged value
         # 'adaptive_krum_avg', 'krum_avg', 'adaptive_krum+rp_avg', 'krum+rp_avg', 'medoid_avg',
         # 'adaptive_krum_avg', 'krum_avg', 'medoid_avg',
@@ -367,35 +394,38 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, random_state=42)
         end = time.time()
         time_taken = end - start
         # l2_error = torch.norm(agg_value - 0).item()
-        l2_error = torch.norm(agg_value - true_cw_mean).item()
+        l2_error = torch.norm(agg_value - empirical_cw_mean).item()
         results[method] = (agg_value, l2_error, time_taken, clients_type)
-        print(f'{method:{SPACES}s}: {[f"{v:.3f}" for v in agg_value.tolist()]}, '
-              f'l2: {l2_error:.5f}, time: {time_taken:.5f}, '
-              f'clients_type: {clients_type.tolist()}')
+        print(f'{method:{SPACES}s}: {[float(f"{v:.3f}") for v in agg_value.tolist()]}, '
+              f'l2: {l2_error:.5f}, time: {time_taken:.5f}, ')
+        # f'clients_type: {clients_type.tolist()}')
 
-    # # Plotting
-    # plt.figure(figsize=(6, 6))
-    # plt.scatter(honest_points[:, 0], honest_points[:, 1], color='blue', label='Honest Points', s=100)
-    # plt.scatter(byzantine_points[:, 0], byzantine_points[:, 1], color='red', label='Byzantine Point', s=100, marker='x')
-    # plt.scatter([true_cw_mean[0]], [true_cw_mean[1]], color='green', label='True MEAN (Honest Only)', s=150,
-    #             marker='*')
-    #
-    # for i, (method, (agg_value, l2_error, clients_type)) in enumerate(results.items()):
-    #     plt.scatter([agg_value[0]], [agg_value[1]], color=colors[i], label=f'{method}', s=120,
-    #                 marker=makers[i])
-    #
-    # # Labels and legend
-    # # plt.xlabel("X-axis")
-    # # plt.ylabel("Y-axis")
-    # plt.title(f"Effect of Byzantine Attack, byzantine_location={byzantine_mu}")
-    # plt.legend()
-    # # plt.grid(True)
-    # # plt.xlim(0, 2.2)
-    # # plt.ylim(0, 2.2)
-    # plt.tight_layout()
-    # plt.savefig('synthetic_case.png', dpi=600)
-    #
-    # plt.show()
+    if show:
+        # Plotting
+        plt.figure(figsize=(6, 6))
+        plt.scatter(honest_points[:, 0], honest_points[:, 1], color='blue', label='Honest Points', s=100)
+        plt.scatter(byzantine_points[:, 0], byzantine_points[:, 1], color='red', label='Byzantine Point', s=100,
+                    marker='x')
+        plt.scatter([empirical_cw_mean[0]], [empirical_cw_mean[1]], color='green', label='True MEAN (Honest Only)',
+                    s=150,
+                    marker='*')
+
+        for i, (method, (agg_value, l2_error, time_taken, clients_type)) in enumerate(results.items()):
+            plt.scatter([agg_value[0]], [agg_value[1]], color=colors[i], label=f'{method}', s=120,
+                        marker=makers[i])
+
+        # Labels and legend
+        # plt.xlabel("X-axis")
+        # plt.ylabel("Y-axis")
+        plt.title(f"Effect of Byzantine Attack, byzantine_location={byzantine_mu}")
+        plt.legend()
+        # plt.grid(True)
+        # plt.xlim(0, 2.2)
+        # plt.ylim(0, 2.2)
+        plt.tight_layout()
+        plt.savefig('synthetic_case.png', dpi=600)
+
+        plt.show()
 
     return results
 
@@ -468,16 +498,16 @@ def synthetic_case(tunable_values, case='byzantine_location', N=None, D=None, by
             axes[i_row, j_col].set_xticklabels(tunable_values)
             if case == 'byzantine_location':
                 xlabel = '$||\mu_{byzantine} - \mu_{honest}||_2$'
-                title = f'N:{N}, D:{D}, byzantine_location:, f:{f}'
+                title = f'n:{N}, d:{D}, byzantine_location:, f:{f}'
             elif case == 'N':
-                xlabel = 'N'
-                title = f'N:, D:{D}, byzantine_location:{byzantine_mu}, f:{f}'
+                xlabel = 'n'
+                title = f'n:, d:{D}, byzantine_location:{byzantine_mu}, f:{f}'
             elif case == 'D':
-                xlabel = 'D'
-                title = f'N:{N}, D:, byzantine_location:{byzantine_mu}, f:{f}'
+                xlabel = 'd'
+                title = f'n:{N}, d:, byzantine_location:{byzantine_mu}, f:{f}'
             elif case == 'f':
                 xlabel = 'f'
-                title = f'N:{N}, D:{D}, byzantine_location:{byzantine_mu}, f:'
+                title = f'n:{N}, d:{D}, byzantine_location:{byzantine_mu}, f:'
             else:
                 raise NotImplementedError(case)
 
@@ -516,30 +546,203 @@ def synthetic_case(tunable_values, case='byzantine_location', N=None, D=None, by
     plt.close()
 
 
+def _krum_rp_case(n, dim, k_factor, num_repetitions=100):
+    verbose = 0
+    time_taken_list = []
+    for i in range(num_repetitions):
+        random_state = i * 100
+        print(f'\nthe {i}th trial: ')
+        # Example updates from clients
+        # clients_updates = [
+        #     np.random.randn(dim),  # Update from client 1
+        #     np.random.randn(dim),  # Update from client 2
+        #     np.random.randn(dim),  # Update from client 3
+        #     np.random.randn(dim),  # Update from client 4
+        #     np.random.randn(dim) + 10,  # Malicious update
+        # ]
+        # if number of clients is too small, with Random Projection will take more time.
+        # Number of Byzantine clients to tolerate
+        N = n
+        D = dim
+        f = (N - 3) // 2
+        byzantine_mu = 10
+        h = N - f  # the number of honest points
+        if 2 + 2 * f >= N or f + h != N:
+            raise ValueError(f, N)
+        print(f'N: {N}, f: {f}, h: {h}, byzantine_mu:{byzantine_mu}, seed: {random_state}')
+        np.random.seed(random_state)
+        # honest_points = np.random.multivariate_normal(mean=[0, 0], cov=[[1, 0], [0, 1]], size=h)
+        # byzantine_points = np.random.multivariate_normal(mean=[byzantine_mu, byzantine_mu],
+        #                                                  cov=[[1, 0], [0, 1]], size=f)
+        mean = np.zeros(D)  # d-dimensional mean vector (all zeros)
+        cov = np.eye(D)  # d x d identity matrix as covariance (independent variables)
+        honest_points = np.random.multivariate_normal(mean=mean, cov=cov, size=h)
+
+        mean = np.ones(D) * byzantine_mu  # d-dimensional mean vector (all zeros)
+        # mean[1:] = 0
+        cov = np.eye(D) * 2  # d x d identity matrix as covariance (independent variables)
+        byzantine_points = np.random.multivariate_normal(mean, cov=cov, size=f)
+
+        # mean = np.ones(D) * byzantine_mu*10  # d-dimensional mean vector (all zeros)
+        # cov = np.eye(D) * 2  # d x d identity matrix as covariance (independent variables)
+        # byzantine_points2 = np.random.multivariate_normal(mean, cov=cov, size=f//2)
+        # byzantine_points = np.concatenate([byzantine_points, byzantine_points2], axis=0)
+
+        f = len(byzantine_points)
+        # byzantine points must be appended to the end if using the first N-f points to compute true mean
+        points = [torch.tensor(p, dtype=torch.float) for p in np.concatenate([honest_points, byzantine_points])]
+        points = torch.stack(points)
+        if len(points) != N:
+            raise ValueError(len(points), N)
+        weights = torch.tensor([1] * N)
+        if 2 + 2 * f >= N or f + len(honest_points) != N:
+            raise ValueError(f, N)
+        # print(f"points: {points}, {weights}")
+        print(f'N: {N}, f: {f}, h: {h}, D: {D}, byzantine_mu:{byzantine_mu}, seed: {random_state}')
+
+        # True median if only honest points were considered
+        empirical_cw_mean, clients_type = robust_aggregation.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
+        method = 'empirical_cw_mean'
+        SPACES = 16
+        print(
+            f'{method:{SPACES}s}: {[float(f"{v:.3f}") for v in empirical_cw_mean.tolist()]}, clients_type: {clients_type.tolist()}')
+
+        clients_updates = points
+        trimmed_average = False
+        # print('Krum...')
+        print('\nadaptive Krum...')
+        start = time.time()
+        aggregated_update, _ = robust_aggregation.adaptive_krum(clients_updates, weights, trimmed_average,
+                                                             random_projection=False, k_factor=k_factor,
+                                                             verbose=verbose)
+        end = time.time()
+        time_taken = end - start
+        l2_error = torch.norm(aggregated_update - empirical_cw_mean).item()
+        print("Aggregated Update (adaptive Krum):", aggregated_update, time_taken)
+
+        print('\nadaptive Krum with Random Projection...')
+        start = time.time()
+        aggregated_update2, _ = robust_aggregation.adaptive_krum(clients_updates, weights, trimmed_average,
+                                                              random_projection=True, k_factor=k_factor,
+                                                              verbose=verbose)
+        end = time.time()
+        time_taken2 = end - start
+        l2_error_rp = torch.norm(aggregated_update2 - empirical_cw_mean).item()
+        print("Aggregated Update (adaptive Krum) with RP:", aggregated_update2, time_taken2)
+
+        time_taken_list.append([time_taken, time_taken2, l2_error, l2_error_rp])
+        # if np.sum(aggregated_update2.numpy() - aggregated_update.numpy()) != 0:
+        #     print("Different updates were aggregated")
+        #     results.append(clients_updates)
+        # break
+
+    return time_taken_list
+
+
+def krum_rp_case(tunable_values, case='dim', dim=1000, n=100, k_factor=10, num_repetitions=100):
+    results = {}
+    for tunable_value in tunable_values:
+        if case == 'dim':
+            dim = tunable_value
+        elif case == 'k_factor':
+            k_factor = tunable_value
+        else:
+            raise NotImplementedError(case)
+        # print(f'\naccuracy: {1 - len(results) / num_repetitions}')
+        time_taken_list = _krum_rp_case(n, dim, k_factor, num_repetitions)
+        if case == 'dim':
+            results[tunable_value] = {
+                'aKrum': (np.mean([v[0] for v in time_taken_list]), np.std([v[0] for v in time_taken_list])),
+                'aKrum_rp': (np.mean([v[1] for v in time_taken_list]), np.std([v[1] for v in time_taken_list]))}
+        elif case == 'k_factor':
+            results[tunable_value] = {
+                'aKrum': (np.mean([v[2] for v in time_taken_list]), np.std([v[2] for v in time_taken_list])),
+                'aKrum_rp': (np.mean([v[3] for v in time_taken_list]), np.std([v[3] for v in time_taken_list]))}
+        else:
+            raise NotImplementedError(case)
+
+    colors = ['b', 'g']
+    markers = ['*', 'o']
+    # Create a figure and axis
+    fig, ax = plt.subplots()
+    for i, method in enumerate(['aKrum', 'aKrum_rp']):
+        xs = range(len(tunable_values))
+        ys, ys_errs = [results[t][method][0] for t in tunable_values], [results[t][method][1] for t in tunable_values]
+        ax.plot(xs, ys, label=method, color=colors[i], marker=markers[i])
+        ax.fill_between(xs,
+                         [y - e for y, e in zip(ys, ys_errs)],
+                         [y + e for y, e in zip(ys, ys_errs)],
+                         color=colors[i], alpha=0.3)  # label='Error Area'
+    if case == 'dim':
+        ax.set_ylabel('Time Taken in Seconds')
+        ax.set_xlabel(f'd')
+        title = f'n:{n}, k = {k_factor}*logd'
+    elif case == 'k_factor':
+        ax.set_ylabel('Estimated Error: $||\hat{\mu} - \\bar{\mu}||_2$')
+        ax.set_xlabel(f'k_factor')
+        title = f'n:{n}, d:{dim}, k: k_factor*log{dim}'
+    else:
+        raise NotImplementedError(case)
+    # Set x-axis ticks and labels
+    ax.set_xticks(range(len(tunable_values)))  # Numeric positions
+    ax.set_xticklabels(tunable_values)  # Custom labels
+
+    plt.title(title)
+    plt.legend()
+    plt.tight_layout()
+
+    # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
+    #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
+    fig_file = f'synthetic_case_rp_{case}.png'
+    print(fig_file)
+    # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+    plt.savefig(fig_file, dpi=300)
+    plt.show()
+
+
 if __name__ == '__main__':
     # median_case()
     # trimmed_mean_case()
 
+    num_repetitions = 10
+    # dims = [500, 750, 1000, 2500, 5000, 7500, 10000, 25000, 50000, 100000]
+    dims = [500, 1000, 5000, 10000, 50000, 100000]
+    # dims = [50, 100, 200]
+    krum_rp_case(dims, case='dim', n=100, dim=None, k_factor=10, num_repetitions=num_repetitions)
+
+    # dim = 10000
+    # k_factor_max = int(dim / np.log(dim))
+    # k_factors = [1, 5, 10, 20, 25, 50, 75, 100, 150, k_factor_max]
+    # k_factors = [v for v in sorted(k_factors) if v <= k_factor_max]
+    # print(k_factors)
+    # krum_rp_case(k_factors, case='k_factor', n=100, dim=dim, k_factor=None, num_repetitions=num_repetitions)
+
+    # # only for test
     # N = 100
-    # byzantine_mu_locations = [0, 1, 2, 4, 6, 8, 10, 20][::-1]
+    # f_max = (N - 3) // 2
+    # synthetic_single_case(N=N, D=2, byzantine_mu=4, f=f_max, show=True, random_state=100)
+
+    # N = 100
+    # byzantine_mu_locations = [1, 2, 3, 4, 6, 8, 10, 15, 20, 30][::-1]
     # f_max = (N - 3) // 2
     # synthetic_case(byzantine_mu_locations, case='byzantine_location', N=N, D=2, f=f_max)
 
     # Ns = [5, 10, 25, 50, 75, 100, 200, 300, 400, 500]
     # synthetic_case(Ns, case='N', D=2, byzantine_mu=10, f=None)
 
-    N = 100
-    f_max = (N - 3) // 2
-    Ds = [2, 5, 10, 25, 50, 100, 250, 500, 750, 1000]
-    synthetic_case(Ds, case='D', N=N, byzantine_mu=20, f=f_max)
+    # N = 100
+    # f_max = (N - 3) // 2
+    # Ds = [2, 5, 10, 25, 50, 100, 250, 500, 750, 1000]
+    # synthetic_case(Ds, case='D', N=N, byzantine_mu=10, f=f_max)
 
     # # Case: different f
     # N = 100
     # # fs = [0, 5, 10, 25, 48]
     # f_max = (N - 3) // 2
     # # fs = list(range(5, f_max+1, (f_max-5)//10)) + [f_max]
-    # fs = [int(N * p) for p in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.45]]
-    # fs = [0] + fs + [f_max]
+    # # fs = [int(N * p) for p in [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.45]]
+    # # fs = [0] + fs + [f_max]
+    # fs = [1, 5, 10, 15, 20, 25, 30, 40, 45, 48]
     # fs = [v for v in fs if v <= f_max]
     # fs = sorted(set(fs), reverse=False)
     # print(f_max, fs)

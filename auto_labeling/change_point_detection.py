@@ -2,6 +2,51 @@ import numpy as np
 
 import torch
 
+import numpy as np
+
+
+def pelt(data, penalty):
+    """
+    Pruned Exact Linear Time (PELT) for change point detection.
+
+    Arguments:
+    - data: The time series data.
+    - penalty: The penalty term added for each change point to control the number of segments.
+
+    Returns:
+    - breakpoints: List of detected change points.
+    - final_cost: The final minimal cost after segmentation.
+    """
+    n = len(data)  # Number of data points
+    cost = np.inf * np.ones(n + 1)  # Initialize cost array with infinity
+    cost[0] = 0  # Base case: cost for an empty segment is zero
+
+    prev = -1 * np.ones(n + 1, dtype=int)  # Array to track previous breakpoints
+
+    for end in range(1, n + 1):  # Iterate over all possible endpoints for segments
+        for start in range(0, end):  # For each end point, try all possible start points
+            # Compute the cost for this segment
+            segment_cost = cost_function(data, start, end)
+
+            # Check the total cost for the segmentation (previous cost + new segment cost + penalty)
+            current_cost = cost[start] + segment_cost + penalty
+
+            # Update cost and previous breakpoint if a better segmentation is found
+            if current_cost < cost[end]:
+                cost[end] = current_cost
+                prev[end] = start
+
+    # Reconstruct the breakpoints from the 'prev' array
+    breakpoints = []
+    end = n
+    while prev[end] != -1:
+        breakpoints.append(prev[end])
+        end = prev[end]
+
+    breakpoints = list(reversed(breakpoints))  # Reverse to get the correct order
+    return breakpoints, cost[n]
+
+
 
 def cost_function(data, start, end):
     """ Calculate the cost for the segment [start:end] as the sum of squared errors """
@@ -132,23 +177,38 @@ def find_significant_change_point(data, start=1):
 
 
 def main():
+    import matplotlib.pyplot as plt
+
     # h = n-f , 2+2f < n => 2*f <= n-2-1, so f <= (n-3)//2, h = n - f = n - (n-3)//2
     # each point must be >= half of data neighbors, as f is strictly less than half of data
     for N in [5, 6, 7, 8, 9, 10, 100, 1000]:
         f = (N - 3) // 2
         h = N - (N - 3) // 2  # the number of honest points
-        print(N, f, h)
-    # # Example usage
-    # data = np.random.randn(100)  # Example time series data
-    # breakpoints = binary_segmentation(data)
-    #
-    # print("Detected change points:", breakpoints)
+        h2 = (N+3)//2
+        print(N, f, h, h2)
+
+    data = torch.randn(100)  # Example time series data as a torch tensor
+
+    plt.plot(range(data.shape[0]), data)
+    plt.show()
+
+    breakpoints = binary_segmentation(data)
+
+    print("Detected change points:", breakpoints)
 
     # Example usage
-    data = torch.randn(100)  # Example time series data as a torch tensor
+    # data = torch.randn(100)  # Example time series data as a torch tensor
     change_point = find_significant_change_point(data)
-
     print("Most significant change point:", change_point)
+
+    # Example usage
+    penalty = 10  # Penalty term to control the number of change points
+    # Apply PELT algorithm
+    breakpoints, final_cost = pelt(data, penalty)
+
+    print("Detected change points:", breakpoints)
+    print("Final cost:", final_cost)
+
 
 
 if __name__ == '__main__':

@@ -201,7 +201,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
     #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
-    fig_file = 'global_cnn.png'
+    fig_file = '../global_cnn.png'
     # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)
     plt.show()
@@ -283,23 +283,23 @@ def plot_robust_aggregation_all():
                 start2 = start + 7
                 method_txt_files = [
                     # # # # # Aggregated results: single point
-                    # ('adaptive_krum', f'log/output_{JOBID}_{start}.out'),
-                    # ('krum', f'log/output_{JOBID}_{start + 1}.out'),
-                    # ('adaptive_krum+rp', f'log/output_{JOBID}_{start + 2}.out'),
-                    # ('krum+rp', f'log/output_{JOBID}_{start + 3}.out')
-                    # ('medoid', f'log/output_{JOBID}_{start + 4}.out'),,
-                    # ('median', f'log/output_{JOBID}_{start + 5}.out'),
-                    # ('mean', f'log/output_{JOBID}_{start + 6}.out'),
-                    # # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 7}.out'),
+                    ('adaptive_krum', f'log/output_{JOBID}_{start}.out'),
+                    ('krum', f'log/output_{JOBID}_{start + 1}.out'),
+                    ('adaptive_krum+rp', f'log/output_{JOBID}_{start + 2}.out'),
+                    ('krum+rp', f'log/output_{JOBID}_{start + 3}.out')
+                    ('medoid', f'log/output_{JOBID}_{start + 4}.out'),
+                    ('median', f'log/output_{JOBID}_{start + 5}.out'),
+                    ('mean', f'log/output_{JOBID}_{start + 6}.out'),
+                    # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 7}.out'),
 
-                    # # Aggregated results: average point
-                    ('adaptive_krum_avg', f'log/output_{JOBID}_{start2}.out'),
-                    ('krum_avg', f'log/output_{JOBID}_{start2 + 1}.out'),
-                    ('adaptive_krum+rp_avg', f'log/output_{JOBID}_{start2 + 2}.out'),
-                    ('krum+rp_avg', f'log/output_{JOBID}_{start2 + 3}.out'),
-                    ('medoid_avg', f'log/output_{JOBID}_{start2 + 4}.out'),
-                    ('trimmed_mean', f'log/output_{JOBID}_{start2 + 5}.out'),
-                    ('geometric_median', f'log/output_{JOBID}_{start2 + 6}.out'),
+                    # # # Aggregated results: average point
+                    # ('adaptive_krum_avg', f'log/output_{JOBID}_{start2}.out'),
+                    # ('krum_avg', f'log/output_{JOBID}_{start2 + 1}.out'),
+                    # ('adaptive_krum+rp_avg', f'log/output_{JOBID}_{start2 + 2}.out'),
+                    # ('krum+rp_avg', f'log/output_{JOBID}_{start2 + 3}.out'),
+                    # ('medoid_avg', f'log/output_{JOBID}_{start2 + 4}.out'),
+                    # ('trimmed_mean', f'log/output_{JOBID}_{start2 + 5}.out'),
+                    # ('geometric_median', f'log/output_{JOBID}_{start2 + 6}.out'),
 
                 ]
                 case_name = extract_case_info(f'log/output_{JOBID}_{start}.out')

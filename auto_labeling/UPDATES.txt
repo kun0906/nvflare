@@ -1,3 +1,6 @@
+v0.3.8: Generated results for NSF
+    1. replication_neurips
+
 v0.3.7: Generate synthetic results
 
 
