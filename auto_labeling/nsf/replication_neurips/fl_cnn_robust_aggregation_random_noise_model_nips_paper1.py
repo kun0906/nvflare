@@ -6,7 +6,7 @@
     # $conda activate nvflare-3.10
     # $cd nvflare/auto_labeling
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
-    $PYTHONPATH=.:replication_neurips fl_cnn_robust_aggregation_random_spambase_nips_paper.py
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_model_nips_paper.py
 
     Byzantine (malicious or faulty) clients.
 
@@ -32,7 +32,6 @@ from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets
 
 import robust_aggregation
-import exp_weighted_mean
 from utils import timer
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
@@ -64,13 +63,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=100,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=3,
                         help="label rate, how much labeled data in local data.")
-    parser.add_argument('-s', '--server_epochs', type=int, required=False, default=5,
+    parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-n', '--num_clients', type=int, required=False, default=2,
-                        help="The number of clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='adaptive_krum',
+    parser.add_argument('-b', '--honest_clients', type=int, required=False, default=2,
+                        help="The number of honest clients.")
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='mean',
                         help="aggregation method.")
     # Parse the arguments
     args = parser.parse_args()
@@ -87,18 +86,16 @@ LABELING_RATE = 0.8
 BIG_NUMBER = int(args.labeling_rate)
 # BIG_NUMBER = args.labeling_rate
 # SERVER_EPOCHS = args.server_epochs
-SERVER_EPOCHS = args.server_epochs
-IID_CLASSES_CNT = 10
+SERVER_EPOCHS = 10000
+IID_CLASSES_CNT = args.server_epochs
 # NUM_HONEST_CLIENTS = args.honest_clients
 # NUM_BYZANTINE_CLIENTS = NUM_HONEST_CLIENTS - 1
 # the total number of clients is 20, in which 33% of them is malicious clients, i.e., f = int(0.33*20) = 6.
-TOTAL_CLIENTS = args.num_clients
+TOTAL_CLIENTS = 20
 ATTACK_METHOD = 'omniscient'
-if ATTACK_METHOD == 'omniscient':  # case 2
-    NUM_BYZANTINE_CLIENTS = min(int(0.45 * TOTAL_CLIENTS), int((TOTAL_CLIENTS-3)/2))  # 2 + 2f < n, so f <= int((n-3)/2)
-elif ATTACK_METHOD == 'gaussian_33':  # case 2
-    NUM_BYZANTINE_CLIENTS = min(int(0.33 * TOTAL_CLIENTS), int((TOTAL_CLIENTS-3)/2))  # 2 + 2f < n, so f <= int((n-3)/2)
-else:  # case 1: gaussian noise
+if ATTACK_METHOD == 'omniscient':   # case 2
+    NUM_BYZANTINE_CLIENTS = 0 # int(0.45 * TOTAL_CLIENTS)  # 0
+else:   # case 1: gaussian noise
     NUM_BYZANTINE_CLIENTS = 0  # int(0.33 * TOTAL_CLIENTS)  # 0
 NUM_HONEST_CLIENTS = TOTAL_CLIENTS - NUM_BYZANTINE_CLIENTS
 AGGREGATION_METHOD = args.aggregation_method
@@ -228,8 +225,8 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     local_cnn = local_cnn.to(DEVICE)
     local_cnn.load_state_dict(global_cnn.state_dict())  # Initialize client_gm with the parameters of global_model
     # optimizer = optim.Adam(local_cnn.parameters(), lr=0.005)
-    optimizer = optim.Adam(local_cnn.parameters(), lr=0.001, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
-    # optimizer = optim.SGD(local_cnn.parameters(), lr=0.001)
+    # optimizer = optim.Adam(local_cnn.parameters(), lr=0.001, betas=(0.5, 0.999), weight_decay=5e-5)  # L2
+    optimizer = optim.SGD(local_cnn.parameters(), lr=0.001)
     # optimizer = torch.optim.AdamW(local_cnn.parameters(), lr=0.001, weight_decay=5e-4)
     # criterion = nn.CrossEntropyLoss(weight=class_weight, reduction='mean').to(DEVICE)
     criterion = nn.CrossEntropyLoss(reduction='mean').to(DEVICE)
@@ -262,6 +259,16 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
             scheduler.step()  # adjust learning rate
 
             model_loss += loss_.item()
+
+            # from the paper, Machine Learning with Adversaries: Byzantine Tolerant Gradient Descent
+            # During round t, the parameter server broadcasts its parameter vector x t ∈ R d to all the workers.
+            # Each correct worker p computes an estimate V p t = G(x t , ξ p t ) of the gradient ∇Q(x t ) of the
+            # cost function Q, where ξ p t is a random variable representing, e.g.,
+            # the sample (or a mini-batch of samples) drawn from the dataset. so here for each epoch,
+            # only one batch is used to compute the gradient and update the model
+            break
+
+
         losses.append(model_loss)
 
         val_loss = model_loss
@@ -394,7 +401,6 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
         model.load_state_dict(client_state_dict)
         tmp_models.append(model)
     flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]
-    flatten_clients_updates = torch.stack(flatten_clients_updates)
     # for debugging
     if VERBOSE >= 30:
         for i, update in enumerate(flatten_clients_updates):
@@ -424,21 +430,15 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     elif aggregation_method == 'median':
         p = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = robust_aggregation.cw_median(flatten_clients_updates, clients_weights,
+        aggregated_update, clients_type_pred = robust_aggregation.median(flatten_clients_updates, clients_weights,
+                                                                         trimmed_average, p=p,
                                                                          verbose=VERBOSE)
-    elif aggregation_method == 'exp_weighted_mean':
-        clients_type_pred = None
-        aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
-            torch.stack(flatten_clients_updates),
-            x_est=flatten_clients_updates[-1],
-            r=0.1, max_iters=100, tol=1e-6,
-            verbose=VERBOSE)
-    elif aggregation_method == 'mean':
-        aggregated_update, clients_type_pred = robust_aggregation.cw_mean(flatten_clients_updates, clients_weights,
-                                                                       verbose=VERBOSE)
     else:
-        raise ValueError(f'Aggregation method {aggregation_method} not recognized')
-
+        p = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
+        p = p / 2  # top p/2 and bottom p/2 are removed
+        aggregated_update, clients_type_pred = robust_aggregation.mean(flatten_clients_updates, clients_weights,
+                                                                       trimmed_average, p=p,
+                                                                       verbose=VERBOSE)
     print(f'{aggregation_method}, clients_type: {clients_type_pred}, '
           f'client_updates: min: {min_value}, max: {max_value}')  # f'clients_weights: {clients_weights.numpy()},
 
@@ -846,20 +846,20 @@ def gen_client_spambase_data(data_dir='data/spambase', out_dir='.'):
     non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
     non_iid_cnt1 = 0
 
-    Xs, Ys = dirichlet_split(X, y, num_clients=TOTAL_CLIENTS, alpha=1.0)
+    Xs, Ys = dirichlet_split(X, y, num_clients=NUM_HONEST_CLIENTS, alpha=0.5)
     print([collections.Counter(y_) for y_ in Ys])
     # exit(0)
     ########################################### Benign Clients #############################################
     for c in range(NUM_HONEST_CLIENTS):
         client_type = 'Honest'
         print(f"\n*** client_{c}: {client_type}...")
-        # X_c = X[:, ]
-        # y_c = y[:, ]
+        X_c = X[:, ]
+        y_c = y[:, ]
         # # X_c = X[indices[c * step:(c + 1) * step]]
         # # y_c = y[indices[c * step:(c + 1) * step]]
         # # np.random.seed(c)  # change seed
 
-        X_c, y_c = Xs[c], Ys[c]  # using dirichlet distribution
+        # X_c, y_c = Xs[c], Ys[c]  # using dirichlet distribution
         num_samples_client = len(y_c)
         indices_sub = np.arange(num_samples_client)
         train_indices, test_indices = train_test_split(indices_sub, test_size=1 - LABELING_RATE,
@@ -897,15 +897,8 @@ def gen_client_spambase_data(data_dir='data/spambase', out_dir='.'):
             # each Byzantine worker computes an estimate of the gradient over the whole dataset (yielding a very
             # accurate estimate of the gradient), and proposes the opposite vector, scaled to a large length.
             # We refer to this behavior as omniscient.
-            # X_c = X[:, ]
-            # y_c = y[:, ]
-            X_c = Xs[c]
-            y_c = Ys[c]
-        elif ATTACK_METHOD == 'gaussian_33':
-            # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
-            #             # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
-            X_c = Xs[c]
-            y_c = Ys[c]
+            X_c = X[:, ]
+            y_c = y[:, ]
         else:
             # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
             # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
@@ -1033,7 +1026,7 @@ def clients_training(data_dir, epoch, global_cnn):
             train_cnn(local_cnn, global_cnn, local_data, train_info)
             delta_w = {key: -1 * scale_factor * (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
                        in global_cnn.state_dict()}
-        elif ATTACK_METHOD == 'gaussian_33':
+        else:
             # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
             # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
             new_state_dict = {}
@@ -1044,19 +1037,6 @@ def clients_training(data_dir, epoch, global_cnn):
             # w = w0 - \eta * \namba_w, so delta_w = w0 - w, only send update difference to the server
             delta_w = {key: (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
                        in global_cnn.state_dict()}
-        else:
-            # # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
-            # # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
-            # new_state_dict = {}
-            # for key, param in global_cnn.state_dict().items():
-            #     noise = torch.normal(0, 200, size=param.shape).to(DEVICE)
-            #     new_state_dict[key] = noise
-            # local_cnn.load_state_dict(new_state_dict)
-            # # w = w0 - \eta * \namba_w, so delta_w = w0 - w, only send update difference to the server
-            # delta_w = {key: (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
-            #            in global_cnn.state_dict()}
-            raise NotImplementedError(ATTACK_METHOD)
-
         clients_cnns[c] = delta_w
 
         print('Evaluate CNNs...')
@@ -1076,10 +1056,10 @@ def main():
     print(f"\n*************************** Generate Clients Data ******************************")
     dataset = 'spambase'
     if dataset == 'spambase':
-        data_dir = './data/spambase'
+        data_dir = '../../data/spambase'
         sub_dir = (f'data/spambase/random_noise/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
-        # data_out_dir = data_dir
+        data_out_dir = data_dir
         data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
         print(data_out_dir)
         gen_client_spambase_data(data_dir=data_dir, out_dir=data_out_dir)  # for spambase dataset
@@ -1123,9 +1103,7 @@ def main():
 
 
 if __name__ == '__main__':
-    IN_DIR = '../data/spambase'
-    # IN_DIR = 'fl/mnist'
-    # LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+    IN_DIR = '../../data/spambase'
     LABELS = {0, 1}
     NUM_CLASSES = len(LABELS)
     print(f'IN_DIR: {IN_DIR}, AGGREGATION_METHOD: {AGGREGATION_METHOD}, LABELING_RATE: {LABELING_RATE}, '

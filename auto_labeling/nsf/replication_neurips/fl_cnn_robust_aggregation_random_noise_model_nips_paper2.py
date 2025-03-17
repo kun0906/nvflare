@@ -1244,7 +1244,7 @@ def main():
     print(f"\n*************************** Generate Clients Data ******************************")
     dataset = 'spambase'
     if dataset == 'spambase':
-        data_dir = '../data/spambase'
+        data_dir = '../../data/spambase'
         sub_dir = (f'data/spambase/random_noise/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
         data_out_dir = data_dir
@@ -1291,7 +1291,7 @@ def main():
 
 
 if __name__ == '__main__':
-    IN_DIR = '../data/spambase'
+    IN_DIR = '../../data/spambase'
     # IN_DIR = 'fl/mnist'
     # LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
     LABELS = {0, 1}

@@ -1,3 +1,6 @@
+v0.3.9: Generated results for NSF on MNIST
+
+
 v0.3.8: Generated results for NSF
     1. replication_neurips
 

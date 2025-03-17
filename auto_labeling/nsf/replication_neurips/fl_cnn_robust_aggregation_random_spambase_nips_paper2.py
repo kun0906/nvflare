@@ -8,6 +8,8 @@
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
     $PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_model_nips_paper.py
 
+    Byzantine (malicious or faulty) clients.
+
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 """
 
@@ -30,6 +32,7 @@ from torch.optim.lr_scheduler import StepLR
 from torchvision import datasets
 
 import robust_aggregation
+import exp_weighted_mean
 from utils import timer
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
@@ -61,13 +64,13 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=3,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=100,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-n', '--server_epochs', type=int, required=False, default=5,
                         help="The number of server epochs (integer).")
     parser.add_argument('-b', '--honest_clients', type=int, required=False, default=2,
                         help="The number of honest clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='mean',
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='exp_weighted_mean',
                         help="aggregation method.")
     # Parse the arguments
     args = parser.parse_args()
@@ -84,16 +87,16 @@ LABELING_RATE = 0.8
 BIG_NUMBER = int(args.labeling_rate)
 # BIG_NUMBER = args.labeling_rate
 # SERVER_EPOCHS = args.server_epochs
-SERVER_EPOCHS = 100
+SERVER_EPOCHS = 2
 IID_CLASSES_CNT = args.server_epochs
 # NUM_HONEST_CLIENTS = args.honest_clients
 # NUM_BYZANTINE_CLIENTS = NUM_HONEST_CLIENTS - 1
 # the total number of clients is 20, in which 33% of them is malicious clients, i.e., f = int(0.33*20) = 6.
 TOTAL_CLIENTS = 20
 ATTACK_METHOD = 'omniscient'
-if ATTACK_METHOD == 'omniscient':   # case 2
+if ATTACK_METHOD == 'omniscient':  # case 2
     NUM_BYZANTINE_CLIENTS = int(0.45 * TOTAL_CLIENTS)  # 0
-else:   # case 1: gaussian noise
+else:  # case 1: gaussian noise
     NUM_BYZANTINE_CLIENTS = 0  # int(0.33 * TOTAL_CLIENTS)  # 0
 NUM_HONEST_CLIENTS = TOTAL_CLIENTS - NUM_BYZANTINE_CLIENTS
 AGGREGATION_METHOD = args.aggregation_method
@@ -138,8 +141,7 @@ class CNN(nn.Module):
         #     nn.LeakyReLU(0.2),
         # )
 
-        # self.fc11 = nn.Linear(57, 32)   # for spambase
-        self.fc11 = nn.Linear(28*28, 32)    # for mnist
+        self.fc11 = nn.Linear(57, 32)
         self.fc21 = nn.Linear(32, 16)
         self.fc22 = nn.Linear(16, 8)
         self.fc33 = nn.Linear(8, num_classes)
@@ -422,6 +424,13 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
         aggregated_update, clients_type_pred = robust_aggregation.median(flatten_clients_updates, clients_weights,
                                                                          trimmed_average, p=p,
                                                                          verbose=VERBOSE)
+    elif aggregation_method == 'exp_weighted_mean':
+        clients_type_pred = None
+        aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
+            torch.stack(flatten_clients_updates),
+            x_est=flatten_clients_updates[-1], f=NUM_BYZANTINE_CLIENTS,
+            r=0.1, max_iters=100, tol=1e-6,
+            verbose=VERBOSE)
     else:
         p = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
@@ -926,153 +935,6 @@ def gen_client_spambase_data(data_dir='data/spambase', out_dir='.'):
         torch.save(local_data, out_file)
 
 
-
-
-@timer
-def gen_client_mnist_data(data_dir='data/mnist', out_dir='.'):
-    os.makedirs(out_dir, exist_ok=True)
-
-    # spambase data
-    # df = pd.read_csv(os.path.join(data_dir, 'spambase.data'), dtype=float, header=None)
-    # X, y = torch.tensor(df.iloc[:, 0:-1].values), torch.tensor(df.iloc[:, -1].values, dtype=int)
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,
-    #                                                     shuffle=True, random_state=42)
-    # # Initialize scaler and fit ONLY on training data
-    # scaler = StandardScaler()
-    # scaler.fit(X_train)
-    # X_train = scaler.transform(X_train)
-    # X_test = scaler.transform(X_test)
-
-    # MNIST dataset
-    train_dataset = datasets.MNIST(root="./data", train=True, transform=None, download=True)
-    test_dataset = datasets.MNIST(root="./data", train=False, transform=None, download=True)
-    X_test = test_dataset.data
-    y_test = test_dataset.targets
-
-    X_train, y_train = train_dataset.data, train_dataset.targets
-    X_train = normalize(X_train).reshape(-1, 28 * 28)
-    X_test = normalize(X_test).reshape(-1, 28 * 28)
-
-    mask = np.full(len(y_test), False)
-    for l in LABELS:
-        mask_ = y_test == l
-        mask[mask_] = True
-    X_test, y_test = X_test[mask], y_test[mask]
-    # preprocessing X_test
-    # X_test = normalize(X_test.numpy())
-    y_test = y_test.numpy()
-    shared_data = {"X": torch.tensor(X_test).float().to(DEVICE), 'y': torch.tensor(y_test).to(DEVICE)}
-
-    X, y = X_train, y_train
-    mask = np.full(len(y), False)
-    for l in LABELS:
-        mask_ = y == l
-        mask[mask_] = True
-    X, y = X[mask], y[mask]
-    # X = normalize(X.numpy())  # [-1, 1]
-    y = y.numpy()
-    num_samples = len(y)
-    dim = X.shape[1]
-
-    random_state = 42
-    torch.manual_seed(random_state)
-    indices = torch.randperm(num_samples)  # Randomly shuffle
-    step = int(num_samples / NUM_HONEST_CLIENTS)
-    # step = 50  # for debugging
-    non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
-    non_iid_cnt1 = 0
-
-    Xs, Ys = dirichlet_split(X, y, num_clients=NUM_HONEST_CLIENTS, alpha=0.5)
-    print([collections.Counter(y_) for y_ in Ys])
-    # exit(0)
-    ########################################### Benign Clients #############################################
-    for c in range(NUM_HONEST_CLIENTS):
-        client_type = 'Honest'
-        print(f"\n*** client_{c}: {client_type}...")
-        # X_c = X[:, ]
-        # y_c = y[:, ]
-        # # X_c = X[indices[c * step:(c + 1) * step]]
-        # # y_c = y[indices[c * step:(c + 1) * step]]
-        # # np.random.seed(c)  # change seed
-
-        X_c, y_c = Xs[c], Ys[c]  # using dirichlet distribution
-        num_samples_client = len(y_c)
-        indices_sub = np.arange(num_samples_client)
-        train_indices, test_indices = train_test_split(indices_sub, test_size=1 - LABELING_RATE,
-                                                       shuffle=True, random_state=random_state)
-        train_indices, val_indices = train_test_split(train_indices, test_size=0.1, shuffle=True,
-                                                      random_state=random_state)
-        train_mask = np.full(num_samples_client, False)
-        val_mask = np.full(num_samples_client, False)
-        test_mask = np.full(num_samples_client, False)
-        train_mask[train_indices] = True
-        val_mask[val_indices] = True
-        test_mask[test_indices] = True
-
-        local_data = {'client_type': client_type,
-                      'X': torch.tensor(X_c).float().to(DEVICE), 'y': torch.tensor(y_c).to(DEVICE),
-                      'train_mask': torch.tensor(train_mask, dtype=torch.bool).to(DEVICE),
-                      'val_mask': torch.tensor(val_mask, dtype=torch.bool).to(DEVICE),
-                      'test_mask': torch.tensor(test_mask, dtype=torch.bool).to(DEVICE),
-                      'shared_data': shared_data}
-
-        label_cnts = collections.Counter(local_data['y'].tolist())
-        print(f'client_{c} data ({len(label_cnts.keys())}):', label_cnts)
-        print_data(local_data)
-
-        out_file = f'{out_dir}/{c}.pth'
-        torch.save(local_data, out_file)
-
-    ########################################### Malicious Clients #############################################
-    indices = torch.randperm(num_samples)  # Randomly shuffle
-    for c in range(NUM_HONEST_CLIENTS, NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS, 1):
-        client_type = 'malicious'
-        print(f"\n*** client_{c}: {client_type}...")
-
-        if ATTACK_METHOD == 'omniscient':
-            # each Byzantine worker computes an estimate of the gradient over the whole dataset (yielding a very
-            # accurate estimate of the gradient), and proposes the opposite vector, scaled to a large length.
-            # We refer to this behavior as omniscient.
-            X_c = X[:, ]
-            y_c = y[:, ]
-        else:
-            # The Gaussian Byzantine workers: Byzantine workers do not compute an estimator of the gradient and send a random vector,
-            # drawn from a Gaussian distribution of which we could set the variance high enough (200) to break averaging strategies.
-            X_c = torch.zeros(X.shape, dtype=float).to(DEVICE)
-            y_c = torch.zeros(y.shape, dtype=int).to(DEVICE)
-
-        # might be used in server
-        # train_info = {"client_type": client_type, "cnn": {}, 'client_id': c}
-        # Create indices for train/test split
-        num_samples_client = len(y_c)
-        indices_sub = np.arange(num_samples_client)
-        train_indices, test_indices = train_test_split(indices_sub, test_size=1 - LABELING_RATE,
-                                                       shuffle=True, random_state=random_state)
-        train_indices, val_indices = train_test_split(train_indices, test_size=0.1, shuffle=True,
-                                                      random_state=random_state)
-        train_mask = np.full(num_samples_client, False)
-        val_mask = np.full(num_samples_client, False)
-        test_mask = np.full(num_samples_client, False)
-        train_mask[train_indices] = True
-        val_mask[val_indices] = True
-        test_mask[test_indices] = True
-
-        # train_info['NUM_BYZANTINE_CLIENTS'] = NUM_BYZANTINE_CLIENTS
-        local_data = {'client_type': client_type,
-                      'X': torch.tensor(X_c).to(DEVICE).float(), 'y': torch.tensor(y_c).to(DEVICE),
-                      'train_mask': torch.tensor(train_mask, dtype=torch.bool).to(DEVICE),
-                      'val_mask': torch.tensor(val_mask, dtype=torch.bool).to(DEVICE),
-                      'test_mask': torch.tensor(test_mask, dtype=torch.bool).to(DEVICE),
-                      'shared_data': shared_data}
-
-        label_cnts = collections.Counter(local_data['y'].tolist())
-        print(f'client_{c} data ({len(label_cnts.keys())}):', label_cnts)
-        print_data(local_data)
-
-        out_file = f'{out_dir}/{c}.pth'
-        torch.save(local_data, out_file)
-
-
 def clients_training(data_dir, epoch, global_cnn):
     clients_cnns = {}
     clients_info = {}  # extra information (e.g., number of samples) of clients that can be used in aggregation
@@ -1190,12 +1052,13 @@ def clients_training(data_dir, epoch, global_cnn):
 @timer
 def main():
     print(f"\n*************************** Generate Clients Data ******************************")
+    dataset = 'spambase'
     if dataset == 'spambase':
-        data_dir = '../data/spambase'
+        data_dir = '../../data/spambase'
         sub_dir = (f'data/spambase/random_noise/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
         data_out_dir = data_dir
-        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
+        # data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
         print(data_out_dir)
         gen_client_spambase_data(data_dir=data_dir, out_dir=data_out_dir)  # for spambase dataset
     else:
@@ -1204,7 +1067,7 @@ def main():
         print(data_dir)
         data_out_dir = data_dir
         data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
-        gen_client_mnist_data(data_dir=data_dir, out_dir=data_out_dir)  # for mnist dataset
+        # gen_client_data(data_dir=data_dir, out_dir=data_out_dir)  # for MNIST dataset
 
     print(f"\n***************************** Global Models *************************************")
     global_cnn = CNN(num_classes=NUM_CLASSES)
@@ -1234,18 +1097,14 @@ def main():
     # print_histories_server(histories['server'])
 
     # Delete all the generated data
-    if data_out_dir != data_dir:
-        shutil.rmtree(data_out_dir)
+    # shutil.rmtree(data_out_dir)
 
 
 if __name__ == '__main__':
-    # IN_DIR = 'data/spambase'
-    # dataset = 'spambase'
-    # LABELS = {0, 1}
-    IN_DIR = '../fl/mnist'
-    dataset = 'mnist'
-    LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-    # LABELS = {0, 1}
+    IN_DIR = '../../data/spambase'
+    # IN_DIR = 'fl/mnist'
+    # LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+    LABELS = {0, 1}
     NUM_CLASSES = len(LABELS)
     print(f'IN_DIR: {IN_DIR}, AGGREGATION_METHOD: {AGGREGATION_METHOD}, LABELING_RATE: {LABELING_RATE}, '
           f'NUM_HONEST_CLIENTS: {NUM_HONEST_CLIENTS}, NUM_BYZANTINE_CLIENTS: {NUM_BYZANTINE_CLIENTS}, '

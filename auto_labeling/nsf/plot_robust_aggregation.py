@@ -115,13 +115,12 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     start2 = start + 6
     method_txt_files = [
         # # # # Aggregated results: single point
+        # ('refined_krum', f'log/output_{JOBID}_{start}.out'),
         ('adaptive_krum', f'log/output_{JOBID}_{start}.out'),
-        # ('krum', f'log/output_{JOBID}_{start + 1}.out'),
-        # ('adaptive_krum+rp', f'log/output_{JOBID}_{start + 2}.out'),
-        # ('krum+rp', f'log/output_{JOBID}_{start + 3}.out'),
-        # ('median', f'log/output_{JOBID}_{start + 4}.out'),
-        # ('mean', f'log/output_{JOBID}_{start + 5}.out'),
-        # # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 6}.out'),
+        ('krum', f'log/output_{JOBID}_{start + 1}.out'),
+        # ('median', f'log/output_{JOBID}_{start + 2}.out'),
+        ('mean', f'log/output_{JOBID}_{start + 3}.out'),
+        # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 6}.out'),
 
         # # Aggregated results: average point
         # # start2 = start + 5
@@ -137,13 +136,14 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
 
     # Example usage
     namespace_params = extract_namespace(f'log/output_{JOBID}_{start}.out')
+    print(namespace_params, flush=True)
     # if (namespace_params['server_epochs'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
     #         or namespace_params['labeling_rate'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
     #         or namespace_params['num_clients'] in []):
     #     return
     # print(namespace_params)
-    if (namespace_params['server_epochs'] == 10 and namespace_params['labeling_rate'] != 0.0
-            and namespace_params['num_clients'] == 20):
+    if (namespace_params['server_epochs'] == 100 and namespace_params['labeling_rate'] != 0.0
+            and namespace_params['num_clients'] == 50):
         pass
 
         print(namespace_params)
@@ -168,30 +168,56 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
 
     plt.close()
 
+    fig, ax = plt.subplots()
+    FONTSIZE = 10
     aggregation_methods = list(global_accs.keys())
     makers = ['o', '+', 's', '*', 'v', '.', 'p', 'h', 'x', '8', '1', '^', 'D', 'd']
     for i in range(len(aggregation_methods)):
         agg_method, txt_file = aggregation_methods[i]
         label = agg_method
-        ys = global_accs[(agg_method, txt_file)]['shared_accs']  # [:10]
-        if METRIC == 'misclassified_error':
-            ys = [1 - v for v in ys]
+        if METRIC == 'accuracy':
+            vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
+        elif METRIC == 'l2_error':
+            vs = [vs['l2_error'] for vs in global_accs[(agg_method, txt_file)]]
+        elif METRIC == 'time_taken':
+            vs = [vs['time_taken'] for vs in global_accs[(agg_method, txt_file)]]
+            if agg_method == 'median_avg': continue
+        elif METRIC == 'misclassification_error':
+            vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
+            vs = [(1 - v[0], v[1]) for v in vs] # (\mu, \std)
+        else:
+            raise NotImplementedError(METRIC)
+        ys, ys_errs = zip(*vs)
         xs = range(len(ys))
         print(agg_method, txt_file, ys, flush=True)
-        plt.plot(xs, ys, label=label, marker=makers[i])
-    plt.xlabel('Server Epochs')
+
+        # plt.plot(xs, ys, label=label, marker=makers[i])
+        # axes[i_row, j_col].plot(xs, ys, label=label, marker=makers[i])
+        # axes[i_row, j_col].errorbar(xs, ys, yerr=ys_errs, label=label, marker=makers[i], capsize=3)
+        plt.plot(xs, ys, label=label, marker=makers[i])  # Plot the line
+        # axes[i_row, j_col].fill_between(xs,
+        #                                 [y - e for y, e in zip(ys, ys_errs)],
+        #                                 [y + e for y, e in zip(ys, ys_errs)],
+        #                                 color='blue', alpha=0.3)  # label='Error Area'
+    plt.xlabel('Epochs', fontsize=FONTSIZE)
+    if len(xs) > 50:
+        xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 20 == 0]
+    else:
+        xs_labels = [v + 1 for v in xs]
+    ax.set_xticks(xs_labels)
+    ax.set_xticklabels(xs_labels)
     if METRIC == 'loss':
-        plt.ylabel('Loss')
+        plt.ylabel('Loss', fontsize=FONTSIZE)
     elif METRIC == 'l2_error':
-        plt.ylabel('L_2 Error')
+        plt.ylabel('L_2 Error', fontsize=FONTSIZE)
     elif METRIC == 'time_taken':
-        plt.ylabel('Time Taken')
-    elif METRIC == 'misclassified_error':
-        plt.ylabel('Misclassified Error')
+        plt.ylabel('Time Taken', fontsize=FONTSIZE)
+    elif METRIC == 'misclassification_error':
+        plt.ylabel('Misclassification Error', fontsize=FONTSIZE)
     else:
         plt.ylabel('Accuracy')
-    plt.title(f'Global Model ({JOBID}), start:{start}, {title}', fontsize=10)
-    plt.legend(fontsize=6.5, loc='lower right')
+    # plt.title(f'Global Model ({JOBID}), start:{start}, {title}', fontsize=10)
+    plt.legend(fontsize=FONTSIZE, loc='best')
 
     # attacker_ratio = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
     # title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
@@ -270,7 +296,7 @@ def plot_robust_aggregation_all():
     """
     plt.close()
 
-    fig, axes = plt.subplots(nrows=3, ncols=8, sharey=None, figsize=(30, 15))  # width, height
+    fig, axes = plt.subplots(nrows=3, ncols=5, sharey=None, figsize=(15, 10))  # width, height
     # axes = axes.reshape((1, -1))
 
     j_col = 0
@@ -300,7 +326,7 @@ def plot_robust_aggregation_all():
 
                 ]
                 case_name = extract_case_info(f'log/output_{JOBID}_{start}.out')
-                print(case_name)
+                print(case_name, flush=True)
                 # Example usage
                 namespace_params = extract_namespace(f'log/output_{JOBID}_{start}.out')
                 # if (namespace_params['server_epochs'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
@@ -308,8 +334,8 @@ def plot_robust_aggregation_all():
                 #         or namespace_params['num_clients'] in []):
                 #     return
                 # print(namespace_params)
-                if (namespace_params['server_epochs'] == 10 and namespace_params['labeling_rate'] != 0.0
-                        and namespace_params['num_clients'] == 20):
+                if (namespace_params['server_epochs'] == 100 and namespace_params['labeling_rate'] != 0.0
+                        and namespace_params['num_clients'] == 50):
                     pass
 
                     print(namespace_params)
@@ -344,7 +370,7 @@ def plot_robust_aggregation_all():
                     elif METRIC == 'time_taken':
                         vs = [vs['time_taken'] for vs in global_accs[(agg_method, txt_file)]]
                         if agg_method == 'median_avg': continue
-                    # elif METRIC == 'misclassified_error':
+                    # elif METRIC == 'misclassification_error':
                     #     vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
                     #     vs = [1 - v for v in vs]
                     else:
@@ -361,22 +387,24 @@ def plot_robust_aggregation_all():
                     #                                 [y - e for y, e in zip(ys, ys_errs)],
                     #                                 [y + e for y, e in zip(ys, ys_errs)],
                     #                                 color='blue', alpha=0.3)  # label='Error Area'
-                plt.xlabel('Server Epochs')
+                plt.xlabel('Epochs', fontsize=10)
                 if METRIC == 'loss':
                     ylabel = 'Loss'
                 elif METRIC == 'l2_error':
                     ylabel = 'L_2 Error'
                 elif METRIC == 'time_taken':
                     ylabel = 'Time Taken'
-                # elif METRIC == 'misclassified_error':
-                #     ylabel = 'Misclassified Error'
+                # elif METRIC == 'misclassification_error':
+                #     ylabel = 'Misclassification Error'
                 else:
                     ylabel = 'Accuracy'
-                axes[i_row, j_col].set_ylabel(ylabel)
+
+                FONTSIZE = 20
+                axes[i_row, j_col].set_ylabel(ylabel, fontsize=FONTSIZE)
 
                 variable = str(namespace_params['labeling_rate'])
-                axes[i_row, j_col].set_title(f'start:{start}, {variable}', fontsize=10)
-                axes[i_row, j_col].legend(fontsize=6.5, loc='lower right')
+                axes[i_row, j_col].set_title(f'start:{start}, {variable}', fontsize=FONTSIZE)
+                axes[i_row, j_col].legend(fontsize=6.5, loc='lower right', fontsie=FONTSIZE)
 
             except Exception as e:
                 print(e)
@@ -387,7 +415,7 @@ def plot_robust_aggregation_all():
     # title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
     #          f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
     # plt.suptitle(f'Global Model ({JOBID}), start:{start}, {title}, {METRIC}', fontsize=10)
-    plt.suptitle(f'Global Model ({JOBID}), {title}\n{case_name}', fontsize=10)
+    plt.suptitle(f'Global Model ({JOBID}), {title}\n{case_name}', fontsize=FONTSIZE)
     # Adjust layout to prevent overlap
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
@@ -395,24 +423,45 @@ def plot_robust_aggregation_all():
     fig_file = f'global_{JOBID}.png'
     print(fig_file)
     # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
-    plt.savefig(fig_file, dpi=600)
+    plt.savefig(fig_file, dpi=300)
     plt.show()
     plt.close()
 
 
 if __name__ == '__main__':
     # plot_robust_aggregation()
-    # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
-    JOBID = 272092  # 266353 #266233 #265651 #265426 #265364 #265338 # 265030
-    # METRIC = 'loss'
-    # METRIC = 'misclassified_error'  # or misclassification Rate
-    # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken
 
-    # for start in range(0, 100, 14):
-    #     try:
-    #         print(f'\nstart: {start}')
-    #         plot_robust_aggregation(start, METRIC)
-    #     except Exception as e:
-    #         print(e)
+    ######################### Results 20250313 ###############################################
+    # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
+
+    # # Random noise injection with alpha=10, client_epochs=20, batch_size=512, epoch=10, num_clients=20, f=8
+    # JOBID = 273327  # for Model Poisoning Attacks, random noise injection to model updates
+
+    # # # Large Value with alpha=10, client_epochs=20, batch_size=512, epoch=10, num_clients=20, f=8
+    # JOBID = 273345  # for Model Poisoning Attacks, Large values to model updates
+
+
+    ### Label flipping
+
+    # # Flip labels with alpha=10, client_epochs=1, batch_size=512, epoch=10, num_clients=20, f=8
+    # JOBID = 273678  # for Data Poisoning Attacks, flip labels for Byzantine clients
+
+    # # Flip labels with alpha=10, client_epochs=1, batch_size=512, epoch=100, num_clients=50, f=23
+    # JOBID = 273720  # for Data Poisoning Attacks, flip labels for Byzantine clients
+
+    ######################################################################################
+
+    # JOBID = 273742
+    # JOBID = 273327
+    # METRIC = 'loss'
+    # METRIC = 'misclassification_error'  # or misclassification Rate
+    # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken
+    METRIC = 'accuracy'
+    for start in range(0, 100, 4):
+        try:
+            print(f'\nstart: {start}')
+            plot_robust_aggregation(start, METRIC)
+        except Exception as e:
+            print(e)
 
     plot_robust_aggregation_all()

@@ -519,8 +519,8 @@ def synthetic_case(tunable_values, case='byzantine_location', N=None, D=None, by
                 ylabel = '$||\hat{\mu} - \\bar{\mu}||_2$'
             elif METRIC == 'time_taken':
                 ylabel = 'Time Taken'
-            # elif METRIC == 'misclassified_error':
-            #     ylabel = 'Misclassified Error'
+            # elif METRIC == 'misclassification_error':
+            #     ylabel = 'Misclassification Error'
             else:
                 ylabel = 'Accuracy'
             axes[i_row, j_col].set_ylabel(ylabel)

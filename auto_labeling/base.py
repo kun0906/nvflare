@@ -112,7 +112,9 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     #       {k: float(f"{v:.2f}") for k, v in labeled_classes_weights.items()})
 
     # only train smaller model
-    epochs_client = 20
+    CLIENT_EPOCHS = train_info['CFG'].CLIENT_EPOCHS
+    BATCH_SIZE = train_info['CFG'].BATCH_SIZE
+    # epochs_client = 20
     losses = []
     val_losses = []
     best = {'epoch': -1, 'val_accuracy': -1.0, 'val_accs': [], 'val_losses': [], 'train_accs': [], 'train_losses': []}
@@ -132,8 +134,10 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
     scheduler = StepLR(optimizer, step_size=100, gamma=0.9)
 
     dataset = CustomDataset(X_train, y_train)
-    train_loader = DataLoader(dataset, batch_size=512, shuffle=True)
-    for epoch in range(epochs_client):
+    if BATCH_SIZE == -1:
+        BATCH_SIZE = len(y_train)
+    train_loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
+    for epoch in range(CLIENT_EPOCHS):
         local_cnn.train()  #
         model_loss = 0
         for X_batch, y_batch in train_loader:
@@ -166,7 +170,7 @@ def train_cnn(local_cnn, global_cnn, local_data, train_info={}):
         #                                                                 best=best)
         # val_losses.append(val_loss.item())
         val_loss = model_loss
-        if epoch % 100 == 0 or epoch == epochs_client - 1:
+        if epoch % 100 == 0 or epoch == CLIENT_EPOCHS - 1:
             print(f"train_cnn epoch: {epoch}, local_cnn train loss: {model_loss:.4f}, "
                   f"val_loss: {val_loss:.4f}, LR: {scheduler.get_last_lr()[0]}")
 
@@ -297,6 +301,11 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
         model.load_state_dict(client_state_dict)
         tmp_models.append(model)
     flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]
+
+    # for v in flatten_clients_updates:
+    #     # print(v.tolist())
+    #     print_histgram(v, bins=10, value_type='update')
+
     flatten_clients_updates = torch.stack(flatten_clients_updates)
     print(f'each update shape: {flatten_clients_updates[1].shape}')
     # for debugging

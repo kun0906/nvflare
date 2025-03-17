@@ -61,7 +61,7 @@ def dirichlet_split(X, y, num_clients, alpha=0.5, random_state=42):
             proportions = [v + left_per_each for v in proportions]
         # Adjust the last client to ensure total sum matches
         proportions[-1] += len(indices) - sum(proportions)
-        print(f'class {c}: ', sum(proportions), list(proportions), left, f', alpha: {alpha}')
+        print(f'class {c}: ', sum(proportions), [int(v) for v in list(proportions)], f', left: {left}, alpha: {alpha}')
 
         start = 0
         for client, num_samples in enumerate(proportions):

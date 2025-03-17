@@ -126,60 +126,73 @@ def parse_file(txt_file):
     return results
 
 
-def plot_robust_aggregation(start=0):
-    global_accs = {}
-    method_txt_files = [
-        ('adaptive_krum', f'log/output_{JOBID}_{start}.out'),
-        ('krum', f'log/output_{JOBID}_{start + 1}.out'),
-        # ('median', f'log/output_{JOBID}_{start + 2}.out'),
-        ('mean', f'log/output_{JOBID}_{start + 3}.out'),
-        # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 4}.out'),
-    ]
+def plot_robust_aggregation():
 
-    # Example usage
-    namespace_params = extract_namespace(f'log/output_{JOBID}_{start}.out')
-    # if (namespace_params['server_epochs'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
-    #         or namespace_params['labeling_rate'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
-    #         or namespace_params['honest_clients'] in []):
-    #     return
-    # print(namespace_params)
-    if (namespace_params['server_epochs'] == 200 and namespace_params['labeling_rate'] !=0.0
-            and namespace_params['num_clients'] == 50):
-        pass
+    # JOBID_no_malicious = 265364  # with 0% malicious clients
+    # JOBID_with_malicious = 265338  # with 45% malicious clients
+    # starts = [0, 4, 8, 12, 16] #  the correpsoding epochs = [20, 50, 80, 100]
+    # epochs = [3, 20, 50, 80, 100]
 
-        print(namespace_params)
-    else:
-        return
 
-    title = ', '.join(['num_clients:' + str(namespace_params['num_clients']),
-                       'classes_cnt:' + str(namespace_params['server_epochs']),
-                       'large_value:' + str(namespace_params['labeling_rate'])])
-    for method, txt_file in method_txt_files:
-        results = parse_file(txt_file)
-        global_accs[method] = results
+    # JOBID_no_malicious = 265412  # with 0% malicious clients
+    # JOBID_with_malicious = 265651  # with 45% malicious clients
+    # starts = [4, 8, 12, 16, 20, 24] #  the correpsoding BATCH_SIZE = [20, 50, 80, 100]
+    # BATCH_SIZE = [2, 3, 20, 50, 80, 100]
 
-    plt.close()
+    JOBID_no_malicious = 272544  # with 0% malicious clients
+    JOBID_with_malicious = 272544  # with 45% malicious clients
+    starts = [4]  # the correpsoding BATCH_SIZE = [20, 50, 80, 100]
+    # BATCH_SIZE = [2, 3, 20, 50, 80, 100]
+    # BATCH_SIZE = [2, 3, 20, 50, 80, 100]
+    BATCH_SIZE = range(20)
+
+    all_results = {}
+    for start in starts:
+        global_accs = {}
+        method_txt_files = [
+            # # ('adaptive_krum', f'log/output_{JOBID_no_malicious}_{start}.out'),
+            # ('krum (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 1}.out'),
+            # # ('median', f'log/output_{JOBID}_{start + 2}.out'),
+            # ('mean (0% byz)', f'log/output_{JOBID_no_malicious}_{start + 3}.out'),
+
+            ('adaptive_krum (45% byz)', f'log/output_{JOBID_with_malicious}_{start}.out'),
+            ('krum (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 1}.out'),
+            ('median (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 2}.out'),
+            ('mean (45% byz)', f'log/output_{JOBID_with_malicious}_{start + 3}.out'),
+        ]
+
+        for method, txt_file in method_txt_files:
+            results = parse_file(txt_file)
+            global_accs[method] = results
+
+        all_results[start] = global_accs
 
     aggregation_methods = list(global_accs.keys())
-    makers = ['o', '+', 's', '*', 'v']
+    makers = ['o', '+', 's', '*']
+    colors = ['']
     for i in range(len(aggregation_methods)):
         agg_method = aggregation_methods[i]
         label = agg_method
-        ys = global_accs[agg_method]['shared_accs'][:10]
-        if METRIC == 'misclassified_error':
+        ys = global_accs[agg_method]['shared_accs'] #[:10]
+        # # choose sever_epoch = 10 for each method
+        # sever_epoch = 100
+        # ys = [res[agg_method]['shared_accs'][sever_epoch] for res in all_results.values()]
+        if METRIC == 'misclassification_error':
             ys = [1-v for v in ys]
-        xs = range(len(ys))
         print(agg_method, [float(f'{v:.2f}') for v in ys])
+        xs = range(len(ys))
+        # xs = BATCH_SIZE
         plt.plot(xs, ys, label=label, marker=makers[i])
-    plt.xlabel('Server Epochs')
+    plt.xlabel('Batch size')
     if METRIC == 'loss':
         plt.ylabel('Loss')
-    elif METRIC == 'misclassified_error':
-        plt.ylabel('Misclassified Error')
+    elif METRIC == 'misclassification_error':
+        plt.ylabel('Misclassification Error')
     else:
         plt.ylabel('Accuracy')
-    # plt.title(f'Global Model ({JOBID}), start:{start}, {title}', fontsize=10)
-    plt.legend(fontsize=6.5, loc='best')
+    title = f'{JOBID_no_malicious} + {JOBID_with_malicious}'
+    plt.title(f'Global Model, start:{start}, {title}', fontsize=10)
+    plt.legend(fontsize=6.5, loc='lower right')
 
     # attacker_ratio = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
     # title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
@@ -189,7 +202,7 @@ def plot_robust_aggregation(start=0):
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
     #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
-    fig_file = 'global_cnn.png'
+    fig_file = '../../global_cnn.png'
     # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)
     plt.show()
@@ -197,11 +210,15 @@ def plot_robust_aggregation(start=0):
 
 
 if __name__ == '__main__':
+    # METRIC = 'misclassification_error'  # or misclassification Rate
+    # plot_robust_aggregation()
+
+
     # plot_robust_aggregation()
     # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
-    JOBID = 272920 # 266353 #266233 #265651 #265426 #265364 #265338 # 265030
+    JOBID = 265290 # 265030
     METRIC = 'loss'
-    METRIC = 'misclassified_error'  # or misclassification Rate
+    METRIC = 'misclassification_error'  # or misclassification Rate
     for start in range(0, 100, 4):
         try:
             print(f'\nstart: {start}')

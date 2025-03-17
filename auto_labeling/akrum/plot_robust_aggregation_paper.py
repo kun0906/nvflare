@@ -174,7 +174,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
         agg_method, txt_file = aggregation_methods[i]
         label = agg_method
         ys = global_accs[(agg_method, txt_file)]['shared_accs']  # [:10]
-        if METRIC == 'misclassified_error':
+        if METRIC == 'misclassification_error':
             ys = [1 - v for v in ys]
         xs = range(len(ys))
         print(agg_method, txt_file, ys, flush=True)
@@ -186,8 +186,8 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
         plt.ylabel('L_2 Error')
     elif METRIC == 'time_taken':
         plt.ylabel('Time Taken')
-    elif METRIC == 'misclassified_error':
-        plt.ylabel('Misclassified Error')
+    elif METRIC == 'misclassification_error':
+        plt.ylabel('Misclassification Error')
     else:
         plt.ylabel('Accuracy')
     plt.title(f'Global Model ({JOBID}), start:{start}, {title}', fontsize=10)
@@ -347,7 +347,7 @@ def plot_robust_aggregation_all():
                     elif METRIC == 'time_taken':
                         vs = [vs['time_taken'] for vs in global_accs[(agg_method, txt_file)]]
                         if agg_method == 'median_avg': continue
-                    # elif METRIC == 'misclassified_error':
+                    # elif METRIC == 'misclassification_error':
                     #     vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
                     #     vs = [1 - v for v in vs]
                     else:
@@ -371,8 +371,8 @@ def plot_robust_aggregation_all():
                     ylabel = 'L_2 Error'
                 elif METRIC == 'time_taken':
                     ylabel = 'Time Taken'
-                # elif METRIC == 'misclassified_error':
-                #     ylabel = 'Misclassified Error'
+                # elif METRIC == 'misclassification_error':
+                #     ylabel = 'Misclassification Error'
                 else:
                     ylabel = 'Accuracy'
                 axes[i_row, j_col].set_ylabel(ylabel)
@@ -408,7 +408,7 @@ if __name__ == '__main__':
     # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
     JOBID = 271247  # 266353 #266233 #265651 #265426 #265364 #265338 # 265030
     # METRIC = 'loss'
-    # METRIC = 'misclassified_error'  # or misclassification Rate
+    # METRIC = 'misclassification_error'  # or misclassification Rate
     # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken
 
     # for start in range(0, 100, 14):
