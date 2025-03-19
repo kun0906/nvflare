@@ -26,7 +26,7 @@ def timer(func):
 from numpy.random import dirichlet
 
 
-def dirichlet_split(X, y, num_clients, alpha=0.5, random_state=42):
+def dirichlet_split(X, y, num_clients, alpha=0.5, min_samples_per_client=5, random_state=42):
     """Splits dataset using Dirichlet distribution for non-IID allocation.
 
     alpha: > 0
@@ -43,30 +43,39 @@ def dirichlet_split(X, y, num_clients, alpha=0.5, random_state=42):
             Classes are somewhat skewed, but each client still has a mix of multiple classes.
 
     """
-    np.random.seed(random_state)  # Set random seed for reproducibility
-
+    print(f'X.shape: {X.shape}, y.shape: {y.shape}')
+    np.random.seed(random_state) # Set random seed for reproducibility
     classes = np.unique(y)
     class_indices = {c: np.where(y == c)[0] for c in classes}
+
     X_splits, y_splits = [[] for _ in range(num_clients)], [[] for _ in range(num_clients)]
+    client_counts = np.zeros(num_clients, dtype=int)
     print('\n\t: size, ' + ",  ".join(f'Client_{c}' for c in range(num_clients)))
     for c, indices in class_indices.items():
         np.random.shuffle(indices)
-        proportions = dirichlet(alpha * np.ones(num_clients))
-        proportions = (proportions * len(indices)).astype(int)
-
-        # even split the left data to each client
-        left = len(indices) - sum(proportions)
-        left_per_each = left // num_clients
-        if left_per_each > 0:
-            proportions = [v + left_per_each for v in proportions]
-        # Adjust the last client to ensure total sum matches
-        proportions[-1] += len(indices) - sum(proportions)
-        print(f'class {c}: ', sum(proportions), [int(v) for v in list(proportions)], f', left: {left}, alpha: {alpha}')
+        proportions = dirichlet(alpha * np.ones(num_clients)) * len(indices)
+        proportions = proportions.astype(int)
+        proportions[-1] += len(indices) - sum(proportions)  # Adjust last client
+        print(f'class {c}: ', sum(proportions), [int(v) for v in list(proportions)], f', alpha: {alpha}')
 
         start = 0
         for client, num_samples in enumerate(proportions):
             X_splits[client].extend(X[indices[start:start + num_samples]])
             y_splits[client].extend(y[indices[start:start + num_samples]])
+            client_counts[client] += num_samples
             start += num_samples
+
+    # **Ensure each client gets at least `min_samples_per_client`**
+    for client in range(num_clients):
+        while client_counts[client] < min_samples_per_client:
+            donor = np.argmax(client_counts)  # Pick the client with the most samples
+            if client_counts[donor] <= min_samples_per_client:
+                break  # Stop if no excess samples available
+
+            # Transfer one sample from donor to under-allocated client
+            X_splits[client].append(X_splits[donor].pop())
+            y_splits[client].append(y_splits[donor].pop())
+            client_counts[client] += 1
+            client_counts[donor] -= 1
 
     return [np.array(X_s) for X_s in X_splits], [np.array(y_s) for y_s in y_splits]

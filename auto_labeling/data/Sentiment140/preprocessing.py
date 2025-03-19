@@ -135,4 +135,4 @@ def check_client_data():
 
 if __name__ == '__main__':
     preprocessing()
-    check_client_data()
+    # check_client_data()

@@ -142,8 +142,8 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     #         or namespace_params['num_clients'] in []):
     #     return
     # print(namespace_params)
-    if (namespace_params['server_epochs'] == 100 and namespace_params['labeling_rate'] != 0.0
-            and namespace_params['num_clients'] == 50):
+    if (namespace_params['server_epochs'] == 10 and namespace_params['labeling_rate'] != 0.0
+            and namespace_params['num_clients'] == 100):
         pass
 
         print(namespace_params)
@@ -334,8 +334,8 @@ def plot_robust_aggregation_all():
                 #         or namespace_params['num_clients'] in []):
                 #     return
                 # print(namespace_params)
-                if (namespace_params['server_epochs'] == 100 and namespace_params['labeling_rate'] != 0.0
-                        and namespace_params['num_clients'] == 50):
+                if (namespace_params['server_epochs'] == 10 and namespace_params['labeling_rate'] != 0.0
+                        and namespace_params['num_clients'] == 20):
                     pass
 
                     print(namespace_params)
@@ -437,9 +437,14 @@ if __name__ == '__main__':
     # # Random noise injection with alpha=10, client_epochs=20, batch_size=512, epoch=10, num_clients=20, f=8
     # JOBID = 273327  # for Model Poisoning Attacks, random noise injection to model updates
 
+    # # Random noise injection with alpha=10, client_epochs=20, batch_size=512, epoch=100, num_clients=50, f=23
+    # JOBID = 274003  # for Model Poisoning Attacks, random noise injection to model updates
+
     # # # Large Value with alpha=10, client_epochs=20, batch_size=512, epoch=10, num_clients=20, f=8
     # JOBID = 273345  # for Model Poisoning Attacks, Large values to model updates
 
+    # # # Large Value with alpha=10, client_epochs=20, batch_size=512, epoch=100, num_clients=50, f=23
+    JOBID = 274024  # for Model Poisoning Attacks, Large values to model updates
 
     ### Label flipping
 
@@ -453,6 +458,10 @@ if __name__ == '__main__':
 
     # JOBID = 273742
     # JOBID = 273327
+    JOBID = 274219      # Sentiment140 with 30% data
+    JOBID = 274249  # Sentiment140 with 10% data with different batch sizes
+    JOBID = 274271  # Sentiment140 with 10% data with different alpha
+    JOBID = 274320  # Sentiment140 with 10% data with different alpha
     # METRIC = 'loss'
     # METRIC = 'misclassification_error'  # or misclassification Rate
     # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken

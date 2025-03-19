@@ -14,8 +14,9 @@
 #labeling_rates=(0.01 0.05 0.1)                            # random_noise rate
 #labeling_rates=(10 30 45 90 135 270 5)          # degree
 #labeling_rates=(0.001 0.01 0.1 0.3 0.5 0.8 1.0)          # percent of parameters will be changed
-labeling_rates=(3 32 512 1024 -1)          # larger values
-#labeling_rates=(0.1 0.5 1 5 10 100) #(10 30 45 90 135 20 5)                            # Labeling rate
+#labeling_rates=(3 32 512 1024 -1)          # larger values
+#labeling_rates=(512)          # larger values
+labeling_rates=(0.1 0.5 1 5 10) #(10 30 45 90 135 20 5)                            # Labeling rate
 server_epochs_values=(100)                           # Number of server epochs
 num_clients_values=(50)                          # Number of total clients
 #aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum+rp' 'krum+rp' 'medoid' 'median' 'mean'
@@ -76,7 +77,10 @@ pwd
 # Model Poisoning
 #PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model.py $PARAMS
 #PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_sign_flipping.py $PARAMS
-PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_large_values_model.py $PARAMS
+#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_large_values_model.py $PARAMS
 
+
+# sentiment140
+PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model_sentiment140.py $PARAMS
 
 
