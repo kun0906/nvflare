@@ -1,12 +1,10 @@
 import numpy as np
-import os
-import sys
 import tensorflow as tf
 
 from tensorflow.contrib import rnn
 
 from model import Model
-from utils.language_utils import line_to_indices, get_word_emb_arr, val_to_vec
+from ragg.utils import line_to_indices, get_word_emb_arr, val_to_vec
 
 
 VOCAB_DIR = 'embs.json'

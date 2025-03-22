@@ -1,28 +1,16 @@
 """
-    https://www.kaggle.com/datasets/kazanova/sentiment140/data
+
+     Dataset Description: ArXiv Scientific Research Papers Dataset
+    This dataset is a curated collection of research papers from arXiv, covering various scientific fields such as
+    Artificial Intelligence, Machine Learning, computer science, mathematics and more. It includes titles,
+    abstracts, categories, authors, publications and Updated dates making it useful for various machine learning
+    and NLP tasks. It can be used for several use cases given below
 
 
-    This is the sentiment140 dataset.
-    It contains 1,600,000 tweets extracted using the twitter api . The tweets have been annotated (0 = negative, 2 = neutral, 4 = positive) and they can be used to detect sentiment .
-    It contains the following 6 fields:
-
-    target: the polarity of the tweet (0 = negative, 2 = neutral, 4 = positive)
-    ids: The id of the tweet ( 2087)
-    date: the date of the tweet (Sat May 16 23:58:44 UTC 2009)
-    flag: The query (lyx). If there is no query, then this value is NO_QUERY.
-    user: the user that tweeted (robotickilldozr)
-    text: the text of the tweet (Lyx is cool)
-    The official link regarding the dataset with resources about how it was generated is here
-    The official paper detailing the approach is here
-
-    According to the creators of the dataset:
-
-    "Our approach was unique because our training data was automatically created, as opposed to having humans manual annotate tweets. In our approach, we assume that any tweet with positive emoticons, like :), were positive, and tweets with negative emoticons, like :(, were negative. We used the Twitter Search API to collect these tweets by using keyword search"
-
-    citation: Go, A., Bhayani, R. and Huang, L., 2009. Twitter sentiment classification using distant supervision. CS224N Project Report, Stanford, 1(2009), p.12.
+    https://www.kaggle.com/datasets/sumitm004/arxiv-scientific-research-papers-dataset?resource=download&select=arXiv_scientific+dataset.csv
 
 
-    $PYTHONPATH=.:nsf python3 nsf/preprocessing_sentiment140.py
+    $PYTHONPATH=.:nsf python3 nsf/preprocessing_arxiv.py
 
 """
 import collections
@@ -49,7 +37,7 @@ def tweets2vecs(tweets, batch_size=5000):
     for i in range(0, len(tweets), batch_size):
         # if i % 10000 == 0:
         #     print(f'{i}/{len(tweets)}', flush=True)
-        print(f'{i}/{len(tweets)}, {i / len(tweets) * 100:.2f}', flush=True)
+        print(f'tweets2vecs: {i}/{len(tweets)}, {i / len(tweets) * 100:.2f}', flush=True)
         batch = tweets[i:i + batch_size]  # Slice batch
         inputs = tokenizer(batch, return_tensors='pt', truncation=True, padding=True, max_length=512).to(DEVICE)
 
@@ -108,7 +96,7 @@ def tweet2vec(tweet):
 
 @timer
 def preprocessing():
-    in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv'
+    in_file = 'data/arXiv/arXiv_scientific dataset.csv'
     # with open(in_file, 'rb') as file:
     #     result = chardet.detect(file.read())
     #     print(result)
@@ -118,15 +106,26 @@ def preprocessing():
     # training.1600000.processed.noemoticon.csv may have more rows in reality,
     # but we are only loading/previewing the first 1000 rows
     # The most common encoding for CSV files is ISO-8859-1 (also known as latin1) or utf-16.
-    df = pd.read_csv(in_file, delimiter=',', nrows=nrows, encoding='ISO-8859-1', header=None)
-    df.dataframeName = 'training.1600000.processed.noemoticon.csv'
-    df.columns = ['target', 'id', 'date', 'flag', 'user', 'text']
+    df = pd.read_csv(in_file, delimiter=',', nrows=nrows, encoding='ISO-8859-1', header=0)
+    df.dataframeName = 'arXiv_scientific dataset.csv'
+    # df.columns = ['index', 'play_name', 'genre', 'character', 'act', 'scene', 'sentence', 'text', 'sex']
     nRow, nCol = df.shape
     print(f'There are {nRow} rows and {nCol} columns', df.columns.tolist())
 
-    labels, ids, dates, flags, users, texts = df['target'].tolist(), df['id'].tolist(), df['date'].tolist(), df[
-        'flag'].tolist(), df['user'].tolist(), df['text'].tolist()
+    # labels, ids, dates, flags, users, texts = df['target'].tolist(), df['id'].tolist(), df['date'].tolist(), df[
+    #     'flag'].tolist(), df['user'].tolist(), df['text'].tolist()
+    labels, texts = df['category'].tolist(), df['summary'].tolist()
     print(collections.Counter(labels))
+    classes = ['Machine Learning', 'Computer Vision and Pattern Recognition',
+               'Computation and Language (Natural Language Processing)', 'Artificial Intelligence'
+        , 'Machine Learning (Statistics)']
+    df = df[df['category'].isin(classes)]
+    nRow, nCol = df.shape
+    print(f'after filtering, there are {nRow} rows and {nCol} columns', df.columns.tolist())
+    labels, texts = df['category'].tolist(), df['summary'].tolist()
+    print('after filtering: ', collections.Counter(labels))
+
+    # exit()
     # data = {}
     # print(f'Number of Users: {len(users)}')    # {collections.Counter(users)}
     # for i, user in enumerate(users):
@@ -138,7 +137,7 @@ def preprocessing():
     #         data[user].append(item)
     # vs = [(k, len(v)) for k, v in data.items()]
     # print(len(data), ', top 10 User distribution: ', sorted(vs, key=lambda kv: kv[1], reverse=True)[:10])
-    print('text length distribution: ', collections.Counter([len(t) for t in texts]))
+    print('text length distribution: ', collections.Counter([len(t.split()) for t in texts]))
 
     # csv_file = f'{in_file}_bert.csv'
     # with open(csv_file, 'w') as f:
@@ -150,7 +149,7 @@ def preprocessing():
     #         x_string = ', '.join([f"{v:.5f}" for v in x])
     #         f.write(f'{x_string}, {target}\n')
 
-    xs = tweets2vecs(texts)
+    xs = tweets2vecs(texts, batch_size=500)
 
     # csv_file = f'{in_file}_bert.csv'
     # with open(csv_file, 'w') as f:
@@ -160,23 +159,23 @@ def preprocessing():
     #         x_string = ','.join([f"{v:.5f}" for v in x])
     #         f.write(f'{x_string}, {l}\n')
 
+    classes = {v:i for i, v in enumerate(classes)}
+
     csv_file = f'{in_file}_bert.csv'
-    buffer_size = 50000
+    buffer_size = 5000
     with open(csv_file, 'w') as f:
         buffer = []
         for i, (x, l) in enumerate(zip(xs, labels)):
             x_string = ','.join([f"{v:.5f}" for v in x])
-            if l == 0:
-                pass
-            elif l == 4:
-                l = 1
+            if l in classes.keys():
+                l = classes[l]
             else:
-                raise ValueError(l)
+                continue
             buffer.append(f'{x_string}, {l}\n')
 
             # Write in batches of `buffer_size`
             if len(buffer) >= buffer_size:
-                print(f'{i}/{len(xs)}, {i/len(xs)*100:.2f}', flush=True)
+                print(f'{i}/{len(xs)}, {i / len(xs) * 100:.2f}', flush=True)
                 f.writelines(buffer)
                 buffer = []  # Reset buffer
 
@@ -188,4 +187,24 @@ def preprocessing():
 
 
 if __name__ == '__main__':
-    preprocessing()
+    csv_file = preprocessing()
+
+    # reduce_dimension = False
+    # if reduce_dimension:
+    #     csv_file = 'data/SHAKESPEARE/shakespeare_plays.csv_bert.csv'
+    #     reduced_csv_file = f'{csv_file}_reduced.csv'
+    #     df = pd.read_csv(csv_file, dtype=float, header=None)
+    #     X, y = df.iloc[:, 0:-1].values, df.iloc[:, -1].values
+    #
+    #     pca = PCA(n_components=50)
+    #     X_reduced = pca.fit_transform(X)
+    #
+    #     # Create a new DataFrame with reduced features + labels
+    #     df_reduced = pd.DataFrame(X_reduced)
+    #     df_reduced[len(df_reduced.columns)] = y  # Append labels as last column
+    #
+    #     # Save the reduced dataset
+    #     reduced_csv_file = f"{csv_file}_reduced.csv"
+    #     df_reduced.to_csv(reduced_csv_file, index=False, header=False)
+    #
+    #     print(f"Saved reduced dataset to {reduced_csv_file}")

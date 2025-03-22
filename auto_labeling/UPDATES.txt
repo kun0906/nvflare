@@ -1,3 +1,6 @@
+v0.4.1: Restructure the project
+
+
 v0.4.0: Add new dataset: Sentiment140
     1. Add Sentiment140
     2. Add min_samples_per_client into dirichlet_split() to make sure each client at least has

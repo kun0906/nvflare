@@ -9,7 +9,7 @@ import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 from transformers import BertTokenizer, BertModel
 
-from auto_labeling.utils import timer
+from ragg.utils import timer
 
 # Initialize BERT tokenizer and model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')

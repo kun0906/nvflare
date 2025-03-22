@@ -1,12 +1,14 @@
+# Python version
+python~=3.10.12
 
-# Python~=3.10.12
-
+# Core dependencies
 nvflare~=2.5.0
-torchmetrics    # will install torch and others..
 torch==2.4.0
 torchvision
+torchmetrics  # Installs torch and other dependencies
+
+# Testing and visualization
 pytest
-matplotlib=3.9.0
+matplotlib==3.9.0
 scikit-learn
 seaborn
-

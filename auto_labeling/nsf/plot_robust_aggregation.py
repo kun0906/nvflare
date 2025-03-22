@@ -142,8 +142,8 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     #         or namespace_params['num_clients'] in []):
     #     return
     # print(namespace_params)
-    if (namespace_params['server_epochs'] == 10 and namespace_params['labeling_rate'] != 0.0
-            and namespace_params['num_clients'] == 100):
+    if (namespace_params['server_epochs'] == SERVER_EPOCHS and namespace_params['labeling_rate'] != 0.0
+            and namespace_params['num_clients'] == NUM_CLIENTS):
         pass
 
         print(namespace_params)
@@ -184,7 +184,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
             if agg_method == 'median_avg': continue
         elif METRIC == 'misclassification_error':
             vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
-            vs = [(1 - v[0], v[1]) for v in vs] # (\mu, \std)
+            vs = [(1 - v[0], v[1]) for v in vs]  # (\mu, \std)
         else:
             raise NotImplementedError(METRIC)
         ys, ys_errs = zip(*vs)
@@ -334,8 +334,8 @@ def plot_robust_aggregation_all():
                 #         or namespace_params['num_clients'] in []):
                 #     return
                 # print(namespace_params)
-                if (namespace_params['server_epochs'] == 10 and namespace_params['labeling_rate'] != 0.0
-                        and namespace_params['num_clients'] == 20):
+                if (namespace_params['server_epochs'] == SERVER_EPOCHS and namespace_params['labeling_rate'] != 0.0
+                        and namespace_params['num_clients'] == NUM_CLIENTS):
                     pass
 
                     print(namespace_params)
@@ -444,7 +444,7 @@ if __name__ == '__main__':
     # JOBID = 273345  # for Model Poisoning Attacks, Large values to model updates
 
     # # # Large Value with alpha=10, client_epochs=20, batch_size=512, epoch=100, num_clients=50, f=23
-    JOBID = 274024  # for Model Poisoning Attacks, Large values to model updates
+    # JOBID = 274024  # for Model Poisoning Attacks, Large values to model updates
 
     ### Label flipping
 
@@ -456,13 +456,49 @@ if __name__ == '__main__':
 
     ######################################################################################
 
-    # JOBID = 273742
-    # JOBID = 273327
-    JOBID = 274219      # Sentiment140 with 30% data
-    JOBID = 274249  # Sentiment140 with 10% data with different batch sizes
-    JOBID = 274271  # Sentiment140 with 10% data with different alpha
-    JOBID = 274320  # Sentiment140 with 10% data with different alpha
-    # METRIC = 'loss'
+    # # JOBID = 273742
+    # # JOBID = 273327
+    # JOBID = 274219      # Sentiment140 with 30% data
+    # JOBID = 274249  # Sentiment140 with 10% data with different batch sizes
+    # JOBID = 274271  # Sentiment140 with 10% data with different alpha
+    # JOBID = 274320  # Sentiment140 with 10% data with different alpha
+
+    # # Random noise injection with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8,
+    # JOBID = 274502  # Sentiment140 with 10% data with different alpha
+
+    # # Random noise injection with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=8,
+    # JOBID = 274433  # Sentiment140 with 10% data with different alpha
+
+    # # Large Value with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8,
+    # JOBID = 274527  # Sentiment140 with 10% data with different alpha
+
+    # Large Value with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=8,
+    # JOBID = 274794 # Sentiment140 with 10% data with different alpha
+
+    ### Label flipping
+
+    # # Flip labels with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8
+    JOBID = 274839  # for Data Poisoning Attacks, flip labels for Byzantine clients
+    # # Flip labels with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=23
+    JOBID = 274863 # Sentiment140 with 10% data with different alpha
+
+
+    # JOBID = 274594
+    # JOBID = 274462  # Shakespeare with 50 features and  different alpha
+
+    SERVER_EPOCHS = 100
+    NUM_CLIENTS = 50
+
+    # #  # NewsCategory
+    # JOBID = 274668  # NewsCategory with different alpha, num_clients=20, epochs=10
+    # JOBID = 274713  # NewsCategory with different alpha, num_clients=50, epochs=100
+
+    # # Fakenews
+    # JOBID = 274735  # Fakenews with different alpha,  num_clients=20, epochs=10
+    # JOBID = 274765  # Fakenews with different alpha,  num_clients=50, epochs=100
+
+
+    # # METRIC = 'loss'
     # METRIC = 'misclassification_error'  # or misclassification Rate
     # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken
     METRIC = 'accuracy'

@@ -1,12 +1,10 @@
 """Bag-of-words logistic regression."""
 
 import numpy as np
-import os
-import sys
 import tensorflow as tf
 
 from model import Model
-from utils.language_utils import bag_of_words, get_word_emb_arr, val_to_vec
+from ragg.utils import bag_of_words, get_word_emb_arr, val_to_vec
 
 VOCAB_DIR = 'embs.json'
 
