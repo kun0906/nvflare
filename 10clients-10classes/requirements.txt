@@ -1,0 +1,11 @@
+
+# Python~=3.10.12
+
+nvflare~=2.5.0
+torch
+torchvision
+pytest
+matplotlib
+scikit-learn
+seaborn
+

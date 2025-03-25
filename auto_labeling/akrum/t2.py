@@ -6,12 +6,148 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import cdist
-np.set_printoptions(precision=1, suppress=True)
 
+np.set_printoptions(precision=1, suppress=True)
+VERBOSE = 1
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+import ragg.robust_aggregation as rag
+
+# Function to compute geometric median with uniform weights (susceptible to Byzantine failure)
+def geometric_median_with_byzantine(clients_updates, clients_weights, init_value=None, max_iters=100, tol=1e-6,
+                                    verbose=1):
+    N, D = clients_updates.shape
+    assert clients_weights.shape == (N,), "Weights must be of shape (N,) where N is the number of updates."
+
+    # Use uniform weights, making the algorithm more susceptible to the Byzantine client
+    clients_weights = torch.ones_like(clients_weights) / N  # Equal weight for all clients
+
+    if init_value is not None:
+        estimated_center = init_value
+    else:
+        # Initial estimate: weighted average
+        estimated_center = torch.sum(clients_updates * clients_weights.view(-1, 1), dim=0)
+
+    for iteration in range(max_iters):
+        distances = torch.norm(clients_updates - estimated_center, dim=1)
+        distances = torch.clamp(distances, min=tol)  # Avoid division by zero
+
+        inv_distances = 1.0 / distances
+        weighted_inv_distances = clients_weights * inv_distances
+
+        weighted_update = torch.sum(weighted_inv_distances.view(-1, 1) * clients_updates, dim=0) / torch.sum(
+            weighted_inv_distances)
+
+        diff = torch.norm(weighted_update - estimated_center).item()
+        # Convergence check
+        if diff < tol:
+            print(diff)
+            break
+        # if iteration%50==0:
+        #     print(iteration, diff)
+
+        estimated_center = weighted_update
+    # print(f"diff: {diff}")
+    return weighted_update, estimated_center
+
+
+# Create some 2D data for the example
+np.random.seed(42)
+#
+# # Define 4 normal points and 1 Byzantine point
+# normal_points = np.random.randn(4, 2)  # 4 points in 2D
+#
+# byzantine_point = np.array([[10, 10]])  # Outlier (Byzantine client)
+# clients_updates = np.vstack([normal_points, byzantine_point])
+
+# # Define normal points, clustered closely together around the true center
+# normal_points = np.array([[0.6, 0.5], [0.65, 0.55], [0.55, 0.45], [0.7, 0.6]])  # Closer points
+#
+# # Define a very far away Byzantine point
+# byzantine_point = np.array([[50, 50]])  # A very distant outlier
+
+for location in [10]:    #[10, 20, 30, 50, 100, 150, 200, 300, 400, 500, 1000]:   # int(1e+6)
+    n = location
+    f = (n - 3) // 2
+    # f = n//4
+    h = n - f
+    d = 5
+    print(n, h, f, flush=True)
+    # normal_points = np.random.randn(h, d)  # 4 points in 2D
+    cov = np.eye(d)*0.1
+    normal_points = np.random.multivariate_normal(np.zeros((d,)), cov, size=h//2)
+    normal_points2 = np.random.multivariate_normal(np.ones((d,))*0.5, cov, size=h-h//2)
+    normal_points = np.concatenate((normal_points, normal_points2), axis=0)
+
+    # Create Byzantine points by shifting their location and adding more variation
+    # byzantine_point = np.random.randn(f, d) + location * np.random.randn(f, d)*100  # Added randomness to location
+    cov = np.eye(d)*0.01
+    # cov[0, :] = 10
+    # cov[0,0] = 1e+20
+    # cov = np.random.randn(d,d)+10000
+    byzantine_point = np.random.multivariate_normal(np.ones((d,)) * 5.0, cov, size=f)
+    # byzantine_point2 = np.random.multivariate_normal(np.ones((d,))+(1e+4), cov, size=f-1)
+    # byzantine_point = np.concatenate((byzantine_point, byzantine_point2), axis=0)
+    # mu=np.ones((d,)) * 1e+1
+    # mu[0] = 1000
+    # byzantine_point = np.random.multivariate_normal(mu, cov, size=f)
+
+    # # Create a random rotation matrix (2D in this case)
+    # # theta = np.random.uniform(0, 2 * np.pi)  # Random rotation angle between 0 and 2*pi
+    # theta = 0.3
+    # rotation_matrix = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
+    # # Rotate Byzantine points
+    # rotated_byzantine_points = byzantine_point.dot(rotation_matrix)
+    # # Scale the rotated Byzantine points so they are far from the normal points
+    # scale_factor = 2000
+    # byzantine_point = rotated_byzantine_points * scale_factor
+
+    # Combine normal points and Byzantine client
+    clients_updates = np.vstack([normal_points, byzantine_point])
+
+    # Set initial weights (with equal weights for simplicity)
+    clients_weights = np.ones(n)
+    true_center = np.mean(normal_points, axis=0)
+
+    # if byzantine is very far away from normal points, which lead geometric median more iteration to converge.
+    # # Run the geometric median with the Byzantine point
+    # geometric_median_result, final_center = geometric_median_with_byzantine(
+    #     torch.tensor(clients_updates, dtype=torch.float32),
+    #     torch.tensor(clients_weights, dtype=torch.float32),
+    #     max_iters=100, tol=1e-6, verbose=1)
+
+    points = torch.tensor(clients_updates, dtype=torch.float32)
+    weights = torch.tensor(clients_weights, dtype=torch.float32)
+
+    # if normal point with larger cov, cw_median will fail
+    # final_center, clients_type = rag.cw_median(points, weights, verbose=VERBOSE)
+
+    # if normal point with larger cov, medoid will fail
+    final_center, clients_type = rag.medoid(points, weights, verbose=VERBOSE)
+    print(f'n:{n}, medoid: ', final_center[:5], torch.norm(final_center - true_center).item(),  np.where(clients_type == 'Chosen Update')[0])
+
+    # if normal point with larger cov, medoid will fail
+    final_center2, clients_type2 = rag.adaptive_krum(points, weights, verbose=VERBOSE)
+    print(f'n:{n}, adaptive_krum:', final_center2[:5], torch.norm(final_center2 - true_center).item(), np.where(clients_type2 == 'Chosen Update')[0])
+
+    # print(f"true_center: {true_center}, final_center: {final_center}")
+    # print(f'location: {location}, l2: {torch.norm(final_center - true_center).item()}')
+
+# Plotting the result
+plt.figure(figsize=(8, 6))
+plt.scatter(clients_updates[:, 0], clients_updates[:, 1], c='blue', label='Client Updates')
+plt.scatter(true_center[0], true_center[1], c='green', marker='x', label='True Center')
+plt.scatter(final_center[0], final_center[1], c='red', marker='x', label='Geometric Median', s=10)
+plt.title("Geometric Median with a Byzantine Client")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+exit(0)
 
 # Re-import necessary libraries after execution state reset
 import numpy as np
@@ -19,7 +155,7 @@ import matplotlib.pyplot as plt
 
 # Define the range of 'a' from 0 to pi/2
 
-alpha_values = np.linspace(0, np.pi/2, 100)
+alpha_values = np.linspace(0, np.pi / 2, 100)
 y_values = 1 - np.sin(alpha_values)
 
 # Plot the function
@@ -34,8 +170,6 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-
-
 exit(0)
 
 # Generate 10 points on a circle of radius 1 centered at (0,0)
@@ -44,12 +178,11 @@ angles = np.linspace(0, 2 * np.pi, n, endpoint=False)
 circle_points = np.array([(np.cos(a), np.sin(a)) for a in angles])
 
 # Add an outlier at (100,100)
-outlier = np.array([[10, 10]]*(n-2))
+outlier = np.array([[10, 10]] * (n - 2))
 
 # Combine points
 points = np.vstack((circle_points, outlier))
 print(points)
-
 
 # Compute Mean (average of all points)
 mean_point = np.mean(points, axis=0)
@@ -66,10 +199,12 @@ medoid_point = points[medoid_index]
 # Compute Krum (Selects a point closest to its nearest neighbors, ignoring the farthest)
 k = len(points) - len(outlier) - 2  # k = total_n -f-2  = 19 - 9 - 2 = 8
 print(f'k:{k}')
-krum_scores = np.sum(np.sort(dist_matrix, axis=1)[:, 1:k+1], axis=1)  # Ignore self-distance (0)
+krum_scores = np.sum(np.sort(dist_matrix, axis=1)[:, 1:k + 1], axis=1)  # Ignore self-distance (0)
 print(krum_scores)
 krum_index = np.argmin(krum_scores)
 krum_point = points[krum_index]
+
+
 #
 # def adaptive_weighted_mean(points, beta_values):
 #     center_guess = np.median(points, axis=0)  # Initial guess
@@ -103,7 +238,9 @@ def adaptive_weighted_mean(points, beta=1):
     print(weights)
     return np.sum(points * weights[:, np.newaxis], axis=0)
 
+
 adaptive_mean = adaptive_weighted_mean(points)
+
 
 # Compute Geometric Median using Weiszfeld’s algorithm
 def geometric_median(X, eps=1e-5):
@@ -116,6 +253,7 @@ def geometric_median(X, eps=1e-5):
         if np.linalg.norm(y - new_y) < eps:
             return new_y
         y = new_y
+
 
 geo_median = geometric_median(points)
 
@@ -143,7 +281,6 @@ plt.show()
 
 # Print results
 print(mean_point, median_point, medoid_point, krum_point, geo_median, adaptive_mean)
-
 
 #
 # random_state=42
@@ -245,7 +382,6 @@ exit(0)
 file_path = 'histories_gan_r_0.1-n_1.pth'
 data = torch.load(file_path, map_location="cpu")
 print(data)
-
 
 
 # Minibatch Discrimination

@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from sklearn.random_projection import GaussianRandomProjection
 
-from ragg.change_point_detection import binary_segmentation, find_significant_change_point
+from .change_point_detection import binary_segmentation, find_significant_change_point
 
 np.set_printoptions(precision=4)
 
@@ -230,7 +230,7 @@ def cw_median(clients_updates, clients_weights, verbose=1):
         # print(f'Chosen update indices: {dict(collections.Counter(original_median_indices.tolist()))}')
         # Mark the client whose update was chosen as the median
         # predict_clients_type[original_median_indices.numpy()] = 'chosen update'  # {stacked_updates.numpy()}
-        print(f'Chosen update: {dict(collections.Counter(original_median_indices.tolist()))}, '
+        print(f'Chosen update: {collections.Counter(original_median_indices.tolist())}, '
               f'updates[0].shape: {tuple(clients_updates[0].shape)}, clients_weights: {clients_weights.numpy()}')
 
     return weighted_median, predict_clients_type
@@ -288,11 +288,12 @@ def geometric_median(clients_updates, clients_weights, init_value=None, max_iter
 
     if verbose >= 5:
         print(f"Geometric median found in {iteration + 1} iterations.")
+        print(f"weighted_inv_distances: {weighted_inv_distances.numpy()}")
 
     return weighted_update, predict_clients_type
 
 
-def pairwise_distances(clients_updates, is_squared_distance = True):
+def pairwise_distances(clients_updates, is_squared_distance=True):
     """ Squared Euclidean distance has the effect of penalizing larger deviations more than the regular Euclidean
     distance, which could make the algorithm more sensitive to outliers (i.e., adversarial gradients). Using
     regular Euclidean distance might slightly reduce this sensitivity.
@@ -327,30 +328,7 @@ def pairwise_distances(clients_updates, is_squared_distance = True):
     return distances
 
 
-#
-# def medoid(clients_updates, clients_weights, trimmed_average=False, p=0.1, verbose=1):
-#     """
-#
-#     """
-#
-#     N, D = clients_updates.shape
-#     assert clients_weights.shape == (N,), "Weights must be of shape (N,) where N is the number of updates."
-#     predict_clients_type = np.array([[f'Update {i}'] for i in range(N)], dtype='U20')
-#     unique_ws, counts = torch.unique(clients_weights, return_counts=True)
-#     if verbose >= 5:
-#         print(f'Unique weights: {unique_ws}, counts: {counts}')
-#
-#     # we don't need the weighted distance here.
-#     distances = pairwise_distances(clients_updates)
-#     # Compute sum of distances for each point to all others
-#     distance_sums = torch.sum(distances, dim=0)
-#
-#     # Select the medoid (the point with the minimum sum of distances)
-#     medoid_index = torch.argmin(distance_sums)
-#
-#     return clients_updates[medoid_index], predict_clients_type
-
-def medoid(clients_updates, clients_weights, trimmed_average=False, upper_trimmed_ratio=0.1, verbose=1):
+def medoid(clients_updates, clients_weights, trimmed_average=False, verbose=1):
     """
     Computes the medoid from a set of client updates based on pairwise distances.
 
@@ -359,7 +337,6 @@ def medoid(clients_updates, clients_weights, trimmed_average=False, upper_trimme
         clients_updates (torch.Tensor): Tensor of shape (N, D) containing client updates.
         clients_weights (torch.Tensor): Tensor of shape (N,) containing weights for each client.
         trimmed_average (bool, optional): Whether to use trimmed averaging (not implemented here). Defaults to False.
-        p (float, optional): A parameter for potential extensions (not used here). Defaults to 0.1.
         verbose (int, optional): Verbosity level for debugging. Defaults to 1.
 
     Returns:
@@ -377,38 +354,11 @@ def medoid(clients_updates, clients_weights, trimmed_average=False, upper_trimme
     distances = pairwise_distances(clients_updates, is_squared_distance=False)
 
     # Compute sum of distances for each point to all others
-    total_distances = torch.sum(distances, dim=0)
+    total_distances = torch.sum(distances, dim=1)  # distances is symmetric, so dim=0 is the as dim=1
 
     if trimmed_average:
-        sorted_indices = torch.argsort(total_distances)
-        sorted_updates = clients_updates[sorted_indices]
-        sorted_weights = clients_weights[sorted_indices]
-        sorted_predict_clients_type = predict_clients_type[sorted_indices]
-        # # Remove by count,
-        # m = N - f
-        # # Compute weighted average of the top `m` smallest updates
-        # update = torch.sum(sorted_updates[:m] * sorted_weights[:m].unsqueeze(1), dim=0) / torch.sum(sorted_weights[:m])
-
-        # Remove by cumulative weights
-        cumulative_weights = torch.cumsum(sorted_weights, dim=0)
-        # D = sorted_updates.shape[1]
-        total_weight = cumulative_weights[-1]
-
-        # Optimized implementation
-        weight_threshold = upper_trimmed_ratio * total_weight  # one value
-        upper_bound = torch.searchsorted(cumulative_weights.contiguous(), total_weight - weight_threshold,
-                                         side="right")
-        trimmed_updates = sorted_updates[:upper_bound]
-        trimmed_weights = sorted_weights[:upper_bound]
-        sorted_predict_clients_type[upper_bound:] = 'Byzantine'
-        if verbose >= 5:
-            print(f"sorted_updates.shape: {sorted_updates.shape}, trimmed_updates.shape: {trimmed_updates.shape}, "
-                  f"upper weight_threshold: {total_weight - weight_threshold}")
         # Compute weighted average
-        weighted_update = torch.sum(trimmed_updates * trimmed_weights.unsqueeze(1), dim=0) / torch.sum(trimmed_weights)
-        if verbose >= 5:
-            print(f"weighted_update: {weighted_update}")
-        predict_clients_type[sorted_indices] = sorted_predict_clients_type
+        weighted_update = torch.sum(clients_updates * clients_weights.unsqueeze(1), dim=0) / torch.sum(clients_weights)
         update = weighted_update
     else:
         # Select the medoid (point with the smallest sum of distances)
@@ -513,12 +463,6 @@ def krum(clients_updates, clients_weights, f, trimmed_average=False, random_proj
         predict_clients_type[selected_index] = 'Chosen Update'
 
     return weighted_update, predict_clients_type
-
-
-# def krum_with_random_projection(clients_updates, clients_weights, f, trimmed_average=False, k_factor=1,
-#                                 random_state=42, verbose=1):
-#     return krum(clients_updates, clients_weights, f, trimmed_average, True, k_factor,
-#                 random_state, verbose)
 
 
 def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, random_projection=False, k_factor=10,
@@ -658,13 +602,6 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
     # print(weighted_update)
     # print(predict_clients_type)
     return weighted_update, predict_clients_type
-
-
-# def adaptive_krum_with_random_projection(clients_updates, clients_weights,
-#                                          trimmed_average=False, k_factor=10,
-#                                          random_state=42, verbose=1):
-#     return adaptive_krum(clients_updates, clients_weights, trimmed_average, True, k_factor,
-#                          random_state, verbose)
 
 
 def conduct_random_projection(updates, k_factor=1, random_state=42, verbose=1):

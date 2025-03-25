@@ -160,7 +160,7 @@ def vae_loss_function(recon_x, x, mu, logvar):
     # We assume logvar is the log of variance (log(sigma^2))
     kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
     # Return the total loss
-    beta = 0.3
+    beta = 0.1
     info = (recon_loss.item(), beta * kl_loss.item())
     return recon_loss + beta * kl_loss, info
 
@@ -170,6 +170,95 @@ def distillation_loss(client_logits, vae_logits, temperature=2.0):
     vae_probs = F.softmax(vae_logits / temperature, dim=1)
     return F.kl_div(client_probs, vae_probs, reduction='batchmean') * (temperature ** 2)
 
+
+def _gen_pseudo_logits(global_vae, label, count, max_attempts=5):
+    """
+    Generate pseudo logits by decoding latent vectors, ensuring they match the desired label.
+
+    Args:
+        global_vae: VAE model to use for decoding.
+        label: The label we are trying to match.
+        count: The number of logits required.
+        max_attempts: The maximum number of times to try to generate matching logits.
+
+    Returns:
+        A list of logits matching the desired label, or empty if unable to generate enough matching logits.
+    """
+    if count == 0:
+        return [], []
+
+    latent_dim = global_vae.latent_dim  # Get the latent dimension from the VAE model
+    attempts = 0
+    new_logits, new_labels = [], []
+    while attempts < max_attempts:
+        # Generate latent vectors sampled from N(0, 1)
+        z = torch.randn(count * 100, latent_dim).to(device)  # Increase sample size
+
+        # Decode latent vectors into logits (predictions)
+        pseudo_logits = global_vae.decode(z)
+
+        # Detach from the computation graph and move to the correct device
+        pseudo_logits = pseudo_logits.detach().to(device)
+
+        # Get predicted labels based on the decoded logits
+        predicted_labels = pseudo_logits.argmax(dim=1)
+
+        # Find logits where the predicted class matches the desired label
+        for logit, label_pred in zip(pseudo_logits, predicted_labels):
+            if label_pred.item() == label:
+                new_logits.append(logit)
+                new_labels.append(label_pred)
+
+            if len(new_labels) >= count:
+                return new_logits, new_labels
+
+        # If not enough matching logits, increment the attempt counter and try again
+        attempts += 1
+        # print(f"Not enough matching logits. Trying again...")
+
+    # If the function reaches here, it means we couldn't generate enough matching logits after max_attempts
+    # print(f"Unable to generate enough matching logits for label {label} after {max_attempts} attempts.")
+    return new_logits, new_labels  # Return an empty list if not enough matching logits found
+
+
+def gen_pseudo_logits(global_vae, labels, all_class_labels={0, 1, 2, 3, 4, 5, 6, 7, 8, 9}):
+    lb_dict = collections.Counter(labels.tolist())
+    max_cnt = max(lb_dict.values())
+    new_logits = []
+    new_labels = []
+    for label in all_class_labels:
+        if label in lb_dict:
+            if lb_dict[label] == max_cnt:
+                continue
+            else:
+                cnt = max_cnt - lb_dict[label]
+                logits, labels = _gen_pseudo_logits(global_vae, label, cnt)
+        else:
+            logits, labels = _gen_pseudo_logits(global_vae, label, max_cnt)
+        new_logits.extend(logits)
+        new_labels.extend(labels)
+    return torch.vstack(new_logits), torch.stack(new_labels)
+
+
+def weighted_cross_entropy_loss(logits, targets, all_class_labels={0, 1, 2, 3, 4, 5, 6, 7, 8, 9}):
+    """
+    Compute weighted cross-entropy loss for a classification task.
+
+    Args:
+    - logits (Tensor): The predicted logits (raw scores) from the model (shape: [batch_size, num_classes]).
+    - targets (Tensor): The true labels (shape: [batch_size]). Each value should be an integer representing the class index.
+    Returns:
+    - loss (Tensor): The weighted cross-entropy loss.
+    """
+    # Get unique values and their counts
+    unique_values, counts = torch.unique(targets, return_counts=True)
+    class_weights = torch.Tensor([0] * len(all_class_labels))
+    # for v,c in zip(unique_values, counts):
+    #     class_weights[v] = c/torch.sum(counts)
+    class_weights[unique_values] = counts/torch.sum(counts)
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+    loss = criterion(logits, targets)
+    return loss
 
 class FL:
     def __init__(self):
@@ -228,7 +317,7 @@ class FL:
         # CNN
         model = model.to(device)
         optimizer = optim.Adam(model.parameters(), lr=0.001)
-        criterion = nn.CrossEntropyLoss()
+        criterion = nn.CrossEntropyLoss()  # mean
 
         # VAE
         vae.load_state_dict(global_vae.state_dict())  # deep copy of global_vae parameters
@@ -239,58 +328,84 @@ class FL:
         model.train()
         vae.train()
         losses = []
-        epochs = 11
-        distill_weight = 2
+        epochs = 2
+        distill_weight = 0.995
         for epoch in range(epochs):
             epoch_model_loss = 0
             _model_loss, _model_distill_loss = 0, 0
             epoch_vae_loss = 0
             _vae_recon_loss, _vae_kl_loss = 0, 0
-            for images, labels in train_loader:
+            for i, (images, labels) in enumerate(train_loader):
                 images, labels = images.to(device), labels.to(device)
 
                 # your local personal model
                 outputs = model(images)
                 model_logits = F.softmax(outputs, dim=1)
-                model_loss = criterion(model_logits, labels)
+                model_loss = criterion(model_logits, labels)  # cross entropy loss
 
-                # Knowledge distillation loss
-                batch_size = images.size(0)
-                latent_dim = vae.latent_dim
-                # generate latent vector from N(0, 1)
-                z = torch.randn(batch_size, latent_dim).to(device)  # Sample latent vectors
-                pseudo_logits = global_vae.decode(z)  # Reconstruct probabilities from latent space
-                pseudo_logits = pseudo_logits.detach().to(device)
-                print(epoch, collections.Counter(labels.tolist()),
-                      collections.Counter(model_logits.argmax(dim=1).tolist()),
-                      collections.Counter(pseudo_logits.argmax(dim=1).tolist()))
-                distill_loss = distillation_loss(model_logits, pseudo_logits)
-                # Combine losses
-                loss = model_loss + distill_weight * distill_loss
+                distillation = True
+                if distillation:
+                    # Knowledge distillation loss
+                    batch_size = images.size(0)
+                    latent_dim = vae.latent_dim
+                    # generate latent vector from N(0, 1)
+                    z = torch.randn(batch_size, latent_dim).to(device)  # Sample latent vectors
+                    pseudo_logits = global_vae.decode(z)  # Reconstruct probabilities from latent space
+                    pseudo_logits = pseudo_logits.detach().to(device)
+                    if i == 0:
+                        print(epoch, collections.Counter(labels.tolist()),
+                          collections.Counter(model_logits.argmax(dim=1).tolist()),
+                          collections.Counter(pseudo_logits.argmax(dim=1).tolist()))
+                    distill_loss = distillation_loss(model_logits, pseudo_logits)
+                    # Combine losses
+                    # KL divergence: input is log_softmax, and target is softmax
+                    # distill_loss = nn.KLDivLoss(reduction="batchmean")(torch.log_softmax(outputs, dim=1), pseudo_logits)
+                    loss = (1-distill_weight)*model_loss + distill_weight * distill_loss
+                    _model_distill_loss += distill_weight * distill_loss.item()
+                else:
+                    # here, each client know all class information
+                    new_logits, new_labels = gen_pseudo_logits(global_vae, labels,
+                                                               all_class_labels={0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+                    # print(len(new_labels), collections.Counter(new_labels.tolist()))
+                    # model_loss2 = criterion(new_logits, new_labels)
+                    model_loss2 = weighted_cross_entropy_loss(new_logits, new_labels, all_class_labels={0, 1, 2, 3, 4, 5, 6, 7, 8, 9})
+                    loss = model_loss + model_loss2
+                    _model_distill_loss += model_loss2.item()
 
                 optimizer.zero_grad()
                 loss.backward()
+
+                # # Print gradients for each parameter
+                # print("Gradients for model parameters:")
+                # for name, param in model.named_parameters():
+                #     if param.grad is not None:
+                #         print(f"{name}: {param.grad}")
+                #     else:
+                #         print(f"{name}: No gradient (likely frozen or unused)")
+
                 optimizer.step()
                 epoch_model_loss += loss.item()
                 _model_loss += model_loss.item()
-                _model_distill_loss += distill_weight * distill_loss.item()
 
+                # if epoch >= epochs//2:
                 # your local vae model
                 # generated logits
                 logits = model_logits.detach().to(device)
                 reconstructed_logits, mu, logvar = vae(logits)  # reconstructed logits
                 vae_loss, vae_info = vae_loss_function(reconstructed_logits, logits, mu, logvar)
-                _vae_recon_loss += vae_info[0]
-                _vae_kl_loss += vae_info[1]
                 vae_optimizer.zero_grad()
                 vae_loss.backward()
                 vae_optimizer.step()
                 epoch_vae_loss += vae_loss.item()
+                _vae_recon_loss += vae_info[0]
+                _vae_kl_loss += vae_info[1]
 
             losses.append((epoch_model_loss, epoch_vae_loss))
             if epoch % 10 == 0:
-                print(epoch, ' model:', epoch_model_loss, _model_loss, _model_distill_loss,
-                      ' vae:', epoch_vae_loss, _vae_recon_loss, _vae_kl_loss)
+                print(epoch, ' model:', epoch_model_loss / len(train_loader), _model_loss / len(train_loader),
+                      _model_distill_loss / len(train_loader),
+                      ' vae:', epoch_vae_loss / len(train_loader), _vae_recon_loss / len(train_loader),
+                      _vae_kl_loss / len(train_loader))
         result = {'vae': vae.state_dict(), 'losses': losses, 'info': client_info}
         return result
 

@@ -348,6 +348,25 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
 
     flatten_clients_updates = torch.stack(flatten_clients_updates)
     print(f'each update shape: {flatten_clients_updates[1].shape}')
+
+    # if CFG.VERBOSE >=1:
+    #     from sklearn.decomposition import PCA
+    #
+    #     # Reduce the dimensionality to 2D using PCA
+    #     pca = PCA(n_components=2)
+    #     reduced_data = pca.fit_transform(flatten_clients_updates.numpy())
+    #
+    #     # Plot the reduced data
+    #     plt.figure(figsize=(8, 6))
+    #     for i in range(reduced_data.shape[0]):
+    #         plt.scatter(reduced_data[i, 0], reduced_data[i, 1], label=f'Client {i + 1}')
+    #
+    #     plt.title(f"epoch: {epoch}")
+    #     # plt.xlabel("PCA Component 1")
+    #     # plt.ylabel("PCA Component 2")
+    #     plt.legend()
+    #     plt.show()
+
     # for debugging
     if CFG.VERBOSE >= 30:
         for i, update in enumerate(flatten_clients_updates):
@@ -430,19 +449,15 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
                                                                             verbose=CFG.VERBOSE)
 
     elif aggregation_method == 'medoid':
-        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
         aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
                                                                          clients_weights,
                                                                          trimmed_average=False,
-                                                                         upper_trimmed_ratio=p,
                                                                          verbose=CFG.VERBOSE)
 
     elif aggregation_method == 'medoid_avg':
-        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
         aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
                                                                          clients_weights,
                                                                          trimmed_average=True,
-                                                                         upper_trimmed_ratio=p,
                                                                          verbose=CFG.VERBOSE)
 
     elif aggregation_method == 'geometric_median':
@@ -709,7 +724,7 @@ def print_histories(histories):
                     f'{CFG.SERVER_EPOCHS}_{CFG.NUM_HONEST_CLIENTS}_{CFG.NUM_BYZANTINE_CLIENTS}_accuracy.png')
         os.makedirs(os.path.dirname(fig_file), exist_ok=True)
         plt.savefig(fig_file, dpi=300)
-        plt.show()
+        # plt.show()
         plt.close(fig)
 
 

@@ -1,0 +1,46 @@
+{
+  "format_version": 2,
+
+  "executors": [
+    {
+      "tasks": [
+        "get_weights",
+        "train",
+        "submit_model",
+        "validate"
+      ],
+      "executor": {
+        "id": "Executor",
+        "path": "learner_executor.LearnerExecutor",
+        "args": {
+          "learner_id": "pt_learner"
+        }
+      }
+    }
+  ],
+  "task_result_filters": [
+  ],
+  "task_data_filters": [
+  ],
+  "components": [
+    {
+      "id": "pt_learner",
+      "path": "learner_with_tb.PTLearner",
+      "args": {
+        "lr": 0.001,
+        "epochs": 5,
+        "analytic_sender_id": "log_writer"
+      }
+    },
+    {
+      "id": "log_writer",
+      "path": "nvflare.app_opt.tracking.tb.tb_writer.TBWriter",
+      "args": {"event_type": "analytix_log_stats"}
+    },
+    {
+      "id": "event_to_fed",
+      "name": "ConvertToFedEvent",
+      "args": {"events_to_convert": ["analytix_log_stats"], "fed_event_prefix": "fed."}
+    }
+  ]
+}

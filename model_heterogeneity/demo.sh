@@ -1,0 +1,42 @@
+#!/bin/bash
+#SBATCH --job-name=param_combinations_job   # Job name
+#SBATCH --account=kunyang_nvflare_py31012_0001
+#SBATCH --output=log/output_%A_%a.out            # Standard output (job ID and array task ID)
+#SBATCH --error=log/error_%A_%a.err              # Standard error
+#SBATCH --ntasks=1                           # Number of tasks
+#SBATCH --mem=16G                            # Memory per node
+#SBATCH --gres=gpu:1                         # Request 1 GPU (adjust if needed)
+#SBATCH --time=00:00:10                      # Time limit in hrs:min:sec
+#SBATCH --array=0-3                          # Array range for combinations
+
+# Define the parameter combinations (distill_weight, epochs)
+#PARAMS=("0. 10" "0.1 10" "0.3 10" "0.5 10" "0.7 10" "0.9 10" "0.95 10" "1 10")
+#PARAMS=("0. 1" "0.1 1" "0.3 1")
+
+# Define the parameter sets
+params1=(0 0.1 0.2 0.3 0.5 0.7 0.9 0.95 1)
+param2=(5 10)
+
+# Calculate the total number of combinations
+num_combinations=$(( ${#params1[@]} * ${#param2[@]} ))
+#$num_combinations
+
+# Get the parameter combination for the current task (SLURM_ARRAY_TASK_ID)
+param1_index=$((SLURM_ARRAY_TASK_ID / ${#param2[@]}))  # Index for params1
+param2_index=$((SLURM_ARRAY_TASK_ID % ${#param2[@]}))  # Index for param2
+
+param1_value=${params1[$param1_index]}
+param2_value=${param2[$param2_index]}
+
+# Combine the selected parameters into the format for flags
+PARAM="-v $param1_value -n $param2_value"
+
+# Load necessary modules (e.g., Python and CUDA)
+module load conda
+conda activate nvflare-3.10
+
+# Run your script with the selected parameters
+#cd nvflare/model_heterogeneity
+pwd
+python3 demo.py $PARAM
+

@@ -22,3 +22,14 @@ __pycache__/
 # Ignore data
 
 
+/auto_labeling/data/LEAF/
+/auto_labeling/data/MNIST/
+/auto_labeling/data/Sentiment140/data/
+/auto_labeling/data/Sentiment140/training.1600000.processed.noemoticon.csv
+/auto_labeling/feature.pkl
+/auto_labeling/graph_data.pkl
+/auto_labeling/fl/
+/auto_labeling/data/REDDIT/data/
+/auto_labeling/data/SHAKESPEARE/data/
+/auto_labeling/data/SHAKESPEARE/shakespeare_plays.csv
+/auto_labeling/log/

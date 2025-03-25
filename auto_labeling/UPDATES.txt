@@ -1,3 +1,8 @@
+v0.4.2: Add real_cases.py
+    1. Add real_cases.py
+    2. Remove trim_ratio from medoid()
+
+
 v0.4.1: Restructure the project
 
 

@@ -1,4 +1,7 @@
 v0.2.1rc02: Add -A kunyang_nvflare_py31012_0001 to start.sh
+# storage location:
+	/projects/kunyang/nvflare_py31012/nvflare
+
 
 
 v0.2.1rc01: Fix gen_sites_byzantine.py for replacing new_weights

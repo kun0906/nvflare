@@ -47,8 +47,7 @@ import time
 import torch
 import numpy as np
 
-import projection_median
-import ragg
+import ragg.robust_aggregation as rag
 import matplotlib.pyplot as plt
 
 VERBOSE = 1
@@ -91,14 +90,14 @@ def median_case():
         raise ValueError(f, N)
     print(f'N:{N}, f:{f}, h:{N - f}')
     # True median if only honest points were considered
-    true_cw_median, clients_type = ragg.cw_median(points[:N - f], weights[:N - f])
+    true_cw_median, clients_type = rag.cw_median(points[:N - f], weights[:N - f])
     print(f'true_cw_median: {true_cw_median}, {clients_type}')
 
-    cw_median, clients_type = ragg.cw_median(points, weights)
+    cw_median, clients_type = rag.cw_median(points, weights)
     print(f'cw_median: {cw_median}, {clients_type}')
     print()
 
-    krum_point, clients_type = ragg.krum(points, weights, f, trimmed_average=False, verbose=30)
+    krum_point, clients_type = rag.krum(points, weights, f, trimmed_average=False, verbose=30)
     print(f'krum: {krum_point}, {clients_type}')
 
     # point, clients_type = adaptive_krum(points, weights, trimmed_average=False, verbose=30)
@@ -165,12 +164,12 @@ def trimmed_mean_case():
         raise ValueError(f, N)
     print(f'N:{N}, f:{f}, h:{N - f}')
     # True median if only honest points were considered
-    true_cw_mean, clients_type = ragg.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
+    true_cw_mean, clients_type = rag.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
     print(f'true_cw_mean: {true_cw_mean}, {clients_type}')
 
     p = (f / N) / 2
     # p = 0.45
-    trimmed_cw_mean, clients_type = ragg.trimmed_mean(points, weights, trim_ratio=p, verbose=VERBOSE)
+    trimmed_cw_mean, clients_type = rag.trimmed_mean(points, weights, trim_ratio=p, verbose=VERBOSE)
     print(f'trimmed_cw_mean: {trimmed_cw_mean}, {clients_type}')
     print()
 
@@ -182,12 +181,12 @@ def trimmed_mean_case():
     # print(f'geo_median: {geo_median}, {clients_type}')
     # print()
     # exit(0)
-    medoid, clients_type = ragg.medoid(points, weights, trimmed_average=True, upper_trimmed_ratio=f / N,
+    medoid, clients_type = rag.medoid(points, weights, trimmed_average=True, upper_trimmed_ratio=f / N,
                                        verbose=VERBOSE)
     print(f'medoid: {medoid}, {clients_type}')
     print()
 
-    krum_point, clients_type = ragg.krum(points, weights, f, trimmed_average=False, verbose=VERBOSE)
+    krum_point, clients_type = rag.krum(points, weights, f, trimmed_average=False, verbose=VERBOSE)
     print(f'krum: {krum_point}, {clients_type}')
 
     # point, clients_type = adaptive_krum(points, weights, trimmed_average=False, verbose=30)
@@ -297,7 +296,7 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, show=False, rand
         plt.show()
 
     # True median if only honest points were considered
-    empirical_cw_mean, clients_type = ragg.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
+    empirical_cw_mean, clients_type = rag.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
     method = 'empirical_cw_mean'
     SPACES = 16
     print(
@@ -320,26 +319,26 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, show=False, rand
         start = time.time()
         ##################################### Single value ################################################
         if method == 'adaptive_krum':
-            agg_value, clients_type = ragg.adaptive_krum(points, weights,
+            agg_value, clients_type = rag.adaptive_krum(points, weights,
                                                          trimmed_average=False,
                                                          random_projection=False, k_factor=1,
                                                          random_state=SEED,
                                                          verbose=VERBOSE)
         elif method == 'krum':
-            agg_value, clients_type = ragg.krum(points, weights, f=f,
+            agg_value, clients_type = rag.krum(points, weights, f=f,
                                                 trimmed_average=False,
                                                 random_projection=False, k_factor=1,
                                                 random_state=SEED,
                                                 verbose=VERBOSE)
         elif method == 'adaptive_krum+rp':
-            agg_value, clients_type = ragg.adaptive_krum(points, weights,
+            agg_value, clients_type = rag.adaptive_krum(points, weights,
                                                          trimmed_average=False,
                                                          random_projection=True,
                                                          k_factor=1,
                                                          random_state=SEED,
                                                          verbose=VERBOSE)
         elif method == 'krum+rp':
-            agg_value, clients_type = ragg.krum(points, weights,
+            agg_value, clients_type = rag.krum(points, weights,
                                                 f=f,
                                                 trimmed_average=False,
                                                 random_projection=True,
@@ -348,33 +347,33 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, show=False, rand
                                                 verbose=VERBOSE)
         elif method == 'medoid':
             p = (f / N)
-            agg_value, clients_type = ragg.medoid(points, weights, trimmed_average=False,
+            agg_value, clients_type = rag.medoid(points, weights, trimmed_average=False,
                                                   upper_trimmed_ratio=p, verbose=VERBOSE)
         elif method == 'median':
-            agg_value, clients_type = ragg.cw_median(points, weights, verbose=VERBOSE)
+            agg_value, clients_type = rag.cw_median(points, weights, verbose=VERBOSE)
         elif method == 'mean':
-            agg_value, clients_type = ragg.cw_mean(points, weights, verbose=VERBOSE)
+            agg_value, clients_type = rag.cw_mean(points, weights, verbose=VERBOSE)
         ##################################### merged value ################################################
         elif method == 'adaptive_krum_avg':
-            agg_value, clients_type = ragg.adaptive_krum(points, weights, trimmed_average=True,
+            agg_value, clients_type = rag.adaptive_krum(points, weights, trimmed_average=True,
                                                          random_projection=False, k_factor=1,
                                                          random_state=SEED,
                                                          verbose=VERBOSE)
         elif method == 'krum_avg':
-            agg_value, clients_type = ragg.krum(points, weights, f=f,
+            agg_value, clients_type = rag.krum(points, weights, f=f,
                                                 trimmed_average=True,
                                                 random_projection=False, k_factor=1,
                                                 random_state=SEED,
                                                 verbose=VERBOSE)
         elif method == 'adaptive_krum+rp_avg':
-            agg_value, clients_type = ragg.adaptive_krum(points, weights,
+            agg_value, clients_type = rag.adaptive_krum(points, weights,
                                                          trimmed_average=True,
                                                          random_projection=True,
                                                          k_factor=1,
                                                          random_state=SEED,
                                                          verbose=VERBOSE)
         elif method == 'krum+rp_avg':
-            agg_value, clients_type = ragg.krum(points, weights, f,
+            agg_value, clients_type = rag.krum(points, weights, f,
                                                 trimmed_average=True,
                                                 random_projection=True,
                                                 k_factor=1,
@@ -382,18 +381,18 @@ def synthetic_single_case(N=100, D=500, byzantine_mu=1, f=None, show=False, rand
                                                 verbose=VERBOSE)
         elif method == 'medoid_avg':
             p = (f / N)
-            agg_value, clients_type = ragg.medoid(points, weights, trimmed_average=True,
+            agg_value, clients_type = rag.medoid(points, weights, trimmed_average=True,
                                                   upper_trimmed_ratio=p, verbose=VERBOSE)
         elif method == 'trimmed_mean':
             p = (f / N) / 2
             # p = 0.45
-            agg_value, clients_type = ragg.trimmed_mean(points, weights, trim_ratio=p, verbose=VERBOSE)
+            agg_value, clients_type = rag.trimmed_mean(points, weights, trim_ratio=p, verbose=VERBOSE)
         elif method == 'geometric_median':
-            agg_value, clients_type = ragg.geometric_median(points, weights, verbose=VERBOSE)
+            agg_value, clients_type = rag.geometric_median(points, weights, verbose=VERBOSE)
         elif method == 'projection_median':
             n, d = points.shape
             num_projections = int(np.log(max(n, d)))
-            agg_value, clients_type = projection_median.projection_median(points, weights,
+            agg_value, clients_type = rag.projection_median(points, weights,
                                                                           num_projections,
                                                                           verbose=VERBOSE)
         else:
@@ -454,7 +453,7 @@ def synthetic_case(tunable_values, case='byzantine_location', N=None, D=None, by
 
         # get result with different seeds
         tmp_res = []
-        num_repeats = 10
+        num_repeats = 1
         print(f"\n{case}, N:{N}, D:{D}, byzantine_mu:{byzantine_mu}, f:{f}, num_repeats:{num_repeats}")
         for seed in range(0, 1000, 1000 // num_repeats):
             res = synthetic_single_case(N, D, byzantine_mu, f, random_state=seed)
@@ -609,7 +608,7 @@ def _krum_rp_case(n, dim, k_factor, num_repetitions=100):
         print(f'N: {N}, f: {f}, h: {h}, D: {D}, byzantine_mu:{byzantine_mu}, seed: {random_state}')
 
         # True median if only honest points were considered
-        empirical_cw_mean, clients_type = ragg.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
+        empirical_cw_mean, clients_type = rag.cw_mean(points[:N - f], weights[:N - f], verbose=VERBOSE)
         method = 'empirical_cw_mean'
         SPACES = 16
         print(
@@ -620,7 +619,7 @@ def _krum_rp_case(n, dim, k_factor, num_repetitions=100):
         # print('Krum...')
         print('\nadaptive Krum...')
         start = time.time()
-        aggregated_update, _ = ragg.adaptive_krum(clients_updates, weights, trimmed_average,
+        aggregated_update, _ = rag.adaptive_krum(clients_updates, weights, trimmed_average,
                                                   random_projection=False, k_factor=k_factor,
                                                   verbose=verbose)
         end = time.time()
@@ -630,7 +629,7 @@ def _krum_rp_case(n, dim, k_factor, num_repetitions=100):
 
         print('\nadaptive Krum with Random Projection...')
         start = time.time()
-        aggregated_update2, _ = ragg.adaptive_krum(clients_updates, weights, trimmed_average,
+        aggregated_update2, _ = rag.adaptive_krum(clients_updates, weights, trimmed_average,
                                                    random_projection=True, k_factor=k_factor,
                                                    verbose=verbose)
         end = time.time()
@@ -712,11 +711,11 @@ if __name__ == '__main__':
     # median_case()
     # trimmed_mean_case()
 
-    num_repetitions = 10
-    # dims = [500, 750, 1000, 2500, 5000, 7500, 10000, 25000, 50000, 100000]
-    dims = [500, 1000, 5000, 10000, 50000, 100000]
-    # dims = [50, 100, 200]
-    krum_rp_case(dims, case='dim', n=100, dim=None, k_factor=10, num_repetitions=num_repetitions)
+    # num_repetitions = 10
+    # # dims = [500, 750, 1000, 2500, 5000, 7500, 10000, 25000, 50000, 100000]
+    # dims = [500, 1000, 5000, 10000, 50000, 100000]
+    # # dims = [50, 100, 200]
+    # krum_rp_case(dims, case='dim', n=100, dim=None, k_factor=10, num_repetitions=num_repetitions)
 
     # dim = 10000
     # k_factor_max = int(dim / np.log(dim))
@@ -735,8 +734,8 @@ if __name__ == '__main__':
     # f_max = (N - 3) // 2
     # synthetic_case(byzantine_mu_locations, case='byzantine_location', N=N, D=2, f=f_max)
 
-    # Ns = [5, 10, 25, 50, 75, 100, 200, 300, 400, 500]
-    # synthetic_case(Ns, case='N', D=2, byzantine_mu=10, f=None)
+    Ns = [5, 10, 25, 50, 75, 100, 200, 300, 400, 500, 1000]
+    synthetic_case(Ns, case='N', D=2, byzantine_mu=10, f=None)
 
     # N = 100
     # f_max = (N - 3) // 2

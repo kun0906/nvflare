@@ -237,7 +237,7 @@ class FL:
         # vae_criterion = nn.KLDivLoss(reduction="batchmean")
 
         model.train()
-        vae.train()
+        vae.eval()
         losses = []
         epochs = 11
         distill_weight = 2
@@ -245,7 +245,7 @@ class FL:
         for epoch in range(epochs):
             epoch_model_loss = 0
             epoch_vae_loss = 0
-            for images, labels in train_loader:
+            for j, (images, labels) in enumerate(train_loader):
                 images, labels = images.to(device), labels.to(device)
 
                 # your local personal model
@@ -254,13 +254,24 @@ class FL:
                 model_loss = criterion(model_logits, labels)
 
                 # Knowledge distillation loss
-                batch_size = images.size(0)
-                latent_dim = vae.latent_dim
-                # generate latent vector from N(0, 1)
-                z = torch.randn(batch_size, latent_dim).to(device)  # Sample latent vectors
-                pseudo_logits = global_vae.decode(z)  # Reconstruct probabilities from latent space
+                if True:
+                    batch_size = images.size(0)
+                    latent_dim = vae.latent_dim
+                    # generate latent vector from N(0, 1)
+                    z = torch.randn(batch_size, latent_dim).to(device)  # Sample latent vectors
+                    pseudo_logits = global_vae.decode(z)  # Reconstruct probabilities from latent space
+                    if client_info['client_id'] == 0:
+                        pseudo_logits[:, 5:] = -float('inf')    # only keep 0-4 classes
+                    else:
+                        # Set the first 5 classes to a large negative number (ignore them)
+                        pseudo_logits[:, :5] = -float('inf')    # only keep 5-9 classes
+                else:
+                    pseudo_logits, mu, logvar = vae(outputs)
                 pseudo_logits = pseudo_logits.detach().to(device)
-                print(epoch, collections.Counter(labels.tolist()), collections.Counter(model_logits.argmax(dim=1).tolist()), collections.Counter(pseudo_logits.argmax(dim=1).tolist()), )
+                if epoch %10 == 0 and j == 0:
+                    print(epoch, collections.Counter(labels.tolist()),
+                          collections.Counter(model_logits.argmax(dim=1).tolist()),
+                          collections.Counter(pseudo_logits.argmax(dim=1).tolist()), )
                 distill_loss = distillation_loss(model_logits, pseudo_logits)
                 # Combine losses
                 loss = model_loss + distill_weight * distill_loss
@@ -275,6 +286,8 @@ class FL:
                 print(epoch, model_loss.item(), distill_weight * distill_loss.item(), loss.item())
 
         print('Training local VAE')
+        model.eval()
+        vae.train()
         for epoch in range(epochs):
             epoch_model_loss = 0
             epoch_vae_loss = 0
