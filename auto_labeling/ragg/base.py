@@ -71,7 +71,6 @@ class CNN(nn.Module):
         return x
 
 
-
 class FNN(nn.Module):
     def __init__(self, input_dim=768, num_classes=10):
         super(FNN, self).__init__()
@@ -398,11 +397,13 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
 
     elif aggregation_method == 'adaptive_krum+rp':  # adaptive_krum + random projection
         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
-            flatten_clients_updates, clients_weights, trimmed_average=False, random_projection=True,
+            flatten_clients_updates, clients_weights, trimmed_average=False,
+            random_projection=True, c_ratio=CFG.tunable_parameter,
             random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
     elif aggregation_method == 'adaptive_krum+rp_avg':  # adaptive_krum + random projection
         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
-            flatten_clients_updates, clients_weights, trimmed_average=True, random_projection=True,
+            flatten_clients_updates, clients_weights, trimmed_average=True,
+            random_projection=True, c_ratio=CFG.tunable_parameter,
             random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum':
         # train_info = list(histories['clients'][-1].values())[-1]
@@ -429,6 +430,7 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
                                                                        clients_weights, f,
                                                                        trimmed_average=False,
                                                                        random_projection=True,
+                                                                       c_ratio=CFG.tunable_parameter,
                                                                        random_state=CFG.TRAIN_VAL_SEED,
                                                                        verbose=CFG.VERBOSE)
     elif aggregation_method == 'krum+rp_avg':
@@ -440,6 +442,7 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
                                                                        clients_weights, f,
                                                                        trimmed_average=True,
                                                                        random_projection=True,
+                                                                       c_ratio=CFG.tunable_parameter,
                                                                        random_state=CFG.TRAIN_VAL_SEED,
                                                                        verbose=CFG.VERBOSE)
     elif aggregation_method == 'median':
@@ -514,12 +517,16 @@ def evaluate(local_cnn, local_data, global_cnn, test_type='test', client_id=0, t
     """
         Evaluate how well each client's model performs on the test set.
     """
-    print('---------------------------------------------------------------')
     DEVICE = train_info['DEVICE']
+    CFG = train_info['CFG']
+    verbose = CFG.VERBOSE
+    if verbose >= 20:
+        print('---------------------------------------------------------------')
     for model_type, model in [('global', global_cnn), ('local', local_cnn)]:
         # At time t, global model has not been updated yet, however, local_cnn is updated.
         # After training, the model can make predictions for both labeled and unlabeled nodes
-        print(f'***Testing {model_type} model on {test_type}...')
+        if verbose >= 10:
+            print(f'***Testing {model_type} model on {test_type}...')
         cnn = model
         cnn = cnn.to(DEVICE)
 
@@ -545,7 +552,8 @@ def evaluate(local_cnn, local_data, global_cnn, test_type='test', client_id=0, t
                 true_labels_tmp = true_labels[mask_]
                 y = true_labels_tmp.cpu().numpy()
                 y_pred = predicted_labels_tmp.cpu().numpy()
-                print(collections.Counter(y.tolist()))
+                if verbose >= 20:
+                    print(collections.Counter(y.tolist()))
 
                 # Total samples and number of classes
                 total_samples = len(y)
@@ -558,13 +566,17 @@ def evaluate(local_cnn, local_data, global_cnn, test_type='test', client_id=0, t
                 accuracy = accuracy_score(y, y_pred, sample_weight=sample_weight)
 
                 train_info[f'{model_type}_{data_type}_accuracy'] = accuracy
-                print(f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+                if verbose >= 10:
+                    print(
+                        f"Accuracy on {data_type} data (only): {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
                 conf_matrix = confusion_matrix(y, y_pred, sample_weight=sample_weight)
                 conf_matrix = conf_matrix.astype(int)
                 train_info[f'{model_type}_{data_type}_cm'] = conf_matrix
-                print("Confusion Matrix:\n", conf_matrix)
+                if verbose >= 20:
+                    print("Confusion Matrix:\n", conf_matrix)
 
-        print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
+        if verbose >= 20:
+            print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
     return
 
@@ -575,19 +587,25 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
     """
         Evaluate how well each client's model performs on the test set.
     """
-    print('---------------------------------------------------------------')
+    CFG = train_info['CFG']
+    verbose = CFG.VERBOSE
+    if verbose >= 20:
+        print('---------------------------------------------------------------')
     DEVICE = train_info['DEVICE']
     shared_data = local_data['shared_data']
 
     # shared_test
     X_test, y_test = shared_data['X'].to(DEVICE), shared_data['y'].to(DEVICE)
-    print(f'X_test: {X_test.size()}, {collections.Counter(y_test.tolist())}')
+    if verbose >= 20:
+        print(f'X_test: {X_test.size()}, {collections.Counter(y_test.tolist())}')
     tmp = X_test.cpu().numpy().flatten()
-    print(f'X_test: [min: {min(tmp)}, max: {max(tmp)}]')
+    if verbose >= 30:
+        print(f'X_test: [min: {min(tmp)}, max: {max(tmp)}]')
 
     for model_type, model in [('global', global_cnn), ('local', local_cnn)]:
         # After training, the model can make predictions for both labeled and unlabeled nodes
-        print(f'***Testing {model_type} model on {test_type}...')
+        if verbose >= 20:
+            print(f'***Testing {model_type} model on {test_type}...')
         # evaluate the data
         # cnn = local_cnn
         cnn = model
@@ -598,7 +616,8 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
             _, predicted_labels = torch.max(output, dim=1)
 
             # only on test set
-            print('Evaluate on shared test data...')
+            if verbose >= 20:
+                print('Evaluate on shared test data...')
             # Calculate accuracy for the labeled data
             # NUM_CLASSES = 10
             # labeled_indices = graph_data.train_mask.nonzero(as_tuple=True)[0]  # Get indices of labeled nodes
@@ -618,16 +637,19 @@ def evaluate_shared_test(local_cnn, local_data, global_cnn,
 
             accuracy = accuracy_score(y, y_pred, sample_weight=sample_weight)
             train_info[f'{model_type}_shared_accuracy'] = accuracy
-            print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
+            if verbose >= 10:
+                print(f"Accuracy on shared test data: {accuracy * 100:.2f}%, {collections.Counter(y.tolist())}")
 
             # Compute the confusion matrix
             conf_matrix = confusion_matrix(y, y_pred, sample_weight=sample_weight)
             conf_matrix = conf_matrix.astype(int)
             train_info[f'{model_type}_shared_cm'] = conf_matrix
-            print("Confusion Matrix:")
-            print(conf_matrix)
+            if verbose >= 20:
+                print("Confusion Matrix:")
+                print(conf_matrix)
 
-        print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
+        if verbose >= 20:
+            print(f"Client {client_id} evaluation on {test_type} Accuracy: {accuracy * 100:.2f}%")
 
     return
 

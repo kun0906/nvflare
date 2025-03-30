@@ -75,10 +75,10 @@ for location in [10]:    #[10, 20, 30, 50, 100, 150, 200, 300, 400, 500, 1000]: 
     f = (n - 3) // 2
     # f = n//4
     h = n - f
-    d = 5
+    d = 50
     print(n, h, f, flush=True)
     # normal_points = np.random.randn(h, d)  # 4 points in 2D
-    cov = np.eye(d)*0.1
+    cov = np.eye(d)*1.0
     normal_points = np.random.multivariate_normal(np.zeros((d,)), cov, size=h//2)
     normal_points2 = np.random.multivariate_normal(np.ones((d,))*0.5, cov, size=h-h//2)
     normal_points = np.concatenate((normal_points, normal_points2), axis=0)
@@ -89,7 +89,7 @@ for location in [10]:    #[10, 20, 30, 50, 100, 150, 200, 300, 400, 500, 1000]: 
     # cov[0, :] = 10
     # cov[0,0] = 1e+20
     # cov = np.random.randn(d,d)+10000
-    byzantine_point = np.random.multivariate_normal(np.ones((d,)) * 5.0, cov, size=f)
+    byzantine_point = np.random.multivariate_normal(np.ones((d,)) * 2.0, cov, size=f)
     # byzantine_point2 = np.random.multivariate_normal(np.ones((d,))+(1e+4), cov, size=f-1)
     # byzantine_point = np.concatenate((byzantine_point, byzantine_point2), axis=0)
     # mu=np.ones((d,)) * 1e+1
@@ -109,8 +109,10 @@ for location in [10]:    #[10, 20, 30, 50, 100, 150, 200, 300, 400, 500, 1000]: 
     # Combine normal points and Byzantine client
     clients_updates = np.vstack([normal_points, byzantine_point])
 
+    # clients_updates = [0, 1.8, 2, 2.1, 2.2, 3, 3., 4.1, 4.1]   # for testing
+    # clients_updates = np.reshape(clients_updates, (-1, 1))
     # Set initial weights (with equal weights for simplicity)
-    clients_weights = np.ones(n)
+    clients_weights = np.ones(len(clients_updates))
     true_center = np.mean(normal_points, axis=0)
 
     # if byzantine is very far away from normal points, which lead geometric median more iteration to converge.
@@ -125,7 +127,7 @@ for location in [10]:    #[10, 20, 30, 50, 100, 150, 200, 300, 400, 500, 1000]: 
 
     # if normal point with larger cov, cw_median will fail
     # final_center, clients_type = rag.cw_median(points, weights, verbose=VERBOSE)
-
+    VERBOSE = 30
     # if normal point with larger cov, medoid will fail
     final_center, clients_type = rag.medoid(points, weights, verbose=VERBOSE)
     print(f'n:{n}, medoid: ', final_center[:5], torch.norm(final_center - true_center).item(),  np.where(clients_type == 'Chosen Update')[0])

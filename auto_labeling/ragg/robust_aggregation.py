@@ -355,6 +355,8 @@ def medoid(clients_updates, clients_weights, trimmed_average=False, verbose=1):
 
     # Compute sum of distances for each point to all others
     total_distances = torch.sum(distances, dim=1)  # distances is symmetric, so dim=0 is the as dim=1
+    if verbose >= 30:
+        print(f'Total distances: {total_distances}')
 
     if trimmed_average:
         # Compute weighted average
@@ -369,7 +371,7 @@ def medoid(clients_updates, clients_weights, trimmed_average=False, verbose=1):
     return update, predict_clients_type
 
 
-def krum(clients_updates, clients_weights, f, trimmed_average=False, random_projection=False, k_factor=10,
+def krum(clients_updates, clients_weights, f, trimmed_average=False, random_projection=False, c_ratio=1,
          random_state=42, verbose=1):
     """
     Krum aggregation for Byzantine-robust federated learning.
@@ -379,7 +381,7 @@ def krum(clients_updates, clients_weights, f, trimmed_average=False, random_proj
     :param f: Number of Byzantine clients to tolerate.
     :param trimmed_average: Whether to use trimmed averaging instead of selecting one update.
     :param random_projection: Whether to apply random projection before computing distances.
-    :param k_factor: Dimensionality reduction factor for random projection.
+    :param c_ratio: Dimensionality reduction factor for random projection.
     :param random_state: Random seed for projection.
     :param verbose: Verbosity level.
     :return: Aggregated update and client type predictions.
@@ -400,7 +402,9 @@ def krum(clients_updates, clients_weights, f, trimmed_average=False, random_proj
 
     # Compute pairwise distances:   # we don't need the weighted distance here.
     if random_projection:
-        projected_updates = conduct_random_projection(clients_updates, k_factor, random_state)
+        C = c_ratio * (D / np.log(N))  # to get constant C
+        reduced_d = int(C * np.log(N))  # Reduced dimension using log(N)
+        projected_updates = conduct_random_projection(clients_updates, reduced_d, random_state)
         distances = pairwise_distances(projected_updates, is_squared_distance=True)
     else:
         distances = pairwise_distances(clients_updates, is_squared_distance=True)
@@ -465,7 +469,7 @@ def krum(clients_updates, clients_weights, f, trimmed_average=False, random_proj
     return weighted_update, predict_clients_type
 
 
-def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, random_projection=False, k_factor=10,
+def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, random_projection=False, c_ratio=1,
                   random_state=42, verbose=1):
     """
     adaptive Krum aggregation for Byzantine-robust federated learning.
@@ -475,7 +479,7 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         clients_weights (Tensor): Weights of client updates, shape (N,).
         trimmed_average (bool): Whether to use trimmed averaging.
         random_projection (bool): Whether to apply random projection.
-        k_factor (int): Projection dimensionality reduction factor.
+        c_ratio: Projection dimensionality reduction.
         random_state (int): Random seed for projection.
         verbose (int): Verbosity level.
 
@@ -494,7 +498,9 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
 
     # Compute pairwise distances:   # we don't need the weighted distance here.
     if random_projection:
-        projected_updates = conduct_random_projection(clients_updates, k_factor, random_state)
+        C = c_ratio * (D / np.log(N))  # to get constant C
+        reduced_d = int(C * np.log(N))  # Reduced dimension using log(N)
+        projected_updates = conduct_random_projection(clients_updates, reduced_d, random_state)
         distances = pairwise_distances(projected_updates, is_squared_distance=True)
     else:
         distances = pairwise_distances(clients_updates, is_squared_distance=True)
@@ -604,13 +610,13 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
     return weighted_update, predict_clients_type
 
 
-def conduct_random_projection(updates, k_factor=1, random_state=42, verbose=1):
+def conduct_random_projection(updates, k=1, random_state=42, verbose=1):
     """
     Applies random projection to reduce the dimensionality of model updates.
 
     Args:
         updates (torch.Tensor): A tensor of shape (num_updates, num_features) representing model updates.
-        k_factor (int): Factor controlling the reduced dimension, calculated as k_factor * log(num_updates).
+        k: reduced dimension
         random_state (int, optional): Seed for reproducibility. Default is 42.
         verbose (int, optional): Verbosity level for logging. Default is 1.
 
@@ -620,7 +626,6 @@ def conduct_random_projection(updates, k_factor=1, random_state=42, verbose=1):
     start = time.time()
     N, D = updates.shape
 
-    k = k_factor * int(np.log(N))  # Reduced dimension using log(N)
     if k >= D:
         raise ValueError("k must be smaller than D.")
     # k = min(D, k_factor * int(np.log(N)))

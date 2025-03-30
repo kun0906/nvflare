@@ -41,24 +41,25 @@ from ragg.utils import dirichlet_split, reduce_dimensionality
 print(f'current directory: {os.path.abspath(os.getcwd())}')
 print(f'current file: {__file__}')
 
+
 # Define the function to parse the parameters
 def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-t', '--tunable_type', type=str, required=False, default='different_f',
+    parser.add_argument('-t', '--tunable_type', type=str, required=False, default='different_c_ratio',
                         help="which parameter you are tuning.")
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.1,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
                         help="The number of server epochs (integer).")
     parser.add_argument('-n', '--num_clients', type=int, required=False, default=50,
                         help="The number of total clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='medoid_avg',
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='adaptive_krum+rp_avg',
                         help="aggregation method.")
     parser.add_argument('-R', '--num_repeats', type=int, required=False, default=1,
                         help="Number of times to repeat the aggregation method.")
-    parser.add_argument('-v', '--verbose', type=int, required=False, default=10,
+    parser.add_argument('-v', '--verbose', type=int, required=False, default=5,
                         help="verbose mode.")
     # Parse the arguments
     args = parser.parse_args()
@@ -75,7 +76,7 @@ reduce_dim_flg = True
 if args.tunable_type == 'different_d':
     reduced_dim = int(args.labeling_rate)
 else:
-    reduced_dim = 200
+    reduced_dim = 10
 
 from functools import partial
 
@@ -114,9 +115,9 @@ class CONFIG:
         self.SEED = None
         self.TRAIN_VAL_SEED = 42
         self.DEVICE = None
-        self.VERBOSE = 5
+        self.VERBOSE = 0
         self.LABELING_RATE = None
-        self.BIG_NUMBER = None
+        self.tunable_parameter = None
         self.SERVER_EPOCHS = None
         self.CLIENT_EPOCHS = 10
         self.BATCH_SIZE = 512  # -1
@@ -147,25 +148,25 @@ def get_configuration(train_val_seed):
     CFG.VERBOSE = args.verbose
     # Access the arguments
     CFG.LABELING_RATE = 0.8
-    CFG.BIG_NUMBER = args.labeling_rate
+    CFG.tunable_parameter = args.labeling_rate
     # SERVER_EPOCHS = args.server_epochs
     CFG.SERVER_EPOCHS = args.server_epochs
-    # CFG.BATCH_SIZE = int(CFG.BIG_NUMBER)
+    # CFG.BATCH_SIZE = int(CFG.tunable_parameter)
     CFG.IID_CLASSES_CNT = 5
 
     CFG.TUNABLE_TYPE = args.tunable_type
     if CFG.TUNABLE_TYPE == 'different_f':
         CFG.NUM_CLIENTS = args.num_clients
         max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-        CFG.NUM_BYZANTINE_CLIENTS = int(CFG.BIG_NUMBER * CFG.NUM_CLIENTS)
+        CFG.NUM_BYZANTINE_CLIENTS = int(CFG.tunable_parameter * CFG.NUM_CLIENTS)
         # 2 + 2f < n for Krum, so f < (n-2)/2, not equal to (n-2)/2
         if CFG.NUM_CLIENTS < 5:  # if n == 4, f will be 0
             raise ValueError(f"NUM_CLIENTS ({CFG.NUM_CLIENTS}) must be >= 5")
     elif CFG.TUNABLE_TYPE == 'different_n':
-        CFG.NUM_CLIENTS = int(CFG.BIG_NUMBER)
+        CFG.NUM_CLIENTS = int(CFG.tunable_parameter)
         max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
         CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-    elif CFG.TUNABLE_TYPE == 'different_location':
+    elif CFG.TUNABLE_TYPE == 'different_mu':
         CFG.NUM_CLIENTS = args.num_clients
         max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
         CFG.NUM_BYZANTINE_CLIENTS = max_num_f
@@ -173,11 +174,16 @@ def get_configuration(train_val_seed):
     #     CFG.NUM_CLIENTS = args.num_clients
     #     max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
     #     CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-    elif CFG.TUNABLE_TYPE == 'different_variance':
+    elif CFG.TUNABLE_TYPE == 'different_var':
         CFG.NUM_CLIENTS = args.num_clients
         max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
         CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-        CFG.BIG_NUMBER = args.labeling_rate
+        CFG.tunable_parameter = args.labeling_rate
+    elif CFG.TUNABLE_TYPE == 'different_c_ratio':
+        CFG.NUM_CLIENTS = args.num_clients
+        max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
+        CFG.NUM_BYZANTINE_CLIENTS = max_num_f
+        CFG.tunable_parameter = args.labeling_rate
     elif CFG.TUNABLE_TYPE == 'different_d':
         CFG.NUM_CLIENTS = args.num_clients
         max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
@@ -258,7 +264,7 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
     # non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
     # non_iid_cnt1 = 0
     # m = len(y) // 2
-    # m = int(CFG.BIG_NUMBER * len(y))
+    # m = int(CFG.tunable_parameter * len(y))
     m = int(0.5 * len(y))
     # Xs1, Ys1 = dirichlet_split(X[:m, :], y[:m], num_clients=CFG.NUM_CLIENTS // 3, alpha=0.1, random_state=SEED)
     # Xs2, Ys2 = dirichlet_split(X[m:2*m, :], y[m:2*m], num_clients=CFG.NUM_CLIENTS // 3, alpha=1.0, random_state=SEED)
@@ -281,8 +287,9 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
     for j, y_ in enumerate(Ys):
         vs = collections.Counter(y_.tolist())
         vs = dict(sorted(vs.items(), key=lambda x: x[0], reverse=False))
-        print(f"client {j}'s data size: {len(y_)}, total classes: {len(vs)}, in which {vs}, "
-              f"alpha: {CFG.BIG_NUMBER}")
+        if CFG.VERBOSE >= 10:
+            print(f"client {j}'s data size: {len(y_)}, total classes: {len(vs)}, in which {vs}, "
+                  f"alpha: {CFG.tunable_parameter}")
         total_size += len(y_)
     print(f"total size: {total_size}")
     ########################################### Benign Clients #############################################
@@ -317,7 +324,7 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
         #         mask_ = y_c == l
         #         mask_c[mask_] = True
-        # if c <= NUM_HONEST_CLIENTS//BIG_NUMBER:
+        # if c <= NUM_HONEST_CLIENTS//tunable_parameter:
         #     mask_c = np.full(len(y_c), False)
         #     # for l in [5, 6, 7, 8, 9]:
         #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
@@ -372,7 +379,7 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         X_c, y_c = Xs[c], Ys[c]  # using dirichlet distribution
 
         # mask_c = np.full(len(y_c), False)
-        # for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=CFG.BIG_NUMBER, replace=False):
+        # for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=CFG.tunable_parameter, replace=False):
         #     mask_ = y_c == l
         #     mask_c[mask_] = True
         # X_c = X_c[mask_c]
@@ -513,19 +520,19 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         # elif byzantine_method == 'adaptive_large_value':
         #     new_state_dict = {}
         #     for key, param in global_cnn.state_dict().items():
-        #         new_state_dict[key] = param * BIG_NUMBER
+        #         new_state_dict[key] = param * tunable_parameter
         #     local_cnn.load_state_dict(new_state_dict)
         # else:  # assign large values
         #     # Assign fixed large values to all parameters
-        #     # BIG_NUMBER = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
+        #     # tunable_parameter = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
         #     for param in local_cnn.parameters():
-        #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+        #         param.data.fill_(tunable_parameter)  # Assign big number to each parameter
         # train_cnn(local_cnn, global_cnn, local_data, train_info)
 
         # # Inject noise to malicious clients' CNNs
         # new_state_dict = {}
         # for key, param in global_cnn.state_dict().items():
-        #     noise = torch.normal(0, CFG.BIG_NUMBER, size=param.shape).to(DEVICE)
+        #     noise = torch.normal(0, CFG.tunable_parameter, size=param.shape).to(DEVICE)
         #     new_state_dict[key] = param + noise
 
         # # only inject noise to partial dimensions of model parameters.
@@ -533,7 +540,7 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         # model.load_state_dict(global_cnn.state_dict())
         # ps = parameters_to_vector(model.parameters()).detach()
         # # Randomly select the indices
-        # cnt = max(1, int(CFG.BIG_NUMBER * len(ps)))
+        # cnt = max(1, int(CFG.tunable_parameter * len(ps)))
         # selected_indices = random.sample(range(len(ps)), cnt)
         # noise = torch.normal(0, 10, size=(cnt, )).to(DEVICE)
         # ps[selected_indices] = ps[selected_indices] + noise
@@ -544,7 +551,7 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         # new_state_dict = {}
         # for key, param in global_cnn.state_dict().items():
         #     noise = torch.normal(0, 10, size=param.shape).to(DEVICE)
-        #     # new_state_dict[key] = param * CFG.BIG_NUMBER
+        #     # new_state_dict[key] = param * CFG.tunable_parameter
         #     new_state_dict[key] = param + noise
 
         # only inject noise to partial dimensions of model parameters.
@@ -553,9 +560,9 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         # print_histgram(ps.cpu(), bins=5, value_type='before parameters')
 
         # Randomly select the indices
-        # cnt = max(1, int(CFG.BIG_NUMBER * len(ps)))
-        # print(f'{cnt} parameters ({CFG.BIG_NUMBER * 100}%) are changed.')
-        # cnt = int(CFG.BIG_NUMBER * len(ps))
+        # cnt = max(1, int(CFG.tunable_parameter * len(ps)))
+        # print(f'{cnt} parameters ({CFG.tunable_parameter * 100}%) are changed.')
+        # cnt = int(CFG.tunable_parameter * len(ps))
         # selected_indices = random.sample(range(len(ps)), cnt)
         # if c % 3 == 0:
         #     noise = torch.normal(-1e+2, 1, size=(len(ps),)).to(DEVICE)
@@ -563,13 +570,16 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         #     noise = torch.normal(1e+8, 1, size=(len(ps),)).to(DEVICE)
 
         ########### different Byzantine location
-        if CFG.TUNABLE_TYPE == 'different_location':
-            noise = torch.normal(CFG.BIG_NUMBER, 1, size=(len(ps),)).to(DEVICE)
+        if CFG.TUNABLE_TYPE == 'different_mu':
+            noise = torch.normal(CFG.tunable_parameter, 0.1, size=(len(ps),)).to(DEVICE)
         elif CFG.TUNABLE_TYPE in ['different_n', 'different_f']:
-            noise = torch.normal(5, 1, size=(len(ps),)).to(DEVICE)
-        elif CFG.TUNABLE_TYPE in ['different_variance']:
-            noise = torch.normal(0.05, CFG.BIG_NUMBER, size=(len(ps),)).to(DEVICE)
+            # noise = torch.normal(5, 1, size=(len(ps),)).to(DEVICE)
+            noise = torch.normal(0.05, 0.1, size=(len(ps),)).to(DEVICE)
+        elif CFG.TUNABLE_TYPE in ['different_var']:
+            noise = torch.normal(0.05, CFG.tunable_parameter, size=(len(ps),)).to(DEVICE)
         elif CFG.TUNABLE_TYPE in ['different_d']:
+            noise = torch.normal(0.05, 0.1, size=(len(ps),)).to(DEVICE)
+        elif CFG.TUNABLE_TYPE in ['different_c_ratio']:    # for random projection
             noise = torch.normal(0.05, 0.1, size=(len(ps),)).to(DEVICE)
         else:
             raise ValueError('CFG.TUNABLE_TYPE')
@@ -620,8 +630,9 @@ def main():
         print('\n')
         CFG = get_configuration(train_val_seed)
         print(f"\n*************************** Generate Clients Data ******************************")
-        data_dir = (f'data/MNIST/model_large_value/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
-                    f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
+        data_dir = (f'data/MNIST/model_large_value/{CFG.TUNABLE_TYPE}/h_{CFG.NUM_HONEST_CLIENTS}-'
+                    f'b_{CFG.NUM_BYZANTINE_CLIENTS}'
+                    f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.tunable_parameter}-{CFG.AGGREGATION_METHOD}'
                     f'/{CFG.TRAIN_VAL_SEED}')
         data_out_dir = data_dir
         data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
