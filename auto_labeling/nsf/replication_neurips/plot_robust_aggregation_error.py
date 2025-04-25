@@ -15,6 +15,8 @@ def extract_namespace(filepath):
             clean_value = value.rstrip(',')
             if clean_value.replace('.', '', 1).isdigit():  # Check for int/float
                 clean_value = float(clean_value) if '.' in clean_value else int(clean_value)
+            else:  # string
+                clean_value = clean_value.strip("'")
             params[key] = clean_value  # Remove quotes if present
 
         return params
@@ -145,10 +147,11 @@ def plot_robust_aggregation(start=0):
     #         or namespace_params['honest_clients'] in []):
     #     return
     # print(namespace_params)
-    if (namespace_params['server_epochs'] == 20 and namespace_params['labeling_rate'] != 0.0
-            and namespace_params['num_clients'] == 20):
+    if (namespace_params['server_epochs'] == SERVER_EPOCHS and namespace_params['labeling_rate'] != 0.0
+            and namespace_params['num_clients'] == NUM_CLIENTS):
         pass
-        # print(namespace_params)
+
+        print(namespace_params)
     else:
         return
 
@@ -168,6 +171,15 @@ def plot_robust_aggregation(start=0):
     for i in range(len(aggregation_methods)):
         agg_method = aggregation_methods[i]
         label = agg_method
+        if label == 'adaptive_krum':
+            label = 'rKrum'
+        elif label == 'krum':
+            label = 'Krum'
+        elif label == 'mean':
+            label = 'Mean'
+        else:
+            pass
+
         ys = global_accs[agg_method]['shared_accs']  # [:10]
         if METRIC == 'misclassification_error':
             ys = [1 - v for v in ys]
@@ -179,7 +191,7 @@ def plot_robust_aggregation(start=0):
         xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 20 == 0]
     else:
         xs_labels = [v+1 for v in xs]
-    ax.set_xticks(xs)
+    ax.set_xticks(xs_labels)
     ax.set_xticklabels(xs_labels)
     if METRIC == 'loss':
         plt.ylabel('Loss', fontsize=FONTSIZE)
@@ -198,7 +210,7 @@ def plot_robust_aggregation(start=0):
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
     #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
-    fig_file = 'global_cnn.png'
+    fig_file = f'plots/global_cnn-{JOBID}-{title}.png'
     # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)
     plt.show()
@@ -208,6 +220,9 @@ def plot_robust_aggregation(start=0):
 if __name__ == '__main__':
     # plot_robust_aggregation()
     # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
+
+    SERVER_EPOCHS = 200
+    NUM_CLIENTS = 50
 
     ######################### Results 20250313 ###############################################
     # # Guassian attacks with 20 epochs and 20 clients, f=8, client_epoch=1, batch_size=3, alpha= 1
@@ -229,7 +244,7 @@ if __name__ == '__main__':
     # JOBID = 273882
 
     # # Guassian attacks (33% attacks) with 200 epochs and 50 clients, f=16, client_epoch=1, batch_sie=3, alpha=10.0
-    # JOBID = 273860
+    JOBID = 273860
 
     # # Omniscient attacks (2+2f<n) with 20 epochs and 20 clients, f=8, client_epoch=1, batch_sie=3, alpha=10.0
     # JOBID = 273910

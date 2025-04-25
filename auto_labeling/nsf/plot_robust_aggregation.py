@@ -1,3 +1,4 @@
+import os
 import re
 import traceback
 
@@ -175,6 +176,14 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     for i in range(len(aggregation_methods)):
         agg_method, txt_file = aggregation_methods[i]
         label = agg_method
+        if label == 'adaptive_krum':
+            label = 'rKrum'
+        elif label == 'krum':
+            label = 'Krum'
+        elif label == 'mean':
+            label = 'Mean'
+        else:
+            pass
         if METRIC == 'accuracy':
             vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
         elif METRIC == 'l2_error':
@@ -227,8 +236,8 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
     #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
-    fig_file = '../global_cnn.png'
-    # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+    fig_file = f'plots/global_cnn_{JOBID}-{title}.png'
+    os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)
     plt.show()
     plt.close()
@@ -431,7 +440,7 @@ def plot_robust_aggregation_all():
 if __name__ == '__main__':
     # plot_robust_aggregation()
 
-    ######################### Results 20250313 ###############################################
+    ######################### MNIST Results 20250313 ###############################################
     # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
 
     # # Random noise injection with alpha=10, client_epochs=20, batch_size=512, epoch=10, num_clients=20, f=8
@@ -454,7 +463,7 @@ if __name__ == '__main__':
     # # Flip labels with alpha=10, client_epochs=1, batch_size=512, epoch=100, num_clients=50, f=23
     # JOBID = 273720  # for Data Poisoning Attacks, flip labels for Byzantine clients
 
-    ######################################################################################
+    ###########################Sentiment140###########################################################
 
     # # JOBID = 273742
     # # JOBID = 273327
@@ -466,25 +475,25 @@ if __name__ == '__main__':
     # # Random noise injection with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8,
     # JOBID = 274502  # Sentiment140 with 10% data with different alpha
 
-    # # Random noise injection with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=8,
+    # # Random noise injection with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=823,
     # JOBID = 274433  # Sentiment140 with 10% data with different alpha
 
     # # Large Value with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8,
     # JOBID = 274527  # Sentiment140 with 10% data with different alpha
 
-    # Large Value with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=8,
+    # Large Value with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=23,
     # JOBID = 274794 # Sentiment140 with 10% data with different alpha
 
     ### Label flipping
 
     # # Flip labels with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8
-    JOBID = 274839  # for Data Poisoning Attacks, flip labels for Byzantine clients
+    # JOBID = 274839  # for Data Poisoning Attacks, flip labels for Byzantine clients
     # # Flip labels with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=23
-    JOBID = 274863 # Sentiment140 with 10% data with different alpha
+    # JOBID = 274863 # Sentiment140 with 10% data with different alpha
 
 
     # JOBID = 274594
-    # JOBID = 274462  # Shakespeare with 50 features and  different alpha
+    JOBID = 274462  # Shakespeare with 50 features and  different alpha
 
     SERVER_EPOCHS = 100
     NUM_CLIENTS = 50
