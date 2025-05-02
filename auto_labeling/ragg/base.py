@@ -72,7 +72,7 @@ class CNN(nn.Module):
 
 
 class FNN(nn.Module):
-    def __init__(self, input_dim=768, num_classes=10):
+    def __init__(self, input_dim=100, num_classes=10):
         super(FNN, self).__init__()
         # self.conv1 = nn.Conv2d(1, 16, kernel_size=4, stride=2, padding=1)  # From 1 channel to 16 channels
         # self.conv11 = nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1)

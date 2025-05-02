@@ -1,3 +1,7 @@
+v0.4.6: Add filter_large_values for change point method
+    1. Add filter_large_values with median as povit to filter large values
+
+
 v0.4.5: ICONIP
     1. nonIID
     2. aKrum_avg

@@ -176,7 +176,7 @@ def preprocessing():
 
             # Write in batches of `buffer_size`
             if len(buffer) >= buffer_size:
-                print(f'{i}/{len(xs)}, {i/len(xs)*100:.2f}', flush=True)
+                print(f'{i}/{len(xs)}, {i / len(xs) * 100:.2f}', flush=True)
                 f.writelines(buffer)
                 buffer = []  # Reset buffer
 
@@ -187,5 +187,35 @@ def preprocessing():
     return csv_file
 
 
+@timer
+def pca_feature_reduction():
+    import pandas as pd
+    from sklearn.decomposition import PCA
+
+    in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv'
+
+    # Load the CSV file
+    df = pd.read_csv(in_file, header=None, nrows=None)
+
+    # Split into features and labels
+    X = df.iloc[:, :-1].values  # All columns except last
+    y = df.iloc[:, -1].values  # Last column
+
+    # Apply PCA
+    n_components = 100
+    pca = PCA(n_components=n_components)
+    reduced_X = pca.fit_transform(X)
+
+    # Concatenate reduced features and labels
+    output_df = pd.DataFrame(reduced_X)
+    output_df['label'] = y
+
+    # Save to new CSV
+    output_df.to_csv(in_file + f'_pca_{n_components}.csv', index=False, header=False)
+
+
 if __name__ == '__main__':
-    preprocessing()
+    # preprocessing()
+
+    # PYTHONPATH='.' python3 ICONIP/preprocessing_sentiment140.py
+    pca_feature_reduction()

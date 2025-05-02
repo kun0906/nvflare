@@ -65,7 +65,7 @@ def parse_arguments():
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-n', '--num_clients', type=int, required=False, default=20,
+    parser.add_argument('-n', '--num_clients', type=int, required=False, default=10,
                         help="The number of clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False,
                         default='adaptive_krum_avg',
@@ -1075,7 +1075,7 @@ def clients_training(data_dir, epoch, global_cnn):
             # each Byzantine worker computes an estimate of the gradient over the whole dataset (yielding a very
             # accurate estimate of the gradient), and proposes the opposite vector, scaled to a large length.
             # We refer to this behavior as omniscient.
-            scale_factor = 20.0
+            scale_factor = 2.0
             train_cnn(local_cnn, global_cnn, local_data, train_info)
             delta_w = {key: -1 * scale_factor * (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
                        in global_cnn.state_dict()}
@@ -1126,7 +1126,7 @@ def main():
         sub_dir = (f'data/spambase/random_noise/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
         data_out_dir = data_dir
-        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
+        # data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
         print(data_out_dir)
         gen_client_spambase_data(data_dir=data_dir, out_dir=data_out_dir)  # for spambase dataset
     else:

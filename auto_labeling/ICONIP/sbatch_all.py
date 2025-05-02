@@ -28,7 +28,7 @@ input_str = """#!/bin/bash
 #SBATCH --time=6:00:00
 #SBATCH --array=0-6
 
-labeling_rates=(1)
+labeling_rates=(1 10)
 # server_epochs_values=(2)
 # num_clients_values=(10)
 server_epochs_values=(100)

@@ -443,8 +443,20 @@ def krum(clients_updates, clients_weights, f, trimmed_average=False, random_proj
         print('Krum scores:', [f'{v:.2f}' for v in scores.tolist()])
 
     if trimmed_average:
-        # Select top `N-f` updates for trimmed averaging
-        sorted_indices = torch.argsort(scores)
+        # # Select top `N-f` updates for trimmed averaging
+        # sorted_indices = torch.argsort(scores)        # sorted by scores
+        # sorted_weights = clients_weights[sorted_indices]
+        # sorted_updates = clients_updates[sorted_indices]
+        # sorted_predict_clients_type = predict_clients_type[sorted_indices]
+
+        # Select the update with the smallest score
+        selected_index = np.argmin(scores)
+        if verbose >= 5:
+            print(f"selected_index: {selected_index}")
+        # weighted_update = clients_updates[selected_index]
+
+        sorted_indices = np.argsort(distances[selected_index])      # sorted by distances[selected_index].
+        sorted_distances = distances[selected_index][sorted_indices]
         sorted_weights = clients_weights[sorted_indices]
         sorted_updates = clients_updates[sorted_indices]
         sorted_predict_clients_type = predict_clients_type[sorted_indices]
@@ -536,10 +548,11 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         # breakpoints = binary_segmentation(sorted_distances)
         # h = n-f , 2+2f < n => 2*f <= n-2-1, so f <= (n-3)//2, h >= n - f = n - (n-3)//2
         # each point must be >= half of data neighbors, as f is strictly less than half of data
-        h = N - (N - 3) // 2  # the number of honest points
+        h = N - (N - 3) // 2  # the number of honest points, k must be >= h, i.e, half of data
+        # the first value (with index k) that is used to separate left and right, where index k is included in right
         k = find_significant_change_point(sorted_distances, start=h-1)  # index starts from 0
-        # k = find_change_point_with_knee(sorted_distances, start=h-1)
         ks.append(k)
+
         if verbose >= 20:
             # print(f'*** j: {j} ***')
             print(f'sorted_distances: {sorted_distances}')
@@ -569,7 +582,7 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         sorted_updates = clients_updates[sorted_indices]
         sorted_predict_clients_type = predict_clients_type[sorted_indices]
 
-        # k = ks[selected_index]
+        k = ks[selected_index]
 
         # # instead return the smallest value, we return the top weighted average
         # # Sort scores
@@ -604,7 +617,8 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         #     print("Index of maximum scores difference after half of values:", k)
 
         # m = k  # we will average over top m closet updates
-        m = N - (N - 3) // 2  # N//2 the half number of points, no need to be  N - (N - 3) // 2
+        # m = N - (N - 3) // 2  # N//2 the half number of points, no need to be  N - (N - 3) // 2
+        m = k
         if verbose >= 5:
             print(f'm: {m}')
         sorted_predict_clients_type[m:] = 'Byzantine'   # here we use k, it's correct. because k is the seperated point.

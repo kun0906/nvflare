@@ -520,7 +520,7 @@ if __name__ == '__main__':
     # JOBID = 291557      # large_value epochs:2
     # JOBID = 292831  # large_value epochs:2
     # JOBIDs = [293596 + i for i in range(6)]
-    JOBIDs = [294155]
+    JOBIDs = [294331]
     for JOBID in JOBIDs:
         SERVER_EPOCHS = 100
         NUM_CLIENTS = 100

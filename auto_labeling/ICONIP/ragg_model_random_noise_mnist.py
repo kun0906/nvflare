@@ -88,7 +88,7 @@ def parse_arguments():
                         help="The number of total clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='krum_avg',
                         help="aggregation method.")
-    parser.add_argument('-v', '--verbose', type=int, required=False, default=1,
+    parser.add_argument('-v', '--verbose', type=int, required=False, default=5,
                         help="verbose mode.")
     # Parse the arguments
     args = parser.parse_args()

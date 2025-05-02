@@ -90,7 +90,7 @@ def parse_arguments():
                         help="The number of total clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='krum_avg',
                         help="aggregation method.")
-    parser.add_argument('-v', '--verbose', type=int, required=False, default=1,
+    parser.add_argument('-v', '--verbose', type=int, required=False, default=5,
                         help="verbose mode.")
     # Parse the arguments
     args = parser.parse_args()
@@ -384,8 +384,9 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
     sample_size = int(0.1*total_rows)
     # Randomly choose rows to read
     skip = np.random.choice(total_rows, total_rows - sample_size, replace=False)
-    df = pd.read_csv('data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv',
-                     dtype=float, header=None, skiprows=skip.tolist())
+    # in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv'
+    in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv_pca_100.csv'
+    df = pd.read_csv(in_file, dtype=float, header=None, skiprows=skip.tolist())
     X, y = torch.tensor(df.iloc[:, 0:-1].values), torch.tensor(df.iloc[:, -1].values, dtype=int)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,
                                                         shuffle=True, random_state=42)
@@ -416,8 +417,8 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
     num_samples = len(y)
     dim = X.shape[1]
 
-    random_state = 42
-    torch.manual_seed(random_state)
+    # random_state = 42
+    # torch.manual_seed(random_state)
     # indices = torch.randperm(num_samples)  # Randomly shuffle
     # step = int(num_samples / NUM_HONEST_CLIENTS)
     # step = 50  # for debugging

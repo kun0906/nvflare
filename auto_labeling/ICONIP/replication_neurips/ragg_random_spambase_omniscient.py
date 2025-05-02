@@ -1075,7 +1075,7 @@ def clients_training(data_dir, epoch, global_cnn):
             # each Byzantine worker computes an estimate of the gradient over the whole dataset (yielding a very
             # accurate estimate of the gradient), and proposes the opposite vector, scaled to a large length.
             # We refer to this behavior as omniscient.
-            scale_factor = 20.0
+            scale_factor = 2.0
             train_cnn(local_cnn, global_cnn, local_data, train_info)
             delta_w = {key: -1 * scale_factor * (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
                        in global_cnn.state_dict()}
