@@ -180,11 +180,11 @@ def plot_robust_aggregation(JOBID, start=0, METRIC='accuracy'):
         if label == 'adaptive_krum':
             label = 'rKrum'
         elif label == 'adaptive_krum_avg':
-            label = 'arKrum'
+            label = '$\\overline{aKrum}$'
         elif label == 'krum':
             label = 'Krum'
         elif label == 'krum_avg':
-            label = 'mKrum'
+            label = '$\\overline{Krum}$'
         elif label == 'mean':
             label = 'Mean'
         else:
@@ -241,9 +241,9 @@ def plot_robust_aggregation(JOBID, start=0, METRIC='accuracy'):
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
     #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
-    fig_file = f'plots/global_cnn_{JOBID}-{title}.png'
-    os.makedirs(os.path.dirname(fig_file), exist_ok=True)
-    plt.savefig(fig_file, dpi=300)
+    # fig_file = f'plots/global_cnn_{JOBID}-{title}.png'
+    # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+    # plt.savefig(fig_file, dpi=300)
     plt.show()
     plt.close()
 
@@ -520,7 +520,7 @@ if __name__ == '__main__':
     # JOBID = 291557      # large_value epochs:2
     # JOBID = 292831  # large_value epochs:2
     # JOBIDs = [293596 + i for i in range(6)]
-    JOBIDs = [294331]
+    JOBIDs = [294375]
     for JOBID in JOBIDs:
         SERVER_EPOCHS = 100
         NUM_CLIENTS = 100

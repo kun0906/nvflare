@@ -156,7 +156,7 @@ def get_configuration(train_val_seed):
     CFG.LABELS = {0, 1}
     CFG.NUM_CLASSES = len(CFG.LABELS)
     CFG.CNN = FNN
-    CFG.in_dim = 100 # after PCA
+    CFG.in_dim = 57
     print(CFG)
     return CFG
 
@@ -378,15 +378,7 @@ def get_configuration(train_val_seed):
 def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
     os.makedirs(out_dir, exist_ok=True)
 
-    # Total rows in the dataset
-    total_rows = 1600000  # Replace with the actual number of rows in your CSV file
-    # Number of rows to sample
-    sample_size = int(0.1*total_rows)
-    # Randomly choose rows to read
-    skip = np.random.choice(total_rows, total_rows - sample_size, replace=False)
-    # in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv'
-    in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv_pca_100.csv'
-    df = pd.read_csv(in_file, dtype=float, header=None, skiprows=skip.tolist())
+    df = pd.read_csv('data/spambase/spambase.data', dtype=float, header=None)
     X, y = torch.tensor(df.iloc[:, 0:-1].values), torch.tensor(df.iloc[:, -1].values, dtype=int)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,
                                                         shuffle=True, random_state=42)
@@ -517,7 +509,8 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
         label_cnts = collections.Counter(local_data['y'].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         print(f'client_{c} data ({len(label_cnts)}): ', label_cnts)
-        print_data(local_data)
+        if CFG.VERBOSE>=20:
+            print_data(local_data)
 
         out_file = f'{out_dir}/{c}.pt.gz'
         # torch.save(local_data, out_file)
@@ -570,7 +563,8 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
         label_cnts = collections.Counter(local_data['y'].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         print(f'client_{c} data ({len(label_cnts)}): ', label_cnts)
-        print_data(local_data)
+        if CFG.VERBOSE>=20:
+            print_data(local_data)
 
         out_file = f'{out_dir}/{c}.pt.gz'
         # torch.save(local_data, out_file)
@@ -623,7 +617,8 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data ({len(label_cnts)}):', label_cnts)
-        print_data(local_data)
+        if CFG.VERBOSE>=20:
+            print_data(local_data)
 
         print('Train FNN...')
         # local_fnn = FNN(input_dim=input_dim, hidden_dim=hidden_dim_fnn, output_dim=num_classes)
@@ -660,7 +655,8 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data:', label_cnts)
-        print_data(local_data)
+        if CFG.VERBOSE>=20:
+            print_data(local_data)
 
         local_fnn = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES).to(DEVICE)
         # byzantine_method = 'adaptive_large_value'
@@ -737,7 +733,7 @@ def main():
             print('\n')
             CFG = get_configuration(train_val_seed)
             print(f"\n*************************** Generate Clients Data ******************************")
-            data_dir = (f'data/Sentiment140/large_values_model/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
+            data_dir = (f'data/spambase/large_values_model/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
                         f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
                         f'/{CFG.TRAIN_VAL_SEED}')
             data_out_dir = data_dir
@@ -783,7 +779,7 @@ def main():
             # #     pickle.dump(all_histories, f)
             # torch.save(all_histories, history_file)
 
-        # history_file = 'data/Sentiment140/sign_flipping/h_12-b_8-5-0.8-0.1-krum_avg/all_histories_3.pt.gz'
+        # history_file = 'data/spambase/sign_flipping/h_12-b_8-5-0.8-0.1-krum_avg/all_histories_3.pt.gz'
         # history_file = 'all_histories_5.pt.gz'
         # all_histories = torch.load(history_file)
         print_all(all_histories)

@@ -7,7 +7,8 @@
     # $conda activate nvflare-3.10
     # $cd nvflare/auto_labeling
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_large_values_model.py
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping.py
+    $PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_label_flipping.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 
@@ -156,11 +157,11 @@ def get_configuration(train_val_seed):
     CFG.LABELS = {0, 1}
     CFG.NUM_CLASSES = len(CFG.LABELS)
     CFG.CNN = FNN
-    CFG.in_dim = 100 # after PCA
+    CFG.in_dim = 57
     print(CFG)
     return CFG
 
-
+#
 #
 # class FNN(nn.Module):
 #     def __init__(self, num_classes=10):
@@ -201,7 +202,7 @@ def get_configuration(train_val_seed):
 #         return x
 #
 
-#
+
 # @timer
 # def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
 #     print('*aggregate cnn...')
@@ -373,20 +374,11 @@ def get_configuration(train_val_seed):
 #     vector_to_parameters(aggregated_update, global_cnn.parameters())  # in_place
 #     # global_cnn.load_state_dict(aggregated_update)
 
-
 @timer
-def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
+def gen_client_data(data_dir='data/spambase', out_dir='.', CFG=None):
     os.makedirs(out_dir, exist_ok=True)
 
-    # Total rows in the dataset
-    total_rows = 1600000  # Replace with the actual number of rows in your CSV file
-    # Number of rows to sample
-    sample_size = int(0.1*total_rows)
-    # Randomly choose rows to read
-    skip = np.random.choice(total_rows, total_rows - sample_size, replace=False)
-    # in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv'
-    in_file = 'data/Sentiment140/training.1600000.processed.noemoticon.csv_bert.csv_pca_100.csv'
-    df = pd.read_csv(in_file, dtype=float, header=None, skiprows=skip.tolist())
+    df = pd.read_csv('data/spambase/spambase.data', dtype=float, header=None)
     X, y = torch.tensor(df.iloc[:, 0:-1].values), torch.tensor(df.iloc[:, -1].values, dtype=int)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,
                                                         shuffle=True, random_state=42)
@@ -475,13 +467,7 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
         #     non_iid_cnt1 += 1
         #     mask_c = np.full(len(y_c), False)
         #     # for l in [5, 6, 7, 8, 9]:
-        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
-        #         mask_ = y_c == l
-        #         mask_c[mask_] = True
-        # if c <= NUM_HONEST_CLIENTS//BIG_NUMBER:
-        #     mask_c = np.full(len(y_c), False)
-        #     # for l in [5, 6, 7, 8, 9]:
-        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
+        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT * 2, replace=False):
         #         mask_ = y_c == l
         #         mask_c[mask_] = True
         # else:  # 2/4 of honest clients has IID distributions
@@ -541,6 +527,12 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
         # X_c = X_c[mask_c]
         # y_c = y_c[mask_c]
 
+        # mask_c = np.full(len(y_c), False)
+        # for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=5, replace=False):
+        #     mask_ = y_c == l
+        #     mask_c[mask_] = True
+        # y_c[mask_c] = (CFG.NUM_CLASSES - 1)-y_c[mask_c]     # # flip label
+
         # might be used in server
         # train_info = {"client_type": client_type, "FNN": {}, 'client_id': c}
         # Create indices for train/test split
@@ -556,8 +548,11 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
         train_mask[train_indices] = True
         val_mask[val_indices] = True
         test_mask[test_indices] = True
-        # y_c[train_mask] = (NUM_CLASSES - 1) - y_c[train_mask]  # flip label
-        # y_c[val_mask] = (NUM_CLASSES - 1) - y_c[val_mask]  # flip label
+        y_c[train_mask] = (CFG.NUM_CLASSES - 1) - y_c[train_mask]  # flip label
+        y_c[val_mask] = (CFG.NUM_CLASSES - 1) - y_c[val_mask]  # flip label
+        # y_c[train_mask] = torch.tensor([(CFG.NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[train_mask]])
+        # y_c[val_mask] = torch.tensor(
+        #     [(CFG.NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[val_mask]])  # flip label
 
         # train_info['NUM_BYZANTINE_CLIENTS'] = NUM_BYZANTINE_CLIENTS
         local_data = {'client_type': client_type,
@@ -627,6 +622,7 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
 
         print('Train FNN...')
         # local_fnn = FNN(input_dim=input_dim, hidden_dim=hidden_dim_fnn, output_dim=num_classes)
+        # n, d = local_data['X'].shape
         local_fnn = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
         train_cnn(local_fnn, global_fnn, local_data, train_info)
         # w = w0 - \eta * \namba_w, so delta_w = w0 - w
@@ -662,7 +658,7 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         print(f'client_{c} data:', label_cnts)
         print_data(local_data)
 
-        local_fnn = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES).to(DEVICE)
+        # local_fnn = FNN(num_classes=CFG.NUM_CLASSES).to(DEVICE)
         # byzantine_method = 'adaptive_large_value'
         # if byzantine_method == 'last_global_model':
         #     local_fnn.load_state_dict(global_fnn.state_dict())
@@ -692,30 +688,16 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         #     noise = torch.normal(0, CFG.BIG_NUMBER, size=param.shape).to(DEVICE)
         #     new_state_dict[key] = param + noise
 
-        # only inject noise to partial dimensions of model parameters.
-        model = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
-        model.load_state_dict(global_fnn.state_dict())
-        ps = parameters_to_vector(model.parameters()).detach().to(DEVICE)
-        # # Randomly select the indices
-        # cnt = max(1, int(CFG.BIG_NUMBER * len(ps)))
-        # print(f'{cnt} parameters ({CFG.BIG_NUMBER*100}%) are changed.')
-
-        # selected_indices = random.sample(range(len(ps)), cnt)
-        # noise = torch.normal(0, 10, size=(cnt, )).to(DEVICE)
-        # ps[selected_indices] = ps[selected_indices] + noise
-
-        # # Large values malicious clients' CNNs
-        new_state_dict = {}
-        for key, param in global_fnn.state_dict().items():
-            noise = torch.normal(0, 10, size=param.shape).to(DEVICE)
-            new_state_dict[key] = noise
-            # new_state_dict[key] = param * CFG.BIG_NUMBER
-
-        local_fnn.load_state_dict(new_state_dict)
-        # w = w0 - \eta * \namba_w, so delta_w = w0 - w, only send update difference to the server
-        delta_w = {key: (global_fnn.state_dict()[key] - local_fnn.state_dict()[key]) for key
-                   in global_fnn.state_dict()}
+        # local_fnn = FNN(input_dim=input_dim, hidden_dim=hidden_dim_fnn, output_dim=num_classes)
+        # n, d = local_data['X'].shape
+        local_fnn = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
+        train_cnn(local_fnn, global_fnn, local_data, train_info)
+        # w = w0 - \eta * \namba_w, so delta_w = w0 - w
+        delta_w = {key: global_fnn.state_dict()[key] - local_fnn.state_dict()[key] for key in global_fnn.state_dict()}
         clients_fnns[c] = delta_w
+        delta_dist = sum([torch.norm(local_fnn.state_dict()[key].cpu() - global_fnn.state_dict()[key].cpu()) for key
+                          in global_fnn.state_dict()])
+        print(f'dist(local, global): {delta_dist}')
 
         print('Evaluate FNNs...')
         evaluate(local_fnn, local_data, global_fnn,
@@ -737,7 +719,7 @@ def main():
             print('\n')
             CFG = get_configuration(train_val_seed)
             print(f"\n*************************** Generate Clients Data ******************************")
-            data_dir = (f'data/Sentiment140/large_values_model/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
+            data_dir = (f'data/spambase/label_flipping/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
                         f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
                         f'/{CFG.TRAIN_VAL_SEED}')
             data_out_dir = data_dir
@@ -765,7 +747,7 @@ def main():
             # # with open(history_file, 'wb') as f:
             # #     pickle.dump(histories, f)
             # torch.save(histories, history_file)
-            #
+
             # try:
             #     print_histories(histories)
             # except Exception as e:
@@ -783,7 +765,7 @@ def main():
             # #     pickle.dump(all_histories, f)
             # torch.save(all_histories, history_file)
 
-        # history_file = 'data/Sentiment140/sign_flipping/h_12-b_8-5-0.8-0.1-krum_avg/all_histories_3.pt.gz'
+        # history_file = 'data/spambase/sign_flipping/h_12-b_8-5-0.8-0.1-krum_avg/all_histories_3.pt.gz'
         # history_file = 'all_histories_5.pt.gz'
         # all_histories = torch.load(history_file)
         print_all(all_histories)

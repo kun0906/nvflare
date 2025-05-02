@@ -72,7 +72,7 @@ class CNN(nn.Module):
 
 
 class FNN(nn.Module):
-    def __init__(self, input_dim=100, num_classes=10):
+    def __init__(self, in_dim=100, num_classes=10):
         super(FNN, self).__init__()
         # self.conv1 = nn.Conv2d(1, 16, kernel_size=4, stride=2, padding=1)  # From 1 channel to 16 channels
         # self.conv11 = nn.Conv2d(16, 16, kernel_size=3, stride=1, padding=1)
@@ -94,7 +94,7 @@ class FNN(nn.Module):
         #     nn.LeakyReLU(0.2),
         # )
 
-        self.fc11 = nn.Linear(input_dim, 32)
+        self.fc11 = nn.Linear(in_dim, 32)
         self.fc21 = nn.Linear(32, 16)
         self.fc22 = nn.Linear(16, 8)
         self.fc33 = nn.Linear(8, num_classes)
@@ -336,7 +336,10 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     #                            client_state_dict in clients_cnns.values()]
     tmp_models = []
     for client_state_dict in clients_cnns.values():
-        model = CFG.CNN(num_classes=CFG.NUM_CLASSES)
+        if type(CFG.CNN) == type(FNN):
+            model = CFG.CNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
+        else:
+            model = CFG.CNN(num_classes=CFG.NUM_CLASSES)
         model.load_state_dict(client_state_dict)
         tmp_models.append(model)
     flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]

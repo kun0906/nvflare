@@ -156,6 +156,7 @@ def get_configuration(train_val_seed):
     CFG.LABELS = {0, 1}
     CFG.NUM_CLASSES = len(CFG.LABELS)
     CFG.CNN = FNN
+    CFG.in_dim = 100
     print(CFG)
     return CFG
 
@@ -629,7 +630,7 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
 
         print('Train FNN...')
         # local_fnn = FNN(input_dim=input_dim, hidden_dim=hidden_dim_fnn, output_dim=num_classes)
-        local_fnn = FNN(num_classes=CFG.NUM_CLASSES)
+        local_fnn = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
         train_cnn(local_fnn, global_fnn, local_data, train_info)
         # w = w0 - \eta * \namba_w, so delta_w = w0 - w
         delta_w = {key: global_fnn.state_dict()[key] - local_fnn.state_dict()[key] for key in global_fnn.state_dict()}
@@ -665,7 +666,7 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         if CFG.VERBOSE>=20:
             print_data(local_data)
 
-        local_fnn = FNN(num_classes=CFG.NUM_CLASSES).to(DEVICE)
+        local_fnn = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES).to(DEVICE)
         # byzantine_method = 'adaptive_large_value'
         # if byzantine_method == 'last_global_model':
         #     local_fnn.load_state_dict(global_fnn.state_dict())
@@ -696,7 +697,7 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         #     new_state_dict[key] = param + noise
 
         # only inject noise to partial dimensions of model parameters.
-        model = FNN(num_classes=CFG.NUM_CLASSES)
+        model = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
         model.load_state_dict(global_fnn.state_dict())
         ps = parameters_to_vector(model.parameters()).detach().to(DEVICE)
         # # Randomly select the indices
@@ -748,7 +749,7 @@ def main():
             gen_client_data(data_dir, data_out_dir, CFG)
 
             print(f"\n***************************** Global Models *************************************")
-            global_fnn = FNN(num_classes=CFG.NUM_CLASSES)
+            global_fnn = FNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
             global_fnn = global_fnn.to(DEVICE)
             print(global_fnn)
 

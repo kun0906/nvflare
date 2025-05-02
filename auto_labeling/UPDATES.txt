@@ -1,3 +1,7 @@
+v0.4.7: Add spambase for 3 attacks as MNIST and SENTIMENT140
+    1. Using the same configuration/parameteres
+
+
 v0.4.6: Add filter_large_values for change point method
     1. Add filter_large_values with median as povit to filter large values
 
