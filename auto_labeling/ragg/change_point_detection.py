@@ -134,6 +134,7 @@ def binary_segmentation(data, min_size=5):
 #     return change_point
 #
 
+
 def find_significant_change_point(data, start=1):
     """
     Find the most significant change point in O(n) time.
@@ -174,6 +175,15 @@ def find_significant_change_point(data, start=1):
             change_point = i
 
     return change_point
+
+def find_change_point_with_knee(sorted_distances, start):
+    from kneed import KneeLocator
+    # Use KneeLocator to find the jump point
+    knee = KneeLocator(range(len(sorted_distances)), sorted_distances, curve='convex', direction='increasing')
+    index_jump_point = knee.knee
+
+    return max(index_jump_point, start)
+
 
 
 def main():

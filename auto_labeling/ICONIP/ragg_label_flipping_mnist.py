@@ -7,7 +7,8 @@
     # $conda activate nvflare-3.10
     # $cd nvflare/auto_labeling
     $module load conda && conda activate nvflare-3.10 && cd nvflare/auto_labeling
-    $PYTHONPATH=. python3 akrum/ragg_model_large_value_mnist.py
+    $PYTHONPATH=. python3 fl_cnn_robust_aggregation_label_flipping.py
+    $PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_label_flipping.py
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 
@@ -27,66 +28,32 @@
 Author: kun88.yang@gmail.com
 """
 import argparse
+import gzip
 import shutil
 import random
+import traceback
 
 from sklearn.model_selection import train_test_split
 from torchvision import datasets
 from dataclasses import dataclass
 
-import ragg.base
+import ragg
 from ragg.base import *
-from ragg.utils import dirichlet_split, reduce_dimensionality
-
-print(f'current directory: {os.path.abspath(os.getcwd())}')
-print(f'current file: {__file__}')
-
-
-# Define the function to parse the parameters
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="FedCNN")
-
-    # Add arguments to be parsed
-    parser.add_argument('-t', '--tunable_type', type=str, required=False, default='different_c_ratio',
-                        help="which parameter you are tuning.")
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=0.1,
-                        help="label rate, how much labeled data in local data.")
-    parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
-                        help="The number of server epochs (integer).")
-    parser.add_argument('-n', '--num_clients', type=int, required=False, default=50,
-                        help="The number of total clients.")
-    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='adaptive_krum+rp_avg',
-                        help="aggregation method.")
-    parser.add_argument('-R', '--num_repeats', type=int, required=False, default=1,
-                        help="Number of times to repeat the aggregation method.")
-    parser.add_argument('-v', '--verbose', type=int, required=False, default=5,
-                        help="verbose mode.")
-    # Parse the arguments
-    args = parser.parse_args()
-
-    # Return the parsed arguments
-    return args
-
-
-args = parse_arguments()
-NUM_REPEATS = args.num_repeats
-print('num_repeats', NUM_REPEATS, flush=True)
-
-reduce_dim_flg = True
-if args.tunable_type == 'different_d':
-    reduced_dim = int(args.labeling_rate)
-else:
-    reduced_dim = 10
+from ragg.utils import dirichlet_split
 
 from functools import partial
 
+reduce_dim_flg = False
 # Conditional model selection using partial
 if reduce_dim_flg:
+    reduced_dim = 10
     # Define a partial function for FNN
     CNN = partial(ragg.base.FNN, input_dim=reduced_dim)
 else:
     CNN = ragg.base.CNN
-print(f'reduce_dim_flg:{reduce_dim_flg}, reduced_dim:{reduced_dim}, CNN:{CNN}')
+print(f'current directory: {os.path.abspath(os.getcwd())}')
+print(f'current file: {__file__}')
+
 # Set print options for 2 decimal places
 torch.set_printoptions(precision=2, sci_mode=False)
 
@@ -109,17 +76,39 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {DEVICE}")
 
 
+# Define the function to parse the parameters
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="FedCNN")
+
+    # Add arguments to be parsed
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=2,
+                        help="label rate, how much labeled data in local data.")
+    parser.add_argument('-s', '--server_epochs', type=int, required=False, default=10,
+                        help="The number of server epochs (integer).")
+    parser.add_argument('-n', '--num_clients', type=int, required=False, default=5,
+                        help="The number of total clients.")
+    parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='krum_avg',
+                        help="aggregation method.")
+    parser.add_argument('-v', '--verbose', type=int, required=False, default=1,
+                        help="verbose mode.")
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Return the parsed arguments
+    return args
+
+
 @dataclass
 class CONFIG:
     def __init__(self):
         self.SEED = None
         self.TRAIN_VAL_SEED = 42
         self.DEVICE = None
-        self.VERBOSE = 0
+        self.VERBOSE = None
         self.LABELING_RATE = None
-        self.tunable_parameter = None
+        self.BIG_NUMBER = None
         self.SERVER_EPOCHS = None
-        self.CLIENT_EPOCHS = 10
+        self.CLIENT_EPOCHS = 5
         self.BATCH_SIZE = 512  # -1
         self.IID_CLASSES_CNT = 5
         self.NUM_CLIENTS = None
@@ -148,53 +137,18 @@ def get_configuration(train_val_seed):
     CFG.VERBOSE = args.verbose
     # Access the arguments
     CFG.LABELING_RATE = 0.8
-    CFG.tunable_parameter = args.labeling_rate
+    CFG.BIG_NUMBER = args.labeling_rate
     # SERVER_EPOCHS = args.server_epochs
     CFG.SERVER_EPOCHS = args.server_epochs
-    # CFG.BATCH_SIZE = int(CFG.tunable_parameter)
+    # CFG.BATCH_SIZE = int(CFG.BIG_NUMBER)
     CFG.IID_CLASSES_CNT = 5
-
-    CFG.TUNABLE_TYPE = args.tunable_type
-    if CFG.TUNABLE_TYPE == 'different_f':
-        CFG.NUM_CLIENTS = args.num_clients
-        max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-        CFG.NUM_BYZANTINE_CLIENTS = int(CFG.tunable_parameter * CFG.NUM_CLIENTS)
-        # 2 + 2f < n for Krum, so f < (n-2)/2, not equal to (n-2)/2
-        if CFG.NUM_CLIENTS < 5:  # if n == 4, f will be 0
-            raise ValueError(f"NUM_CLIENTS ({CFG.NUM_CLIENTS}) must be >= 5")
-    elif CFG.TUNABLE_TYPE == 'different_n':
-        CFG.NUM_CLIENTS = int(CFG.tunable_parameter)
-        max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-        CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-    elif CFG.TUNABLE_TYPE == 'different_mu':
-        CFG.NUM_CLIENTS = args.num_clients
-        max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-        CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-    # elif CFG.TUNABLE_TYPE == 'different_d':
-    #     CFG.NUM_CLIENTS = args.num_clients
-    #     max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-    #     CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-    elif CFG.TUNABLE_TYPE == 'different_var':
-        CFG.NUM_CLIENTS = args.num_clients
-        max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-        CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-        CFG.tunable_parameter = args.labeling_rate
-    elif CFG.TUNABLE_TYPE == 'different_c_ratio':
-        CFG.NUM_CLIENTS = args.num_clients
-        max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-        CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-        CFG.tunable_parameter = args.labeling_rate
-    elif CFG.TUNABLE_TYPE == 'different_d':
-        CFG.NUM_CLIENTS = args.num_clients
-        max_num_f = int((CFG.NUM_CLIENTS - 3) / 2)
-        CFG.NUM_BYZANTINE_CLIENTS = max_num_f
-    else:
-        raise ValueError(f"Unrecognized tunable type: {CFG.TUNABLE_TYPE}")
-
-    # if 2 + 2 * CFG.NUM_BYZANTINE_CLIENTS == CFG.NUM_CLIENTS:
-    #     CFG.NUM_BYZANTINE_CLIENTS -= 1
-    if CFG.NUM_BYZANTINE_CLIENTS > max_num_f:
-        CFG.NUM_BYZANTINE_CLIENTS = max_num_f
+    CFG.NUM_CLIENTS = args.num_clients
+    # 2 + 2f < n for Krum, so f < (n-2)/2, not equal to (n-2)/2
+    if CFG.NUM_CLIENTS < 5:  # if n == 4, f will be 0
+        raise ValueError(f"NUM_CLIENTS ({CFG.NUM_CLIENTS}) must be >= 5")
+    CFG.NUM_BYZANTINE_CLIENTS = int((CFG.NUM_CLIENTS - 3) / 2)
+    if 2 + 2 * CFG.NUM_BYZANTINE_CLIENTS == CFG.NUM_CLIENTS:
+        CFG.NUM_BYZANTINE_CLIENTS -= 1
     CFG.NUM_HONEST_CLIENTS = CFG.NUM_CLIENTS - CFG.NUM_BYZANTINE_CLIENTS  # n - f
     CFG.AGGREGATION_METHOD = args.aggregation_method  # adaptive_krum, krum, median, mean
     print(args)
@@ -205,11 +159,7 @@ def get_configuration(train_val_seed):
     CFG.LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
     # LABELS = {0, 1}
     CFG.NUM_CLASSES = len(CFG.LABELS)
-
     CFG.CNN = CNN
-    # print(f'IN_DIR: {IN_DIR}, AGGREGATION_METHOD: {AGGREGATION_METHOD}, LABELING_RATE: {LABELING_RATE}, '
-    #       f'NUM_HONEST_CLIENTS: {NUM_HONEST_CLIENTS}, NUM_BYZANTINE_CLIENTS: {NUM_BYZANTINE_CLIENTS}, '
-    #       f'NUM_CLASSES: {NUM_CLASSES}, where classes: {LABELS}')
     print(CFG)
     return CFG
 
@@ -244,52 +194,28 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
     y = y.numpy()
     num_samples = len(y)
 
-    if reduce_dim_flg:
-        # Flatten the input data
-        X_flattened = X.reshape(X.shape[0], -1)
-        X_test_flattened = X_test.reshape(X_test.shape[0], -1)
-
-        # Reduce dimensionality using PCA
-        X, X_test = reduce_dimensionality(
-            X_flattened, X_test_flattened, n_components=reduced_dim, method='pca', random_state=SEED
-        )
-        shared_data = {"X": torch.tensor(X_test).float().to(DEVICE), 'y': torch.tensor(y_test).to(DEVICE)}
-    print(f'X.shape: {X.shape}, X_test.shape: {X_test.shape}, reduce_dim_flg:{reduce_dim_flg}')
-
-    # random_state = 42
-    # torch.manual_seed(random_state)
+    random_state = 42
+    torch.manual_seed(random_state)
     # indices = torch.randperm(num_samples)  # Randomly shuffle
     # step = int(num_samples / NUM_HONEST_CLIENTS)
     # step = 50  # for debugging
     # non_iid_cnt0 = 0  # # make sure that non_iid_cnt is always less than iid_cnt
     # non_iid_cnt1 = 0
-    # m = len(y) // 2
-    # m = int(CFG.tunable_parameter * len(y))
-    m = int(0.5 * len(y))
-    # Xs1, Ys1 = dirichlet_split(X[:m, :], y[:m], num_clients=CFG.NUM_CLIENTS // 3, alpha=0.1, random_state=SEED)
-    # Xs2, Ys2 = dirichlet_split(X[m:2*m, :], y[m:2*m], num_clients=CFG.NUM_CLIENTS // 3, alpha=1.0, random_state=SEED)
-    # Xs3, Ys3 = dirichlet_split(X[2*m:], y[2*m:], num_clients=CFG.NUM_CLIENTS - CFG.NUM_CLIENTS // 3 * 2, alpha=10,
-    #                            random_state=SEED)
-    # Xs, Ys = Xs1 + Xs2 + Xs3, Ys1 + Ys2 + Ys3
+    # m = len(y)//2
 
-    Xs1, Ys1 = dirichlet_split(X[:m, :], y[:m], num_clients=CFG.NUM_CLIENTS // 2, alpha=0.1, random_state=SEED)
-    Xs2, Ys2 = dirichlet_split(X[m:], y[m:], num_clients=CFG.NUM_CLIENTS - CFG.NUM_CLIENTS // 2, alpha=10,
-                               random_state=SEED)
-    Xs, Ys = Xs1 + Xs2, Ys1 + Ys2
-    # Shuffle the lists X and y in the same order
-    combined = list(zip(Xs, Ys))  # Combine the lists into pairs of (X[i], y[i])
-    random.shuffle(combined)  # Shuffle the combined list
-    # Unzip the shuffled list back into X and y
-    Xs, Ys = zip(*combined)
-    # Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=10, random_state=SEED)
+    # Xs1, Ys1 = dirichlet_split(X[:m, :], y[:m], num_clients=CFG.NUM_CLIENTS // 2, alpha=0.5, random_state=SEED)
+    # Xs2, Ys2 = dirichlet_split(X[m:], y[m:], num_clients=CFG.NUM_CLIENTS - CFG.NUM_CLIENTS // 2, alpha=100,
+    #                            random_state=SEED)
+    # Xs, Ys = Xs1 + Xs2, Ys1 + Ys2
+
+    Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=CFG.BIG_NUMBER, random_state=SEED)
     # Xs, Ys = [X[:]] * NUM_CLIENTS, [y[:]]*NUM_CLIENTS   # if each client has all the data
     total_size = 0
     for j, y_ in enumerate(Ys):
         vs = collections.Counter(y_.tolist())
         vs = dict(sorted(vs.items(), key=lambda x: x[0], reverse=False))
-        if CFG.VERBOSE >= 10:
-            print(f"client {j}'s data size: {len(y_)}, total classes: {len(vs)}, in which {vs}, "
-                  f"alpha: {CFG.tunable_parameter}")
+        print(f"client {j}'s data size: {len(y_)}, total classes: {len(vs)}, in which {vs}, "
+              f"alpha: {CFG.BIG_NUMBER}")
         total_size += len(y_)
     print(f"total size: {total_size}")
     ########################################### Benign Clients #############################################
@@ -321,13 +247,7 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         #     non_iid_cnt1 += 1
         #     mask_c = np.full(len(y_c), False)
         #     # for l in [5, 6, 7, 8, 9]:
-        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
-        #         mask_ = y_c == l
-        #         mask_c[mask_] = True
-        # if c <= NUM_HONEST_CLIENTS//tunable_parameter:
-        #     mask_c = np.full(len(y_c), False)
-        #     # for l in [5, 6, 7, 8, 9]:
-        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT, replace=False):
+        #     for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=IID_CLASSES_CNT * 2, replace=False):
         #         mask_ = y_c == l
         #         mask_c[mask_] = True
         # else:  # 2/4 of honest clients has IID distributions
@@ -365,8 +285,10 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         print(f'client_{c} data ({len(label_cnts)}): ', label_cnts)
         print_data(local_data)
 
-        out_file = f'{out_dir}/{c}.pth'
-        torch.save(local_data, out_file)
+        out_file = f'{out_dir}/{c}.pt.gz'
+        # torch.save(local_data, out_file)
+        with gzip.open(out_file, 'wb') as f:
+            torch.save(local_data, f)
 
     ########################################### Byzantine Clients #############################################
     indices = torch.randperm(num_samples)  # Randomly shuffle
@@ -379,11 +301,17 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         X_c, y_c = Xs[c], Ys[c]  # using dirichlet distribution
 
         # mask_c = np.full(len(y_c), False)
-        # for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=CFG.tunable_parameter, replace=False):
+        # for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=CFG.BIG_NUMBER, replace=False):
         #     mask_ = y_c == l
         #     mask_c[mask_] = True
         # X_c = X_c[mask_c]
         # y_c = y_c[mask_c]
+
+        # mask_c = np.full(len(y_c), False)
+        # for l in np.random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], size=5, replace=False):
+        #     mask_ = y_c == l
+        #     mask_c[mask_] = True
+        # y_c[mask_c] = (CFG.NUM_CLASSES - 1)-y_c[mask_c]     # # flip label
 
         # might be used in server
         # train_info = {"client_type": client_type, "cnn": {}, 'client_id': c}
@@ -400,8 +328,11 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         train_mask[train_indices] = True
         val_mask[val_indices] = True
         test_mask[test_indices] = True
-        # y_c[train_mask] = (NUM_CLASSES - 1) - y_c[train_mask]  # flip label
-        # y_c[val_mask] = (NUM_CLASSES - 1) - y_c[val_mask]  # flip label
+        y_c[train_mask] = (CFG.NUM_CLASSES - 1) - y_c[train_mask]  # flip label
+        y_c[val_mask] = (CFG.NUM_CLASSES - 1) - y_c[val_mask]  # flip label
+        # y_c[train_mask] = torch.tensor([(CFG.NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[train_mask]])
+        # y_c[val_mask] = torch.tensor(
+        #     [(CFG.NUM_CLASSES - 1) - v if v % 1 == 0 else v for v in y_c[val_mask]])  # flip label
 
         # train_info['NUM_BYZANTINE_CLIENTS'] = NUM_BYZANTINE_CLIENTS
         local_data = {'client_type': client_type,
@@ -416,34 +347,10 @@ def gen_client_data(data_dir='data/MNIST/clients', out_dir='.', CFG=None):
         print(f'client_{c} data ({len(label_cnts)}): ', label_cnts)
         print_data(local_data)
 
-        out_file = f'{out_dir}/{c}.pth'
-        torch.save(local_data, out_file)
-
-
-# Function to add Gaussian noise
-def add_gaussian_noise(image, mean=0, std=0.2):
-    noise = torch.randn(image.size()) * std + mean  # Generate Gaussian noise
-    noisy_image = image + noise  # Add noise
-    noisy_image = torch.clamp(noisy_image, 0, 1)  # Keep pixel values in [0,1]
-    return noisy_image
-
-
-def add_salt_and_pepper_noise(image, prob=0.02):
-    np_image = image.numpy()  # Convert to NumPy array
-    noisy_image = np_image.copy()
-
-    # Generate mask for salt and pepper noise
-    salt_pepper = np.random.rand(*np_image.shape)
-    noisy_image[salt_pepper < prob / 2] = 0  # Black pixels
-    noisy_image[salt_pepper > 1 - prob / 2] = 1  # White pixels
-
-    return torch.tensor(noisy_image)
-
-
-def add_speckle_noise(image, std=0.2):
-    noise = torch.randn(image.size()) * image * std  # Noise proportional to pixel values
-    noisy_image = image + noise
-    return torch.clamp(noisy_image, 0, 1)
+        out_file = f'{out_dir}/{c}.pt.gz'
+        # torch.save(local_data, out_file)
+        with gzip.open(out_file, 'wb') as f:
+            torch.save(local_data, f)
 
 
 def clients_training(data_dir, epoch, global_cnn, CFG):
@@ -458,9 +365,9 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch,
                       'DEVICE': DEVICE, 'CFG': CFG}
 
-        data_file = f'{data_dir}/{c}.pth'
-        with open(data_file, 'rb') as f:
-            local_data = torch.load(f, weights_only=True)
+        data_file = f'{data_dir}/{c}.pt.gz'
+        with gzip.open(data_file, 'rb') as f:
+            local_data = torch.load(f)
         num_samples_client = len(local_data['y'].tolist())
         label_cnts = collections.Counter(local_data['y'].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
@@ -495,9 +402,16 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         train_info = {"client_type": client_type, "cnn": {}, 'client_id': c, 'server_epoch': epoch,
                       'DEVICE': DEVICE, 'CFG': CFG}
 
-        data_file = f'{data_dir}/{c}.pth'
-        with open(data_file, 'rb') as f:
-            local_data = torch.load(f, weights_only=True)
+        data_file = f'{data_dir}/{c}.pt.gz'
+        with gzip.open(data_file, 'rb') as f:
+            local_data = torch.load(f)
+
+        # if epoch % 2 == 0:
+        #     local_data['y'] = (CFG.NUM_CLASSES - 1) - local_data['y']
+        # else:
+        #     local_data['y'] = (local_data['y']+2)%10
+        # local_data['y'] = torch.tensor([(c + epoch) % 10] * len(local_data['y'])).to(DEVICE)
+        # local_data['y'] = torch.tensor([(c) % 10] * len(local_data['y'])).to(DEVICE)
         num_samples_client = len(local_data['y'].tolist())
         label_cnts = collections.Counter(local_data['y'].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
@@ -520,94 +434,14 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         # elif byzantine_method == 'adaptive_large_value':
         #     new_state_dict = {}
         #     for key, param in global_cnn.state_dict().items():
-        #         new_state_dict[key] = param * tunable_parameter
+        #         new_state_dict[key] = param * BIG_NUMBER
         #     local_cnn.load_state_dict(new_state_dict)
         # else:  # assign large values
         #     # Assign fixed large values to all parameters
-        #     # tunable_parameter = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
+        #     # BIG_NUMBER = 1.0  # if epoch % 5 == 0 else -1e3  # Example: Set all weights and biases to 1,000,000
         #     for param in local_cnn.parameters():
-        #         param.data.fill_(tunable_parameter)  # Assign big number to each parameter
-        # train_cnn(local_cnn, global_cnn, local_data, train_info)
-
-        # # Inject noise to malicious clients' CNNs
-        # new_state_dict = {}
-        # for key, param in global_cnn.state_dict().items():
-        #     noise = torch.normal(0, CFG.tunable_parameter, size=param.shape).to(DEVICE)
-        #     new_state_dict[key] = param + noise
-
-        # # only inject noise to partial dimensions of model parameters.
-        # model = CNN(num_classes=CFG.NUM_CLASSES)
-        # model.load_state_dict(global_cnn.state_dict())
-        # ps = parameters_to_vector(model.parameters()).detach()
-        # # Randomly select the indices
-        # cnt = max(1, int(CFG.tunable_parameter * len(ps)))
-        # selected_indices = random.sample(range(len(ps)), cnt)
-        # noise = torch.normal(0, 10, size=(cnt, )).to(DEVICE)
-        # ps[selected_indices] = ps[selected_indices] + noise
-        # vector_to_parameters(ps, model.parameters())  # in_place
-        # new_state_dict = model.state_dict()
-
-        # # # Large values malicious clients' CNNs
-        # new_state_dict = {}
-        # for key, param in global_cnn.state_dict().items():
-        #     noise = torch.normal(0, 10, size=param.shape).to(DEVICE)
-        #     # new_state_dict[key] = param * CFG.tunable_parameter
-        #     new_state_dict[key] = param + noise
-
-        # only inject noise to partial dimensions of model parameters.
-        local_cnn.load_state_dict(global_cnn.state_dict())
-        ps = parameters_to_vector(local_cnn.parameters()).detach().to(DEVICE)
-        # print_histgram(ps.cpu(), bins=5, value_type='before parameters')
-
-        # Randomly select the indices
-        # cnt = max(1, int(CFG.tunable_parameter * len(ps)))
-        # print(f'{cnt} parameters ({CFG.tunable_parameter * 100}%) are changed.')
-        # cnt = int(CFG.tunable_parameter * len(ps))
-        # selected_indices = random.sample(range(len(ps)), cnt)
-        # if c % 3 == 0:
-        #     noise = torch.normal(-1e+2, 1, size=(len(ps),)).to(DEVICE)
-        # else:
-        #     noise = torch.normal(1e+8, 1, size=(len(ps),)).to(DEVICE)
-
-        ########### different Byzantine location
-        if CFG.TUNABLE_TYPE == 'different_mu':
-            noise = torch.normal(CFG.tunable_parameter, 0.1, size=(len(ps),)).to(DEVICE)
-        elif CFG.TUNABLE_TYPE in ['different_n', 'different_f']:
-            # noise = torch.normal(5, 1, size=(len(ps),)).to(DEVICE)
-            noise = torch.normal(0.05, 0.1, size=(len(ps),)).to(DEVICE)
-        elif CFG.TUNABLE_TYPE in ['different_var']:
-            noise = torch.normal(0.05, CFG.tunable_parameter, size=(len(ps),)).to(DEVICE)
-        elif CFG.TUNABLE_TYPE in ['different_d']:
-            noise = torch.normal(0.05, 0.1, size=(len(ps),)).to(DEVICE)
-        elif CFG.TUNABLE_TYPE in ['different_c_ratio']:    # for random projection
-            noise = torch.normal(0.05, 0.1, size=(len(ps),)).to(DEVICE)
-        else:
-            raise ValueError('CFG.TUNABLE_TYPE')
-        # # Define the mean and covariance matrix
-        # mean = torch.zeros(cnt).to(DEVICE)  # Mean of the distribution (zero mean vector)
-        # covariance_matrix = torch.eye(cnt).to(DEVICE)  # Identity covariance matrix scaled by 10 (change as needed)
-        # covariance_matrix[0, 0] = 10
-        #
-        # # Define a full covariance matrix (cnt x cnt)
-        # # This could be any positive semi-definite matrix (ensure it's symmetric)
-        # covariance_matrix = torch.randn(cnt, cnt).to(DEVICE)  # Random matrix
-        # covariance_matrix = torch.matmul(covariance_matrix, covariance_matrix.T)  # Make it positive semi-definite
-        # # Regularize the covariance matrix by adding a small value to the diagonal
-        # covariance_matrix += torch.eye(cnt).to(
-        #     DEVICE) * 5  # Add small value to diagonal to ensure positive definiteness
-        #
-        # # Generate multivariate normal noise with the given mean and covariance matrix
-        # mnormal= torch.distributions.multivariate_normal.MultivariateNormal(mean, covariance_matrix)
-        # noise = mnormal.sample().to(DEVICE)
-        # ps[selected_indices] = noise
-        ps = noise
-        # print_histgram(ps.cpu(), bins=5, value_type='byzantine parameters')
-
-        vector_to_parameters(ps, local_cnn.parameters())  # in_place
-        new_state_dict = local_cnn.state_dict()
-
-        local_cnn.load_state_dict(new_state_dict)
-        # w = w0 - \eta * \namba_w, so delta_w = w0 - w, only send update difference to the server
+        #         param.data.fill_(BIG_NUMBER)  # Assign big number to each parameter
+        train_cnn(local_cnn, global_cnn, local_data, train_info)
         delta_w = {key: (global_cnn.state_dict()[key] - local_cnn.state_dict()[key]) for key
                    in global_cnn.state_dict()}
         clients_cnns[c] = delta_w
@@ -625,62 +459,69 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
 
 @timer
 def main():
-    all_histories = {}
-    for train_val_seed in range(0, 1000, 1000 // NUM_REPEATS):
-        print('\n')
-        CFG = get_configuration(train_val_seed)
-        print(f"\n*************************** Generate Clients Data ******************************")
-        data_dir = (f'data/MNIST/model_large_value/{CFG.TUNABLE_TYPE}/h_{CFG.NUM_HONEST_CLIENTS}-'
-                    f'b_{CFG.NUM_BYZANTINE_CLIENTS}'
-                    f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.tunable_parameter}-{CFG.AGGREGATION_METHOD}'
-                    f'/{CFG.TRAIN_VAL_SEED}')
-        data_out_dir = data_dir
-        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
-        CFG.data_out_dir = data_out_dir
-        gen_client_data(data_dir, data_out_dir, CFG)
+    try:
+        all_histories = {}
+        NUM_REPEATS = 1
+        for train_val_seed in range(0, 1000, 1000 // NUM_REPEATS):
+            print('\n')
+            CFG = get_configuration(train_val_seed)
+            print(f"\n*************************** Generate Clients Data ******************************")
+            data_dir = (f'data/MNIST/label_flipping/h_{CFG.NUM_HONEST_CLIENTS}-b_{CFG.NUM_BYZANTINE_CLIENTS}'
+                        f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
+                        f'/{CFG.TRAIN_VAL_SEED}')
+            data_out_dir = data_dir
+            data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
+            CFG.data_out_dir = data_out_dir
+            gen_client_data(data_dir, data_out_dir, CFG)
 
-        print(f"\n***************************** Global Models *************************************")
-        global_cnn = CNN(num_classes=CFG.NUM_CLASSES)
-        global_cnn = global_cnn.to(DEVICE)
-        print(global_cnn)
+            print(f"\n***************************** Global Models *************************************")
+            global_cnn = CNN(num_classes=CFG.NUM_CLASSES)
+            global_cnn = global_cnn.to(DEVICE)
+            print(global_cnn)
 
-        histories = {'clients': [], 'server': [], 'CFG': CFG}
-        for server_epoch in range(CFG.SERVER_EPOCHS):
-            print(f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Client Training *************")
-            clients_cnns, clients_info, history = clients_training(data_out_dir, server_epoch, global_cnn, CFG)
-            histories['clients'].append(history)
+            histories = {'clients': [], 'server': [], 'CFG': CFG}
+            for server_epoch in range(CFG.SERVER_EPOCHS):
+                print(
+                    f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Client Training *****************")
+                clients_cnns, clients_info, history = clients_training(data_out_dir, server_epoch, global_cnn, CFG)
+                histories['clients'].append(history)
 
-            print(f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Server Aggregation **********")
-            aggregate_cnns(clients_cnns, clients_info, global_cnn, CFG.AGGREGATION_METHOD, histories, server_epoch)
+                print(
+                    f"\n*************** Server Epoch: {server_epoch}/{CFG.SERVER_EPOCHS}, Server Aggregation **************")
+                aggregate_cnns(clients_cnns, clients_info, global_cnn, CFG.AGGREGATION_METHOD, histories, server_epoch)
 
-        prefix = f'-n_{CFG.SERVER_EPOCHS}'
-        history_file = f'{CFG.data_out_dir}/histories_{prefix}.pth'
-        print(f'saving histories to {history_file}')
-        # with open(history_file, 'wb') as f:
-        #     pickle.dump(histories, f)
-        torch.save(histories, history_file)
+            prefix = f'-n_{CFG.SERVER_EPOCHS}'
+            history_file = f'{CFG.data_out_dir}/histories_{prefix}.pt.gz'
+            print(f'saving histories to {history_file}')
+            # with open(history_file, 'wb') as f:
+            #     pickle.dump(histories, f)
+            # torch.save(histories, history_file)
 
-        try:
-            print_histories(histories)
-        except Exception as e:
-            print('Exception: ', e)
-        # print_histories_server(histories['server'])
+            # try:
+            #     print_histories(histories)
+            # except Exception as e:
+            #     print('Exception: ', e)
+            # print_histories_server(histories['server'])
 
-        # Delete all the generated data
+            # Delete all the generated data
+            shutil.rmtree(data_out_dir)
+
+            # # save all results
+            all_histories[CFG.TRAIN_VAL_SEED] = histories
+            # history_file = f'{os.path.dirname(CFG.data_out_dir)}/all_histories_{NUM_REPEATS}.pt.gz'
+            # print(f'saving all histories to {history_file}')
+            # # with open(history_file, 'wb') as f:
+            # #     pickle.dump(all_histories, f)
+            # torch.save(all_histories, history_file)
+
+        # history_file = 'data/MNIST/sign_flipping/h_12-b_8-5-0.8-0.1-krum_avg/all_histories_3.pt.gz'
+        # history_file = 'all_histories_5.pt.gz'
+        # all_histories = torch.load(history_file)
+        print_all(all_histories)
+    except Exception as e:
+        traceback.print_exc()
         shutil.rmtree(data_out_dir)
 
-        # save all results
-        all_histories[CFG.TRAIN_VAL_SEED] = histories
-        history_file = f'{os.path.dirname(CFG.data_out_dir)}/all_histories_{NUM_REPEATS}.pth'
-        print(f'saving all histories to {history_file}')
-        # with open(history_file, 'wb') as f:
-        #     pickle.dump(all_histories, f)
-        torch.save(all_histories, history_file)
-
-    # history_file = 'data/MNIST/sign_flipping/h_12-b_8-5-0.8-0.1-krum_avg/all_histories_3.pth'
-    # history_file = 'all_histories_5.pth'
-    # all_histories = torch.load(history_file)
-    print_all(all_histories)
 
 
 if __name__ == '__main__':

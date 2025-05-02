@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from sklearn.random_projection import GaussianRandomProjection
 
-from .change_point_detection import binary_segmentation, find_significant_change_point
+from .change_point_detection import binary_segmentation, find_significant_change_point, find_change_point_with_knee
 
 np.set_printoptions(precision=4)
 
@@ -537,7 +537,8 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         # h = n-f , 2+2f < n => 2*f <= n-2-1, so f <= (n-3)//2, h >= n - f = n - (n-3)//2
         # each point must be >= half of data neighbors, as f is strictly less than half of data
         h = N - (N - 3) // 2  # the number of honest points
-        k = find_significant_change_point(sorted_distances, start=h)
+        k = find_significant_change_point(sorted_distances, start=h-1)  # index starts from 0
+        # k = find_change_point_with_knee(sorted_distances, start=h-1)
         ks.append(k)
         if verbose >= 20:
             # print(f'*** j: {j} ***')
@@ -556,13 +557,27 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         print(f'ks: {ks}')
 
     if trimmed_average:
-        # instead return the smallest value, we return the top weighted average
-        # Sort scores
-        sorted_indices = torch.argsort(scores)
-        sorted_scores = scores[sorted_indices]
+        # Select the update with the smallest score
+        selected_index = np.argmin(scores)
+        if verbose >= 5:
+            print(f"selected_index: {selected_index}")
+        # weighted_update = clients_updates[selected_index]
+
+        sorted_indices = np.argsort(distances[selected_index])
+        sorted_distances = distances[selected_index][sorted_indices]
         sorted_weights = clients_weights[sorted_indices]
         sorted_updates = clients_updates[sorted_indices]
         sorted_predict_clients_type = predict_clients_type[sorted_indices]
+
+        # k = ks[selected_index]
+
+        # # instead return the smallest value, we return the top weighted average
+        # # Sort scores
+        # sorted_indices = torch.argsort(scores)
+        # sorted_scores = scores[sorted_indices]
+        # sorted_weights = clients_weights[sorted_indices]
+        # sorted_updates = clients_updates[sorted_indices]
+        # sorted_predict_clients_type = predict_clients_type[sorted_indices]
 
         # # Find the index of the maximum value (after the halfway point)
         # # Calculate the middle point
@@ -581,16 +596,18 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         #         max_diff = t
         #         k = j  # Store the first occurrence of max diff
 
-        k = find_significant_change_point(sorted_scores, start=h)
+        # # k = find_significant_change_point(sorted_scores, start=h-1)
+        # k = min(ks)
+        # # k = np.median(ks)
+        # if verbose >= 20:
+        #     print(f'trimmed_average: sorted_scores: {sorted_scores}')
+        #     print("Index of maximum scores difference after half of values:", k)
 
-        if verbose >= 20:
-            print(f'trimmed_average: sorted_scores: {sorted_scores}')
-            print("Index of maximum scores difference after half of values:", k)
-
-        m = k  # we will average over top m closet updates
+        # m = k  # we will average over top m closet updates
+        m = N - (N - 3) // 2  # N//2 the half number of points, no need to be  N - (N - 3) // 2
         if verbose >= 5:
             print(f'm: {m}')
-        sorted_predict_clients_type[m:] = 'Byzantine'
+        sorted_predict_clients_type[m:] = 'Byzantine'   # here we use k, it's correct. because k is the seperated point.
         # **Map the sorted labels back to original order**
         predict_clients_type[sorted_indices] = sorted_predict_clients_type
 

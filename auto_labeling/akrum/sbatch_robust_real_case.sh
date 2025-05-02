@@ -73,20 +73,20 @@ pwd
 # Run the script with the selected parameters
 
 # replicate neurips results
-#PYTHONPATH=. python3 nsf/ragg_random_spambase_nips_paper.py $PARAMS
+#PYTHONPATH=. python3 nsf/ragg_random_spambase_omniscient.py $PARAMS
 #PYTHONPATH=. python3 nsf/ragg_random_mnist_nips_paper.py $PARAMS
 #PYTHONPATH=. python3 nsf/ragg_random_noise_model_nips_paper1.py $PARAMS
 #PYTHONPATH=. python3 nsf/fl_ragg.py $PARAMS
 
 # Data Poisoning
 #PYTHONPATH=. python3 akrum/ragg_random_noise_data.py $PARAMS
-#PYTHONPATH=. python3 akrum/ragg_label_flipping.py $PARAMS
+#PYTHONPATH=. python3 akrum/ragg_label_flipping_mnist.py $PARAMS
 #PYTHONPATH=. python3 akrum/ragg_rotation_data.py $PARAMS
 
 # Model Poisoning
 #PYTHONPATH=. python3 akrum/ragg_random_noise_model.py $PARAMS
 #PYTHONPATH=. python3 akrum/ragg_sign_flipping.py $PARAMS
-#PYTHONPATH=. python3 akrum/ragg_model_large_value.py $PARAMS
+#PYTHONPATH=. python3 akrum/ragg_model_large_value_mnist.py $PARAMS
 
 
 PYTHONPATH=. python3 akrum/real_cases.py

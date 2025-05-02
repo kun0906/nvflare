@@ -1,3 +1,11 @@
+v0.4.5: ICONIP
+    1. nonIID
+    2. aKrum_avg
+
+
+v0.4.4:IoT-J
+
+
 v0.4.3: Added different c_ratio for random projection
     1. modified random projection k_factor to c_ratio
     2. modified plot_robust_aggregation.py with fixed markers and colors
