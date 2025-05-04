@@ -336,7 +336,7 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     #                            client_state_dict in clients_cnns.values()]
     tmp_models = []
     for client_state_dict in clients_cnns.values():
-        if type(CFG.CNN) == type(FNN):
+        if CFG.CNN == FNN:
             model = CFG.CNN(in_dim=CFG.in_dim, num_classes=CFG.NUM_CLASSES)
         else:
             model = CFG.CNN(num_classes=CFG.NUM_CLASSES)

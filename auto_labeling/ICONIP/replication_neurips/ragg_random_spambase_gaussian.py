@@ -1123,10 +1123,10 @@ def main():
     dataset = 'spambase'
     if dataset == 'spambase':
         data_dir = './data/spambase'
-        sub_dir = (f'data/spambase/random_noise/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
+        sub_dir = (f'data/spambase_neurips/random_noise_gaussian/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
         data_out_dir = data_dir
-        # data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
+        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
         print(data_out_dir)
         gen_client_spambase_data(data_dir=data_dir, out_dir=data_out_dir)  # for spambase dataset
     else:

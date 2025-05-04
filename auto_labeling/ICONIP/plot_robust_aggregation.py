@@ -1,9 +1,13 @@
 import os
 import re
 import traceback
-
+import matplotlib
 import matplotlib.pyplot as plt
 
+# default "Tableau 10" colors.
+# Get the default color cycle
+default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+print('Default colors: ', default_colors)
 
 def extract_case_info(filepath):
     with open(filepath, "r") as file:
@@ -116,28 +120,28 @@ def plot_robust_aggregation(JOBID, start=0, METRIC='accuracy'):
     start2 = start + 6
     method_txt_files = [
         # # # # Aggregated results: single point
-        ('adaptive_krum', f'log/output_{JOBID}_{start}.out'),
-        ('krum', f'log/output_{JOBID}_{start + 1}.out'),
-        ('adaptive_krum_avg', f'log/output_{JOBID}_{start+2}.out'),
-        ('krum_avg', f'log/output_{JOBID}_{start + 3}.out'),
-        # ('median', f'log/output_{JOBID}_{start + 4}.out'),
-        ('mean', f'log/output_{JOBID}_{start + 5}.out'),
-        # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 6}.out'),
+        ('adaptive_krum', f'{LOG_DIR}/output_{JOBID}_{start}.out'),
+        ('krum', f'{LOG_DIR}/output_{JOBID}_{start + 1}.out'),
+        ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start+2}.out'),
+        ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 3}.out'),
+        # ('median', f'{LOG_DIR}/output_{JOBID}_{start + 4}.out'),
+        ('mean', f'{LOG_DIR}/output_{JOBID}_{start + 5}.out'),
+        # ('exp_weighted_mean', f'{LOG_DIR}/output_{JOBID}_{start + 6}.out'),
 
         # # Aggregated results: average point
         # # start2 = start + 5
-        # ('adaptive_krum_avg', f'log/output_{JOBID}_{start2}.out'),
-        # ('krum_avg', f'log/output_{JOBID}_{start2 + 1}.out'),
-        # ('adaptive_krum+rp_avg', f'log/output_{JOBID}_{start2 + 2}.out'),
-        # ('krum+rp_avg', f'log/output_{JOBID}_{start2 + 3}.out'),
-        # ('median_avg', f'log/output_{JOBID}_{start2 + 4}.out'),
-        # ('trimmed_mean', f'log/output_{JOBID}_{start2 + 5}.out'),
-        # ('geometric_median', f'log/output_{JOBID}_{start2 + 6}.out'),
+        # ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start2}.out'),
+        # ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 1}.out'),
+        # ('adaptive_krum+rp_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 2}.out'),
+        # ('krum+rp_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 3}.out'),
+        # ('median_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 4}.out'),
+        # ('trimmed_mean', f'{LOG_DIR}/output_{JOBID}_{start2 + 5}.out'),
+        # ('geometric_median', f'{LOG_DIR}/output_{JOBID}_{start2 + 6}.out'),
 
     ]
 
     # Example usage
-    namespace_params = extract_namespace(f'log/output_{JOBID}_{start}.out')
+    namespace_params = extract_namespace(f'{LOG_DIR}/output_{JOBID}_{start}.out')
     print(namespace_params, flush=True)
     # if (namespace_params['server_epochs'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
     #         or namespace_params['labeling_rate'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
@@ -173,7 +177,8 @@ def plot_robust_aggregation(JOBID, start=0, METRIC='accuracy'):
     fig, ax = plt.subplots()
     FONTSIZE = 10
     aggregation_methods = list(global_accs.keys())
-    makers = ['o', '+', 's', '*', 'v', '.', 'p', 'h', 'x', '8', '1', '^', 'D', 'd']
+    makers = ['o', '^', 's', 'v', 'x', '.', 'p', 'h', 'x', '8', '1', '^', 'D', 'd']
+    # colors = ['green', 'orange', 'purple', 'm', 'red', 'k', 'w']
     for i in range(len(aggregation_methods)):
         agg_method, txt_file = aggregation_methods[i]
         label = agg_method
@@ -322,28 +327,28 @@ def plot_robust_aggregation_all(JOBID, end=24):
                 start2 = start + 7
                 method_txt_files = [
                     # # # # # Aggregated results: single point
-                    ('adaptive_krum', f'log/output_{JOBID}_{start}.out'),
-                    ('krum', f'log/output_{JOBID}_{start + 1}.out'),
-                    ('adaptive_krum_avg', f'log/output_{JOBID}_{start+2}.out'),
-                    ('krum_avg', f'log/output_{JOBID}_{start + 3}.out'),
-                    ('median', f'log/output_{JOBID}_{start + 4}.out'),
-                    ('mean', f'log/output_{JOBID}_{start + 5}.out'),
-                    # ('exp_weighted_mean', f'log/output_{JOBID}_{start + 7}.out'),
+                    ('adaptive_krum', f'{LOG_DIR}/output_{JOBID}_{start}.out'),
+                    ('krum', f'{LOG_DIR}/output_{JOBID}_{start + 1}.out'),
+                    ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start+2}.out'),
+                    ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 3}.out'),
+                    ('median', f'{LOG_DIR}/output_{JOBID}_{start + 4}.out'),
+                    ('mean', f'{LOG_DIR}/output_{JOBID}_{start + 5}.out'),
+                    # ('exp_weighted_mean', f'{LOG_DIR}/output_{JOBID}_{start + 7}.out'),
 
                     # # # Aggregated results: average point
-                    # ('adaptive_krum_avg', f'log/output_{JOBID}_{start2}.out'),
-                    # ('krum_avg', f'log/output_{JOBID}_{start2 + 1}.out'),
-                    # ('adaptive_krum+rp_avg', f'log/output_{JOBID}_{start2 + 2}.out'),
-                    # ('krum+rp_avg', f'log/output_{JOBID}_{start2 + 3}.out'),
-                    # ('medoid_avg', f'log/output_{JOBID}_{start2 + 4}.out'),
-                    # ('trimmed_mean', f'log/output_{JOBID}_{start2 + 5}.out'),
-                    # ('geometric_median', f'log/output_{JOBID}_{start2 + 6}.out'),
+                    # ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start2}.out'),
+                    # ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 1}.out'),
+                    # ('adaptive_krum+rp_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 2}.out'),
+                    # ('krum+rp_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 3}.out'),
+                    # ('medoid_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 4}.out'),
+                    # ('trimmed_mean', f'{LOG_DIR}/output_{JOBID}_{start2 + 5}.out'),
+                    # ('geometric_median', f'{LOG_DIR}/output_{JOBID}_{start2 + 6}.out'),
 
                 ]
-                case_name = extract_case_info(f'log/output_{JOBID}_{start}.out')
+                case_name = extract_case_info(f'{LOG_DIR}/output_{JOBID}_{start}.out')
                 print(case_name, flush=True)
                 # Example usage
-                namespace_params = extract_namespace(f'log/output_{JOBID}_{start}.out')
+                namespace_params = extract_namespace(f'{LOG_DIR}/output_{JOBID}_{start}.out')
                 # if (namespace_params['server_epochs'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
                 #         or namespace_params['labeling_rate'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
                 #         or namespace_params['num_clients'] in []):
@@ -520,9 +525,10 @@ if __name__ == '__main__':
     # JOBID = 291557      # large_value epochs:2
     # JOBID = 292831  # large_value epochs:2
     # JOBIDs = [293596 + i for i in range(6)]
-    JOBIDs = [294375]
+    JOBIDs = [296766]
+    LOG_DIR = "log"
     for JOBID in JOBIDs:
-        SERVER_EPOCHS = 100
+        SERVER_EPOCHS = 200
         NUM_CLIENTS = 100
 
         # # METRIC = 'loss'

@@ -515,7 +515,7 @@ def main():
                         f'-{CFG.IID_CLASSES_CNT}-{CFG.LABELING_RATE}-{CFG.BIG_NUMBER}-{CFG.AGGREGATION_METHOD}'
                         f'/{CFG.TRAIN_VAL_SEED}')
             data_out_dir = data_dir
-            data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
+            # data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{data_dir}'
             CFG.data_out_dir = data_out_dir
             gen_client_data(data_dir, data_out_dir, CFG)
 
