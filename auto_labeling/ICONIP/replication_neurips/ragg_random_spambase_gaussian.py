@@ -9,6 +9,8 @@
     $PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_omniscient.py
 
     Byzantine (malicious or faulty) clients.
+    https://archive.ics.uci.edu/dataset/94/spambase
+    he e-mail was considered spam (1) or not (0),
 
     Storage path: /projects/kunyang/nvflare_py31012/nvflare
 """
@@ -61,11 +63,11 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=100,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=10,
                         help="label rate, how much labeled data in local data.")
-    parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
+    parser.add_argument('-s', '--server_epochs', type=int, required=False, default=1,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-n', '--num_clients', type=int, required=False, default=10,
+    parser.add_argument('-n', '--num_clients', type=int, required=False, default=5,
                         help="The number of clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False,
                         default='adaptive_krum_avg',
@@ -885,7 +887,7 @@ def gen_client_spambase_data(data_dir='data/spambase', out_dir='.'):
     dim = X.shape[1]
 
     random_state = 42
-    torch.manual_seed(random_state)
+    torch.manual_seed(random_state)     # fix seed for NN
     indices = torch.randperm(num_samples)  # Randomly shuffle
     step = int(num_samples / NUM_HONEST_CLIENTS)
     # step = 50  # for debugging

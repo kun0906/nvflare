@@ -701,7 +701,7 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         # noise = torch.normal(0, 10, size=(cnt, )).to(DEVICE)
         # ps[selected_indices] = ps[selected_indices] + noise
 
-        noise = torch.normal(0, 10, size=ps.shape).to(DEVICE)
+        noise = torch.normal(0, 1, size=ps.shape).to(DEVICE)
         ps = ps + noise
 
         vector_to_parameters(ps, model.parameters())  # in_place

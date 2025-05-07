@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 print('Default colors: ', default_colors)
 
+
 def extract_case_info(filepath):
     with open(filepath, "r") as file:
         lines = file.readlines()
@@ -122,7 +123,7 @@ def plot_robust_aggregation(JOBID, start=0, METRIC='accuracy'):
         # # # # Aggregated results: single point
         ('adaptive_krum', f'{LOG_DIR}/output_{JOBID}_{start}.out'),
         ('krum', f'{LOG_DIR}/output_{JOBID}_{start + 1}.out'),
-        ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start+2}.out'),
+        ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 2}.out'),
         ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 3}.out'),
         # ('median', f'{LOG_DIR}/output_{JOBID}_{start + 4}.out'),
         ('mean', f'{LOG_DIR}/output_{JOBID}_{start + 5}.out'),
@@ -298,6 +299,7 @@ def parse_file(txt_file, metric=''):
         })
     return results
 
+
 def plot_robust_aggregation_all(JOBID, end=24):
     """
        single point: 'adaptive_krum' 'krum' 'adaptive_krum+rp' 'krum+rp' 'median' 'mean'
@@ -329,7 +331,7 @@ def plot_robust_aggregation_all(JOBID, end=24):
                     # # # # # Aggregated results: single point
                     ('adaptive_krum', f'{LOG_DIR}/output_{JOBID}_{start}.out'),
                     ('krum', f'{LOG_DIR}/output_{JOBID}_{start + 1}.out'),
-                    ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start+2}.out'),
+                    ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 2}.out'),
                     ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 3}.out'),
                     ('median', f'{LOG_DIR}/output_{JOBID}_{start + 4}.out'),
                     ('mean', f'{LOG_DIR}/output_{JOBID}_{start + 5}.out'),
@@ -449,98 +451,208 @@ def plot_robust_aggregation_all(JOBID, end=24):
     plt.close()
 
 
+def plot_ax_attack(ax, case, JOBID, start=0):
+    global_accs = {}
+    start2 = start + 6
+    method_txt_files = [
+        # # # # Aggregated results: single point
+        ('adaptive_krum', f'{LOG_DIR}/output_{JOBID}_{start}.out'),
+        ('krum', f'{LOG_DIR}/output_{JOBID}_{start + 1}.out'),
+        ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 2}.out'),
+        ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start + 3}.out'),
+        # ('median', f'{LOG_DIR}/output_{JOBID}_{start + 4}.out'),
+        ('mean', f'{LOG_DIR}/output_{JOBID}_{start + 5}.out'),
+        # ('exp_weighted_mean', f'{LOG_DIR}/output_{JOBID}_{start + 6}.out'),
+
+        # # Aggregated results: average point
+        # # start2 = start + 5
+        # ('adaptive_krum_avg', f'{LOG_DIR}/output_{JOBID}_{start2}.out'),
+        # ('krum_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 1}.out'),
+        # ('adaptive_krum+rp_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 2}.out'),
+        # ('krum+rp_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 3}.out'),
+        # ('median_avg', f'{LOG_DIR}/output_{JOBID}_{start2 + 4}.out'),
+        # ('trimmed_mean', f'{LOG_DIR}/output_{JOBID}_{start2 + 5}.out'),
+        # ('geometric_median', f'{LOG_DIR}/output_{JOBID}_{start2 + 6}.out'),
+
+    ]
+
+    # Example usage
+    namespace_params = extract_namespace(f'{LOG_DIR}/output_{JOBID}_{start}.out')
+    print(namespace_params, flush=True)
+    # if (namespace_params['server_epochs'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
+    #         or namespace_params['labeling_rate'] in [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.8, 9.0, 10.0]
+    #         or namespace_params['num_clients'] in []):
+    #     return
+    # print(namespace_params)
+    if (namespace_params['server_epochs'] == SERVER_EPOCHS and namespace_params['labeling_rate'] != 0.0
+            and namespace_params['num_clients'] == NUM_CLIENTS):
+        pass
+
+        print(namespace_params)
+    else:
+        return
+
+    title = ', '.join(['num_clients:' + str(namespace_params['num_clients']),
+                       'classes_cnt:' + str(namespace_params['server_epochs']),
+                       'large_value:' + str(namespace_params['labeling_rate'])])
+    for method, txt_file in method_txt_files:
+        namespace_params = extract_namespace(txt_file)
+        method0 = namespace_params['aggregation_method']
+        if method != method0:
+            print(f'{method} != {method0}, ', txt_file, flush=True)
+            continue
+        try:
+            results = parse_file(txt_file, metric=METRIC)
+            global_accs[(method, txt_file)] = results
+        except Exception as e:
+            print(e, method0, txt_file, flush=True)
+            # traceback.print_exc()
+
+    FONTSIZE = 10
+    aggregation_methods = list(global_accs.keys())
+    makers = ['o', '^', 's', 'v', 'x', '.', 'p', 'h', 'x', '8', '1', '^', 'D', 'd']
+    # colors = ['green', 'orange', 'purple', 'm', 'red', 'k', 'w']
+    for i in range(len(aggregation_methods)):
+        agg_method, txt_file = aggregation_methods[i]
+        label = agg_method
+        if label == 'adaptive_krum':
+            label = 'rKrum'
+        elif label == 'adaptive_krum_avg':
+            label = '$\\overline{aKrum}$'
+        elif label == 'krum':
+            label = 'Krum'
+        elif label == 'krum_avg':
+            label = '$\\overline{Krum}$'
+        elif label == 'mean':
+            label = 'Mean'
+        else:
+            pass
+        if METRIC == 'accuracy':
+            vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
+        elif METRIC == 'l2_error':
+            vs = [vs['l2_error'] for vs in global_accs[(agg_method, txt_file)]]
+        elif METRIC == 'time_taken':
+            vs = [vs['time_taken'] for vs in global_accs[(agg_method, txt_file)]]
+            if agg_method == 'median_avg': continue
+        elif METRIC == 'misclassification_error':
+            vs = [vs['shared_acc'] for vs in global_accs[(agg_method, txt_file)]]
+            vs = [(1 - v[0], v[1]) for v in vs]  # (\mu, \std)
+        else:
+            raise NotImplementedError(METRIC)
+        ys, ys_errs = zip(*vs)
+        xs = list(range(len(ys)))
+        print(agg_method, txt_file, ys, flush=True)
+
+        # plt.plot(xs, ys, label=label, marker=makers[i])
+        # axes[i_row, j_col].plot(xs, ys, label=label, marker=makers[i])
+        # axes[i_row, j_col].errorbar(xs, ys, yerr=ys_errs, label=label, marker=makers[i], capsize=3)
+        ax.plot(xs, ys, label=label, marker=makers[i])  # Plot the line
+        # axes[i_row, j_col].fill_between(xs,
+        #                                 [y - e for y, e in zip(ys, ys_errs)],
+        #                                 [y + e for y, e in zip(ys, ys_errs)],
+        #                                 color='blue', alpha=0.3)  # label='Error Area'
+    ax.set_xlabel('Epochs', fontsize=FONTSIZE)
+    if len(xs) > 50:
+        xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 50 == 0]
+    else:
+        xs_labels = [v + 1 for v in xs]
+    ax.set_xticks(xs_labels)
+    ax.set_xticklabels(xs_labels)
+    if METRIC == 'loss':
+        # plt.ylabel('Loss', fontsize=FONTSIZE)
+        ax.set_ylabel('Loss', fontsize=FONTSIZE)
+    elif METRIC == 'l2_error':
+        # plt.ylabel('L_2 Error', fontsize=FONTSIZE)
+        ax.set_ylabel('L_2 Error', fontsize=FONTSIZE)
+    elif METRIC == 'time_taken':
+        # plt.ylabel('Time Taken', fontsize=FONTSIZE)
+        ax.set_ylabel('Time Taken', fontsize=FONTSIZE)
+    elif METRIC == 'misclassification_error':
+        ax.set_ylabel('Misclassification Error', fontsize=FONTSIZE)
+    else:
+        # plt.ylabel('Accuracy')
+        ax.set_ylabel('Accuracy')
+
+    ax.set_title(case, fontsize=FONTSIZE)
+    # plt.title(f'Global Model ({JOBID}), start:{start}, {title}', fontsize=10)
+    # plt.legend(fontsize=FONTSIZE, loc='best')
+    # ax.legend(fontsize=FONTSIZE, loc='best')
+    # attacker_ratio = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
+    # title = (f'{model_type}_cnn' + '$_{' + f'{num_server_epoches}+1' + '}$' +
+    #          f':{attacker_ratio:.2f}-{LABELING_RATE:.2f}')
+
+    # Adjust layout to prevent overlap
+    # plt.tight_layout()
+    # # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
+    # #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
+    # # fig_file = f'plots/global_cnn_{JOBID}-{title}.png'
+    # # os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+    # # plt.savefig(fig_file, dpi=300)
+    # plt.show()
+    # plt.close()
+    return ax
+
+
 if __name__ == '__main__':
-    # plot_robust_aggregation()
 
-    ######################### MNIST Results 20250313 ###############################################
-    # JOBID = 256611  # it works, log_large_values_20250214 with fixed large values
-
-    # # Random noise injection with alpha=10, client_epochs=20, batch_size=512, epoch=10, num_clients=20, f=8
-    # JOBID = 273327  # for Model Poisoning Attacks, random noise injection to model updates
-
-    # # Random noise injection with alpha=10, client_epochs=20, batch_size=512, epoch=100, num_clients=50, f=23
-    # JOBID = 274003  # for Model Poisoning Attacks, random noise injection to model updates
-
-    # # # Large Value with alpha=10, client_epochs=20, batch_size=512, epoch=10, num_clients=20, f=8
-    # JOBID = 273345  # for Model Poisoning Attacks, Large values to model updates
-
-    # # # Large Value with alpha=10, client_epochs=20, batch_size=512, epoch=100, num_clients=50, f=23
-    # JOBID = 274024  # for Model Poisoning Attacks, Large values to model updates
-
-    ### Label flipping
-
-    # # Flip labels with alpha=10, client_epochs=1, batch_size=512, epoch=10, num_clients=20, f=8
-    # JOBID = 273678  # for Data Poisoning Attacks, flip labels for Byzantine clients
-
-    # # Flip labels with alpha=10, client_epochs=1, batch_size=512, epoch=100, num_clients=50, f=23
-    # JOBID = 273720  # for Data Poisoning Attacks, flip labels for Byzantine clients
-
-    ###########################Sentiment140###########################################################
-
-    # # JOBID = 273742
-    # # JOBID = 273327
-    # JOBID = 274219      # Sentiment140 with 30% data
-    # JOBID = 274249  # Sentiment140 with 10% data with different batch sizes
-    # JOBID = 274271  # Sentiment140 with 10% data with different alpha
-    # JOBID = 274320  # Sentiment140 with 10% data with different alpha
-
-    # # Random noise injection with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8,
-    # JOBID = 274502  # Sentiment140 with 10% data with different alpha
-
-    # # Random noise injection with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=823,
-    # JOBID = 274433  # Sentiment140 with 10% data with different alpha
-
-    # # Large Value with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8,
-    # JOBID = 274527  # Sentiment140 with 10% data with different alpha
-
-    # Large Value with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=23,
-    # JOBID = 274794 # Sentiment140 with 10% data with different alpha
-
-    ### Label flipping
-
-    # # Flip labels with alpha=10, client_epochs=5, batch_size=512, epoch=10, num_clients=20, f=8
-    # JOBID = 274839  # for Data Poisoning Attacks, flip labels for Byzantine clients
-    # # Flip labels with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=23
-    # JOBID = 274863 # Sentiment140 with 10% data with different alpha
-
-
-    # # JOBID = 274594
-    # JOBID = 274462  # Shakespeare with 50 features and  different alpha
-    #
-    # SERVER_EPOCHS = 100
-    # NUM_CLIENTS = 50
-
-    # #  # NewsCategory
-    # JOBID = 274668  # NewsCategory with different alpha, num_clients=20, epochs=10
-    # JOBID = 274713  # NewsCategory with different alpha, num_clients=50, epochs=100
-
-    # # Fakenews
-    # JOBID = 274735  # Fakenews with different alpha,  num_clients=20, epochs=10
-    # JOBID = 274765  # Fakenews with different alpha,  num_clients=50, epochs=100
-
-
-    ##############################################################################
-    # Non IID case, alpha = 0.5, 1.0, 5, 10, n_clients:100, epochs:100
-    # MNIST
-    # JOBID = 291557      # large_value epochs:2
-    # JOBID = 292831  # large_value epochs:2
-    # JOBIDs = [293596 + i for i in range(6)]
-    JOBIDs = [299528]
+    METRIC = 'accuracy'
     LOG_DIR = "log"
-    for JOBID in JOBIDs:
+    SERVER_EPOCHS = 200
+    NUM_CLIENTS = 100
+    for start, data_case, alpha in [(18, 'IID', 10), (6, 'NON-IID', 0.5)]:
+
+        fig, ax = plt.subplots(1, 3, figsize=(10, 3))  # width, height
+        attack_cases = ['Large Outlier', 'Noise Injection', 'Label Flipping']
+        # old results before 20250503
+        # JOBIDs = [296768, 296767, 296769]   # Spambase
+        # JOBIDs = [295647, 295646, 295648]  # MNIST
+        # JOBIDs = [295198, 295197, 295199]  # Sentiment140,  SERVER_EPOCHS = 500
+
+        # old results before 20250506
+        # SERVER_EPOCHS = 200
+        # JOBIDs = [296914, 296913, 296915]  # Spambase
+        # JOBIDs = [296917, 296916, 296918]   # MNIST
+        # JOBIDs = [297013, 296919, 297014]   # Sentiment140
+
+        # results on 20250507
         SERVER_EPOCHS = 200
-        NUM_CLIENTS = 100
+        # JOBIDs = [299530, 299529, 299531]  # Spambase
+        # JOBIDs = [299533, 299532, 299534]   # MNIST
+        JOBIDs = [299536, 299535, 299537]   # Sentiment140
 
-        # # METRIC = 'loss'
-        # METRIC = 'misclassification_error'  # or misclassification Rate
-        # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken
-        METRIC = 'accuracy'
-        for start in range(0, 100, 6):
-            try:
-                print(f'\nstart: {start}')
-                plot_robust_aggregation(JOBID, start, METRIC)
-            except Exception as e:
-                print(e)
+        for j in range(3):
+            plot_ax_attack(ax[j], attack_cases[j], JOBID=JOBIDs[j], start=start)
+            if j == 0:
+                FONTSIZE = 10
+                ax[j].legend(fontsize=FONTSIZE, loc='lower right')
 
-        plot_robust_aggregation_all(JOBID, end=100)
-        print('finished')
+        title = '_'.join([f'{JOBID}' for JOBID in JOBIDs])
+        fig.suptitle(f'{data_case} ($\\alpha={alpha}$)', fontsize=FONTSIZE)
+        fig.tight_layout(rect=[0, 0, 1, 1.07])  # rect=[left, bottom, right, top]
+
+        fig_file = f'plots/global_{title}-{data_case}-{alpha}.png'
+        os.makedirs(os.path.dirname(fig_file), exist_ok=True)
+        plt.savefig(fig_file, dpi=300)
+        plt.show()
+
+        plt.close()
+
+    # JOBIDs = [295648]
+    # LOG_DIR = "log"
+    # for JOBID in JOBIDs:
+    #     SERVER_EPOCHS = 200
+    #     NUM_CLIENTS = 100
+    #
+    #     # # METRIC = 'loss'
+    #     # METRIC = 'misclassification_error'  # or misclassification Rate
+    #     # METRIC = "l2_error"  # 'accuracy'  # l2_error, time_taken
+    #     METRIC = 'accuracy'
+    #     for start in range(0, 100, 6):
+    #         try:
+    #             print(f'\nstart: {start}')
+    #             plot_robust_aggregation(JOBID, start, METRIC)
+    #         except Exception as e:
+    #             print(e)
+    #
+    #     plot_robust_aggregation_all(JOBID, end=100)
+    #     print('finished')

@@ -175,7 +175,7 @@ def elbow_index_max_distance(values):
     return elbow_idx
 
 
-def filter_large_values(distances):
+def filter_extreme_values(distances):
     """
         Filter large values based on distances with median as pivot.
     Args:
@@ -191,36 +191,35 @@ def filter_large_values(distances):
     left_max_diff = median - distances[0]
     assert left_max_diff >= 0
 
+    jump_idx = n
     for i in range(mid + 1, n):
         if distances[i] > (median + left_max_diff):
-            return i
+            jump_idx = i
+            break
 
     # If no value is larger than (median + left_max_diff), we return the length
-    return n
+    return distances[: jump_idx]
 
 
-def find_significant_change_point(data, start=1):
+def estimate_f(data, N=1):
     """
     Find the most significant change point in O(n) time.
 
     Arguments:
-    - data: Time series data (torch tensor)
+    - data: after filtering extreme values, so n <= N
 
     Returns:
     - change_point: The index of the most significant change point
     """
-    jump_idx = filter_large_values(data)
-    data = data[: jump_idx]     # excluding the outliers or extremely large value first.
 
     n = len(data)
-
     # Compute prefix sums for efficient mean and variance calculation
     prefix_sum = torch.cumsum(data, dim=0)
     prefix_sq_sum = torch.cumsum(data ** 2, dim=0)
 
     best_cost = float('inf')
     change_point = n
-
+    start = N - (N - 3) // 2  # the number of honest points, k must be >= h, i.e, half of data
     for i in range(start, n):  # We start from 1 to ensure two non-empty segments
         # Compute left segment mean and squared error
         # Here is correct, as the index is started from 0, so prefix_sum[i-1] is the sum of the first i values,
@@ -241,7 +240,7 @@ def find_significant_change_point(data, start=1):
             best_cost = total_cost
             change_point = i+1      # the ith item is included in left sum, so we should return i+1
 
-    return change_point
+    return N - change_point
 
 
 def find_change_point_with_knee(sorted_distances, start):
@@ -379,7 +378,7 @@ def compare():
 
     mean_split_idx = mean_split_index(distances)
     mean_split_idx2 = mean_split_index2(distances)
-    sse_idx = find_significant_change_point(torch.tensor(distances))
+    # sse_idx = find_significant_change_point(torch.tensor(distances))
     max_diff_idx = max_difference_jump(distances)
     max_idx = max_ratio_jump(distances)
     second_idx = second_derivative_jump(distances)
@@ -393,7 +392,7 @@ def compare():
     print(f"Elbow method: index = {elbow_index}, value = {distances[elbow_index]}")
     print(f"Mean split:  index = {mean_split_idx}, value = {distances[mean_split_idx]}")
     print(f"Mean split2:  index = {mean_split_idx2}, value = {distances[mean_split_idx2]}")
-    print(f"SSE:  index = {sse_idx}, value = {distances[mean_split_idx2]}")
+    # print(f"SSE:  index = {sse_idx}, value = {distances[mean_split_idx2]}")
     print(f"max_diff_idx:  index = {max_diff_idx}, value = {distances[max_diff_idx]}")
     print(f"max_idx:  index = {max_idx}, value = {distances[max_idx]}")
     print(f"second_idx:  index = {second_idx}, value = {distances[second_idx]}")
@@ -443,7 +442,7 @@ def main():
 
     # Example usage
     # data = torch.randn(100)  # Example time series data as a torch tensor
-    change_point = find_significant_change_point(data)
+    change_point = len(data) - estimate_f(data)
     print("Most significant change point:", change_point)
 
     # Example usage

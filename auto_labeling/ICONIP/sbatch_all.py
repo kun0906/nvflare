@@ -28,7 +28,7 @@ input_str = """#!/bin/bash
 #SBATCH --time=10:00:00
 #SBATCH --array=0-24
 
-labeling_rates=(0.5 1 5 10)
+labeling_rates=(0.1 0.5 1 10)
 # server_epochs_values=(2)
 # num_clients_values=(10)
 server_epochs_values=(200)
@@ -75,16 +75,16 @@ cases = {
         'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
         'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
     },
-    # 'mnist': {
-    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_mnist.py $PARAMS',
-    # },
-    # 'sentiment140': {
-    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_sentiment140.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_sentiment140.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_sentiment140.py $PARAMS',
-    # }
+    'mnist': {
+        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS',
+        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS',
+        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_mnist.py $PARAMS',
+    },
+    'sentiment140': {
+        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_sentiment140.py $PARAMS',
+        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_sentiment140.py $PARAMS',
+        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_sentiment140.py $PARAMS',
+    }
 }
 job_txt = 'job.txt'
 res = {}

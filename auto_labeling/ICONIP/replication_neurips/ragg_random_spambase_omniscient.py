@@ -61,11 +61,11 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=100,
+    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=10,
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-s', '--server_epochs', type=int, required=False, default=2,
                         help="The number of server epochs (integer).")
-    parser.add_argument('-n', '--num_clients', type=int, required=False, default=20,
+    parser.add_argument('-n', '--num_clients', type=int, required=False, default=5,
                         help="The number of clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False,
                         default='adaptive_krum_avg',

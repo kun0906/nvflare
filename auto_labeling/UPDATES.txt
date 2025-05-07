@@ -1,3 +1,7 @@
+v0.4.9: Change the random noise with a smaller std
+    random noise with N(0, 1), std=1 changed from 10 before
+
+
 v0.4.8: Fix issues
     1. type(CNN) = type(ragg.base.CNN)
 

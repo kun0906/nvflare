@@ -4,7 +4,8 @@ import numpy as np
 import torch
 from sklearn.random_projection import GaussianRandomProjection
 
-from .change_point_detection import binary_segmentation, find_significant_change_point, find_change_point_with_knee
+from .change_point_detection import binary_segmentation, find_change_point_with_knee, \
+    filter_extreme_values, estimate_f
 
 np.set_printoptions(precision=4)
 
@@ -521,7 +522,7 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         print(distances)
 
     scores = torch.zeros(N, dtype=torch.float32)
-    ks = []
+    fs = []
     for i in range(N):
         # Sort distances for the current update and sum the closest (N-f-2) distances
         sorted_indices = np.argsort(distances[i])
@@ -550,8 +551,10 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         # each point must be >= half of data neighbors, as f is strictly less than half of data
         h = N - (N - 3) // 2  # the number of honest points, k must be >= h, i.e, half of data
         # the first value (with index k) that is used to separate left and right, where index k is included in right
-        k = find_significant_change_point(sorted_distances, start=h-1)  # index starts from 0
-        ks.append(k)
+        D_ = filter_extreme_values(sorted_distances)
+        f_i = estimate_f(D_, N)  # index starts from 0 and filter extreme values
+        k = max(h, N-f_i-2)
+        fs.append(f_i)
 
         if verbose >= 20:
             # print(f'*** j: {j} ***')
@@ -563,11 +566,11 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         if sorted_distances[0] != 0:
             raise ValueError("First distance should be zero (self-distance).")
 
-        scores[i] = (sorted_distances[1:k] * sorted_weights[1:k]).sum() / sorted_weights[1:k].sum()
+        scores[i] = (sorted_distances[1:k+1] * sorted_weights[1:k+1]).sum() / sorted_weights[1:k+1].sum()
 
     if verbose >= 5:
         print('adaptive_Krum scores: ', [f'{v:.2f}' for v in scores.tolist()])
-        print(f'ks: {ks}')
+        print(f'fs: {fs}')
 
     if trimmed_average:
         # Select the update with the smallest score
@@ -582,7 +585,7 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         sorted_updates = clients_updates[sorted_indices]
         sorted_predict_clients_type = predict_clients_type[sorted_indices]
 
-        k = ks[selected_index]
+        f_i = fs[selected_index]
 
         # # instead return the smallest value, we return the top weighted average
         # # Sort scores
@@ -618,7 +621,7 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
 
         # m = k  # we will average over top m closet updates
         # m = N - (N - 3) // 2  # N//2 the half number of points, no need to be  N - (N - 3) // 2
-        m = k
+        m = N-f_i
         if verbose >= 5:
             print(f'm: {m}')
         sorted_predict_clients_type[m:] = 'Byzantine'   # here we use k, it's correct. because k is the seperated point.
