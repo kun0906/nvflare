@@ -509,16 +509,18 @@ def plot_ax_attack(ax, case, JOBID, start=0):
             # traceback.print_exc()
 
     FONTSIZE = 10
+
     aggregation_methods = list(global_accs.keys())
     makers = ['o', '^', 's', 'v', 'x', '.', 'p', 'h', 'x', '8', '1', '^', 'D', 'd']
     # colors = ['green', 'orange', 'purple', 'm', 'red', 'k', 'w']
+    all_data = {}
     for i in range(len(aggregation_methods)):
         agg_method, txt_file = aggregation_methods[i]
         label = agg_method
         if label == 'adaptive_krum':
-            label = 'rKrum'
+            label = 'fKrum'
         elif label == 'adaptive_krum_avg':
-            label = '$\\overline{aKrum}$'
+            label = '$\\overline{fKrum}$'
         elif label == 'krum':
             label = 'Krum'
         elif label == 'krum_avg':
@@ -542,7 +544,7 @@ def plot_ax_attack(ax, case, JOBID, start=0):
         ys, ys_errs = zip(*vs)
         xs = list(range(len(ys)))
         print(agg_method, txt_file, ys, flush=True)
-
+        all_data[agg_method] = (txt_file, ys, ys_errs)
         # plt.plot(xs, ys, label=label, marker=makers[i])
         # axes[i_row, j_col].plot(xs, ys, label=label, marker=makers[i])
         # axes[i_row, j_col].errorbar(xs, ys, yerr=ys_errs, label=label, marker=makers[i], capsize=3)
@@ -551,6 +553,12 @@ def plot_ax_attack(ax, case, JOBID, start=0):
         #                                 [y - e for y, e in zip(ys, ys_errs)],
         #                                 [y + e for y, e in zip(ys, ys_errs)],
         #                                 color='blue', alpha=0.3)  # label='Error Area'
+
+    plot_data_file = f'{case}-{JOBID}.csv'
+    with open(plot_data_file, 'w') as f:
+        for k, vs in all_data.items():
+            f.write(f'{k}|' +'|'.join(map(str, vs)) + '\n')
+
     ax.set_xlabel('Epochs', fontsize=FONTSIZE)
     if len(xs) > 50:
         xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 50 == 0]
@@ -616,8 +624,8 @@ if __name__ == '__main__':
 
         # results on 20250507
         SERVER_EPOCHS = 200
-        # JOBIDs = [299530, 299529, 299531]  # Spambase
-        # JOBIDs = [299533, 299532, 299534]   # MNIST
+        JOBIDs = [299530, 299529, 299531]  # Spambase
+        JOBIDs = [299533, 299532, 299534]   # MNIST
         JOBIDs = [299536, 299535, 299537]   # Sentiment140
 
         for j in range(3):
@@ -632,7 +640,7 @@ if __name__ == '__main__':
 
         fig_file = f'plots/global_{title}-{data_case}-{alpha}.png'
         os.makedirs(os.path.dirname(fig_file), exist_ok=True)
-        plt.savefig(fig_file, dpi=300)
+        plt.savefig(fig_file, dpi=1200)
         plt.show()
 
         plt.close()
