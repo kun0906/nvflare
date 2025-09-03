@@ -3,6 +3,7 @@ import re
 import traceback
 import matplotlib
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # default "Tableau 10" colors.
 # Get the default color cycle
@@ -520,11 +521,11 @@ def plot_ax_attack(ax, case, JOBID, start=0):
         if label == 'adaptive_krum':
             label = 'rKrum'
         elif label == 'adaptive_krum_avg':
-            label = '$ArKrum$'
+            label = 'ArKrum'
         elif label == 'krum':
             label = 'Krum'
         elif label == 'krum_avg':
-            label = '$mKrum$'
+            label = 'mKrum'
         elif label == 'mean':
             label = 'Mean'
         else:
@@ -544,7 +545,7 @@ def plot_ax_attack(ax, case, JOBID, start=0):
         ys, ys_errs = zip(*vs)
         xs = list(range(len(ys)))
         print(agg_method, txt_file, ys, flush=True)
-        all_data[agg_method] = (txt_file, ys, ys_errs)
+        all_data[label] = (txt_file, ys, ys_errs)
         # plt.plot(xs, ys, label=label, marker=makers[i])
         # axes[i_row, j_col].plot(xs, ys, label=label, marker=makers[i])
         # axes[i_row, j_col].errorbar(xs, ys, yerr=ys_errs, label=label, marker=makers[i], capsize=3)
@@ -554,12 +555,28 @@ def plot_ax_attack(ax, case, JOBID, start=0):
         #                                 [y + e for y, e in zip(ys, ys_errs)],
         #                                 color='blue', alpha=0.3)  # label='Error Area'
 
-    plot_data_file = f'{case}-{JOBID}.csv'
-    with open(plot_data_file, 'w') as f:
-        for k, vs in all_data.items():
-            f.write(f'{k}|' +'|'.join(map(str, vs)) + '\n')
+    # plot_data_file = f'{case}-{JOBID}-{data_case}.csv'
+    # with open(plot_data_file, 'w') as f:
+    #     for k, vs in all_data.items():
+    #         f.write(f'{k}|' +'|'.join(map(str, vs)) + '\n')
 
-    ax.set_xlabel('Epochs', fontsize=FONTSIZE)
+    FILENAME = f'{DATASET}/{attack_case}-{data_case}'
+    result_file = f'plots/{FILENAME}_{JOBID}'
+    os.makedirs(os.path.dirname(result_file), exist_ok=True)
+
+    csv_file = result_file + '.csv'
+    with open(csv_file, 'w') as f:
+        for k, vs in all_data.items():
+            f.write(f'{vs[0]},{k},' + ','.join([str(v) for v in vs[1]]) + '\n')
+
+    # Read CSV
+    df = pd.read_csv(csv_file, header=None)
+    # Save as Excel
+    df.to_excel(result_file + '.xlsx', index=False)
+    os.remove(csv_file)
+
+
+    ax.set_xlabel('Communication Rounds', fontsize=FONTSIZE)
     if len(xs) > 50:
         xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 50 == 0]
     else:
@@ -619,17 +636,36 @@ if __name__ == '__main__':
     # JOBIDs = [296917, 296916, 296918]   # MNIST
     # JOBIDs = [297013, 296919, 297014]   # Sentiment140
 
-    # results on 20250507
+    # # results on 20250507
+    # SERVER_EPOCHS = 200
+    # # JOBIDs = [299530, 299529, 299531]  # Spambase
+    # JOBIDs = [299533, 299532, 299534]  # MNIST
+    # # JOBIDs = [299536, 299535, 299537]  # Sentiment140
+
+    # # results on 20250825
+    # SERVER_EPOCHS = 200
+    # JOBIDs = [344679, 344704, 344705]  # MNIST
+    # # JOBIDs = [344706, 344707, 344708]  # Sentiment140
+
+    # results on 20250826
     SERVER_EPOCHS = 200
-    # JOBIDs = [299530, 299529, 299531]  # Spambase
-    JOBIDs = [299533, 299532, 299534]  # MNIST
-    JOBIDs = [299536, 299535, 299537]  # Sentiment140
+    JOBIDs = [345325, 345326, 345327]  # MNIST
+    # JOBIDs = [345328, 345329, 345330]  # Sentiment140
+
+    # results on 20250903
+    SERVER_EPOCHS = 200
+    JOBIDs = [347347, 347348, 347349]  # MNIST
+    DATASET = 'MNIST'
+    # JOBIDs = [347350, 347351, 347352]  # Sentiment140
+    # DATASET = 'SENTIMENT140'
+
+
     attack_cases = ['LargeOutlier', 'NoiseInjection', 'LabelFlipping']
     FONTSIZE = 10
     for i, attack_case in enumerate(attack_cases):
         JOBID = JOBIDs[i]
         fig, ax = plt.subplots(1, 2, figsize=(10, 5))  # width, height
-        for j, (start, data_case, alpha) in enumerate([(18, 'IID', 10), (6, 'NON-IID', 0.5)]):
+        for j, (start, data_case, alpha) in enumerate([(6, 'IID', 10), (0, 'NON-IID', 0.5)]):
             plot_ax_attack(ax[j], attack_cases[j], JOBID=JOBID, start=start)
             ax[j].set_title(f'{data_case} ($\\alpha={alpha}$)', fontsize=FONTSIZE)
             if j == 0:
@@ -638,9 +674,12 @@ if __name__ == '__main__':
         # title = '_'.join([f'{JOBID}' for JOBID in JOBIDs])
         # fig.suptitle(f'{data_case} ($\\alpha={alpha}$)', fontsize=FONTSIZE)
         fig.tight_layout(rect=[0, 0, 1, 1])  # rect=[left, bottom, right, top]
-        fig_file = f'plots/{attack_case}-{JOBID}.png'
+        fig_file = f'plots/{DATASET}/{attack_case}-{JOBID}'
         os.makedirs(os.path.dirname(fig_file), exist_ok=True)
-        plt.savefig(fig_file, dpi=300)
+        # plt.savefig(f"{fig_file}.png", format="png", dpi=300)
+        # plt.savefig(f"{fig_file}.eps", format="eps", dpi=300)  # dpi affects embedded raster images, not vectors
+        # plt.savefig(f"{fig_file}.pdf", format='pdf')  # PDF
+        # plt.savefig(f"{fig_file}.svg", format='svg')  # SVG
         plt.show()
 
         plt.close()

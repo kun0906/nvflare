@@ -484,7 +484,9 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
                                                                                trim_ratio=p,
                                                                                verbose=CFG.VERBOSE)
     else:
-        # empirical mean
+        # empirical mean: fedavg, only train_size
+        # here, just the the train size, inside the cw_mean, it will compute the weighted average
+        clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
         aggregated_update, clients_type_pred = robust_aggregation.cw_mean(flatten_clients_updates, clients_weights,
                                                                           verbose=CFG.VERBOSE)
     end = time.time()

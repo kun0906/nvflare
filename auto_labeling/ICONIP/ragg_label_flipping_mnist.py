@@ -136,7 +136,7 @@ def get_configuration(train_val_seed):
     # Print level
     CFG.VERBOSE = args.verbose
     # Access the arguments
-    CFG.LABELING_RATE = 0.8
+    CFG.LABELING_RATE = 0.8     # labeled data
     CFG.BIG_NUMBER = args.labeling_rate
     # SERVER_EPOCHS = args.server_epochs
     CFG.SERVER_EPOCHS = args.server_epochs
@@ -368,8 +368,10 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         data_file = f'{data_dir}/{c}.pt.gz'
         with gzip.open(data_file, 'rb') as f:
             local_data = torch.load(f)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data ({len(label_cnts)}):', label_cnts)
@@ -412,8 +414,10 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         #     local_data['y'] = (local_data['y']+2)%10
         # local_data['y'] = torch.tensor([(c + epoch) % 10] * len(local_data['y'])).to(DEVICE)
         # local_data['y'] = torch.tensor([(c) % 10] * len(local_data['y'])).to(DEVICE)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data:', label_cnts)

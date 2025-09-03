@@ -551,9 +551,15 @@ def adaptive_krum(clients_updates, clients_weights, trimmed_average=False, rando
         # each point must be >= half of data neighbors, as f is strictly less than half of data
         h = N - (N - 3) // 2  # the number of honest points, k must be >= h, i.e, half of data
         # the first value (with index k) that is used to separate left and right, where index k is included in right
-        D_ = filter_extreme_values(sorted_distances)
-        f_i = estimate_f(D_, N)  # index starts from 0 and filter extreme values
-        k = max(h, N-f_i-2)
+        flg = "ICONIP"
+        if flg=='IOT': # paper
+            D_ = sorted_distances
+            f_i = estimate_f(D_, N)  # index starts from 0 and filter extreme values
+            k = N-f_i-2     # for IoT
+        else:
+            D_ = filter_extreme_values(sorted_distances)
+            f_i = estimate_f(D_, N)  # index starts from 0 and filter extreme values
+            k = max(h, N-f_i-2) # For ICONIP
         fs.append(f_i)
 
         if verbose >= 20:

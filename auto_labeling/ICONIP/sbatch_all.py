@@ -26,9 +26,9 @@ input_str = """#!/bin/bash
 #SBATCH --mem=80G
 #SBATCH --gres=gpu:1
 #SBATCH --time=10:00:00
-#SBATCH --array=0-24
+#SBATCH --array=0-12
 
-labeling_rates=(0.1 0.5 1 10)
+labeling_rates=(0.5 10)
 # server_epochs_values=(2)
 # num_clients_values=(10)
 server_epochs_values=(200)
@@ -66,15 +66,15 @@ pwd
 
 # Define dataset, attack type, and corresponding script
 cases = {
-    'spambase_paper': {
-        'gaussian': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_gaussian.py $PARAMS',
-        'omniscient': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_omniscient.py $PARAMS',
-    },
-    'spambase': {
-        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_spambase.py $PARAMS',
-        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
-        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
-    },
+    # 'spambase_paper': {
+    #     'gaussian': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_gaussian.py $PARAMS',
+    #     'omniscient': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_omniscient.py $PARAMS',
+    # },
+    # 'spambase': {
+    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_spambase.py $PARAMS',
+    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
+    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
+    # },
     'mnist': {
         'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS',
         'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS',

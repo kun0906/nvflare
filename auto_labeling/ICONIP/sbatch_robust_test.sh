@@ -17,14 +17,16 @@
 #labeling_rates=(0.001 0.01 0.1 0.3 0.5 0.8 1.0)          # percent of parameters will be changed
 #labeling_rates=(3 32 512 1024 -1)          # larger values
 #labeling_rates=(512)          # larger values
-labeling_rates=(0.1 0.5 1 5 10) #(10 30 45 90 135 20 5)                            # Labeling rate
+#labeling_rates=(0.1 0.5 1 5 10) #(10 30 45 90 135 20 5)                            # Labeling rate
+labeling_rates=(0.5 10) #
 server_epochs_values=(100)                           # Number of server epochs
 num_clients_values=(100)                          # Number of total clients
 #aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum+rp' 'krum+rp' 'medoid' 'median' 'mean'
 #'adaptive_krum_avg' 'krum_avg' 'adaptive_krum+rp_avg' 'krum+rp_avg' 'medoid_avg' 'trimmed_mean' 'geometric_median')
 # Aggregation method
 #aggregation_values=('adaptive_krum' 'krum' 'median' 'mean')
-aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum_avg' 'krum_avg' 'median' 'mean')
+#aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum_avg' 'krum_avg' 'median' 'mean')
+aggregation_values=('mean')
 
 # Calculate the total number of parameter combinations
 total_combinations=$(( ${#labeling_rates[@]} * ${#server_epochs_values[@]} * ${#num_clients_values[@]} * ${#aggregation_values[@]} ))
@@ -78,7 +80,7 @@ pwd
 
 # Model Poisoning: mnist
 PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS
-#PYTHONPATH=. python3 ICONIP/fl_cnn_robust_aggregation_sign_flipping.py $PARAMS
+PYTHONPATH=. python3 ICONIP/fl_cnn_robust_aggregation_sign_flipping.py $PARAMS
 PYTHONPATH=.  python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS
 
 

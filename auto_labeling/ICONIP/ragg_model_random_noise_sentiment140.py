@@ -620,8 +620,10 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         data_file = f'{data_dir}/{c}.pt.gz'
         with gzip.open(data_file, 'rb') as f:
             local_data = torch.load(f)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data ({len(label_cnts)}):', label_cnts)
@@ -658,8 +660,10 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         data_file = f'{data_dir}/{c}.pt.gz'
         with gzip.open(data_file, 'rb') as f:
             local_data = torch.load(f)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data:', label_cnts)

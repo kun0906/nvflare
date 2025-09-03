@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial.distance import cdist
 
-import projection_median
-from autoencoder_mean import robust_mean_estimation
+# import projection_median
+# from autoencoder_mean import robust_mean_estimation
 
 np.set_printoptions(precision=3, suppress=True)
 
