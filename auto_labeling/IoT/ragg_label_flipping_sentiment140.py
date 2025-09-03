@@ -30,14 +30,26 @@ Author: kun88.yang@gmail.com
 import argparse
 import shutil
 import random
+from functools import partial
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from dataclasses import dataclass
 import pandas as pd
 
+import ragg
 from ragg.base import *
 from ragg.utils import dirichlet_split
+
+
+reduce_dim_flg = False
+# Conditional model selection using partial
+if reduce_dim_flg:
+    reduced_dim = 10
+    # Define a partial function for FNN
+    CNN = partial(ragg.base.FNN, input_dim=reduced_dim)
+else:
+    CNN = ragg.base.FNN
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
 print(f'current file: {__file__}')
@@ -77,7 +89,7 @@ def parse_arguments():
                         help="The number of total clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='krum+rp',
                         help="aggregation method.")
-    parser.add_argument('-v', '--verbose', type=int, required=False, default=10,
+    parser.add_argument('-v', '--verbose', type=int, required=False, default=1,
                         help="verbose mode.")
     # Parse the arguments
     args = parser.parse_args()
@@ -125,7 +137,7 @@ def get_configuration(train_val_seed):
     CFG.VERBOSE = args.verbose
     CFG.LABELING_RATE = 0.8
     CFG.BIG_NUMBER = args.labeling_rate
-    # CFG.BATCH_SIZE = int(CFG.BIG_NUMBER)
+    CFG.BATCH_SIZE = int(CFG.BIG_NUMBER)
     CFG.SERVER_EPOCHS = args.server_epochs
     # CFG.IID_CLASSES_CNT = 5
     CFG.NUM_CLIENTS = args.num_clients
@@ -143,6 +155,7 @@ def get_configuration(train_val_seed):
 
     CFG.LABELS = {0, 1}
     CFG.NUM_CLASSES = len(CFG.LABELS)
+    CFG.CNN = CNN
     print(CFG)
     return CFG
 
@@ -187,177 +200,179 @@ class FNN(nn.Module):
         return x
 
 
-
-@timer
-def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
-    print('*aggregate cnn...')
-    CFG = histories['CFG']
-    # flatten all the parameters into a long vector
-    # clients_updates = [client_state_dict.cpu() for client_state_dict in clients_cnns.values()]
-
-    # Concatenate all parameter tensors into one vector.
-    # Note: The order here is the iteration order of the OrderedDict, which
-    # may not match the order of model.parameters().
-    # vector_from_state = torch.cat([param.view(-1) for param in state.values()])
-    # flatten_clients_updates = [torch.cat([param.view(-1).cpu() for param in client_state_dict.values()]) for
-    #                            client_state_dict in clients_cnns.values()]
-    tmp_models = []
-    for client_state_dict in clients_cnns.values():
-        model = FNN(num_classes=CFG.NUM_CLASSES)
-        model.load_state_dict(client_state_dict)
-        tmp_models.append(model)
-    flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]
-
-    # for v in flatten_clients_updates:
-    #     # print(v.tolist())
-    #     print_histgram(v, bins=10, value_type='update')
-
-    flatten_clients_updates = torch.stack(flatten_clients_updates)
-    print(f'each update shape: {flatten_clients_updates[1].shape}')
-    # for debugging
-    if CFG.VERBOSE >= 30:
-        for i, update in enumerate(flatten_clients_updates):
-            print(f'client_{i}:', end='  ')
-            print_histgram(update, bins=5, value_type='params')
-
-    min_value = min([torch.min(v).item() for v in flatten_clients_updates[: CFG.NUM_HONEST_CLIENTS]])
-    max_value = max([torch.max(v).item() for v in flatten_clients_updates[: CFG.NUM_HONEST_CLIENTS]])
-
-    # each client extra information (such as, number of samples)
-    # client_weights will affect median and krum, so be careful to weights
-    # if assign byzantine clients with very large weights (e.g., 1e6),
-    # then median will choose byzantine client's parameters.
-    clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
-    # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
-    start = time.time()
-    if aggregation_method == 'adaptive_krum':
-        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
-                                                                                clients_weights,
-                                                                                trimmed_average=False,
-                                                                                random_projection=False,
-                                                                                verbose=CFG.VERBOSE)
-    elif aggregation_method == 'adaptive_krum_avg':
-        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
-                                                                                clients_weights,
-                                                                                trimmed_average=True,
-                                                                                random_projection=False,
-                                                                                verbose=CFG.VERBOSE)
-
-    elif aggregation_method == 'adaptive_krum+rp':  # adaptive_krum + random projection
-        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
-            flatten_clients_updates, clients_weights, trimmed_average=False, random_projection=True,
-            random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
-    elif aggregation_method == 'adaptive_krum+rp_avg':  # adaptive_krum + random projection
-        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
-            flatten_clients_updates, clients_weights, trimmed_average=True, random_projection=True,
-            random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
-    elif aggregation_method == 'krum':
-        # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_BYZANTINE_CLIENTS']
-        f = CFG.NUM_BYZANTINE_CLIENTS
-        # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
-                                                                       trimmed_average=False, random_projection=False,
-                                                                       verbose=CFG.VERBOSE)
-    elif aggregation_method == 'krum_avg':
-        # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_BYZANTINE_CLIENTS']
-        f = CFG.NUM_BYZANTINE_CLIENTS
-        # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
-                                                                       trimmed_average=True, random_projection=False,
-                                                                       verbose=CFG.VERBOSE)
-    elif aggregation_method == 'krum+rp':
-        # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_BYZANTINE_CLIENTS']
-        f = CFG.NUM_BYZANTINE_CLIENTS
-        # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates,
-                                                                       clients_weights, f,
-                                                                       trimmed_average=False,
-                                                                       random_projection=True,
-                                                                       random_state=CFG.TRAIN_VAL_SEED,
-                                                                       verbose=CFG.VERBOSE)
-    elif aggregation_method == 'krum+rp_avg':
-        # train_info = list(histories['clients'][-1].values())[-1]
-        # f = train_info['NUM_BYZANTINE_CLIENTS']
-        f = CFG.NUM_BYZANTINE_CLIENTS
-        # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates,
-                                                                       clients_weights, f,
-                                                                       trimmed_average=True,
-                                                                       random_projection=True,
-                                                                       random_state=CFG.TRAIN_VAL_SEED,
-                                                                       verbose=CFG.VERBOSE)
-    elif aggregation_method == 'median':
-        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
-        p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = robust_aggregation.cw_median(flatten_clients_updates, clients_weights,
-                                                                            verbose=CFG.VERBOSE)
-
-    elif aggregation_method == 'medoid':
-        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
-        aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
-                                                                         clients_weights,
-                                                                         trimmed_average=False,
-                                                                         upper_trimmed_ratio=p,
-                                                                         verbose=CFG.VERBOSE)
-
-    elif aggregation_method == 'medoid_avg':
-        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
-        aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
-                                                                         clients_weights,
-                                                                         trimmed_average=True,
-                                                                         upper_trimmed_ratio=p,
-                                                                         verbose=CFG.VERBOSE)
-
-    elif aggregation_method == 'geometric_median':
-        aggregated_update, clients_type_pred = robust_aggregation.geometric_median(flatten_clients_updates,
-                                                                                   clients_weights,
-                                                                                   max_iters=100, tol=1e-6,
-                                                                                   verbose=CFG.VERBOSE)
-
-    # elif aggregation_method == 'exp_weighted_mean':
-    #     clients_type_pred = None
-    #     aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
-    #         torch.stack(flatten_clients_updates), x_est=flatten_clients_updates[-1],
-    #         r=0.1, max_iters=100, tol=1e-6, verbose=CFG.VERBOSE)
-    elif aggregation_method == 'trimmed_mean':
-        p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
-        p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = robust_aggregation.trimmed_mean(flatten_clients_updates, clients_weights,
-                                                                               trim_ratio=p,
-                                                                               verbose=CFG.VERBOSE)
-    else:
-        # empirical mean
-        aggregated_update, clients_type_pred = robust_aggregation.cw_mean(flatten_clients_updates, clients_weights,
-                                                                          verbose=CFG.VERBOSE)
-    end = time.time()
-    time_taken = end - start
-    n = len(flatten_clients_updates)
-    f = CFG.NUM_BYZANTINE_CLIENTS
-    # # weight average
-    # update = 0.0
-    # weight = 0.0
-    # for j in range(n-f):  # note here is k+1 because we want to add all values before k+1
-    #     update += flatten_clients_updates[j] * clients_weights[j]
-    #     weight += clients_weights[j]
-    # empirical_mean = update / weight
-    empirical_mean = torch.sum(flatten_clients_updates[:n - f] *
-                               clients_weights[:n - f, None], dim=0) / torch.sum(clients_weights[:n - f])
-    l2_error = torch.norm(empirical_mean - aggregated_update, p=2).item()  # l2 norm
-    histories['server'].append({"time_taken": time_taken, 'l2_error': l2_error})
-    # f'clients_weights: {clients_weights.numpy()},
-    print(f'{aggregation_method}, clients_type: {clients_type_pred}, '
-          f'client_updates: min: {min_value:.2f}, max: {max_value:.2f}, '
-          f'time taken: {time_taken:.4f}s, l2_error: {l2_error:.2f}')
-
-    # Update the global model with the aggregated parameters
-    # w = w0 - (delta_w), where delta_w = \eta*\namba_w
-    aggregated_update = parameters_to_vector(global_cnn.parameters()).detach().cpu() - aggregated_update
-    aggregated_update = aggregated_update.to(CFG.DEVICE)
-    vector_to_parameters(aggregated_update, global_cnn.parameters())  # in_place
-    # global_cnn.load_state_dict(aggregated_update)
+#
+# @timer
+# def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, histories, epoch):
+#     print('*aggregate cnn...')
+#     CFG = histories['CFG']
+#     # flatten all the parameters into a long vector
+#     # clients_updates = [client_state_dict.cpu() for client_state_dict in clients_cnns.values()]
+#
+#     # Concatenate all parameter tensors into one vector.
+#     # Note: The order here is the iteration order of the OrderedDict, which
+#     # may not match the order of model.parameters().
+#     # vector_from_state = torch.cat([param.view(-1) for param in state.values()])
+#     # flatten_clients_updates = [torch.cat([param.view(-1).cpu() for param in client_state_dict.values()]) for
+#     #                            client_state_dict in clients_cnns.values()]
+#     tmp_models = []
+#     for client_state_dict in clients_cnns.values():
+#         model = FNN(num_classes=CFG.NUM_CLASSES)
+#         model.load_state_dict(client_state_dict)
+#         tmp_models.append(model)
+#     flatten_clients_updates = [parameters_to_vector(md.parameters()).detach().cpu() for md in tmp_models]
+#
+#     # for v in flatten_clients_updates:
+#     #     # print(v.tolist())
+#     #     print_histgram(v, bins=10, value_type='update')
+#
+#     flatten_clients_updates = torch.stack(flatten_clients_updates)
+#     print(f'each update shape: {flatten_clients_updates[1].shape}')
+#     # for debugging
+#     if CFG.VERBOSE >= 30:
+#         for i, update in enumerate(flatten_clients_updates):
+#             print(f'client_{i}:', end='  ')
+#             print_histgram(update, bins=5, value_type='params')
+#
+#     min_value = min([torch.min(v).item() for v in flatten_clients_updates[: CFG.NUM_HONEST_CLIENTS]])
+#     max_value = max([torch.max(v).item() for v in flatten_clients_updates[: CFG.NUM_HONEST_CLIENTS]])
+#
+#     # each client extra information (such as, number of samples)
+#     # client_weights will affect median and krum, so be careful to weights
+#     # if assign byzantine clients with very large weights (e.g., 1e6),
+#     # then median will choose byzantine client's parameters.
+#     clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
+#     # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
+#     start = time.time()
+#     if aggregation_method == 'adaptive_krum':
+#         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
+#                                                                                 clients_weights,
+#                                                                                 trimmed_average=False,
+#                                                                                 random_projection=False,
+#                                                                                 verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'adaptive_krum_avg':
+#         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates,
+#                                                                                 clients_weights,
+#                                                                                 trimmed_average=True,
+#                                                                                 random_projection=False,
+#                                                                                 verbose=CFG.VERBOSE)
+#
+#     elif aggregation_method == 'adaptive_krum+rp':  # adaptive_krum + random projection
+#         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
+#             flatten_clients_updates, clients_weights, trimmed_average=False, random_projection=True,
+#             random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'adaptive_krum+rp_avg':  # adaptive_krum + random projection
+#         aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(
+#             flatten_clients_updates, clients_weights, trimmed_average=True, random_projection=True,
+#             random_state=CFG.TRAIN_VAL_SEED, verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'krum':
+#         # train_info = list(histories['clients'][-1].values())[-1]
+#         # f = train_info['NUM_BYZANTINE_CLIENTS']
+#         f = CFG.NUM_BYZANTINE_CLIENTS
+#         # client_type = train_info['client_type']
+#         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
+#                                                                        trimmed_average=False, random_projection=False,
+#                                                                        verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'krum_avg':
+#         # train_info = list(histories['clients'][-1].values())[-1]
+#         # f = train_info['NUM_BYZANTINE_CLIENTS']
+#         f = CFG.NUM_BYZANTINE_CLIENTS
+#         # client_type = train_info['client_type']
+#         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
+#                                                                        trimmed_average=True, random_projection=False,
+#                                                                        verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'krum+rp':
+#         # train_info = list(histories['clients'][-1].values())[-1]
+#         # f = train_info['NUM_BYZANTINE_CLIENTS']
+#         f = CFG.NUM_BYZANTINE_CLIENTS
+#         # client_type = train_info['client_type']
+#         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates,
+#                                                                        clients_weights, f,
+#                                                                        trimmed_average=False,
+#                                                                        random_projection=True,
+#                                                                        random_state=CFG.TRAIN_VAL_SEED,
+#                                                                        verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'krum+rp_avg':
+#         # train_info = list(histories['clients'][-1].values())[-1]
+#         # f = train_info['NUM_BYZANTINE_CLIENTS']
+#         f = CFG.NUM_BYZANTINE_CLIENTS
+#         # client_type = train_info['client_type']
+#         aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates,
+#                                                                        clients_weights, f,
+#                                                                        trimmed_average=True,
+#                                                                        random_projection=True,
+#                                                                        random_state=CFG.TRAIN_VAL_SEED,
+#                                                                        verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'median':
+#         p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
+#         p = p / 2  # top p/2 and bottom p/2 are removed
+#         aggregated_update, clients_type_pred = robust_aggregation.cw_median(flatten_clients_updates, clients_weights,
+#                                                                             verbose=CFG.VERBOSE)
+#
+#     elif aggregation_method == 'medoid':
+#         p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
+#         aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
+#                                                                          clients_weights,
+#                                                                          trimmed_average=False,
+#                                                                          upper_trimmed_ratio=p,
+#                                                                          verbose=CFG.VERBOSE)
+#
+#     elif aggregation_method == 'medoid_avg':
+#         p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
+#         aggregated_update, clients_type_pred = robust_aggregation.medoid(flatten_clients_updates,
+#                                                                          clients_weights,
+#                                                                          trimmed_average=True,
+#                                                                          upper_trimmed_ratio=p,
+#                                                                          verbose=CFG.VERBOSE)
+#
+#     elif aggregation_method == 'geometric_median':
+#         aggregated_update, clients_type_pred = robust_aggregation.geometric_median(flatten_clients_updates,
+#                                                                                    clients_weights,
+#                                                                                    max_iters=100, tol=1e-6,
+#                                                                                    verbose=CFG.VERBOSE)
+#
+#     # elif aggregation_method == 'exp_weighted_mean':
+#     #     clients_type_pred = None
+#     #     aggregated_update = exp_weighted_mean.robust_center_exponential_reweighting_tensor(
+#     #         torch.stack(flatten_clients_updates), x_est=flatten_clients_updates[-1],
+#     #         r=0.1, max_iters=100, tol=1e-6, verbose=CFG.VERBOSE)
+#     elif aggregation_method == 'trimmed_mean':
+#         p = CFG.NUM_BYZANTINE_CLIENTS / (CFG.NUM_HONEST_CLIENTS + CFG.NUM_BYZANTINE_CLIENTS)
+#         p = p / 2  # top p/2 and bottom p/2 are removed
+#         aggregated_update, clients_type_pred = robust_aggregation.trimmed_mean(flatten_clients_updates, clients_weights,
+#                                                                                trim_ratio=p,
+#                                                                                verbose=CFG.VERBOSE)
+#     else:
+#         # empirical mean
+#         # here, just the the train size, inside the cw_mean, it will compute the weighted average
+#         clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
+#         aggregated_update, clients_type_pred = robust_aggregation.cw_mean(flatten_clients_updates, clients_weights,
+#                                                                           verbose=CFG.VERBOSE)
+#     end = time.time()
+#     time_taken = end - start
+#     n = len(flatten_clients_updates)
+#     f = CFG.NUM_BYZANTINE_CLIENTS
+#     # # weight average
+#     # update = 0.0
+#     # weight = 0.0
+#     # for j in range(n-f):  # note here is k+1 because we want to add all values before k+1
+#     #     update += flatten_clients_updates[j] * clients_weights[j]
+#     #     weight += clients_weights[j]
+#     # empirical_mean = update / weight
+#     empirical_mean = torch.sum(flatten_clients_updates[:n - f] *
+#                                clients_weights[:n - f, None], dim=0) / torch.sum(clients_weights[:n - f])
+#     l2_error = torch.norm(empirical_mean - aggregated_update, p=2).item()  # l2 norm
+#     histories['server'].append({"time_taken": time_taken, 'l2_error': l2_error})
+#     # f'clients_weights: {clients_weights.numpy()},
+#     print(f'{aggregation_method}, clients_type: {clients_type_pred}, '
+#           f'client_updates: min: {min_value:.2f}, max: {max_value:.2f}, '
+#           f'time taken: {time_taken:.4f}s, l2_error: {l2_error:.2f}')
+#
+#     # Update the global model with the aggregated parameters
+#     # w = w0 - (delta_w), where delta_w = \eta*\namba_w
+#     aggregated_update = parameters_to_vector(global_cnn.parameters()).detach().cpu() - aggregated_update
+#     aggregated_update = aggregated_update.to(CFG.DEVICE)
+#     vector_to_parameters(aggregated_update, global_cnn.parameters())  # in_place
+#     # global_cnn.load_state_dict(aggregated_update)
 
 
 @timer
@@ -401,6 +416,7 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
     y = y.numpy()
     num_samples = len(y)
     dim = X.shape[1]
+    CFG.in_dim = dim
 
     random_state = 42
     torch.manual_seed(random_state)
@@ -416,7 +432,7 @@ def gen_client_data(data_dir='data/Sentiment140', out_dir='.', CFG=None):
     #                            random_state=SEED)
     # Xs, Ys = Xs1 + Xs2, Ys1 + Ys2
 
-    Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=CFG.BIG_NUMBER, random_state=SEED)
+    Xs, Ys = dirichlet_split(X, y, num_clients=CFG.NUM_CLIENTS, alpha=10, random_state=SEED)
     # Shuffle the lists X and y in the same order
     combined = list(zip(Xs, Ys))  # Combine the lists into pairs of (X[i], y[i])
     random.shuffle(combined)  # Shuffle the combined list
@@ -603,8 +619,10 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         data_file = f'{data_dir}/{c}.pth'
         with open(data_file, 'rb') as f:
             local_data = torch.load(f)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data ({len(label_cnts)}):', label_cnts)
@@ -640,8 +658,10 @@ def clients_training(data_dir, epoch, global_fnn, CFG):
         data_file = f'{data_dir}/{c}.pth'
         with open(data_file, 'rb') as f:
             local_data = torch.load(f)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data:', label_cnts)

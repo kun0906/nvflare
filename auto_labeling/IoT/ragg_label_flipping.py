@@ -29,16 +29,29 @@ Author: kun88.yang@gmail.com
 """
 import argparse
 import shutil
+from functools import partial
 
 from sklearn.model_selection import train_test_split
 from torchvision import datasets
 from dataclasses import dataclass
 
+import ragg
 from ragg.base import *
 from ragg.utils import dirichlet_split
 
+
+reduce_dim_flg = False
+# Conditional model selection using partial
+if reduce_dim_flg:
+    reduced_dim = 10
+    # Define a partial function for FNN
+    CNN = partial(ragg.base.FNN, input_dim=reduced_dim)
+else:
+    CNN = ragg.base.CNN
+
 print(f'current directory: {os.path.abspath(os.getcwd())}')
 print(f'current file: {__file__}')
+
 
 # Set print options for 2 decimal places
 torch.set_printoptions(precision=2, sci_mode=False)
@@ -73,7 +86,7 @@ def parse_arguments():
                         help="The number of total clients.")
     parser.add_argument('-a', '--aggregation_method', type=str, required=False, default='mean',
                         help="aggregation method.")
-    parser.add_argument('-v', '--verbose', type=int, required=False, default=10,
+    parser.add_argument('-v', '--verbose', type=int, required=False, default=1,
                         help="verbose mode.")
     # Parse the arguments
     args = parser.parse_args()
@@ -143,6 +156,7 @@ def get_configuration(train_val_seed):
     CFG.LABELS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
     # LABELS = {0, 1}
     CFG.NUM_CLASSES = len(CFG.LABELS)
+    CFG.CNN = CNN
     # print(f'IN_DIR: {IN_DIR}, AGGREGATION_METHOD: {AGGREGATION_METHOD}, LABELING_RATE: {LABELING_RATE}, '
     #       f'NUM_HONEST_CLIENTS: {NUM_HONEST_CLIENTS}, NUM_BYZANTINE_CLIENTS: {NUM_BYZANTINE_CLIENTS}, '
     #       f'NUM_CLASSES: {NUM_CLASSES}, where classes: {LABELS}')
@@ -344,8 +358,10 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         data_file = f'{data_dir}/{c}.pth'
         with open(data_file, 'rb') as f:
             local_data = torch.load(f)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data ({len(label_cnts)}):', label_cnts)
@@ -388,8 +404,10 @@ def clients_training(data_dir, epoch, global_cnn, CFG):
         #     local_data['y'] = (local_data['y']+2)%10
         # local_data['y'] = torch.tensor([(c + epoch) % 10] * len(local_data['y'])).to(DEVICE)
         # local_data['y'] = torch.tensor([(c) % 10] * len(local_data['y'])).to(DEVICE)
-        num_samples_client = len(local_data['y'].tolist())
-        label_cnts = collections.Counter(local_data['y'].tolist())
+        # num_samples_client = len(local_data['y'].tolist())
+        # label_cnts = collections.Counter(local_data['y'].tolist())
+        num_samples_client = len(local_data['y'][local_data['train_mask']].tolist())
+        label_cnts = collections.Counter(local_data['y'][local_data['train_mask']].tolist())
         label_cnts = dict(sorted(label_cnts.items(), key=lambda x: x[0], reverse=False))
         clients_info[c] = {'label_cnts': label_cnts, 'size': num_samples_client}
         print(f'client_{c} data:', label_cnts)

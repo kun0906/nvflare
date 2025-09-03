@@ -3,7 +3,7 @@ import re
 import traceback
 
 import matplotlib.pyplot as plt
-
+import pandas as pd
 
 def extract_case_info(filepath):
     with open(filepath, "r") as file:
@@ -15,10 +15,11 @@ def extract_case_info(filepath):
 
 def extract_namespace(filepath):
     with open(filepath, "r") as file:
-        match = re.search(r'Namespace\((.*?)\)', file.read())
+        data = file.read()
+        match = re.search(r'Namespace\((.*?)\)', data)
         if not match:
             return None
-
+        print(data[:200], flush=True)
         params = {}
         for key, value in re.findall(r'(\w+)=([\S]+)', match.group(1)):
             # Remove trailing commas and handle numeric conversion
@@ -147,7 +148,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
             and namespace_params['num_clients'] == NUM_CLIENTS):
         pass
 
-        print(namespace_params)
+        print(namespace_params, flush=True)
     else:
         return
 
@@ -173,6 +174,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     FONTSIZE = 10
     aggregation_methods = list(global_accs.keys())
     makers = ['o', '+', 's', '*', 'v', '.', 'p', 'h', 'x', '8', '1', '^', 'D', 'd']
+    text_str = ''
     for i in range(len(aggregation_methods)):
         agg_method, txt_file = aggregation_methods[i]
         label = agg_method
@@ -198,7 +200,12 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
             raise NotImplementedError(METRIC)
         ys, ys_errs = zip(*vs)
         xs = range(len(ys))
-        print(agg_method, txt_file, ys, flush=True)
+        # print(agg_method, txt_file, ys, flush=True)
+        # Convert ys tuple into comma-separated string
+        ys_str = ", ".join(map(str, ys))
+        # Print all parts separated by commas
+        print(f"{agg_method}, {txt_file}, {ys_str}", flush=True)
+        text_str += f"{txt_file}, {label}, {ys_str}\n"
 
         # plt.plot(xs, ys, label=label, marker=makers[i])
         # axes[i_row, j_col].plot(xs, ys, label=label, marker=makers[i])
@@ -208,7 +215,20 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
         #                                 [y - e for y, e in zip(ys, ys_errs)],
         #                                 [y + e for y, e in zip(ys, ys_errs)],
         #                                 color='blue', alpha=0.3)  # label='Error Area'
-    plt.xlabel('Epochs', fontsize=FONTSIZE)
+
+    result_file = f'plots/{FILENAME}_{JOBID}'
+    os.makedirs(os.path.dirname(result_file), exist_ok=True)
+    # Suppose text_str already contains all your lines
+    csv_file = f'{result_file}.csv'
+    with open(csv_file, "w") as f:
+        f.write(text_str)
+    # Read CSV
+    df = pd.read_csv(csv_file, header=None)
+    # Save as Excel
+    df.to_excel(result_file+'.xlsx', index=False)
+    os.remove(csv_file)
+
+    plt.xlabel('Communication Rounds', fontsize=FONTSIZE)
     if len(xs) > 50:
         xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 20 == 0]
     else:
@@ -236,7 +256,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
     #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
-    fig_file = f'plots/global_cnn_{JOBID}-{title}.png'
+    fig_file = f'plots/{FILENAME}_{JOBID}.png'
     os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)
     plt.show()
@@ -386,7 +406,7 @@ def plot_robust_aggregation_all():
                         raise NotImplementedError(METRIC)
                     ys, ys_errs = zip(*vs)
                     xs = range(len(ys))
-                    print(agg_method, txt_file, ys, flush=True)
+                    print(f"{agg_method}, {txt_file}, ", ys, flush=True)
                     # print(agg_method, txt_file, [f"{v[0]:.2f}/{v[1]:.2f}" for v in vs], flush=True)
 
                     # axes[i_row, j_col].plot(xs, ys, label=label, marker=makers[i])
@@ -413,7 +433,7 @@ def plot_robust_aggregation_all():
 
                 variable = str(namespace_params['labeling_rate'])
                 axes[i_row, j_col].set_title(f'start:{start}, {variable}', fontsize=FONTSIZE)
-                axes[i_row, j_col].legend(fontsize=6.5, loc='lower right', fontsie=FONTSIZE)
+                axes[i_row, j_col].legend(loc='lower right', fontsize=FONTSIZE)
 
             except Exception as e:
                 print(e)
@@ -493,7 +513,36 @@ if __name__ == '__main__':
 
 
     # JOBID = 274594
-    JOBID = 274462  # Shakespeare with 50 features and  different alpha
+    # JOBID = 274462  # Shakespeare with 50 features and  different alpha
+
+    # JOBID = 346414      # MNIST: random noise  Attack
+    # JOBID = 346415  # MNIST: large value Attack
+    # JOBID = 346416  # MNIST: label flipping Attack
+    #
+    # JOBID = 346417  # SENTMENT140: random noise Attack
+    # JOBID = 346418  # SENTMENT140: large value Attack
+    # # JOBID = 346419  # SENTMENT140: label flipping Attack
+    #
+    # JOBID = 346660  # MNIST: random noise  Attack
+    # # JOBID = 346661  # MNIST: large value Attack
+    # # JOBID = 346662  # MNIST: label flipping Attack
+    # #
+    # # JOBID = 346663  # SENTMENT140: random noise Attack
+    # JOBID = 346664  # SENTMENT140: large value Attack
+    # # JOBID = 346665  # SENTMENT140: label flipping Attack
+
+
+    # modify rKrum     20250902 in ragg, IOT doest not filter extreme valeus first
+    JOBID, FILENAME = (347291, 'SPAMBASE/Gaussian_Attack')  # SPAMBASE: Gaussian Attack
+    JOBID, FILENAME = (347292, 'SPAMBASE/Omniscient_Attack')
+    # # # # # #
+    JOBID, FILENAME = (347242, 'MNIST/Random_Noise')
+    JOBID, FILENAME = (347255, 'MNIST/Large_Value')
+    JOBID, FILENAME = (347260, 'MNIST/Label_Flipping')
+    # # # # # # #
+    JOBID, FILENAME = (347265, 'SENTMENT140/Random_Noise')
+    JOBID, FILENAME = (347270, 'SENTMENT140/Large_Value')
+    JOBID, FILENAME = (347275, 'SENTMENT140/Label_Flipping')
 
     SERVER_EPOCHS = 100
     NUM_CLIENTS = 50
@@ -518,4 +567,4 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
 
-    plot_robust_aggregation_all()
+    # plot_robust_aggregation_all()
