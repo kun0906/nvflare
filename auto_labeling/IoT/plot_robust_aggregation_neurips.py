@@ -216,7 +216,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
         #                                 [y + e for y, e in zip(ys, ys_errs)],
         #                                 color='blue', alpha=0.3)  # label='Error Area'
 
-    result_file = f'plots/{FILENAME}_{JOBID}'
+    result_file = f'plots/Krum_Paper/{FILENAME}_{JOBID}_{start}'
     os.makedirs(os.path.dirname(result_file), exist_ok=True)
     # Suppose text_str already contains all your lines
     csv_file = f'{result_file}.csv'
@@ -230,7 +230,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
 
     plt.xlabel('Communication Rounds', fontsize=FONTSIZE)
     if len(xs) > 50:
-        xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 20 == 0]
+        xs_labels = [1] + [v + 1 for v in xs if (v + 1) % 100 == 0]
     else:
         xs_labels = [v + 1 for v in xs]
     ax.set_xticks(xs_labels)
@@ -256,7 +256,7 @@ def plot_robust_aggregation(start=0, METRIC='accuracy'):
     plt.tight_layout()
     # fig_file = (f'{IN_DIR}/{model_type}_{LABELING_RATE}_{AGGREGATION_METHOD}_'
     #             f'{SERVER_EPOCHS}_{NUM_HONEST_CLIENTS}_{NUM_BYZANTINE_CLIENTS}_accuracy.png')
-    fig_file = f'plots/{FILENAME}_{JOBID}.png'
+    fig_file = result_file + '.png'
     os.makedirs(os.path.dirname(fig_file), exist_ok=True)
     plt.savefig(fig_file, dpi=300)
     plt.show()
@@ -511,41 +511,12 @@ if __name__ == '__main__':
     # # Flip labels with alpha=10, client_epochs=5, batch_size=512, epoch=100, num_clients=50, f=23
     # JOBID = 274863 # Sentiment140 with 10% data with different alpha
 
-
-    # JOBID = 274594
-    # JOBID = 274462  # Shakespeare with 50 features and  different alpha
-
-    # JOBID = 346414      # MNIST: random noise  Attack
-    # JOBID = 346415  # MNIST: large value Attack
-    # JOBID = 346416  # MNIST: label flipping Attack
-    #
-    # JOBID = 346417  # SENTMENT140: random noise Attack
-    # JOBID = 346418  # SENTMENT140: large value Attack
-    # # JOBID = 346419  # SENTMENT140: label flipping Attack
-    #
-    # JOBID = 346660  # MNIST: random noise  Attack
-    # # JOBID = 346661  # MNIST: large value Attack
-    # # JOBID = 346662  # MNIST: label flipping Attack
-    # #
-    # # JOBID = 346663  # SENTMENT140: random noise Attack
-    # JOBID = 346664  # SENTMENT140: large value Attack
-    # # JOBID = 346665  # SENTMENT140: label flipping Attack
-
-
-    # modify rKrum     20250902 in ragg, IOT doest not filter extreme valeus first
-    JOBID, FILENAME = (347291, 'SPAMBASE/Gaussian_Attack')  # SPAMBASE: Gaussian Attack
-    JOBID, FILENAME = (347292, 'SPAMBASE/Omniscient_Attack')
-    # # # # # # #
-    JOBID, FILENAME = (347242, 'MNIST/Random_Noise')
-    JOBID, FILENAME = (347255, 'MNIST/Large_Value')
-    JOBID, FILENAME = (347260, 'MNIST/Label_Flipping')
-    # # # # # # # #
-    JOBID, FILENAME = (347265, 'SENTMENT140/Random_Noise')
-    JOBID, FILENAME = (347270, 'SENTMENT140/Large_Value')
-    JOBID, FILENAME = (347275, 'SENTMENT140/Label_Flipping')
-
-    SERVER_EPOCHS = 100
-    NUM_CLIENTS = 50
+    
+    # 20250905, for replication_neurips results 
+    # JOBID, FILENAME = (347996, 'SPAMBASE_Neurips')
+    JOBID, FILENAME = (348154, 'SPAMBASE_Neurips')
+    SERVER_EPOCHS = 500
+    NUM_CLIENTS = 20
 
     # #  # NewsCategory
     # JOBID = 274668  # NewsCategory with different alpha, num_clients=20, epochs=10

@@ -15,10 +15,10 @@
 #labeling_rates=(10 30 45 90 135 270 5)          # degree
 #labeling_rates=(0.001 0.01 0.1 0.3 0.5 0.8 1.0)          # percent of parameters will be changed
 #labeling_rates=(3 32 512 1024 -1)          # larger values
-labeling_rates=(512)          # larger values, batch size
+labeling_rates=('no_byzantine', 'gaussian_33')          # attack method
 #labeling_rates=(10) #(10 30 45 90 135 20 5)                            # Labeling rate
-server_epochs_values=(100)                           # Number of server epochs
-num_clients_values=(50)                          # Number of total clients
+server_epochs_values=(500)                           # Number of server epochs
+num_clients_values=(20)                          # Number of total clients
 #aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum+rp' 'krum+rp' 'medoid' 'median' 'mean'
 #'adaptive_krum_avg' 'krum_avg' 'adaptive_krum+rp_avg' 'krum+rp_avg' 'medoid_avg' 'trimmed_mean' 'geometric_median')
 # Aggregation method
@@ -67,7 +67,9 @@ pwd
 #PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_spambase_nips_paper.py $PARAMS
 #PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_mnist_nips_paper.py $PARAMS
 #PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_model_nips_paper1.py $PARAMS
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation.py $PARAMS
+#PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_gaussian.py $PARAMS
+# change 0 or 33% byzantine clients inside of ragg_random_spambase_0_33_byzantine, set batch size = 3
+PYTHONPATH=. python3 IoT/replication_neurips/ragg_random_spambase_0_33_byzantine.py $PARAMS
 
 # Data Poisoning
 #PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_data.py $PARAMS
@@ -78,16 +80,16 @@ pwd
 #PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model.py $PARAMS
 #PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_sign_flipping.py $PARAMS
 #PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_large_values_model.py $PARAMS
-
-# MNIST
-PYTHONPATH=.:IoT python3 IoT/ragg_model_random_noise.py $PARAMS
-PYTHONPATH=.:IoT python3 IoT/ragg_label_flipping.py $PARAMS
-PYTHONPATH=.:IoT python3 IoT/ragg_model_large_value.py $PARAMS
-
-# sentiment140
-PYTHONPATH=.:IoT python3 IoT/ragg_model_large_value_sentiment140.py $PARAMS
-PYTHONPATH=.:IoT python3 IoT/ragg_random_noise_model_sentiment140.py $PARAMS
-PYTHONPATH=.:IoT python3 IoT/ragg_label_flipping_sentiment140.py $PARAMS
+#
+## MNIST
+#PYTHONPATH=.:IoT python3 IoT/ragg_model_random_noise.py $PARAMS
+#PYTHONPATH=.:IoT python3 IoT/ragg_label_flipping.py $PARAMS
+#PYTHONPATH=.:IoT python3 IoT/ragg_model_large_value.py $PARAMS
+#
+## sentiment140
+#PYTHONPATH=.:IoT python3 IoT/ragg_model_large_value_sentiment140.py $PARAMS
+#PYTHONPATH=.:IoT python3 IoT/ragg_random_noise_model_sentiment140.py $PARAMS
+#PYTHONPATH=.:IoT python3 IoT/ragg_label_flipping_sentiment140.py $PARAMS
 
 #
 ## arXiv

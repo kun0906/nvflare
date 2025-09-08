@@ -1,4 +1,6 @@
 """
+    batch size = 3
+
     $ssh kunyang@slogin-01.superpod.smu.edu
     $srun -A kunyang_nvflare_py31012_0001 -t 60 -G 1 -w bcm-dgxa100-0008 --pty $SHELL
     $srun -A kunyang_nvflare_py31012_0001 -t 260 -G 1 --pty $SHELL
@@ -63,7 +65,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="FedCNN")
 
     # Add arguments to be parsed
-    parser.add_argument('-r', '--labeling_rate', type=float, required=False, default=10,
+    parser.add_argument('-r', '--labeling_rate', type=str, required=False, default='gaussian_33',
                         help="label rate, how much labeled data in local data.")
     parser.add_argument('-s', '--server_epochs', type=int, required=False, default=1,
                         help="The number of server epochs (integer).")
@@ -85,16 +87,16 @@ args = parse_arguments()
 # Access the arguments
 LABELING_RATE = 0.8     # train_set ratio, so test set is 0.2
 # BIG_NUMBER = int(args.labeling_rate)
-BIG_NUMBER = args.labeling_rate  # will not use
-BIG_NUMBER= 10          # For IoT, alpha
-# SERVER_EPOCHS = args.server_epochs
-SERVER_EPOCHS = 200     # For IoT
+BIG_NUMBER= 1          # For IoT, alpha
+SERVER_EPOCHS = args.server_epochs
+# SERVER_EPOCHS = 200     # For IoT
 IID_CLASSES_CNT = 10
 # NUM_HONEST_CLIENTS = args.honest_clients
 # NUM_BYZANTINE_CLIENTS = NUM_HONEST_CLIENTS - 1
 # the total number of clients is 20, in which 33% of them is malicious clients, i.e., f = int(0.33*20) = 6.
 TOTAL_CLIENTS = args.num_clients
-ATTACK_METHOD = 'gaussian_33'
+# ATTACK_METHOD = '0'
+ATTACK_METHOD = args.labeling_rate  # will not use
 if ATTACK_METHOD == 'omniscient':  # case 2
     NUM_BYZANTINE_CLIENTS = int((TOTAL_CLIENTS - 3) / 2)  # 2 + 2f < n, so f <= int((n-3)/2)
 elif ATTACK_METHOD == 'gaussian_33':  # case 2
@@ -1139,7 +1141,7 @@ def main():
         sub_dir = (f'data/spambase_neurips/random_noise_gaussian/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
         data_out_dir = data_dir
-        # data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
+        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
         print(data_out_dir)
         gen_client_spambase_data(data_dir=data_dir, out_dir=data_out_dir)  # for spambase dataset
     else:

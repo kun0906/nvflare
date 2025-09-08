@@ -252,6 +252,8 @@ if __name__ == '__main__':
     # Omniscient attack, n=50, f=23, alpha=10, epochs=200, client_epoch=1, batch_sie=3, alpha=10.0
     # JOBID = 273153
 
+    JOBID = 347996
+
     # METRIC = 'loss'
     # METRIC = 'misclassification_error'  # or misclassification Rate
     METRIC = 'accuracy'
