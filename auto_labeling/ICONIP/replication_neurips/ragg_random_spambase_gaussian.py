@@ -31,8 +31,11 @@ from sklearn.model_selection import train_test_split
 from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
 
-import ragg.robust_aggregation as ragg
-from ragg.utils import timer, dirichlet_split
+from ICONIP.ragg.utils import timer, dirichlet_split
+import ICONIP.ragg.robust_aggregation as robust_aggregation
+
+# import ragg.robust_aggregation as ragg
+# from ragg.utils import timer, dirichlet_split
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
 print(f'current file: {__file__}')
@@ -413,29 +416,29 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
     clients_weights = torch.tensor([1] * len(flatten_clients_updates))  # default as 1
     # clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
     if aggregation_method == 'adaptive_krum':
-        aggregated_update, clients_type_pred = ragg.adaptive_krum(flatten_clients_updates, clients_weights,
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates, clients_weights,
                                                                   trimmed_average=False, verbose=VERBOSE)
     elif aggregation_method == 'adaptive_krum_avg':
-        aggregated_update, clients_type_pred = ragg.adaptive_krum(flatten_clients_updates, clients_weights,
+        aggregated_update, clients_type_pred = robust_aggregation.adaptive_krum(flatten_clients_updates, clients_weights,
                                                                   trimmed_average=True, verbose=VERBOSE)
     elif aggregation_method == 'krum':
         # train_info = list(histories['clients'][-1].values())[-1]
         # f = train_info['NUM_BYZANTINE_CLIENTS']
         f = NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = ragg.krum(flatten_clients_updates, clients_weights, f,
+        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
                                                          trimmed_average=False, verbose=VERBOSE)
     elif aggregation_method == 'krum_avg':
         # train_info = list(histories['clients'][-1].values())[-1]
         # f = train_info['NUM_BYZANTINE_CLIENTS']
         f = NUM_BYZANTINE_CLIENTS
         # client_type = train_info['client_type']
-        aggregated_update, clients_type_pred = ragg.krum(flatten_clients_updates, clients_weights, f,
+        aggregated_update, clients_type_pred = robust_aggregation.krum(flatten_clients_updates, clients_weights, f,
                                                          trimmed_average=True, verbose=VERBOSE)
     elif aggregation_method == 'median':
         p = NUM_BYZANTINE_CLIENTS / (NUM_HONEST_CLIENTS + NUM_BYZANTINE_CLIENTS)
         p = p / 2  # top p/2 and bottom p/2 are removed
-        aggregated_update, clients_type_pred = ragg.cw_median(flatten_clients_updates, clients_weights,
+        aggregated_update, clients_type_pred = robust_aggregation.cw_median(flatten_clients_updates, clients_weights,
                                                               verbose=VERBOSE)
     elif aggregation_method == 'exp_weighted_mean':
         clients_type_pred = None
@@ -445,7 +448,9 @@ def aggregate_cnns(clients_cnns, clients_info, global_cnn, aggregation_method, h
         #     r=0.1, max_iters=100, tol=1e-6,
         #     verbose=VERBOSE)
     elif aggregation_method == 'mean':
-        aggregated_update, clients_type_pred = ragg.cw_mean(flatten_clients_updates, clients_weights,
+        # here, just the the train size, inside the cw_mean, it will compute the weighted average
+        clients_weights = torch.tensor([vs['size'] for vs in clients_info.values()])
+        aggregated_update, clients_type_pred = robust_aggregation.cw_mean(flatten_clients_updates, clients_weights,
                                                             verbose=VERBOSE)
     else:
         raise ValueError(f'Aggregation method {aggregation_method} not recognized')
@@ -1128,7 +1133,7 @@ def main():
         sub_dir = (f'data/spambase_neurips/random_noise_gaussian/h_{NUM_HONEST_CLIENTS}-b_{NUM_BYZANTINE_CLIENTS}'
                    f'-{IID_CLASSES_CNT}-{LABELING_RATE}-{BIG_NUMBER}-{AGGREGATION_METHOD}')
         data_out_dir = data_dir
-        data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
+        # data_out_dir = f'/projects/kunyang/nvflare_py31012/nvflare/{sub_dir}'
         print(data_out_dir)
         gen_client_spambase_data(data_dir=data_dir, out_dir=data_out_dir)  # for spambase dataset
     else:

@@ -70,21 +70,21 @@ cases = {
     #     'gaussian': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_gaussian.py $PARAMS',
     #     'omniscient': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_omniscient.py $PARAMS',
     # },
-    # 'spambase': {
-    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_spambase.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
-    # },
-    'mnist': {
-        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS',
-        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS',
-        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_mnist.py $PARAMS',
+    'spambase': {
+        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_spambase.py $PARAMS',
+        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
+        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
     },
-    'sentiment140': {
-        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_sentiment140.py $PARAMS',
-        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_sentiment140.py $PARAMS',
-        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_sentiment140.py $PARAMS',
-    }
+    # 'mnist': {
+    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS',
+    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS',
+    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_mnist.py $PARAMS',
+    # },
+    # 'sentiment140': {
+    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_sentiment140.py $PARAMS',
+    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_sentiment140.py $PARAMS',
+    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_sentiment140.py $PARAMS',
+    # }
 }
 job_txt = 'job.txt'
 res = {}

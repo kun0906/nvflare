@@ -567,7 +567,7 @@ def plot_ax_attack(ax, case, JOBID, start=0):
     csv_file = result_file + '.csv'
     with open(csv_file, 'w') as f:
         for k, vs in all_data.items():
-            f.write(f'{vs[0]},{k},' + ','.join([str(v) for v in vs[1]]) + '\n')
+            f.write(f'{k},' + ','.join([str(v) for v in vs[1]]) + '\n')
 
     # Read CSV
     df = pd.read_csv(csv_file, header=None)
@@ -647,20 +647,18 @@ if __name__ == '__main__':
     # JOBIDs = [344679, 344704, 344705]  # MNIST
     # # JOBIDs = [344706, 344707, 344708]  # Sentiment140
 
-    # results on 20250826
-    SERVER_EPOCHS = 200
-    JOBIDs = [345325, 345326, 345327]  # MNIST
-    # JOBIDs = [345328, 345329, 345330]  # Sentiment140
 
     # results on 20250903
     SERVER_EPOCHS = 200
-    JOBIDs = [347347, 347348, 347349]  # MNIST
-    DATASET = 'MNIST'
+    # JOBIDs = [347347, 347348, 347349]  # MNIST
+    # DATASET = 'MNIST'
     # JOBIDs = [347350, 347351, 347352]  # Sentiment140
     # DATASET = 'SENTIMENT140'
 
+    JOBIDs = [347957, 347958, 347959]  # SPAMBASE
+    DATASET = 'SPAMBASE'
 
-    attack_cases = ['LargeOutlier', 'NoiseInjection', 'LabelFlipping']
+    attack_cases = ['NoiseInjection', 'LargeOutlier', 'LabelFlipping']
     FONTSIZE = 10
     for i, attack_case in enumerate(attack_cases):
         JOBID = JOBIDs[i]
