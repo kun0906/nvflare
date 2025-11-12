@@ -622,8 +622,8 @@ if __name__ == '__main__':
 
     METRIC = 'accuracy'
     LOG_DIR = "log"
-    SERVER_EPOCHS = 200
-    NUM_CLIENTS = 100
+    # SERVER_EPOCHS = 200
+    # NUM_CLIENTS = 100
 
     # old results before 20250503
     # JOBIDs = [296768, 296767, 296769]   # Spambase
@@ -650,13 +650,11 @@ if __name__ == '__main__':
 
     # results on 20250903
     SERVER_EPOCHS = 200
-    # JOBIDs = [347347, 347348, 347349]  # MNIST
-    # DATASET = 'MNIST'
+    NUM_CLIENTS = 100
+    JOBIDs = [347347, 347348, 347349]  # MNIST
+    DATASET = 'MNIST'
     # JOBIDs = [347350, 347351, 347352]  # Sentiment140
     # DATASET = 'SENTIMENT140'
-
-    JOBIDs = [347957, 347958, 347959]  # SPAMBASE
-    DATASET = 'SPAMBASE'
 
     attack_cases = ['NoiseInjection', 'LargeOutlier', 'LabelFlipping']
     FONTSIZE = 10

@@ -7,7 +7,7 @@
 #SBATCH --mem=16G                            # Memory allocation per node
 #SBATCH --gres=gpu:1                         # Request 1 GPU
 #SBATCH --time=6:00:00                      # Time limit (hrs:min:sec)
-#SBATCH --array=0-20
+#SBATCH --array=0-8
 
 # Define parameter combinations
 #labeling_rates=(-5 -2.5 -1 -0.5 -0.1 -0.05 -0.01 -0.001 -0.0001 0 0.0001 0.001 0.01 0.05 0.1 0.5 1 2.5 5)                            # Labeling rate
@@ -64,45 +64,4 @@ pwd
 # Run the script with the selected parameters
 
 # replicate neurips results
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_spambase_nips_paper.py $PARAMS
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_mnist_nips_paper.py $PARAMS
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_model_nips_paper1.py $PARAMS
-#PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_gaussian.py $PARAMS
-# change 0 or 33% byzantine clients inside of ragg_random_spambase_0_33_byzantine, set batch size = 3
 PYTHONPATH=. python3 IoT/replication_neurips/ragg_random_spambase_0_33_byzantine.py $PARAMS
-
-# Data Poisoning
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_random_noise_data.py $PARAMS
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_label_flipping.py $PARAMS
-#PYTHONPATH=. python3 fl_cnn_robust_aggregation_rotation_data.py $PARAMS
-
-# Model Poisoning
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model.py $PARAMS
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_sign_flipping.py $PARAMS
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_large_values_model.py $PARAMS
-#
-## MNIST
-#PYTHONPATH=.:IoT python3 IoT/ragg_model_random_noise.py $PARAMS
-#PYTHONPATH=.:IoT python3 IoT/ragg_label_flipping.py $PARAMS
-#PYTHONPATH=.:IoT python3 IoT/ragg_model_large_value.py $PARAMS
-#
-## sentiment140
-#PYTHONPATH=.:IoT python3 IoT/ragg_model_large_value_sentiment140.py $PARAMS
-#PYTHONPATH=.:IoT python3 IoT/ragg_random_noise_model_sentiment140.py $PARAMS
-#PYTHONPATH=.:IoT python3 IoT/ragg_label_flipping_sentiment140.py $PARAMS
-
-#
-## arXiv
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model_arxiv.py $PARAMS
-
-# NewsCategory
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model_newscategory.py $PARAMS
-#
-
-# FakeNews
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model_fakenews.py $PARAMS
-
-# SHAKESPEARE not work, too lower accuracy
-#PYTHONPATH=.:nsf python3 nsf/fl_cnn_robust_aggregation_random_noise_model_shakespeare.py $PARAMS
-
-

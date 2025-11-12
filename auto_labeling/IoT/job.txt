@@ -1,0 +1,6 @@
+_mnist_random_noise.sh: Submitted batch job 360675
+_mnist_large_value.sh: Submitted batch job 360676
+_mnist_label_flipping.sh: Submitted batch job 360677
+_sentiment140_random_noise.sh: Submitted batch job 360678
+_sentiment140_large_value.sh: Submitted batch job 360679
+_sentiment140_label_flipping.sh: Submitted batch job 360680

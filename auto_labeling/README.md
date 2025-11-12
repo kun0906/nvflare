@@ -1,7 +1,3 @@
-Semisupervised ML: 
-- dataset
-  - Tiny labeled data + large amount of unlabeled data
-
 
 $ssh kunyang@slogin-01.superpod.smu.edu
 $sinfo 

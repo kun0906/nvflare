@@ -1,0 +1,286 @@
+Running with job name: 8_10_2_1
+=== SLURM Environment Variables ===
+SLURM_JOB_USER=kunyang
+SLURM_TASKS_PER_NODE=16
+SLURM_JOB_UID=149751124
+SLURM_TASK_PID=1258630
+SLURM_JOB_GPUS=2
+SLURM_LOCALID=0
+SLURM_SUBMIT_DIR=/users/kunyang/FLNLP_Dropout/rKrum_dropout
+SLURMD_NODENAME=bcm-dgxa100-0008
+SLURM_JOB_START_TIME=1753464111
+SLURM_NODE_ALIASES=(null)
+SLURM_CLUSTER_NAME=mp
+SLURM_JOB_END_TIME=1753471311
+SLURM_CPUS_ON_NODE=16
+SLURM_JOB_CPUS_PER_NODE=16
+SLURM_GPUS_ON_NODE=1
+SLURM_GTIDS=0
+SLURM_JOB_PARTITION=batch
+SLURM_JOB_NUM_NODES=1
+SLURM_JOBID=337981
+SLURM_JOB_QOS=normal
+SLURM_SCONTROL=/cm/shared/apps/slurm/current/bin/scontrol
+SLURM_PROCID=0
+SLURM_TOPOLOGY_ADDR=bcm-dgxa100-0008
+SLURM_TOPOLOGY_ADDR_PATTERN=node
+SLURM_MEM_PER_NODE=131072
+SLURM_WORKING_CLUSTER=mp:mpcm1:6817:9984:109
+SLURM_NODELIST=bcm-dgxa100-0008
+SLURM_JOB_ACCOUNT=kunyang_nvflare_py31012_0001
+SLURM_PRIO_PROCESS=0
+SLURM_NNODES=1
+SLURM_SUBMIT_HOST=slogin-01
+SLURM_JOB_ID=337981
+SLURM_NODEID=0
+SLURM_SINFO=/cm/shared/apps/slurm/current/bin/sinfo
+SLURM_CONF=/cm/shared/apps/slurm/var/etc/slurm/slurm.conf
+SLURM_JOB_NAME=rkrum_8_30_1_1
+SLURM_JOB_GID=999999
+SLURM_JOB_NODELIST=bcm-dgxa100-0008
+===================================
+=== Node Information ===
+===1node.sh===
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+/users/kunyang/FLNLP_Dropout/rKrum_dropout
+Running on nodes: bcm-dgxa100-0008
+Job ID: 337981
+Running with job name: rkrum_8_30_1_1
+GPUs: 1, Clients: 20, Rounds: 300, OUT_DIR: out, NODE_NAME: bcm-dgxa100-0008
+SERVER_NODE: bcm-dgxa100-0008, IP: 10.211.48.11
+Launching server and clients on bcm-dgxa100-0008...
+===1node.sh===
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+/users/kunyang/FLNLP_Dropout/rKrum_dropout
+Checking and killing existing python processes...
+✅All python processes terminated.
+🚀 Starting server...
+/users/kunyang/FLNLP_Dropout/rKrum_dropout
+Waiting for server to start...
+python3 server.py is now running.
+🚀 Launching client 1... cuda_idx: 0, client_idx: 1
+✅ Started ./start.sh for client site-1 with PID 1258904
+🚀 Launching client 2... cuda_idx: 0, client_idx: 2
+✅ Started ./start.sh for client site-2 with PID 1258905
+🚀 Launching client 3... cuda_idx: 0, client_idx: 3
+✅ Started ./start.sh for client site-3 with PID 1258906
+🚀 Launching client 4... cuda_idx: 0, client_idx: 4
+✅ Started ./start.sh for client site-4 with PID 1258907
+🚀 Launching client 5... cuda_idx: 0, client_idx: 5
+✅ Started ./start.sh for client site-5 with PID 1258908
+🚀 Launching client 6... cuda_idx: 0, client_idx: 6
+✅ Started ./start.sh for client site-6 with PID 1258909
+🚀 Launching client 7... cuda_idx: 0, client_idx: 7
+✅ Started ./start.sh for client site-7 with PID 1258910
+🚀 Launching client 8... cuda_idx: 0, client_idx: 8
+✅ Started ./start.sh for client site-8 with PID 1258911
+🚀 Launching client 9... cuda_idx: 0, client_idx: 9
+✅ Started ./start.sh for client site-9 with PID 1258912
+🚀 Launching client 10... cuda_idx: 0, client_idx: 10
+✅ Started ./start.sh for client site-10 with PID 1258913
+🚀 Launching client 11... cuda_idx: 0, client_idx: 11
+✅ Started ./start.sh for client site-11 with PID 1258914
+🚀 Launching client 12... cuda_idx: 0, client_idx: 12
+✅ Started ./start.sh for client site-12 with PID 1258915
+🚀 Launching client 13... cuda_idx: 0, client_idx: 13
+✅ Started ./start.sh for client site-13 with PID 1258916
+🚀 Launching client 14... cuda_idx: 0, client_idx: 14
+✅ Started ./start.sh for client site-14 with PID 1258917
+🚀 Launching client 15... cuda_idx: 0, client_idx: 15
+✅ Started ./start.sh for client site-15 with PID 1258918
+🚀 Launching client 16... cuda_idx: 0, client_idx: 16
+✅ Started ./start.sh for client site-16 with PID 1258919
+🚀 Launching client 17... cuda_idx: 0, client_idx: 17
+✅ Started ./start.sh for client site-17 with PID 1258920
+🚀 Launching client 18... cuda_idx: 0, client_idx: 18
+✅ Started ./start.sh for client site-18 with PID 1258921
+🚀 Launching client 19... cuda_idx: 0, client_idx: 19
+✅ Started ./start.sh for client site-19 with PID 1258922
+🚀 Launching client 20... cuda_idx: 0, client_idx: 20
+✅ Started ./start.sh for client site-20 with PID 1258923
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 29.0  0.1 14614664 3893864 ?    Sl   12:21   0:29 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 36.8  0.1 14615948 3897032 ?    Rl   12:21   1:14 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 52.0  0.1 14616124 3896860 ?    Sl   12:21   2:37 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 58.8  0.1 14615928 3897104 ?    Sl   12:21   3:57 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 60.6  0.1 14616128 3897288 ?    Rl   12:21   5:04 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 59.0  0.1 14616128 3897304 ?    Sl   12:21   5:56 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 60.4  0.1 14616128 3897532 ?    Sl   12:21   7:06 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 60.2  0.1 14616124 3897544 ?    Rl   12:21   8:04 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 61.1  0.1 14615164 3896452 ?    Sl   12:21   9:13 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 64.0  0.1 14616124 3897560 ?    Sl   12:21  10:44 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 63.0  0.1 14615732 3895064 ?    Sl   12:21  11:38 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 63.2  0.1 14616820 3897904 ?    Sl   12:21  12:44 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 63.8  0.1 14616832 3898068 ?    Rl   12:21  13:56 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 62.7  0.1 14616832 3898068 ?    Sl   12:21  14:45 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 62.9  0.1 14616832 3898080 ?    Sl   12:21  15:50 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+kunyang  1258704 62.5  0.1 14616832 3898080 ?    Sl   12:21  16:47 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+Checking for server.py process...
+kunyang  1258704 61.8  0.1 14616832 3898080 ?    Sl   12:21  17:38 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+Checking for server.py process...
+kunyang  1258704 61.5  0.1 14616832 3898092 ?    Sl   12:21  18:36 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+🔁 server.py is still running.
+⏳ Sleeping for 100 seconds before next check...
+kunyang  1258704 60.9  0.1 14616832 3898092 ?    Sl   12:21  19:25 python3 server.py --server_ip 127.0.0.1 --workspace_dir out/ws_20_300_1_1 --num_clients 20 --num_rounds 300
+⏳ Sleeping for 100 seconds before next check...
+Checking for server.py process...
+hostname: bcm-dgxa100-0008
+IP: 10.211.48.11
+Linux bcm-dgxa100-0008 5.15.0-1046-nvidia #46-Ubuntu SMP Tue Feb 13 15:15:47 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+Checking if server.py is still running...
+✅ server.py is no longer running. Exiting loop.
+✅ server.py has finished. Exiting loop.
+✅ All processes terminated.

@@ -1,4 +1,8 @@
-"""
+""" Jobs must be submitted from login node. 
+
+    module load conda
+    conda activate nvflare-3.10
+
     python3 sbatch_all.py
 
 """
@@ -15,10 +19,10 @@ input_str = """#!/bin/bash
 #SBATCH --mem=16G
 #SBATCH --gres=gpu:1
 #SBATCH --time=6:00:00
-#SBATCH --array=0-4
+#SBATCH --array=0-24
 
 labeling_rates=(512)        # Larger Values, batch size
-server_epochs_values=(100)
+server_epochs_values=(2)    # default 100
 num_clients_values=(50)
 aggregation_values=('adaptive_krum' 'krum' 'median' 'mean')
 
@@ -53,25 +57,16 @@ pwd
 
 # Define dataset, attack type, and corresponding script
 cases = {
-    'spambase_paper': { # we fixed server_epochs = 200 and batch_size=3 inside of the python files, so server_epochs and learning_rate won't work for spambase cases
-        'gaussian': 'PYTHONPATH=. python3 IoT/replication_neurips/ragg_random_spambase_gaussian.py $PARAMS',
-        'omniscient': 'PYTHONPATH=. python3 IoT/replication_neurips/ragg_random_spambase_omniscient.py $PARAMS',
+    'mnist': {
+        'random_noise': 'PYTHONPATH=. python3 IoT/ragg_model_random_noise.py $PARAMS',
+        'large_value': 'PYTHONPATH=. python3 IoT/ragg_model_large_value.py $PARAMS',
+        'label_flipping': 'PYTHONPATH=. python3 IoT/ragg_label_flipping.py $PARAMS',
     },
-    # 'spambase': {
-    #     'random_noise': 'PYTHONPATH=. python3 IOT/ragg_model_random_noise_spambase.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
-    # },
-    # 'mnist': {
-    #     'random_noise': 'PYTHONPATH=. python3 IoT/ragg_model_random_noise.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 IoT/ragg_model_large_value.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 IoT/ragg_label_flipping.py $PARAMS',
-    # },
-    # 'sentiment140': {
-    #     'random_noise': 'PYTHONPATH=. python3 IoT/ragg_random_noise_model_sentiment140.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 IoT/ragg_model_large_value_sentiment140.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 IoT/ragg_label_flipping_sentiment140.py $PARAMS',
-    # }
+    'sentiment140': {
+        'random_noise': 'PYTHONPATH=. python3 IoT/ragg_random_noise_model_sentiment140.py $PARAMS',
+        'large_value': 'PYTHONPATH=. python3 IoT/ragg_model_large_value_sentiment140.py $PARAMS',
+        'label_flipping': 'PYTHONPATH=. python3 IoT/ragg_label_flipping_sentiment140.py $PARAMS',
+    }
 }
 job_txt = 'job.txt'
 res = {}

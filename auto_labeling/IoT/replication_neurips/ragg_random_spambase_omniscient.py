@@ -29,8 +29,8 @@ from sklearn.model_selection import train_test_split
 from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from torch.optim.lr_scheduler import StepLR
 
-import ragg.robust_aggregation as ragg
-from ragg.utils import timer, dirichlet_split
+import IoT.ragg.robust_aggregation as ragg
+from IoT.ragg.utils import timer, dirichlet_split
 
 print(f'current directory: {os.path.abspath(os.getcwd())}')
 print(f'current file: {__file__}')

@@ -1,0 +1,654 @@
+/users/kunyang/nvflare/auto_labeling
+current directory: /users/kunyang/nvflare/auto_labeling
+current file: /users/kunyang/nvflare/auto_labeling/ICONIP/ragg_model_large_value_mnist.py
+NVIDIA A100-SXM4-80GB
+GPU: 79.25 GB
+Device: cuda
+Function 'main starts at 2025-11-12 09:52:03...
+
+
+Namespace(labeling_rate=0.5, server_epochs=2, num_clients=10, aggregation_method='krum_avg', verbose=5)
+NUM_CLIENTS: 10, in which NUM_HONEST_CLIENTS: 7 and NUM_BYZANTINE_CLIENTS: 3
+{'SEED': 42, 'TRAIN_VAL_SEED': 0, 'DEVICE': device(type='cuda'), 'VERBOSE': 5, 'LABELING_RATE': 0.8, 'BIG_NUMBER': 0.5, 'SERVER_EPOCHS': 2, 'CLIENT_EPOCHS': 5, 'BATCH_SIZE': 512, 'IID_CLASSES_CNT': 5, 'NUM_CLIENTS': 10, 'NUM_BYZANTINE_CLIENTS': 3, 'NUM_HONEST_CLIENTS': 7, 'AGGREGATION_METHOD': 'krum_avg', 'LABELS': {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, 'NUM_CLASSES': 10, 'CNN': <class 'ragg.base.CNN'>}
+
+*************************** Generate Clients Data ******************************
+Function 'gen_client_data starts at 2025-11-12 09:52:03...
+X.shape: (60000, 28, 28), y.shape: (60000,)
+
+	: size, Client_0,  Client_1,  Client_2,  Client_3,  Client_4,  Client_5,  Client_6,  Client_7,  Client_8,  Client_9
+class 0:  5923 [8, 93, 229, 442, 173, 1213, 421, 1086, 1250, 1008] , alpha: 0.5
+class 1:  6742 [4, 56, 1027, 196, 2219, 632, 2177, 47, 347, 37] , alpha: 0.5
+class 2:  5958 [802, 128, 1774, 0, 1028, 3, 11, 382, 3, 1827] , alpha: 0.5
+class 3:  6131 [221, 1763, 586, 0, 278, 63, 1633, 1451, 95, 41] , alpha: 0.5
+class 4:  5842 [2606, 1557, 32, 571, 753, 200, 31, 3, 17, 72] , alpha: 0.5
+class 5:  5421 [55, 6, 429, 430, 477, 3589, 31, 165, 3, 236] , alpha: 0.5
+class 6:  5918 [1406, 104, 15, 530, 10, 433, 853, 165, 655, 1747] , alpha: 0.5
+class 7:  6265 [64, 898, 153, 16, 396, 3064, 0, 170, 1365, 139] , alpha: 0.5
+class 8:  5851 [330, 2094, 215, 544, 30, 577, 937, 47, 46, 1031] , alpha: 0.5
+class 9:  5949 [136, 0, 29, 116, 1627, 172, 308, 3198, 312, 51] , alpha: 0.5
+client 0's data size: 6714, total classes: 10, in which {0: 1086, 1: 47, 2: 382, 3: 1451, 4: 3, 5: 165, 6: 165, 7: 170, 8: 47, 9: 3198}
+client 1's data size: 2845, total classes: 8, in which {0: 442, 1: 196, 4: 571, 5: 430, 6: 530, 7: 16, 8: 544, 9: 116}
+client 2's data size: 4489, total classes: 10, in which {0: 229, 1: 1027, 2: 1774, 3: 586, 4: 32, 5: 429, 6: 15, 7: 153, 8: 215, 9: 29}
+client 3's data size: 4093, total classes: 10, in which {0: 1250, 1: 347, 2: 3, 3: 95, 4: 17, 5: 3, 6: 655, 7: 1365, 8: 46, 9: 312}
+client 4's data size: 9946, total classes: 10, in which {0: 1213, 1: 632, 2: 3, 3: 63, 4: 200, 5: 3589, 6: 433, 7: 3064, 8: 577, 9: 172}
+client 5's data size: 6402, total classes: 9, in which {0: 421, 1: 2177, 2: 11, 3: 1633, 4: 31, 5: 31, 6: 853, 8: 937, 9: 308}
+client 6's data size: 6189, total classes: 10, in which {0: 1008, 1: 37, 2: 1827, 3: 41, 4: 72, 5: 236, 6: 1747, 7: 139, 8: 1031, 9: 51}
+client 7's data size: 6991, total classes: 10, in which {0: 173, 1: 2219, 2: 1028, 3: 278, 4: 753, 5: 477, 6: 10, 7: 396, 8: 30, 9: 1627}
+client 8's data size: 5632, total classes: 10, in which {0: 8, 1: 4, 2: 802, 3: 221, 4: 2606, 5: 55, 6: 1406, 7: 64, 8: 330, 9: 136}
+client 9's data size: 6699, total classes: 9, in which {0: 93, 1: 56, 2: 128, 3: 1763, 4: 1557, 5: 6, 6: 104, 7: 898, 8: 2094}
+total size: 60000
+
+*** client_0: Honest...
+client_0 data (10):  {0: 1086, 1: 47, 2: 382, 3: 1451, 4: 3, 5: 165, 6: 165, 7: 170, 8: 47, 9: 3198}
+Local_data: 
+X: torch.Size([6714, 28, 28]), y(10): {0: 1086, 1: 47, 2: 382, 3: 1451, 4: 3, 5: 165, 6: 165, 7: 170, 8: 47, 9: 3198}, in which, 
+	X_train: torch.Size([4833, 28, 28]), y_train: Counter({9: 2312, 3: 1037, 0: 772, 2: 269, 7: 131, 6: 120, 5: 117, 8: 38, 1: 35, 4: 2})
+	X_val: torch.Size([538, 28, 28]), y_val: Counter({9: 254, 3: 133, 0: 85, 2: 23, 5: 16, 6: 11, 7: 10, 1: 3, 8: 2, 4: 1})
+	X_test: torch.Size([1343, 28, 28]), y_test: Counter({9: 632, 3: 281, 0: 229, 2: 90, 6: 34, 5: 32, 7: 29, 1: 9, 8: 7})
+
+*** client_1: Honest...
+client_1 data (8):  {0: 442, 1: 196, 4: 571, 5: 430, 6: 530, 7: 16, 8: 544, 9: 116}
+Local_data: 
+X: torch.Size([2845, 28, 28]), y(8): {0: 442, 1: 196, 4: 571, 5: 430, 6: 530, 7: 16, 8: 544, 9: 116}, in which, 
+	X_train: torch.Size([2048, 28, 28]), y_train: Counter({4: 419, 8: 401, 6: 367, 0: 314, 5: 312, 1: 138, 9: 86, 7: 11})
+	X_val: torch.Size([228, 28, 28]), y_val: Counter({6: 56, 4: 46, 0: 36, 8: 35, 5: 33, 1: 15, 9: 6, 7: 1})
+	X_test: torch.Size([569, 28, 28]), y_test: Counter({8: 108, 6: 107, 4: 106, 0: 92, 5: 85, 1: 43, 9: 24, 7: 4})
+
+*** client_2: Honest...
+client_2 data (10):  {0: 229, 1: 1027, 2: 1774, 3: 586, 4: 32, 5: 429, 6: 15, 7: 153, 8: 215, 9: 29}
+Local_data: 
+X: torch.Size([4489, 28, 28]), y(10): {0: 229, 1: 1027, 2: 1774, 3: 586, 4: 32, 5: 429, 6: 15, 7: 153, 8: 215, 9: 29}, in which, 
+	X_train: torch.Size([3231, 28, 28]), y_train: Counter({2: 1271, 1: 731, 3: 433, 5: 303, 0: 164, 8: 163, 7: 111, 4: 23, 9: 21, 6: 11})
+	X_val: torch.Size([360, 28, 28]), y_val: Counter({2: 142, 1: 75, 3: 47, 5: 43, 0: 17, 8: 17, 7: 11, 4: 4, 9: 3, 6: 1})
+	X_test: torch.Size([898, 28, 28]), y_test: Counter({2: 361, 1: 221, 3: 106, 5: 83, 0: 48, 8: 35, 7: 31, 4: 5, 9: 5, 6: 3})
+
+*** client_3: Honest...
+client_3 data (10):  {0: 1250, 1: 347, 2: 3, 3: 95, 4: 17, 5: 3, 6: 655, 7: 1365, 8: 46, 9: 312}
+Local_data: 
+X: torch.Size([4093, 28, 28]), y(10): {0: 1250, 1: 347, 2: 3, 3: 95, 4: 17, 5: 3, 6: 655, 7: 1365, 8: 46, 9: 312}, in which, 
+	X_train: torch.Size([2946, 28, 28]), y_train: Counter({7: 1014, 0: 883, 6: 458, 1: 245, 9: 229, 3: 67, 8: 32, 4: 13, 5: 3, 2: 2})
+	X_val: torch.Size([328, 28, 28]), y_val: Counter({7: 100, 0: 95, 6: 56, 1: 32, 9: 26, 3: 12, 8: 4, 4: 3})
+	X_test: torch.Size([819, 28, 28]), y_test: Counter({0: 272, 7: 251, 6: 141, 1: 70, 9: 57, 3: 16, 8: 10, 2: 1, 4: 1})
+
+*** client_4: Honest...
+client_4 data (10):  {0: 1213, 1: 632, 2: 3, 3: 63, 4: 200, 5: 3589, 6: 433, 7: 3064, 8: 577, 9: 172}
+Local_data: 
+X: torch.Size([9946, 28, 28]), y(10): {0: 1213, 1: 632, 2: 3, 3: 63, 4: 200, 5: 3589, 6: 433, 7: 3064, 8: 577, 9: 172}, in which, 
+	X_train: torch.Size([7160, 28, 28]), y_train: Counter({5: 2570, 7: 2187, 0: 878, 1: 454, 8: 412, 6: 316, 4: 156, 9: 136, 3: 48, 2: 3})
+	X_val: torch.Size([796, 28, 28]), y_val: Counter({5: 282, 7: 268, 0: 80, 8: 56, 1: 43, 6: 42, 4: 13, 9: 7, 3: 5})
+	X_test: torch.Size([1990, 28, 28]), y_test: Counter({5: 737, 7: 609, 0: 255, 1: 135, 8: 109, 6: 75, 4: 31, 9: 29, 3: 10})
+
+*** client_5: Honest...
+client_5 data (9):  {0: 421, 1: 2177, 2: 11, 3: 1633, 4: 31, 5: 31, 6: 853, 8: 937, 9: 308}
+Local_data: 
+X: torch.Size([6402, 28, 28]), y(9): {0: 421, 1: 2177, 2: 11, 3: 1633, 4: 31, 5: 31, 6: 853, 8: 937, 9: 308}, in which, 
+	X_train: torch.Size([4608, 28, 28]), y_train: Counter({1: 1585, 3: 1174, 8: 672, 6: 607, 0: 287, 9: 232, 4: 21, 5: 21, 2: 9})
+	X_val: torch.Size([513, 28, 28]), y_val: Counter({1: 170, 3: 131, 8: 81, 6: 69, 0: 32, 9: 22, 4: 4, 5: 3, 2: 1})
+	X_test: torch.Size([1281, 28, 28]), y_test: Counter({1: 422, 3: 328, 8: 184, 6: 177, 0: 102, 9: 54, 5: 7, 4: 6, 2: 1})
+
+*** client_6: Honest...
+client_6 data (10):  {0: 1008, 1: 37, 2: 1827, 3: 41, 4: 72, 5: 236, 6: 1747, 7: 139, 8: 1031, 9: 51}
+Local_data: 
+X: torch.Size([6189, 28, 28]), y(10): {0: 1008, 1: 37, 2: 1827, 3: 41, 4: 72, 5: 236, 6: 1747, 7: 139, 8: 1031, 9: 51}, in which, 
+	X_train: torch.Size([4455, 28, 28]), y_train: Counter({2: 1310, 6: 1261, 8: 757, 0: 721, 5: 171, 7: 101, 4: 51, 9: 33, 3: 28, 1: 22})
+	X_val: torch.Size([496, 28, 28]), y_val: Counter({2: 157, 6: 139, 0: 77, 8: 75, 5: 22, 7: 8, 3: 5, 4: 5, 1: 4, 9: 4})
+	X_test: torch.Size([1238, 28, 28]), y_test: Counter({2: 360, 6: 347, 0: 210, 8: 199, 5: 43, 7: 30, 4: 16, 9: 14, 1: 11, 3: 8})
+
+*** client_7: Byzantine...
+client_7 data (10):  {0: 173, 1: 2219, 2: 1028, 3: 278, 4: 753, 5: 477, 6: 10, 7: 396, 8: 30, 9: 1627}
+Local_data: 
+X: torch.Size([6991, 28, 28]), y(10): {0: 173, 1: 2219, 2: 1028, 3: 278, 4: 753, 5: 477, 6: 10, 7: 396, 8: 30, 9: 1627}, in which, 
+	X_train: torch.Size([5032, 28, 28]), y_train: Counter({1: 1568, 9: 1196, 2: 726, 4: 552, 5: 361, 7: 278, 3: 200, 0: 124, 8: 21, 6: 6})
+	X_val: torch.Size([560, 28, 28]), y_val: Counter({1: 189, 9: 128, 2: 92, 4: 49, 5: 35, 7: 32, 3: 17, 0: 15, 6: 2, 8: 1})
+	X_test: torch.Size([1399, 28, 28]), y_test: Counter({1: 462, 9: 303, 2: 210, 4: 152, 7: 86, 5: 81, 3: 61, 0: 34, 8: 8, 6: 2})
+
+*** client_8: Byzantine...
+client_8 data (10):  {0: 8, 1: 4, 2: 802, 3: 221, 4: 2606, 5: 55, 6: 1406, 7: 64, 8: 330, 9: 136}
+Local_data: 
+X: torch.Size([5632, 28, 28]), y(10): {0: 8, 1: 4, 2: 802, 3: 221, 4: 2606, 5: 55, 6: 1406, 7: 64, 8: 330, 9: 136}, in which, 
+	X_train: torch.Size([4054, 28, 28]), y_train: Counter({4: 1859, 6: 1025, 2: 564, 8: 250, 3: 165, 9: 101, 5: 41, 7: 40, 0: 7, 1: 2})
+	X_val: torch.Size([451, 28, 28]), y_val: Counter({4: 225, 6: 117, 2: 50, 3: 20, 8: 17, 7: 9, 9: 8, 5: 3, 0: 1, 1: 1})
+	X_test: torch.Size([1127, 28, 28]), y_test: Counter({4: 522, 6: 264, 2: 188, 8: 63, 3: 36, 9: 27, 7: 15, 5: 11, 1: 1})
+
+*** client_9: Byzantine...
+client_9 data (9):  {0: 93, 1: 56, 2: 128, 3: 1763, 4: 1557, 5: 6, 6: 104, 7: 898, 8: 2094}
+Local_data: 
+X: torch.Size([6699, 28, 28]), y(9): {0: 93, 1: 56, 2: 128, 3: 1763, 4: 1557, 5: 6, 6: 104, 7: 898, 8: 2094}, in which, 
+	X_train: torch.Size([4823, 28, 28]), y_train: Counter({8: 1514, 3: 1256, 4: 1136, 7: 646, 2: 84, 6: 81, 0: 57, 1: 45, 5: 4})
+	X_val: torch.Size([536, 28, 28]), y_val: Counter({8: 170, 3: 156, 4: 104, 7: 73, 0: 10, 2: 10, 6: 9, 1: 4})
+	X_test: torch.Size([1340, 28, 28]), y_test: Counter({8: 410, 3: 351, 4: 317, 7: 179, 2: 34, 0: 26, 6: 14, 1: 7, 5: 2})
+Function 'gen_client_data' executed in 36.9373 seconds (Start: 2025-11-12 09:52:03, End: 2025-11-12 09:52:40)
+
+***************************** Global Models *************************************
+CNN(
+  (conv1): Conv2d(1, 16, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+  (conv11): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (conv2): Conv2d(16, 32, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+  (conv21): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (conv3): Conv2d(32, 64, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+  (conv31): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (fc1): Linear(in_features=576, out_features=512, bias=True)
+  (fc2): Linear(in_features=512, out_features=10, bias=True)
+  (leaky_relu): LeakyReLU(negative_slope=0.2)
+)
+
+*************** Server Epoch: 0/2, Client Training *************
+
+*** server_epoch:0, client_0: Honest... ***
+client_0 data (10): {0: 772, 1: 35, 2: 269, 3: 1037, 4: 2, 5: 117, 6: 120, 7: 131, 8: 38, 9: 2312}
+Local_data: 
+X: torch.Size([6714, 28, 28]), y(10): {0: 1086, 1: 47, 2: 382, 3: 1451, 4: 3, 5: 165, 6: 165, 7: 170, 8: 47, 9: 3198}, in which, 
+	X_train: torch.Size([4833, 28, 28]), y_train: Counter({9: 2312, 3: 1037, 0: 772, 2: 269, 7: 131, 6: 120, 5: 117, 8: 38, 1: 35, 4: 2})
+	X_val: torch.Size([538, 28, 28]), y_val: Counter({9: 254, 3: 133, 0: 85, 2: 23, 5: 16, 6: 11, 7: 10, 1: 3, 8: 2, 4: 1})
+	X_test: torch.Size([1343, 28, 28]), y_test: Counter({9: 632, 3: 281, 0: 229, 2: 90, 6: 34, 5: 32, 7: 29, 1: 9, 8: 7})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:40...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 772), (1, 35), (2, 269), (3, 1037), (4, 2), (5, 117), (6, 120), (7, 131), (8, 38), (9, 2312)])
+class_weight: tensor([    0.00,     0.05,     0.01,     0.00,     0.85,     0.01,     0.01,
+            0.01,     0.04,     0.00], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 16.4047, val_loss: 16.4047, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 2.5718, val_loss: 2.5718, LR: 0.001
+Function 'train_cnn' executed in 1.2770 seconds (Start: 2025-11-12 09:52:40, End: 2025-11-12 09:52:42)
+dist(local, global): 10.08552360534668
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:42...
+Function 'evaluate' executed in 0.0178 seconds (Start: 2025-11-12 09:52:42, End: 2025-11-12 09:52:42)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:42...
+Function 'evaluate_shared_test' executed in 0.0413 seconds (Start: 2025-11-12 09:52:42, End: 2025-11-12 09:52:42)
+
+*** server_epoch:0, client_1: Honest... ***
+client_1 data (8): {0: 314, 1: 138, 4: 419, 5: 312, 6: 367, 7: 11, 8: 401, 9: 86}
+Local_data: 
+X: torch.Size([2845, 28, 28]), y(8): {0: 442, 1: 196, 4: 571, 5: 430, 6: 530, 7: 16, 8: 544, 9: 116}, in which, 
+	X_train: torch.Size([2048, 28, 28]), y_train: Counter({4: 419, 8: 401, 6: 367, 0: 314, 5: 312, 1: 138, 9: 86, 7: 11})
+	X_val: torch.Size([228, 28, 28]), y_val: Counter({6: 56, 4: 46, 0: 36, 8: 35, 5: 33, 1: 15, 9: 6, 7: 1})
+	X_test: torch.Size([569, 28, 28]), y_test: Counter({8: 108, 6: 107, 4: 106, 0: 92, 5: 85, 1: 43, 9: 24, 7: 4})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:42...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 314), (1, 138), (4, 419), (5, 312), (6, 367), (7, 11), (8, 401), (9, 86)])
+class_weight: tensor([0.03, 0.06, 0.02, 0.03, 0.02, 0.73, 0.02, 0.09], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 8.5972, val_loss: 8.5972, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 2.5144, val_loss: 2.5144, LR: 0.001
+Function 'train_cnn' executed in 0.4233 seconds (Start: 2025-11-12 09:52:42, End: 2025-11-12 09:52:43)
+dist(local, global): 8.058597564697266
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:43...
+Function 'evaluate' executed in 0.0136 seconds (Start: 2025-11-12 09:52:43, End: 2025-11-12 09:52:43)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:43...
+Function 'evaluate_shared_test' executed in 0.0383 seconds (Start: 2025-11-12 09:52:43, End: 2025-11-12 09:52:43)
+
+*** server_epoch:0, client_2: Honest... ***
+client_2 data (10): {0: 164, 1: 731, 2: 1271, 3: 433, 4: 23, 5: 303, 6: 11, 7: 111, 8: 163, 9: 21}
+Local_data: 
+X: torch.Size([4489, 28, 28]), y(10): {0: 229, 1: 1027, 2: 1774, 3: 586, 4: 32, 5: 429, 6: 15, 7: 153, 8: 215, 9: 29}, in which, 
+	X_train: torch.Size([3231, 28, 28]), y_train: Counter({2: 1271, 1: 731, 3: 433, 5: 303, 0: 164, 8: 163, 7: 111, 4: 23, 9: 21, 6: 11})
+	X_val: torch.Size([360, 28, 28]), y_val: Counter({2: 142, 1: 75, 3: 47, 5: 43, 0: 17, 8: 17, 7: 11, 4: 4, 9: 3, 6: 1})
+	X_test: torch.Size([898, 28, 28]), y_test: Counter({2: 361, 1: 221, 3: 106, 5: 83, 0: 48, 8: 35, 7: 31, 4: 5, 9: 5, 6: 3})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:44...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 164), (1, 731), (2, 1271), (3, 433), (4, 23), (5, 303), (6, 11), (7, 111), (8, 163), (9, 21)])
+class_weight: tensor([0.03, 0.01, 0.00, 0.01, 0.21, 0.02, 0.43, 0.04, 0.03, 0.23],
+       device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 13.1991, val_loss: 13.1991, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 2.7208, val_loss: 2.7208, LR: 0.001
+Function 'train_cnn' executed in 0.6904 seconds (Start: 2025-11-12 09:52:44, End: 2025-11-12 09:52:44)
+dist(local, global): 9.258928298950195
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:44...
+Function 'evaluate' executed in 0.0128 seconds (Start: 2025-11-12 09:52:44, End: 2025-11-12 09:52:44)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:44...
+Function 'evaluate_shared_test' executed in 0.0268 seconds (Start: 2025-11-12 09:52:44, End: 2025-11-12 09:52:44)
+
+*** server_epoch:0, client_3: Honest... ***
+client_3 data (10): {0: 883, 1: 245, 2: 2, 3: 67, 4: 13, 5: 3, 6: 458, 7: 1014, 8: 32, 9: 229}
+Local_data: 
+X: torch.Size([4093, 28, 28]), y(10): {0: 1250, 1: 347, 2: 3, 3: 95, 4: 17, 5: 3, 6: 655, 7: 1365, 8: 46, 9: 312}, in which, 
+	X_train: torch.Size([2946, 28, 28]), y_train: Counter({7: 1014, 0: 883, 6: 458, 1: 245, 9: 229, 3: 67, 8: 32, 4: 13, 5: 3, 2: 2})
+	X_val: torch.Size([328, 28, 28]), y_val: Counter({7: 100, 0: 95, 6: 56, 1: 32, 9: 26, 3: 12, 8: 4, 4: 3})
+	X_test: torch.Size([819, 28, 28]), y_test: Counter({0: 272, 7: 251, 6: 141, 1: 70, 9: 57, 3: 16, 8: 10, 2: 1, 4: 1})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:45...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 883), (1, 245), (2, 2), (3, 67), (4, 13), (5, 3), (6, 458), (7, 1014), (8, 32), (9, 229)])
+class_weight: tensor([0.00, 0.00, 0.52, 0.02, 0.08, 0.34, 0.00, 0.00, 0.03, 0.00],
+       device='cuda:0'), sum(class_weight) = 1.0000001192092896
+train_cnn epoch: 0, local_cnn train loss: 11.2244, val_loss: 11.2244, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 1.5896, val_loss: 1.5896, LR: 0.001
+Function 'train_cnn' executed in 0.5973 seconds (Start: 2025-11-12 09:52:45, End: 2025-11-12 09:52:46)
+dist(local, global): 8.529609680175781
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:46...
+Function 'evaluate' executed in 0.0128 seconds (Start: 2025-11-12 09:52:46, End: 2025-11-12 09:52:46)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:46...
+Function 'evaluate_shared_test' executed in 0.0336 seconds (Start: 2025-11-12 09:52:46, End: 2025-11-12 09:52:46)
+
+*** server_epoch:0, client_4: Honest... ***
+client_4 data (10): {0: 878, 1: 454, 2: 3, 3: 48, 4: 156, 5: 2570, 6: 316, 7: 2187, 8: 412, 9: 136}
+Local_data: 
+X: torch.Size([9946, 28, 28]), y(10): {0: 1213, 1: 632, 2: 3, 3: 63, 4: 200, 5: 3589, 6: 433, 7: 3064, 8: 577, 9: 172}, in which, 
+	X_train: torch.Size([7160, 28, 28]), y_train: Counter({5: 2570, 7: 2187, 0: 878, 1: 454, 8: 412, 6: 316, 4: 156, 9: 136, 3: 48, 2: 3})
+	X_val: torch.Size([796, 28, 28]), y_val: Counter({5: 282, 7: 268, 0: 80, 8: 56, 1: 43, 6: 42, 4: 13, 9: 7, 3: 5})
+	X_test: torch.Size([1990, 28, 28]), y_test: Counter({5: 737, 7: 609, 0: 255, 1: 135, 8: 109, 6: 75, 4: 31, 9: 29, 3: 10})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:47...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 878), (1, 454), (2, 3), (3, 48), (4, 156), (5, 2570), (6, 316), (7, 2187), (8, 412), (9, 136)])
+class_weight: tensor([0.00, 0.01, 0.88, 0.06, 0.02, 0.00, 0.01, 0.00, 0.01, 0.02],
+       device='cuda:0'), sum(class_weight) = 0.9999999403953552
+train_cnn epoch: 0, local_cnn train loss: 21.4836, val_loss: 21.4836, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 2.4352, val_loss: 2.4352, LR: 0.001
+Function 'train_cnn' executed in 1.5145 seconds (Start: 2025-11-12 09:52:47, End: 2025-11-12 09:52:48)
+dist(local, global): 11.643045425415039
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:48...
+Function 'evaluate' executed in 0.0186 seconds (Start: 2025-11-12 09:52:48, End: 2025-11-12 09:52:48)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:48...
+Function 'evaluate_shared_test' executed in 0.0263 seconds (Start: 2025-11-12 09:52:48, End: 2025-11-12 09:52:48)
+
+*** server_epoch:0, client_5: Honest... ***
+client_5 data (9): {0: 287, 1: 1585, 2: 9, 3: 1174, 4: 21, 5: 21, 6: 607, 8: 672, 9: 232}
+Local_data: 
+X: torch.Size([6402, 28, 28]), y(9): {0: 421, 1: 2177, 2: 11, 3: 1633, 4: 31, 5: 31, 6: 853, 8: 937, 9: 308}, in which, 
+	X_train: torch.Size([4608, 28, 28]), y_train: Counter({1: 1585, 3: 1174, 8: 672, 6: 607, 0: 287, 9: 232, 4: 21, 5: 21, 2: 9})
+	X_val: torch.Size([513, 28, 28]), y_val: Counter({1: 170, 3: 131, 8: 81, 6: 69, 0: 32, 9: 22, 4: 4, 5: 3, 2: 1})
+	X_test: torch.Size([1281, 28, 28]), y_test: Counter({1: 422, 3: 328, 8: 184, 6: 177, 0: 102, 9: 54, 5: 7, 4: 6, 2: 1})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:49...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 287), (1, 1585), (2, 9), (3, 1174), (4, 21), (5, 21), (6, 607), (8, 672), (9, 232)])
+class_weight: tensor([0.02, 0.00, 0.51, 0.00, 0.22, 0.22, 0.01, 0.01, 0.02], device='cuda:0'), sum(class_weight) = 0.9999999403953552
+train_cnn epoch: 0, local_cnn train loss: 15.6542, val_loss: 15.6542, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 2.2794, val_loss: 2.2794, LR: 0.001
+Function 'train_cnn' executed in 0.9400 seconds (Start: 2025-11-12 09:52:49, End: 2025-11-12 09:52:50)
+dist(local, global): 9.698323249816895
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:50...
+Function 'evaluate' executed in 0.0192 seconds (Start: 2025-11-12 09:52:50, End: 2025-11-12 09:52:50)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:50...
+Function 'evaluate_shared_test' executed in 0.0263 seconds (Start: 2025-11-12 09:52:50, End: 2025-11-12 09:52:50)
+
+*** server_epoch:0, client_6: Honest... ***
+client_6 data (10): {0: 721, 1: 22, 2: 1310, 3: 28, 4: 51, 5: 171, 6: 1261, 7: 101, 8: 757, 9: 33}
+Local_data: 
+X: torch.Size([6189, 28, 28]), y(10): {0: 1008, 1: 37, 2: 1827, 3: 41, 4: 72, 5: 236, 6: 1747, 7: 139, 8: 1031, 9: 51}, in which, 
+	X_train: torch.Size([4455, 28, 28]), y_train: Counter({2: 1310, 6: 1261, 8: 757, 0: 721, 5: 171, 7: 101, 4: 51, 9: 33, 3: 28, 1: 22})
+	X_val: torch.Size([496, 28, 28]), y_val: Counter({2: 157, 6: 139, 0: 77, 8: 75, 5: 22, 7: 8, 3: 5, 4: 5, 1: 4, 9: 4})
+	X_test: torch.Size([1238, 28, 28]), y_test: Counter({2: 360, 6: 347, 0: 210, 8: 199, 5: 43, 7: 30, 4: 16, 9: 14, 1: 11, 3: 8})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:51...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 721), (1, 22), (2, 1310), (3, 28), (4, 51), (5, 171), (6, 1261), (7, 101), (8, 757), (9, 33)])
+class_weight: tensor([0.01, 0.30, 0.01, 0.24, 0.13, 0.04, 0.01, 0.07, 0.01, 0.20],
+       device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 16.1306, val_loss: 16.1306, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 2.2593, val_loss: 2.2593, LR: 0.001
+Function 'train_cnn' executed in 0.8883 seconds (Start: 2025-11-12 09:52:51, End: 2025-11-12 09:52:52)
+dist(local, global): 10.142143249511719
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:52...
+Function 'evaluate' executed in 0.0135 seconds (Start: 2025-11-12 09:52:52, End: 2025-11-12 09:52:52)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:52...
+Function 'evaluate_shared_test' executed in 0.0256 seconds (Start: 2025-11-12 09:52:52, End: 2025-11-12 09:52:52)
+
+***server_epoch:0, client_7: Byzantine...
+client_7 data: {0: 124, 1: 1568, 2: 726, 3: 200, 4: 552, 5: 361, 6: 6, 7: 278, 8: 21, 9: 1196}
+Local_data: 
+X: torch.Size([6991, 28, 28]), y(10): {0: 173, 1: 2219, 2: 1028, 3: 278, 4: 753, 5: 477, 6: 10, 7: 396, 8: 30, 9: 1627}, in which, 
+	X_train: torch.Size([5032, 28, 28]), y_train: Counter({1: 1568, 9: 1196, 2: 726, 4: 552, 5: 361, 7: 278, 3: 200, 0: 124, 8: 21, 6: 6})
+	X_val: torch.Size([560, 28, 28]), y_val: Counter({1: 189, 9: 128, 2: 92, 4: 49, 5: 35, 7: 32, 3: 17, 0: 15, 6: 2, 8: 1})
+	X_test: torch.Size([1399, 28, 28]), y_test: Counter({1: 462, 9: 303, 2: 210, 4: 152, 7: 86, 5: 81, 3: 61, 0: 34, 8: 8, 6: 2})
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:53...
+Function 'evaluate' executed in 0.0145 seconds (Start: 2025-11-12 09:52:53, End: 2025-11-12 09:52:53)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:53...
+Function 'evaluate_shared_test' executed in 0.0311 seconds (Start: 2025-11-12 09:52:53, End: 2025-11-12 09:52:53)
+
+***server_epoch:0, client_8: Byzantine...
+client_8 data: {0: 7, 1: 2, 2: 564, 3: 165, 4: 1859, 5: 41, 6: 1025, 7: 40, 8: 250, 9: 101}
+Local_data: 
+X: torch.Size([5632, 28, 28]), y(10): {0: 8, 1: 4, 2: 802, 3: 221, 4: 2606, 5: 55, 6: 1406, 7: 64, 8: 330, 9: 136}, in which, 
+	X_train: torch.Size([4054, 28, 28]), y_train: Counter({4: 1859, 6: 1025, 2: 564, 8: 250, 3: 165, 9: 101, 5: 41, 7: 40, 0: 7, 1: 2})
+	X_val: torch.Size([451, 28, 28]), y_val: Counter({4: 225, 6: 117, 2: 50, 3: 20, 8: 17, 7: 9, 9: 8, 5: 3, 0: 1, 1: 1})
+	X_test: torch.Size([1127, 28, 28]), y_test: Counter({4: 522, 6: 264, 2: 188, 8: 63, 3: 36, 9: 27, 7: 15, 5: 11, 1: 1})
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:54...
+Function 'evaluate' executed in 0.0136 seconds (Start: 2025-11-12 09:52:54, End: 2025-11-12 09:52:54)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:54...
+Function 'evaluate_shared_test' executed in 0.0266 seconds (Start: 2025-11-12 09:52:54, End: 2025-11-12 09:52:54)
+
+***server_epoch:0, client_9: Byzantine...
+client_9 data: {0: 57, 1: 45, 2: 84, 3: 1256, 4: 1136, 5: 4, 6: 81, 7: 646, 8: 1514}
+Local_data: 
+X: torch.Size([6699, 28, 28]), y(9): {0: 93, 1: 56, 2: 128, 3: 1763, 4: 1557, 5: 6, 6: 104, 7: 898, 8: 2094}, in which, 
+	X_train: torch.Size([4823, 28, 28]), y_train: Counter({8: 1514, 3: 1256, 4: 1136, 7: 646, 2: 84, 6: 81, 0: 57, 1: 45, 5: 4})
+	X_val: torch.Size([536, 28, 28]), y_val: Counter({8: 170, 3: 156, 4: 104, 7: 73, 0: 10, 2: 10, 6: 9, 1: 4})
+	X_test: torch.Size([1340, 28, 28]), y_test: Counter({8: 410, 3: 351, 4: 317, 7: 179, 2: 34, 0: 26, 6: 14, 1: 7, 5: 2})
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:55...
+Function 'evaluate' executed in 0.0143 seconds (Start: 2025-11-12 09:52:55, End: 2025-11-12 09:52:55)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:55...
+Function 'evaluate_shared_test' executed in 0.0262 seconds (Start: 2025-11-12 09:52:55, End: 2025-11-12 09:52:55)
+
+*************** Server Epoch: 0/2, Server Aggregation **********
+Function 'aggregate_cnns starts at 2025-11-12 09:52:55...
+*aggregate cnn...
+each update shape: torch.Size([390378])
+Unique weights: tensor([1]), counts: tensor([10])
+Krum scores: ['39.17', '32.70', '37.37', '34.29', '43.24', '36.86', '38.02', '39095336.00', '39032980.00', '38982376.00']
+selected_index: 1
+m: 7
+krum_avg, clients_type: [['Update 0']
+ ['Update 1']
+ ['Update 2']
+ ['Update 3']
+ ['Update 4']
+ ['Update 5']
+ ['Update 6']
+ ['Byzantine']
+ ['Byzantine']
+ ['Byzantine']], client_updates: min: -0.08, max: 0.06, time taken: 0.1278s, l2_error: 0.00
+Function 'aggregate_cnns' executed in 0.7420 seconds (Start: 2025-11-12 09:52:55, End: 2025-11-12 09:52:55)
+
+*************** Server Epoch: 1/2, Client Training *************
+
+*** server_epoch:1, client_0: Honest... ***
+client_0 data (10): {0: 772, 1: 35, 2: 269, 3: 1037, 4: 2, 5: 117, 6: 120, 7: 131, 8: 38, 9: 2312}
+Local_data: 
+X: torch.Size([6714, 28, 28]), y(10): {0: 1086, 1: 47, 2: 382, 3: 1451, 4: 3, 5: 165, 6: 165, 7: 170, 8: 47, 9: 3198}, in which, 
+	X_train: torch.Size([4833, 28, 28]), y_train: Counter({9: 2312, 3: 1037, 0: 772, 2: 269, 7: 131, 6: 120, 5: 117, 8: 38, 1: 35, 4: 2})
+	X_val: torch.Size([538, 28, 28]), y_val: Counter({9: 254, 3: 133, 0: 85, 2: 23, 5: 16, 6: 11, 7: 10, 1: 3, 8: 2, 4: 1})
+	X_test: torch.Size([1343, 28, 28]), y_test: Counter({9: 632, 3: 281, 0: 229, 2: 90, 6: 34, 5: 32, 7: 29, 1: 9, 8: 7})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:56...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 772), (1, 35), (2, 269), (3, 1037), (4, 2), (5, 117), (6, 120), (7, 131), (8, 38), (9, 2312)])
+class_weight: tensor([    0.00,     0.05,     0.01,     0.00,     0.85,     0.01,     0.01,
+            0.01,     0.04,     0.00], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 3.6642, val_loss: 3.6642, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 1.4598, val_loss: 1.4598, LR: 0.001
+Function 'train_cnn' executed in 0.9715 seconds (Start: 2025-11-12 09:52:56, End: 2025-11-12 09:52:57)
+dist(local, global): 5.737493991851807
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:57...
+Function 'evaluate' executed in 0.0138 seconds (Start: 2025-11-12 09:52:57, End: 2025-11-12 09:52:57)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:57...
+Function 'evaluate_shared_test' executed in 0.0262 seconds (Start: 2025-11-12 09:52:57, End: 2025-11-12 09:52:57)
+
+*** server_epoch:1, client_1: Honest... ***
+client_1 data (8): {0: 314, 1: 138, 4: 419, 5: 312, 6: 367, 7: 11, 8: 401, 9: 86}
+Local_data: 
+X: torch.Size([2845, 28, 28]), y(8): {0: 442, 1: 196, 4: 571, 5: 430, 6: 530, 7: 16, 8: 544, 9: 116}, in which, 
+	X_train: torch.Size([2048, 28, 28]), y_train: Counter({4: 419, 8: 401, 6: 367, 0: 314, 5: 312, 1: 138, 9: 86, 7: 11})
+	X_val: torch.Size([228, 28, 28]), y_val: Counter({6: 56, 4: 46, 0: 36, 8: 35, 5: 33, 1: 15, 9: 6, 7: 1})
+	X_test: torch.Size([569, 28, 28]), y_test: Counter({8: 108, 6: 107, 4: 106, 0: 92, 5: 85, 1: 43, 9: 24, 7: 4})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:58...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 314), (1, 138), (4, 419), (5, 312), (6, 367), (7, 11), (8, 401), (9, 86)])
+class_weight: tensor([0.03, 0.06, 0.02, 0.03, 0.02, 0.73, 0.02, 0.09], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 2.4544, val_loss: 2.4544, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 0.9190, val_loss: 0.9190, LR: 0.001
+Function 'train_cnn' executed in 0.3983 seconds (Start: 2025-11-12 09:52:58, End: 2025-11-12 09:52:58)
+dist(local, global): 3.5724332332611084
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:52:58...
+Function 'evaluate' executed in 0.0115 seconds (Start: 2025-11-12 09:52:58, End: 2025-11-12 09:52:59)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:59...
+Function 'evaluate_shared_test' executed in 0.0262 seconds (Start: 2025-11-12 09:52:59, End: 2025-11-12 09:52:59)
+
+*** server_epoch:1, client_2: Honest... ***
+client_2 data (10): {0: 164, 1: 731, 2: 1271, 3: 433, 4: 23, 5: 303, 6: 11, 7: 111, 8: 163, 9: 21}
+Local_data: 
+X: torch.Size([4489, 28, 28]), y(10): {0: 229, 1: 1027, 2: 1774, 3: 586, 4: 32, 5: 429, 6: 15, 7: 153, 8: 215, 9: 29}, in which, 
+	X_train: torch.Size([3231, 28, 28]), y_train: Counter({2: 1271, 1: 731, 3: 433, 5: 303, 0: 164, 8: 163, 7: 111, 4: 23, 9: 21, 6: 11})
+	X_val: torch.Size([360, 28, 28]), y_val: Counter({2: 142, 1: 75, 3: 47, 5: 43, 0: 17, 8: 17, 7: 11, 4: 4, 9: 3, 6: 1})
+	X_test: torch.Size([898, 28, 28]), y_test: Counter({2: 361, 1: 221, 3: 106, 5: 83, 0: 48, 8: 35, 7: 31, 4: 5, 9: 5, 6: 3})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:52:59...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 164), (1, 731), (2, 1271), (3, 433), (4, 23), (5, 303), (6, 11), (7, 111), (8, 163), (9, 21)])
+class_weight: tensor([0.03, 0.01, 0.00, 0.01, 0.21, 0.02, 0.43, 0.04, 0.03, 0.23],
+       device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 4.0119, val_loss: 4.0119, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 1.7547, val_loss: 1.7547, LR: 0.001
+Function 'train_cnn' executed in 0.6399 seconds (Start: 2025-11-12 09:52:59, End: 2025-11-12 09:53:00)
+dist(local, global): 4.72895622253418
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:00...
+Function 'evaluate' executed in 0.0110 seconds (Start: 2025-11-12 09:53:00, End: 2025-11-12 09:53:00)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:00...
+Function 'evaluate_shared_test' executed in 0.0337 seconds (Start: 2025-11-12 09:53:00, End: 2025-11-12 09:53:00)
+
+*** server_epoch:1, client_3: Honest... ***
+client_3 data (10): {0: 883, 1: 245, 2: 2, 3: 67, 4: 13, 5: 3, 6: 458, 7: 1014, 8: 32, 9: 229}
+Local_data: 
+X: torch.Size([4093, 28, 28]), y(10): {0: 1250, 1: 347, 2: 3, 3: 95, 4: 17, 5: 3, 6: 655, 7: 1365, 8: 46, 9: 312}, in which, 
+	X_train: torch.Size([2946, 28, 28]), y_train: Counter({7: 1014, 0: 883, 6: 458, 1: 245, 9: 229, 3: 67, 8: 32, 4: 13, 5: 3, 2: 2})
+	X_val: torch.Size([328, 28, 28]), y_val: Counter({7: 100, 0: 95, 6: 56, 1: 32, 9: 26, 3: 12, 8: 4, 4: 3})
+	X_test: torch.Size([819, 28, 28]), y_test: Counter({0: 272, 7: 251, 6: 141, 1: 70, 9: 57, 3: 16, 8: 10, 2: 1, 4: 1})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:53:01...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 883), (1, 245), (2, 2), (3, 67), (4, 13), (5, 3), (6, 458), (7, 1014), (8, 32), (9, 229)])
+class_weight: tensor([0.00, 0.00, 0.52, 0.02, 0.08, 0.34, 0.00, 0.00, 0.03, 0.00],
+       device='cuda:0'), sum(class_weight) = 1.0000001192092896
+train_cnn epoch: 0, local_cnn train loss: 2.0390, val_loss: 2.0390, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 0.7100, val_loss: 0.7100, LR: 0.001
+Function 'train_cnn' executed in 0.5973 seconds (Start: 2025-11-12 09:53:01, End: 2025-11-12 09:53:01)
+dist(local, global): 4.035248756408691
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:01...
+Function 'evaluate' executed in 0.0109 seconds (Start: 2025-11-12 09:53:01, End: 2025-11-12 09:53:01)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:01...
+Function 'evaluate_shared_test' executed in 0.0264 seconds (Start: 2025-11-12 09:53:01, End: 2025-11-12 09:53:01)
+
+*** server_epoch:1, client_4: Honest... ***
+client_4 data (10): {0: 878, 1: 454, 2: 3, 3: 48, 4: 156, 5: 2570, 6: 316, 7: 2187, 8: 412, 9: 136}
+Local_data: 
+X: torch.Size([9946, 28, 28]), y(10): {0: 1213, 1: 632, 2: 3, 3: 63, 4: 200, 5: 3589, 6: 433, 7: 3064, 8: 577, 9: 172}, in which, 
+	X_train: torch.Size([7160, 28, 28]), y_train: Counter({5: 2570, 7: 2187, 0: 878, 1: 454, 8: 412, 6: 316, 4: 156, 9: 136, 3: 48, 2: 3})
+	X_val: torch.Size([796, 28, 28]), y_val: Counter({5: 282, 7: 268, 0: 80, 8: 56, 1: 43, 6: 42, 4: 13, 9: 7, 3: 5})
+	X_test: torch.Size([1990, 28, 28]), y_test: Counter({5: 737, 7: 609, 0: 255, 1: 135, 8: 109, 6: 75, 4: 31, 9: 29, 3: 10})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:53:02...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 878), (1, 454), (2, 3), (3, 48), (4, 156), (5, 2570), (6, 316), (7, 2187), (8, 412), (9, 136)])
+class_weight: tensor([0.00, 0.01, 0.88, 0.06, 0.02, 0.00, 0.01, 0.00, 0.01, 0.02],
+       device='cuda:0'), sum(class_weight) = 0.9999999403953552
+train_cnn epoch: 0, local_cnn train loss: 5.6277, val_loss: 5.6277, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 1.7639, val_loss: 1.7639, LR: 0.001
+Function 'train_cnn' executed in 1.4192 seconds (Start: 2025-11-12 09:53:02, End: 2025-11-12 09:53:04)
+dist(local, global): 6.369057655334473
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:04...
+Function 'evaluate' executed in 0.0176 seconds (Start: 2025-11-12 09:53:04, End: 2025-11-12 09:53:04)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:04...
+Function 'evaluate_shared_test' executed in 0.0334 seconds (Start: 2025-11-12 09:53:04, End: 2025-11-12 09:53:04)
+
+*** server_epoch:1, client_5: Honest... ***
+client_5 data (9): {0: 287, 1: 1585, 2: 9, 3: 1174, 4: 21, 5: 21, 6: 607, 8: 672, 9: 232}
+Local_data: 
+X: torch.Size([6402, 28, 28]), y(9): {0: 421, 1: 2177, 2: 11, 3: 1633, 4: 31, 5: 31, 6: 853, 8: 937, 9: 308}, in which, 
+	X_train: torch.Size([4608, 28, 28]), y_train: Counter({1: 1585, 3: 1174, 8: 672, 6: 607, 0: 287, 9: 232, 4: 21, 5: 21, 2: 9})
+	X_val: torch.Size([513, 28, 28]), y_val: Counter({1: 170, 3: 131, 8: 81, 6: 69, 0: 32, 9: 22, 4: 4, 5: 3, 2: 1})
+	X_test: torch.Size([1281, 28, 28]), y_test: Counter({1: 422, 3: 328, 8: 184, 6: 177, 0: 102, 9: 54, 5: 7, 4: 6, 2: 1})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:53:05...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 287), (1, 1585), (2, 9), (3, 1174), (4, 21), (5, 21), (6, 607), (8, 672), (9, 232)])
+class_weight: tensor([0.02, 0.00, 0.51, 0.00, 0.22, 0.22, 0.01, 0.01, 0.02], device='cuda:0'), sum(class_weight) = 0.9999999403953552
+train_cnn epoch: 0, local_cnn train loss: 3.3238, val_loss: 3.3238, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 1.3118, val_loss: 1.3118, LR: 0.001
+Function 'train_cnn' executed in 0.9322 seconds (Start: 2025-11-12 09:53:05, End: 2025-11-12 09:53:06)
+dist(local, global): 5.166288375854492
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:06...
+Function 'evaluate' executed in 0.0148 seconds (Start: 2025-11-12 09:53:06, End: 2025-11-12 09:53:06)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:06...
+Function 'evaluate_shared_test' executed in 0.0268 seconds (Start: 2025-11-12 09:53:06, End: 2025-11-12 09:53:06)
+
+*** server_epoch:1, client_6: Honest... ***
+client_6 data (10): {0: 721, 1: 22, 2: 1310, 3: 28, 4: 51, 5: 171, 6: 1261, 7: 101, 8: 757, 9: 33}
+Local_data: 
+X: torch.Size([6189, 28, 28]), y(10): {0: 1008, 1: 37, 2: 1827, 3: 41, 4: 72, 5: 236, 6: 1747, 7: 139, 8: 1031, 9: 51}, in which, 
+	X_train: torch.Size([4455, 28, 28]), y_train: Counter({2: 1310, 6: 1261, 8: 757, 0: 721, 5: 171, 7: 101, 4: 51, 9: 33, 3: 28, 1: 22})
+	X_val: torch.Size([496, 28, 28]), y_val: Counter({2: 157, 6: 139, 0: 77, 8: 75, 5: 22, 7: 8, 3: 5, 4: 5, 1: 4, 9: 4})
+	X_test: torch.Size([1238, 28, 28]), y_test: Counter({2: 360, 6: 347, 0: 210, 8: 199, 5: 43, 7: 30, 4: 16, 9: 14, 1: 11, 3: 8})
+Train CNN...
+Function 'train_cnn starts at 2025-11-12 09:53:07...
+X: min: -1.0, max: 1.0
+Compute classes weights...
+labeled_y:  dict_items([(0, 721), (1, 22), (2, 1310), (3, 28), (4, 51), (5, 171), (6, 1261), (7, 101), (8, 757), (9, 33)])
+class_weight: tensor([0.01, 0.30, 0.01, 0.24, 0.13, 0.04, 0.01, 0.07, 0.01, 0.20],
+       device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 4.0443, val_loss: 4.0443, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 1.4806, val_loss: 1.4806, LR: 0.001
+Function 'train_cnn' executed in 0.9975 seconds (Start: 2025-11-12 09:53:07, End: 2025-11-12 09:53:08)
+dist(local, global): 5.521504878997803
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:08...
+Function 'evaluate' executed in 0.0125 seconds (Start: 2025-11-12 09:53:08, End: 2025-11-12 09:53:08)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:08...
+Function 'evaluate_shared_test' executed in 0.0274 seconds (Start: 2025-11-12 09:53:08, End: 2025-11-12 09:53:08)
+
+***server_epoch:1, client_7: Byzantine...
+client_7 data: {0: 124, 1: 1568, 2: 726, 3: 200, 4: 552, 5: 361, 6: 6, 7: 278, 8: 21, 9: 1196}
+Local_data: 
+X: torch.Size([6991, 28, 28]), y(10): {0: 173, 1: 2219, 2: 1028, 3: 278, 4: 753, 5: 477, 6: 10, 7: 396, 8: 30, 9: 1627}, in which, 
+	X_train: torch.Size([5032, 28, 28]), y_train: Counter({1: 1568, 9: 1196, 2: 726, 4: 552, 5: 361, 7: 278, 3: 200, 0: 124, 8: 21, 6: 6})
+	X_val: torch.Size([560, 28, 28]), y_val: Counter({1: 189, 9: 128, 2: 92, 4: 49, 5: 35, 7: 32, 3: 17, 0: 15, 6: 2, 8: 1})
+	X_test: torch.Size([1399, 28, 28]), y_test: Counter({1: 462, 9: 303, 2: 210, 4: 152, 7: 86, 5: 81, 3: 61, 0: 34, 8: 8, 6: 2})
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:08...
+Function 'evaluate' executed in 0.0131 seconds (Start: 2025-11-12 09:53:08, End: 2025-11-12 09:53:08)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:08...
+Function 'evaluate_shared_test' executed in 0.0280 seconds (Start: 2025-11-12 09:53:08, End: 2025-11-12 09:53:09)
+
+***server_epoch:1, client_8: Byzantine...
+client_8 data: {0: 7, 1: 2, 2: 564, 3: 165, 4: 1859, 5: 41, 6: 1025, 7: 40, 8: 250, 9: 101}
+Local_data: 
+X: torch.Size([5632, 28, 28]), y(10): {0: 8, 1: 4, 2: 802, 3: 221, 4: 2606, 5: 55, 6: 1406, 7: 64, 8: 330, 9: 136}, in which, 
+	X_train: torch.Size([4054, 28, 28]), y_train: Counter({4: 1859, 6: 1025, 2: 564, 8: 250, 3: 165, 9: 101, 5: 41, 7: 40, 0: 7, 1: 2})
+	X_val: torch.Size([451, 28, 28]), y_val: Counter({4: 225, 6: 117, 2: 50, 3: 20, 8: 17, 7: 9, 9: 8, 5: 3, 0: 1, 1: 1})
+	X_test: torch.Size([1127, 28, 28]), y_test: Counter({4: 522, 6: 264, 2: 188, 8: 63, 3: 36, 9: 27, 7: 15, 5: 11, 1: 1})
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:09...
+Function 'evaluate' executed in 0.0124 seconds (Start: 2025-11-12 09:53:09, End: 2025-11-12 09:53:09)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:09...
+Function 'evaluate_shared_test' executed in 0.0261 seconds (Start: 2025-11-12 09:53:09, End: 2025-11-12 09:53:09)
+
+***server_epoch:1, client_9: Byzantine...
+client_9 data: {0: 57, 1: 45, 2: 84, 3: 1256, 4: 1136, 5: 4, 6: 81, 7: 646, 8: 1514}
+Local_data: 
+X: torch.Size([6699, 28, 28]), y(9): {0: 93, 1: 56, 2: 128, 3: 1763, 4: 1557, 5: 6, 6: 104, 7: 898, 8: 2094}, in which, 
+	X_train: torch.Size([4823, 28, 28]), y_train: Counter({8: 1514, 3: 1256, 4: 1136, 7: 646, 2: 84, 6: 81, 0: 57, 1: 45, 5: 4})
+	X_val: torch.Size([536, 28, 28]), y_val: Counter({8: 170, 3: 156, 4: 104, 7: 73, 0: 10, 2: 10, 6: 9, 1: 4})
+	X_test: torch.Size([1340, 28, 28]), y_test: Counter({8: 410, 3: 351, 4: 317, 7: 179, 2: 34, 0: 26, 6: 14, 1: 7, 5: 2})
+Evaluate CNNs...
+Function 'evaluate starts at 2025-11-12 09:53:10...
+Function 'evaluate' executed in 0.0127 seconds (Start: 2025-11-12 09:53:10, End: 2025-11-12 09:53:10)
+Function 'evaluate_shared_test starts at 2025-11-12 09:53:10...
+Function 'evaluate_shared_test' executed in 0.0326 seconds (Start: 2025-11-12 09:53:10, End: 2025-11-12 09:53:10)
+
+*************** Server Epoch: 1/2, Server Aggregation **********
+Function 'aggregate_cnns starts at 2025-11-12 09:53:10...
+*aggregate cnn...
+each update shape: torch.Size([390378])
+Unique weights: tensor([1]), counts: tensor([10])
+Krum scores: ['10.49', '8.14', '8.61', '8.82', '11.42', '9.93', '9.75', '39076396.00', '39001628.00', '39063928.00']
+selected_index: 1
+m: 7
+krum_avg, clients_type: [['Update 0']
+ ['Update 1']
+ ['Update 2']
+ ['Update 3']
+ ['Update 4']
+ ['Update 5']
+ ['Update 6']
+ ['Byzantine']
+ ['Byzantine']
+ ['Byzantine']], client_updates: min: -0.05, max: 0.06, time taken: 0.0392s, l2_error: 0.00
+Function 'aggregate_cnns' executed in 0.1305 seconds (Start: 2025-11-12 09:53:10, End: 2025-11-12 09:53:10)
+
+***************************** Final Results (mu+/-std) *************************************
+
+ Final***model_type: global***
+*client_0:
+	server_epoch_0, train_acc:0.1573-0.0000, val_acc:0.1506-0.0000, test_acc:0.1675-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.7894-0.0000, val_acc:0.8086-0.0000, test_acc:0.7632-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_1:
+	server_epoch_0, train_acc:0.1631-0.0000, val_acc:0.1404-0.0000, test_acc:0.1722-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.6992-0.0000, val_acc:0.7193-0.0000, test_acc:0.7118-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_2:
+	server_epoch_0, train_acc:0.0579-0.0000, val_acc:0.0639-0.0000, test_acc:0.0624-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.5915-0.0000, val_acc:0.6056-0.0000, test_acc:0.5702-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_3:
+	server_epoch_0, train_acc:0.2916-0.0000, val_acc:0.2652-0.0000, test_acc:0.3248-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.8676-0.0000, val_acc:0.8902-0.0000, test_acc:0.8730-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_4:
+	server_epoch_0, train_acc:0.1616-0.0000, val_acc:0.1445-0.0000, test_acc:0.1693-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.7525-0.0000, val_acc:0.7601-0.0000, test_acc:0.7538-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_5:
+	server_epoch_0, train_acc:0.0603-0.0000, val_acc:0.0604-0.0000, test_acc:0.0765-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.8678-0.0000, val_acc:0.8947-0.0000, test_acc:0.8704-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_6:
+	server_epoch_0, train_acc:0.1603-0.0000, val_acc:0.1492-0.0000, test_acc:0.1737-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.6945-0.0000, val_acc:0.6956-0.0000, test_acc:0.7036-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_7:
+	server_epoch_0, train_acc:0.0294-0.0000, val_acc:0.0321-0.0000, test_acc:0.0272-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.6820-0.0000, val_acc:0.6571-0.0000, test_acc:0.6969-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_8:
+	server_epoch_0, train_acc:0.0027-0.0000, val_acc:0.0044-0.0000, test_acc:0.0000-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.4038-0.0000, val_acc:0.3902-0.0000, test_acc:0.3753-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_9:
+	server_epoch_0, train_acc:0.0110-0.0000, val_acc:0.0168-0.0000, test_acc:0.0194-0.0000, shared_acc:0.1040-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.6121-0.0000, val_acc:0.6418-0.0000, test_acc:0.5955-0.0000, shared_acc:0.7078-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+
+ Final***model_type: local***
+*client_0:
+	server_epoch_0, train_acc:0.9330-0.0000, val_acc:0.9461-0.0000, test_acc:0.9367-0.0000, shared_acc:0.6710-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.9361-0.0000, val_acc:0.9275-0.0000, test_acc:0.9293-0.0000, shared_acc:0.7829-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_1:
+	server_epoch_0, train_acc:0.8511-0.0000, val_acc:0.8684-0.0000, test_acc:0.8330-0.0000, shared_acc:0.5526-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.9404-0.0000, val_acc:0.9518-0.0000, test_acc:0.9332-0.0000, shared_acc:0.6952-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_2:
+	server_epoch_0, train_acc:0.8892-0.0000, val_acc:0.8778-0.0000, test_acc:0.8753-0.0000, shared_acc:0.5999-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.9384-0.0000, val_acc:0.9194-0.0000, test_acc:0.9343-0.0000, shared_acc:0.7831-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_3:
+	server_epoch_0, train_acc:0.9311-0.0000, val_acc:0.9299-0.0000, test_acc:0.9328-0.0000, shared_acc:0.5767-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.9667-0.0000, val_acc:0.9695-0.0000, test_acc:0.9585-0.0000, shared_acc:0.6956-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_4:
+	server_epoch_0, train_acc:0.9599-0.0000, val_acc:0.9548-0.0000, test_acc:0.9553-0.0000, shared_acc:0.7563-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.9684-0.0000, val_acc:0.9560-0.0000, test_acc:0.9633-0.0000, shared_acc:0.8219-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_5:
+	server_epoch_0, train_acc:0.9338-0.0000, val_acc:0.9357-0.0000, test_acc:0.9336-0.0000, shared_acc:0.5726-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.9679-0.0000, val_acc:0.9669-0.0000, test_acc:0.9571-0.0000, shared_acc:0.6902-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_6:
+	server_epoch_0, train_acc:0.9219-0.0000, val_acc:0.9052-0.0000, test_acc:0.9071-0.0000, shared_acc:0.6136-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.9484-0.0000, val_acc:0.9375-0.0000, test_acc:0.9394-0.0000, shared_acc:0.7785-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_7:
+	server_epoch_0, train_acc:0.1089-0.0000, val_acc:0.0857-0.0000, test_acc:0.1065-0.0000, shared_acc:0.1076-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.0139-0.0000, val_acc:0.0143-0.0000, test_acc:0.0136-0.0000, shared_acc:0.0728-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_8:
+	server_epoch_0, train_acc:0.0303-0.0000, val_acc:0.0266-0.0000, test_acc:0.0195-0.0000, shared_acc:0.0916-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.1122-0.0000, val_acc:0.1419-0.0000, test_acc:0.0878-0.0000, shared_acc:0.1299-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+*client_9:
+	server_epoch_0, train_acc:0.1238-0.0000, val_acc:0.1250-0.0000, test_acc:0.1396-0.0000, shared_acc:0.0752-0.0000, l2_error:0.0000-0.0000, time_taken:0.1278-0.0000, 
+	server_epoch_1, train_acc:0.1661-0.0000, val_acc:0.1772-0.0000, test_acc:0.1694-0.0000, shared_acc:0.1352-0.0000, l2_error:0.0000-0.0000, time_taken:0.0392-0.0000, 
+Function 'main' executed in 67.8473 seconds (Start: 2025-11-12 09:52:03, End: 2025-11-12 09:53:10)

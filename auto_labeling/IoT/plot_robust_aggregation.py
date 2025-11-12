@@ -532,28 +532,34 @@ if __name__ == '__main__':
     # # JOBID = 346665  # SENTMENT140: label flipping Attack
 
 
-    # modify rKrum     20250902 in ragg, IOT doest not filter extreme valeus first
-    JOBID, FILENAME = (347291, 'SPAMBASE/Gaussian_Attack')  # SPAMBASE: Gaussian Attack
-    JOBID, FILENAME = (347292, 'SPAMBASE/Omniscient_Attack')
-    # # # # # # #
-    JOBID, FILENAME = (347242, 'MNIST/Random_Noise')
-    JOBID, FILENAME = (347255, 'MNIST/Large_Value')
-    JOBID, FILENAME = (347260, 'MNIST/Label_Flipping')
+    # # modify rKrum     20250902 in ragg, IOT doest not filter extreme valeus first
+    # JOBID, FILENAME = (347291, 'SPAMBASE/Gaussian_Attack')  # SPAMBASE: Gaussian Attack
+    # JOBID, FILENAME = (347292, 'SPAMBASE/Omniscient_Attack')
     # # # # # # # #
-    JOBID, FILENAME = (347265, 'SENTMENT140/Random_Noise')
-    JOBID, FILENAME = (347270, 'SENTMENT140/Large_Value')
-    JOBID, FILENAME = (347275, 'SENTMENT140/Label_Flipping')
+    # JOBID, FILENAME = (347242, 'MNIST/Random_Noise')
+    # JOBID, FILENAME = (347255, 'MNIST/Large_Value')
+    # JOBID, FILENAME = (347260, 'MNIST/Label_Flipping')
+    # # # # # # # # #
+    # JOBID, FILENAME = (347265, 'SENTMENT140/Random_Noise')
+    # JOBID, FILENAME = (347270, 'SENTMENT140/Large_Value')
+    # JOBID, FILENAME = (347275, 'SENTMENT140/Label_Flipping')
 
-    SERVER_EPOCHS = 100
+
+    # JOBID, FILENAME = (347291, 'SPAMBASE/Gaussian_Attack')  # SPAMBASE: Gaussian Attack
+    # JOBID, FILENAME = (347292, 'SPAMBASE/Omniscient_Attack')
+    # # # # # # #
+    JOBID, FILENAME = (360675, 'MNIST/Random_Noise')
+    JOBID, FILENAME = (360676, 'MNIST/Large_Value')
+    JOBID, FILENAME = (360677, 'MNIST/Label_Flipping')
+    # # # # # # # #
+    JOBID, FILENAME = (360677, 'SENTMENT140/Random_Noise')
+    JOBID, FILENAME = (360679, 'SENTMENT140/Large_Value')
+    JOBID, FILENAME = (360680, 'SENTMENT140/Label_Flipping')
+
+
+    SERVER_EPOCHS = 2
     NUM_CLIENTS = 50
 
-    # #  # NewsCategory
-    # JOBID = 274668  # NewsCategory with different alpha, num_clients=20, epochs=10
-    # JOBID = 274713  # NewsCategory with different alpha, num_clients=50, epochs=100
-
-    # # Fakenews
-    # JOBID = 274735  # Fakenews with different alpha,  num_clients=20, epochs=10
-    # JOBID = 274765  # Fakenews with different alpha,  num_clients=50, epochs=100
 
 
     # # METRIC = 'loss'

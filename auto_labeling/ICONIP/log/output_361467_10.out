@@ -1,0 +1,476 @@
+/users/kunyang/nvflare/auto_labeling
+current directory: /users/kunyang/nvflare/auto_labeling
+current file: /users/kunyang/nvflare/auto_labeling/ICONIP/ragg_model_random_noise_sentiment140.py
+Device: cuda
+Function 'main starts at 2025-11-12 09:52:03...
+
+
+Namespace(labeling_rate=10.0, server_epochs=2, num_clients=10, aggregation_method='median', verbose=5)
+NUM_CLIENTS: 10, in which NUM_HONEST_CLIENTS: 7 and NUM_BYZANTINE_CLIENTS: 3
+{'SEED': 42, 'TRAIN_VAL_SEED': 0, 'DEVICE': device(type='cuda'), 'VERBOSE': 5, 'LABELING_RATE': 0.8, 'BIG_NUMBER': 10.0, 'SERVER_EPOCHS': 2, 'CLIENT_EPOCHS': 5, 'BATCH_SIZE': 512, 'IID_CLASSES_CNT': 5, 'NUM_CLIENTS': 10, 'NUM_BYZANTINE_CLIENTS': 3, 'NUM_HONEST_CLIENTS': 7, 'AGGREGATION_METHOD': 'median', 'LABELS': {0, 1}, 'NUM_CLASSES': 2, 'CNN': <class 'ragg.base.FNN'>, 'in_dim': 100}
+
+*************************** Generate Clients Data ******************************
+Function 'gen_client_data starts at 2025-11-12 09:52:03...
+X.shape: (144000, 100), y.shape: (144000,)
+
+	: size, Client_0,  Client_1,  Client_2,  Client_3,  Client_4,  Client_5,  Client_6,  Client_7,  Client_8,  Client_9
+class 0:  72022 [9881, 6064, 7500, 6906, 10267, 6735, 6422, 6084, 3129, 9034] , alpha: 10.0
+class 1:  71978 [5643, 8409, 8684, 7994, 8254, 8094, 6077, 4750, 8013, 6060] , alpha: 10.0
+client 0's data size: 10834, total classes: 2, in which {0: 6084, 1: 4750}
+client 1's data size: 14900, total classes: 2, in which {0: 6906, 1: 7994}
+client 2's data size: 16184, total classes: 2, in which {0: 7500, 1: 8684}
+client 3's data size: 11142, total classes: 2, in which {0: 3129, 1: 8013}
+client 4's data size: 14829, total classes: 2, in which {0: 6735, 1: 8094}
+client 5's data size: 12499, total classes: 2, in which {0: 6422, 1: 6077}
+client 6's data size: 15094, total classes: 2, in which {0: 9034, 1: 6060}
+client 7's data size: 18521, total classes: 2, in which {0: 10267, 1: 8254}
+client 8's data size: 15524, total classes: 2, in which {0: 9881, 1: 5643}
+client 9's data size: 14473, total classes: 2, in which {0: 6064, 1: 8409}
+total size: 144000
+
+*** client_0: Honest...
+client_0 data (2):  {0: 6084, 1: 4750}
+
+*** client_1: Honest...
+client_1 data (2):  {0: 6906, 1: 7994}
+
+*** client_2: Honest...
+client_2 data (2):  {0: 7500, 1: 8684}
+
+*** client_3: Honest...
+client_3 data (2):  {0: 3129, 1: 8013}
+
+*** client_4: Honest...
+client_4 data (2):  {0: 6735, 1: 8094}
+
+*** client_5: Honest...
+client_5 data (2):  {0: 6422, 1: 6077}
+
+*** client_6: Honest...
+client_6 data (2):  {0: 9034, 1: 6060}
+
+*** client_7: Byzantine...
+client_7 data (2):  {0: 10267, 1: 8254}
+
+*** client_8: Byzantine...
+client_8 data (2):  {0: 9881, 1: 5643}
+
+*** client_9: Byzantine...
+client_9 data (2):  {0: 6064, 1: 8409}
+Function 'gen_client_data' executed in 16.6099 seconds (Start: 2025-11-12 09:52:03, End: 2025-11-12 09:52:20)
+
+***************************** Global Models *************************************
+FNN(
+  (leaky_relu): LeakyReLU(negative_slope=0.2)
+  (fc11): Linear(in_features=100, out_features=32, bias=True)
+  (fc21): Linear(in_features=32, out_features=16, bias=True)
+  (fc22): Linear(in_features=16, out_features=8, bias=True)
+  (fc33): Linear(in_features=8, out_features=2, bias=True)
+)
+
+*************** Server Epoch: 0/2, Client Training *************
+
+*** server_epoch:0, client_0: Honest... ***
+client_0 data (2): {0: 4355, 1: 3445}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:20...
+X: min: -7.130988121032715, max: 7.0036115646362305
+Compute classes weights...
+labeled_y:  dict_items([(0, 4355), (1, 3445)])
+class_weight: tensor([0.44, 0.56], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 11.5212, val_loss: 11.5212, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 7.8496, val_loss: 7.8496, LR: 0.001
+Function 'train_cnn' executed in 1.5745 seconds (Start: 2025-11-12 09:52:20, End: 2025-11-12 09:52:22)
+dist(local, global): 5.762167930603027
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:22...
+Function 'evaluate' executed in 0.0121 seconds (Start: 2025-11-12 09:52:22, End: 2025-11-12 09:52:22)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:22...
+Function 'evaluate_shared_test' executed in 0.0280 seconds (Start: 2025-11-12 09:52:22, End: 2025-11-12 09:52:22)
+
+*** server_epoch:0, client_1: Honest... ***
+client_1 data (2): {0: 4961, 1: 5767}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:22...
+X: min: -6.6343488693237305, max: 7.2401299476623535
+Compute classes weights...
+labeled_y:  dict_items([(0, 4961), (1, 5767)])
+class_weight: tensor([0.54, 0.46], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 14.4821, val_loss: 14.4821, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 9.5361, val_loss: 9.5361, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.6543 seconds (Start: 2025-11-12 09:52:22, End: 2025-11-12 09:52:23)
+dist(local, global): 6.476821422576904
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:23...
+Function 'evaluate' executed in 0.0130 seconds (Start: 2025-11-12 09:52:23, End: 2025-11-12 09:52:23)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:23...
+Function 'evaluate_shared_test' executed in 0.0249 seconds (Start: 2025-11-12 09:52:23, End: 2025-11-12 09:52:23)
+
+*** server_epoch:0, client_2: Honest... ***
+client_2 data (2): {0: 5399, 1: 6253}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:24...
+X: min: -6.797391891479492, max: 7.5816450119018555
+Compute classes weights...
+labeled_y:  dict_items([(0, 5399), (1, 6253)])
+class_weight: tensor([0.54, 0.46], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 15.8463, val_loss: 15.8463, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 10.6014, val_loss: 10.6014, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.8197 seconds (Start: 2025-11-12 09:52:24, End: 2025-11-12 09:52:24)
+dist(local, global): 6.521916389465332
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:24...
+Function 'evaluate' executed in 0.0135 seconds (Start: 2025-11-12 09:52:24, End: 2025-11-12 09:52:24)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:24...
+Function 'evaluate_shared_test' executed in 0.0249 seconds (Start: 2025-11-12 09:52:24, End: 2025-11-12 09:52:24)
+
+*** server_epoch:0, client_3: Honest... ***
+client_3 data (2): {0: 2251, 1: 5770}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:25...
+X: min: -7.2192063331604, max: 6.97460412979126
+Compute classes weights...
+labeled_y:  dict_items([(0, 2251), (1, 5770)])
+class_weight: tensor([0.72, 0.28], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 9.9751, val_loss: 9.9751, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 7.0059, val_loss: 7.0059, LR: 0.001
+Function 'train_cnn' executed in 0.4857 seconds (Start: 2025-11-12 09:52:25, End: 2025-11-12 09:52:25)
+dist(local, global): 5.856390476226807
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:25...
+Function 'evaluate' executed in 0.0115 seconds (Start: 2025-11-12 09:52:25, End: 2025-11-12 09:52:25)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:25...
+Function 'evaluate_shared_test' executed in 0.0251 seconds (Start: 2025-11-12 09:52:25, End: 2025-11-12 09:52:25)
+
+*** server_epoch:0, client_4: Honest... ***
+client_4 data (2): {0: 4839, 1: 5837}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:26...
+X: min: -7.200689315795898, max: 6.457242012023926
+Compute classes weights...
+labeled_y:  dict_items([(0, 4839), (1, 5837)])
+class_weight: tensor([0.55, 0.45], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 14.4161, val_loss: 14.4161, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 9.6106, val_loss: 9.6106, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.6594 seconds (Start: 2025-11-12 09:52:26, End: 2025-11-12 09:52:27)
+dist(local, global): 6.511076927185059
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:27...
+Function 'evaluate' executed in 0.0129 seconds (Start: 2025-11-12 09:52:27, End: 2025-11-12 09:52:27)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:27...
+Function 'evaluate_shared_test' executed in 0.0258 seconds (Start: 2025-11-12 09:52:27, End: 2025-11-12 09:52:27)
+
+*** server_epoch:0, client_5: Honest... ***
+client_5 data (2): {0: 4591, 1: 4408}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:27...
+X: min: -6.972341537475586, max: 6.859632968902588
+Compute classes weights...
+labeled_y:  dict_items([(0, 4591), (1, 4408)])
+class_weight: tensor([0.49, 0.51], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 12.6834, val_loss: 12.6834, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 8.4956, val_loss: 8.4956, LR: 0.001
+Function 'train_cnn' executed in 0.5484 seconds (Start: 2025-11-12 09:52:27, End: 2025-11-12 09:52:28)
+dist(local, global): 6.217779159545898
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:28...
+Function 'evaluate' executed in 0.0120 seconds (Start: 2025-11-12 09:52:28, End: 2025-11-12 09:52:28)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:28...
+Function 'evaluate_shared_test' executed in 0.0250 seconds (Start: 2025-11-12 09:52:28, End: 2025-11-12 09:52:28)
+
+*** server_epoch:0, client_6: Honest... ***
+client_6 data (2): {0: 6477, 1: 4390}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:28...
+X: min: -6.952571392059326, max: 6.520020961761475
+Compute classes weights...
+labeled_y:  dict_items([(0, 6477), (1, 4390)])
+class_weight: tensor([0.40, 0.60], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 15.9734, val_loss: 15.9734, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 10.1023, val_loss: 10.1023, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.7765 seconds (Start: 2025-11-12 09:52:28, End: 2025-11-12 09:52:29)
+dist(local, global): 6.254955291748047
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:29...
+Function 'evaluate' executed in 0.0131 seconds (Start: 2025-11-12 09:52:29, End: 2025-11-12 09:52:29)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:29...
+Function 'evaluate_shared_test' executed in 0.0249 seconds (Start: 2025-11-12 09:52:29, End: 2025-11-12 09:52:29)
+
+***server_epoch:0, client_7: Byzantine...
+client_7 data: {0: 7396, 1: 5938}
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:30...
+Function 'evaluate' executed in 0.0142 seconds (Start: 2025-11-12 09:52:30, End: 2025-11-12 09:52:30)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:30...
+Function 'evaluate_shared_test' executed in 0.0253 seconds (Start: 2025-11-12 09:52:30, End: 2025-11-12 09:52:30)
+
+***server_epoch:0, client_8: Byzantine...
+client_8 data: {0: 7081, 1: 4096}
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:30...
+Function 'evaluate' executed in 0.0131 seconds (Start: 2025-11-12 09:52:30, End: 2025-11-12 09:52:30)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:30...
+Function 'evaluate_shared_test' executed in 0.0250 seconds (Start: 2025-11-12 09:52:30, End: 2025-11-12 09:52:30)
+
+***server_epoch:0, client_9: Byzantine...
+client_9 data: {0: 4326, 1: 6094}
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:31...
+Function 'evaluate' executed in 0.0127 seconds (Start: 2025-11-12 09:52:31, End: 2025-11-12 09:52:31)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:31...
+Function 'evaluate_shared_test' executed in 0.0250 seconds (Start: 2025-11-12 09:52:31, End: 2025-11-12 09:52:31)
+
+*************** Server Epoch: 0/2, Server Aggregation **********
+Function 'aggregate_cnns starts at 2025-11-12 09:52:31...
+*aggregate cnn...
+each update shape: torch.Size([3914])
+Unique weights: tensor([1]), counts: tensor([10])
+Chosen update: Counter({5: 665, 1: 624, 4: 586, 2: 577, 0: 560, 6: 493, 3: 378, 8: 11, 7: 10, 9: 10}), updates[0].shape: (3914,), clients_weights: [1 1 1 1 1 1 1 1 1 1]
+median, clients_type: [['Update 0']
+ ['Update 1']
+ ['Update 2']
+ ['Update 3']
+ ['Update 4']
+ ['Update 5']
+ ['Update 6']
+ ['Update 7']
+ ['Update 8']
+ ['Update 9']], client_updates: min: -0.18, max: 0.16, time taken: 0.0078s, l2_error: 0.86
+Function 'aggregate_cnns' executed in 0.0144 seconds (Start: 2025-11-12 09:52:31, End: 2025-11-12 09:52:31)
+
+*************** Server Epoch: 1/2, Client Training *************
+
+*** server_epoch:1, client_0: Honest... ***
+client_0 data (2): {0: 4355, 1: 3445}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:31...
+X: min: -7.130988121032715, max: 7.0036115646362305
+Compute classes weights...
+labeled_y:  dict_items([(0, 4355), (1, 3445)])
+class_weight: tensor([0.44, 0.56], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 7.4271, val_loss: 7.4271, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 7.0860, val_loss: 7.0860, LR: 0.001
+Function 'train_cnn' executed in 0.4835 seconds (Start: 2025-11-12 09:52:31, End: 2025-11-12 09:52:32)
+dist(local, global): 1.3542137145996094
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:32...
+Function 'evaluate' executed in 0.0115 seconds (Start: 2025-11-12 09:52:32, End: 2025-11-12 09:52:32)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:32...
+Function 'evaluate_shared_test' executed in 0.0252 seconds (Start: 2025-11-12 09:52:32, End: 2025-11-12 09:52:32)
+
+*** server_epoch:1, client_1: Honest... ***
+client_1 data (2): {0: 4961, 1: 5767}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:33...
+X: min: -6.6343488693237305, max: 7.2401299476623535
+Compute classes weights...
+labeled_y:  dict_items([(0, 4961), (1, 5767)])
+class_weight: tensor([0.54, 0.46], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 9.7727, val_loss: 9.7727, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 9.3409, val_loss: 9.3409, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.6488 seconds (Start: 2025-11-12 09:52:33, End: 2025-11-12 09:52:33)
+dist(local, global): 1.4976708889007568
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:33...
+Function 'evaluate' executed in 0.0129 seconds (Start: 2025-11-12 09:52:33, End: 2025-11-12 09:52:33)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:33...
+Function 'evaluate_shared_test' executed in 0.0251 seconds (Start: 2025-11-12 09:52:33, End: 2025-11-12 09:52:33)
+
+*** server_epoch:1, client_2: Honest... ***
+client_2 data (2): {0: 5399, 1: 6253}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:34...
+X: min: -6.797391891479492, max: 7.5816450119018555
+Compute classes weights...
+labeled_y:  dict_items([(0, 5399), (1, 6253)])
+class_weight: tensor([0.54, 0.46], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 10.9396, val_loss: 10.9396, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 10.4230, val_loss: 10.4230, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.7111 seconds (Start: 2025-11-12 09:52:34, End: 2025-11-12 09:52:35)
+dist(local, global): 1.5779145956039429
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:35...
+Function 'evaluate' executed in 0.0140 seconds (Start: 2025-11-12 09:52:35, End: 2025-11-12 09:52:35)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:35...
+Function 'evaluate_shared_test' executed in 0.0248 seconds (Start: 2025-11-12 09:52:35, End: 2025-11-12 09:52:35)
+
+*** server_epoch:1, client_3: Honest... ***
+client_3 data (2): {0: 2251, 1: 5770}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:35...
+X: min: -7.2192063331604, max: 6.97460412979126
+Compute classes weights...
+labeled_y:  dict_items([(0, 2251), (1, 5770)])
+class_weight: tensor([0.72, 0.28], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 7.1022, val_loss: 7.1022, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 6.2970, val_loss: 6.2970, LR: 0.001
+Function 'train_cnn' executed in 0.5908 seconds (Start: 2025-11-12 09:52:35, End: 2025-11-12 09:52:36)
+dist(local, global): 1.8690743446350098
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:36...
+Function 'evaluate' executed in 0.0115 seconds (Start: 2025-11-12 09:52:36, End: 2025-11-12 09:52:36)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:36...
+Function 'evaluate_shared_test' executed in 0.0252 seconds (Start: 2025-11-12 09:52:36, End: 2025-11-12 09:52:36)
+
+*** server_epoch:1, client_4: Honest... ***
+client_4 data (2): {0: 4839, 1: 5837}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:36...
+X: min: -7.200689315795898, max: 6.457242012023926
+Compute classes weights...
+labeled_y:  dict_items([(0, 4839), (1, 5837)])
+class_weight: tensor([0.55, 0.45], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 9.8447, val_loss: 9.8447, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 9.4060, val_loss: 9.4060, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.6466 seconds (Start: 2025-11-12 09:52:36, End: 2025-11-12 09:52:37)
+dist(local, global): 1.5371984243392944
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:37...
+Function 'evaluate' executed in 0.0129 seconds (Start: 2025-11-12 09:52:37, End: 2025-11-12 09:52:37)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:37...
+Function 'evaluate_shared_test' executed in 0.0252 seconds (Start: 2025-11-12 09:52:37, End: 2025-11-12 09:52:37)
+
+*** server_epoch:1, client_5: Honest... ***
+client_5 data (2): {0: 4591, 1: 4408}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:37...
+X: min: -6.972341537475586, max: 6.859632968902588
+Compute classes weights...
+labeled_y:  dict_items([(0, 4591), (1, 4408)])
+class_weight: tensor([0.49, 0.51], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 8.5023, val_loss: 8.5023, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 8.1435, val_loss: 8.1435, LR: 0.001
+Function 'train_cnn' executed in 0.5544 seconds (Start: 2025-11-12 09:52:37, End: 2025-11-12 09:52:38)
+dist(local, global): 1.3652660846710205
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:38...
+Function 'evaluate' executed in 0.0120 seconds (Start: 2025-11-12 09:52:38, End: 2025-11-12 09:52:38)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:38...
+Function 'evaluate_shared_test' executed in 0.0262 seconds (Start: 2025-11-12 09:52:38, End: 2025-11-12 09:52:38)
+
+*** server_epoch:1, client_6: Honest... ***
+client_6 data (2): {0: 6477, 1: 4390}
+Train FNN...
+Function 'train_cnn starts at 2025-11-12 09:52:39...
+X: min: -6.952571392059326, max: 6.520020961761475
+Compute classes weights...
+labeled_y:  dict_items([(0, 6477), (1, 4390)])
+class_weight: tensor([0.40, 0.60], device='cuda:0'), sum(class_weight) = 1.0
+train_cnn epoch: 0, local_cnn train loss: 10.0646, val_loss: 10.0646, LR: 0.001
+train_cnn epoch: 4, local_cnn train loss: 9.4933, val_loss: 9.4933, LR: 0.0009000000000000001
+Function 'train_cnn' executed in 0.6565 seconds (Start: 2025-11-12 09:52:39, End: 2025-11-12 09:52:39)
+dist(local, global): 1.646308422088623
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:39...
+Function 'evaluate' executed in 0.0129 seconds (Start: 2025-11-12 09:52:39, End: 2025-11-12 09:52:39)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:39...
+Function 'evaluate_shared_test' executed in 0.0249 seconds (Start: 2025-11-12 09:52:39, End: 2025-11-12 09:52:39)
+
+***server_epoch:1, client_7: Byzantine...
+client_7 data: {0: 7396, 1: 5938}
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:40...
+Function 'evaluate' executed in 0.0142 seconds (Start: 2025-11-12 09:52:40, End: 2025-11-12 09:52:40)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:40...
+Function 'evaluate_shared_test' executed in 0.0249 seconds (Start: 2025-11-12 09:52:40, End: 2025-11-12 09:52:40)
+
+***server_epoch:1, client_8: Byzantine...
+client_8 data: {0: 7081, 1: 4096}
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:40...
+Function 'evaluate' executed in 0.0159 seconds (Start: 2025-11-12 09:52:40, End: 2025-11-12 09:52:41)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:41...
+Function 'evaluate_shared_test' executed in 0.0250 seconds (Start: 2025-11-12 09:52:41, End: 2025-11-12 09:52:41)
+
+***server_epoch:1, client_9: Byzantine...
+client_9 data: {0: 4326, 1: 6094}
+Evaluate FNNs...
+Function 'evaluate starts at 2025-11-12 09:52:41...
+Function 'evaluate' executed in 0.0128 seconds (Start: 2025-11-12 09:52:41, End: 2025-11-12 09:52:41)
+Function 'evaluate_shared_test starts at 2025-11-12 09:52:41...
+Function 'evaluate_shared_test' executed in 0.0249 seconds (Start: 2025-11-12 09:52:41, End: 2025-11-12 09:52:41)
+
+*************** Server Epoch: 1/2, Server Aggregation **********
+Function 'aggregate_cnns starts at 2025-11-12 09:52:41...
+*aggregate cnn...
+each update shape: torch.Size([3914])
+Unique weights: tensor([1]), counts: tensor([10])
+Chosen update: Counter({1: 606, 5: 592, 0: 585, 2: 566, 4: 565, 6: 512, 3: 460, 7: 12, 8: 9, 9: 7}), updates[0].shape: (3914,), clients_weights: [1 1 1 1 1 1 1 1 1 1]
+median, clients_type: [['Update 0']
+ ['Update 1']
+ ['Update 2']
+ ['Update 3']
+ ['Update 4']
+ ['Update 5']
+ ['Update 6']
+ ['Update 7']
+ ['Update 8']
+ ['Update 9']], client_updates: min: -0.07, max: 0.09, time taken: 0.0018s, l2_error: 0.36
+Function 'aggregate_cnns' executed in 0.0084 seconds (Start: 2025-11-12 09:52:41, End: 2025-11-12 09:52:41)
+
+***************************** Final Results (mu+/-std) *************************************
+
+ Final***model_type: global***
+*client_0:
+	server_epoch_0, train_acc:0.4417-0.0000, val_acc:0.4233-0.0000, test_acc:0.4329-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7821-0.0000, val_acc:0.7555-0.0000, test_acc:0.7753-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_1:
+	server_epoch_0, train_acc:0.5376-0.0000, val_acc:0.5285-0.0000, test_acc:0.5359-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7825-0.0000, val_acc:0.7810-0.0000, test_acc:0.7617-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_2:
+	server_epoch_0, train_acc:0.5366-0.0000, val_acc:0.5290-0.0000, test_acc:0.5394-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7743-0.0000, val_acc:0.7776-0.0000, test_acc:0.7714-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_3:
+	server_epoch_0, train_acc:0.7194-0.0000, val_acc:0.7231-0.0000, test_acc:0.7169-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7780-0.0000, val_acc:0.7825-0.0000, test_acc:0.7918-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_4:
+	server_epoch_0, train_acc:0.5467-0.0000, val_acc:0.5468-0.0000, test_acc:0.5421-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7803-0.0000, val_acc:0.7675-0.0000, test_acc:0.7960-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_5:
+	server_epoch_0, train_acc:0.4898-0.0000, val_acc:0.4700-0.0000, test_acc:0.4796-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7751-0.0000, val_acc:0.7540-0.0000, test_acc:0.7704-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_6:
+	server_epoch_0, train_acc:0.4040-0.0000, val_acc:0.4081-0.0000, test_acc:0.3899-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7789-0.0000, val_acc:0.7831-0.0000, test_acc:0.7794-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_7:
+	server_epoch_0, train_acc:0.4453-0.0000, val_acc:0.4656-0.0000, test_acc:0.4389-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7671-0.0000, val_acc:0.7800-0.0000, test_acc:0.7814-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_8:
+	server_epoch_0, train_acc:0.3665-0.0000, val_acc:0.3680-0.0000, test_acc:0.3510-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7600-0.0000, val_acc:0.7826-0.0000, test_acc:0.7800-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_9:
+	server_epoch_0, train_acc:0.5848-0.0000, val_acc:0.5639-0.0000, test_acc:0.5741-0.0000, shared_acc:0.4992-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7798-0.0000, val_acc:0.7884-0.0000, test_acc:0.7751-0.0000, shared_acc:0.7729-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+
+ Final***model_type: local***
+*client_0:
+	server_epoch_0, train_acc:0.7942-0.0000, val_acc:0.7532-0.0000, test_acc:0.7743-0.0000, shared_acc:0.7559-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.8040-0.0000, val_acc:0.7601-0.0000, test_acc:0.7743-0.0000, shared_acc:0.7686-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_1:
+	server_epoch_0, train_acc:0.7993-0.0000, val_acc:0.7777-0.0000, test_acc:0.7648-0.0000, shared_acc:0.7701-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7995-0.0000, val_acc:0.7810-0.0000, test_acc:0.7644-0.0000, shared_acc:0.7695-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_2:
+	server_epoch_0, train_acc:0.7888-0.0000, val_acc:0.7884-0.0000, test_acc:0.7661-0.0000, shared_acc:0.7721-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7907-0.0000, val_acc:0.7915-0.0000, test_acc:0.7698-0.0000, shared_acc:0.7741-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_3:
+	server_epoch_0, train_acc:0.8145-0.0000, val_acc:0.8038-0.0000, test_acc:0.8116-0.0000, shared_acc:0.6925-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.8299-0.0000, val_acc:0.8150-0.0000, test_acc:0.8170-0.0000, shared_acc:0.7364-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_4:
+	server_epoch_0, train_acc:0.7949-0.0000, val_acc:0.7582-0.0000, test_acc:0.7967-0.0000, shared_acc:0.7673-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7955-0.0000, val_acc:0.7599-0.0000, test_acc:0.8001-0.0000, shared_acc:0.7680-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_5:
+	server_epoch_0, train_acc:0.7921-0.0000, val_acc:0.7440-0.0000, test_acc:0.7672-0.0000, shared_acc:0.7678-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.7911-0.0000, val_acc:0.7590-0.0000, test_acc:0.7732-0.0000, shared_acc:0.7732-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_6:
+	server_epoch_0, train_acc:0.8008-0.0000, val_acc:0.7889-0.0000, test_acc:0.7913-0.0000, shared_acc:0.7616-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.8079-0.0000, val_acc:0.7873-0.0000, test_acc:0.7926-0.0000, shared_acc:0.7687-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_7:
+	server_epoch_0, train_acc:0.4625-0.0000, val_acc:0.4818-0.0000, test_acc:0.4721-0.0000, shared_acc:0.4916-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.4999-0.0000, val_acc:0.5128-0.0000, test_acc:0.4966-0.0000, shared_acc:0.5052-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_8:
+	server_epoch_0, train_acc:0.4511-0.0000, val_acc:0.4163-0.0000, test_acc:0.4519-0.0000, shared_acc:0.5061-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.4159-0.0000, val_acc:0.4308-0.0000, test_acc:0.3997-0.0000, shared_acc:0.4922-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+*client_9:
+	server_epoch_0, train_acc:0.5270-0.0000, val_acc:0.5440-0.0000, test_acc:0.5271-0.0000, shared_acc:0.5086-0.0000, l2_error:0.8623-0.0000, time_taken:0.0078-0.0000, 
+	server_epoch_1, train_acc:0.4592-0.0000, val_acc:0.4706-0.0000, test_acc:0.4608-0.0000, shared_acc:0.4828-0.0000, l2_error:0.3638-0.0000, time_taken:0.0018-0.0000, 
+Function 'main' executed in 38.1824 seconds (Start: 2025-11-12 09:52:03, End: 2025-11-12 09:52:41)

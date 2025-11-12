@@ -1,4 +1,8 @@
-"""
+"""Jobs must be submitted from login node. 
+
+    module load conda
+    conda activate nvflare-3.10
+
     python3 sbatch_all.py
 
     For spambase,
@@ -29,10 +33,10 @@ input_str = """#!/bin/bash
 #SBATCH --array=0-12
 
 labeling_rates=(0.5 10)
-# server_epochs_values=(2)
-# num_clients_values=(10)
-server_epochs_values=(200)
-num_clients_values=(100)
+server_epochs_values=(2)
+num_clients_values=(10)
+# server_epochs_values=(200)
+# num_clients_values=(100)
 aggregation_values=('adaptive_krum' 'krum' 'adaptive_krum_avg' 'krum_avg' 'median' 'mean')
 
 total_combinations=$(( ${#labeling_rates[@]} * ${#server_epochs_values[@]} * ${#num_clients_values[@]} * ${#aggregation_values[@]} ))
@@ -66,25 +70,21 @@ pwd
 
 # Define dataset, attack type, and corresponding script
 cases = {
-    # 'spambase_paper': {
-    #     'gaussian': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_gaussian.py $PARAMS',
-    #     'omniscient': 'PYTHONPATH=. python3 ICONIP/replication_neurips/ragg_random_spambase_omniscient.py $PARAMS',
+    # 'spambase': {
+    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_spambase.py $PARAMS',
+    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
+    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
     # },
-    'spambase': {
-        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_spambase.py $PARAMS',
-        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_spambase.py $PARAMS',
-        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_spambase.py $PARAMS',
+    'mnist': {
+        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS',
+        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS',
+        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_mnist.py $PARAMS',
     },
-    # 'mnist': {
-    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_mnist.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_mnist.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_mnist.py $PARAMS',
-    # },
-    # 'sentiment140': {
-    #     'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_sentiment140.py $PARAMS',
-    #     'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_sentiment140.py $PARAMS',
-    #     'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_sentiment140.py $PARAMS',
-    # }
+    'sentiment140': {
+        'random_noise': 'PYTHONPATH=. python3 ICONIP/ragg_model_random_noise_sentiment140.py $PARAMS',
+        'large_value': 'PYTHONPATH=. python3 ICONIP/ragg_model_large_value_sentiment140.py $PARAMS',
+        'label_flipping': 'PYTHONPATH=. python3 ICONIP/ragg_label_flipping_sentiment140.py $PARAMS',
+    }
 }
 job_txt = 'job.txt'
 res = {}
